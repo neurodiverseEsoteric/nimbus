@@ -5,21 +5,39 @@ import os
 from PyQt4.QtCore import QCoreApplication, QSettings
 from PyQt4.QtGui import QWidget, QHBoxLayout, QLabel, QSizePolicy, QLineEdit
 
+default_settings = {"proxy/type": "None",
+                    "proxy/hostname": "",
+                    "proxy/port": 8080,
+                    "proxy/user": "",
+                    "proxy/password": ""}
+default_port = default_settings["proxy/port"]
+
 # Common settings manager.
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
+
+for setting, value in default_settings.items():
+    if settings.value(setting) == None:
+        settings.setValue(setting, value)
+
+settings.sync()
 
 # This is a convenient variable that gets the settings folder on any platform.
 settings_folder = os.path.dirname(settings.fileName())
 
-# This stylesheet is applied to toolbars that 
+# This stylesheet is applied to toolbars that are blank.
 blank_toolbar = "QToolBar { border: 0; background: transparent; }"
+
+# Stores webviews.
+webviews = []
+
+# Stores browser windows.
+windows = []
 
 # Variables for convenience.
 app_folder = os.path.dirname(os.path.realpath(__file__))
 extensions_folder = os.path.join(app_folder, "extensions")
 adblock_folder = os.path.join(settings_folder, "adblock")
 easylist = os.path.join(app_folder, "easylist.txt")
-default_port = 8080
 
 # Row widget.
 class Row(QWidget):

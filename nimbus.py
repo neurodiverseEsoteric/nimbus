@@ -205,6 +205,9 @@ class WebView(QWebView):
     def __init__(self, *args, incognito=False, **kwargs):
         super(WebView, self).__init__(*args, **kwargs)
 
+        # Add this webview to the list of webviews.
+        common.webviews.append(self)
+
         # Private browsing.
         self.incognito = incognito
 
@@ -280,7 +283,13 @@ class WebView(QWebView):
         port = common.settings.value("proxy/port")
         if port == None:
             port = common.default_port
-        self.page().networkAccessManager().setProxy(QNetworkProxy(eval("QNetworkProxy." + proxyType + "Proxy"), str(common.settings.value("proxy/hostname")), int(port), str(common.settings.value("proxy/user")), str(common.settings.value("proxy/password"))))
+        user = str(common.settings.value("proxy/user"))
+        if user == "":
+            user = None
+        password = str(common.settings.value("proxy/password"))
+        if password == "":
+            password = None
+        self.page().networkAccessManager().setProxy(QNetworkProxy(eval("QNetworkProxy." + proxyType + "Proxy"), str(common.settings.value("proxy/hostname")), int(port), user, password))
 
     # Handler for unsupported content.
     def handleUnsupportedContent(self, reply):
@@ -381,6 +390,8 @@ class ExtensionButton(QToolButton):
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
+
+        common.windows.append(self)
 
         # List of closed tabs.
         self.closedTabs = []

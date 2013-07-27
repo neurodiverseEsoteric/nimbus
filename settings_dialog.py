@@ -140,3 +140,5 @@ class SettingsDialog(QMainWindow):
     def saveSettings(self):
         for index in range(0, self.tabs.count()):
             self.tabs.widget(index).saveSettings()
+        for webview in common.webviews:
+            webview.updateProxy()
