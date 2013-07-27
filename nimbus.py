@@ -70,6 +70,8 @@ gdocs_extensions = (".doc", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", "
 # Global cookiejar to store cookies.
 # All WebView instances use this.
 cookieJar = QNetworkCookieJar(QCoreApplication.instance())
+
+# All incognito WebView instances use this one instead.
 incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
 
 # Global list to store browser history.
