@@ -1,3 +1,6 @@
+nimbus.py
+================
+
 The MIT License (MIT)
 
 Copyright (c) 2013 foxhead128
@@ -18,3 +21,18 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+abpy.py
+================
+
+This file comes from https://github.com/atereshkin/abpy. I am not sure what the
+licensing terms are, however, and am in the process of asking the developer.
+In the meantime, Nimbus can also run without it, though ad-blocking won't work.
+
+easylist.txt
+================
+
+Copyright (c) The EasyList authors (https://easylist.adblockplus.org/)
+
+EasyList is dual licensed under the GNU General Public License version 3 of the
+License, and the Creative Commons Attribution-ShareAlike 3.0 Unported license.
