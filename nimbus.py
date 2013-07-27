@@ -3,6 +3,9 @@
 # Import everything we need.
 import sys
 import os
+import copy
+import common
+import extension_server
 
 # Try importing Filter from Adblock module.
 # If it isn't available, create a dummy class to avoid problems.
@@ -21,11 +24,8 @@ from PyQt4.QtGui import QApplication, QIcon, QMenu, QAction, QMainWindow, QToolB
 from PyQt4.QtNetwork import QNetworkCookieJar, QNetworkCookie, QNetworkAccessManager, QNetworkRequest
 from PyQt4.QtWebKit import QWebView, QWebPage
 
-# This is the folder that Nimbus is contained in.
-app_folder = os.path.dirname(os.path.realpath(__file__))
-
 # chdir to the app folder.
-os.chdir(app_folder)
+os.chdir(common.app_folder)
 
 # Create a global settings manager.
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
@@ -35,7 +35,7 @@ settings_folder = os.path.dirname(settings.fileName())
 
 # Adblock-related stuff.
 adblock_folder = os.path.join(settings_folder, "adblock")
-easylist = os.path.join(app_folder, "easylist.txt")
+easylist = os.path.join(common.app_folder, "easylist.txt")
 adblock_rules = []
 
 # If we don't want to use Adblock, there's a command-line argument for that.
@@ -60,6 +60,12 @@ if not no_adblock:
 
 # Create instance of Adblock Filter.
 adblock_filter = Filter(adblock_rules)
+
+# Create extension server.
+server_thread = extension_server.ExtensionServerThread()
+
+# List of file extensions supported by Google Docs.
+gdocs_extensions = (".doc", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")
 
 # Global cookiejar to store cookies.
 # All WebView instances use this.
@@ -235,11 +241,10 @@ class WebView(QWebView):
 
         if not "file://" in url: # Make sure the file isn't local.
             
-            # Check to see if the file can be loaded in the online PDF,
-            # PostScript, and Word document viewer.
-            for extension in (".doc", ".pdf", ".ps", ".gz"):
+            # Check to see if the file can be loaded in Google Docs viewer.
+            for extension in gdocs_extensions:
                 if url.lower().endswith(extension):
-                    self.load(QUrl("http://view.samurajdata.se/ps.php?url=" + url + "&submit=View!"))
+                    self.load(QUrl("https://docs.google.com/viewer?embedded=true&url=" + url))
                     return
         
         self.downloadFile(reply.request())
@@ -314,6 +319,15 @@ class WebView(QWebView):
         printDialog.paintRequested.connect(lambda: self.print(printer))
         printDialog.exec_()
         printDialog.deleteLater()
+
+# Extension button class.
+class ExtensionButton(QToolButton):
+    def __init__(self, script="", parent=None):
+        super(ExtensionButton, self).__init__(parent)
+        self._parent = parent
+        self.script = script
+    def loadScript(self):
+        self._parent.currentWidget().page().mainFrame().evaluateJavaScript(self.script)
 
 # Custom MainWindow class.
 # This contains basic navigation controls, a location bar, and a menu.
@@ -441,6 +455,14 @@ class MainWindow(QMainWindow):
         locationAction.triggered.connect(self.locationBar.lineEdit().selectAll)
         self.addAction(locationAction)
 
+        # Extensions toolbar.
+        self.extensionBar = QToolBar(self)
+        self.extensionBar.setMovable(False)
+        self.extensionBar.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.extensionBar.setStyleSheet("QToolBar { border: 0; background: transparent; }")
+        self.toolBar.addWidget(self.extensionBar)
+        self.extensionBar.hide()
+
         # Main menu.
         mainMenu = QMenu(self)
 
@@ -505,6 +527,29 @@ class MainWindow(QMainWindow):
         self.toolBar.widgetForAction(self.mainMenuAction).setPopupMode(QToolButton.InstantPopup)
         self.mainMenuAction.triggered.connect(lambda: self.toolBar.widgetForAction(self.mainMenuAction).showMenu())
 
+        # Load browser extensions.
+        # Ripped off of Ricotta.
+        if os.path.isdir(common.extensions_folder):
+            extensions = sorted(os.listdir(common.extensions_folder))
+            for extension in extensions:
+                extension_path = os.path.join(common.extensions_folder, extension)
+                if os.path.isdir(extension_path):
+                    script_path = os.path.join(extension_path, "script.js")
+                    icon_path = os.path.join(extension_path, "icon.png")
+                    if os.path.isfile(script_path):
+                        f = open(script_path, "r")
+                        script = copy.copy(f.read())
+                        f.close()
+                        newExtension = ExtensionButton(script, self)
+                        newExtension.clicked.connect(newExtension.loadScript)
+                        self.extensionBar.show()
+                        self.extensionBar.addWidget(newExtension)
+                        if os.path.isfile(icon_path):
+                            newExtension.setIcon(QIcon(icon_path))
+                        else:
+                            newExtension.setText(extension)
+            self.extensionBar.addSeparator()
+
     # Toggle all the navigation buttons.
     def toggleActions(self):
         self.backAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Back).isEnabled())
@@ -557,6 +602,9 @@ class MainWindow(QMainWindow):
             self.tabs.currentWidget().load(QUrl("https://duckduckgo.com/?q=" + url))
 
     # Tab-related methods.
+    def currentWidget(self):
+        return self.tabs.currentWidget()
+
     def addTab(self, webView=None, **kwargs):
         # If a URL is specified, load it.
         if "url" in kwargs:
@@ -644,6 +692,9 @@ def main():
 
     # Create app.
     app = QApplication(sys.argv)
+
+    # Start extension server.
+    server_thread.start()
 
     # On quit, save settings.
     app.aboutToQuit.connect(saveSettings)

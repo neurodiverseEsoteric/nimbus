@@ -1,0 +1,15 @@
+application: charcount
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /s/
+  static_dir: s/
+
+- url: /about
+  static_files: s/html/about.html
+  upload: s/html/about.html
+
+- url: /.*
+  script: index.py
