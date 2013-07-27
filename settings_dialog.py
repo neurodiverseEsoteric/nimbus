@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import common
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QUrl
 from PyQt4.QtGui import QWidget, QLabel, QMainWindow, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton
 
 # Basic settings panel.
@@ -95,12 +95,6 @@ class SettingsDialog(QMainWindow):
         # Set window title.
         self.setWindowTitle("Settings")
 
-        # Add action to hide dialog.
-        hideAction = QAction(self)
-        hideAction.setShortcut("Esc")
-        hideAction.triggered.connect(self.hide)
-        self.addAction(hideAction)
-
         # Tab widget
         self.tabs = QTabWidget(self)
         self.setCentralWidget(self.tabs)
@@ -127,7 +121,10 @@ class SettingsDialog(QMainWindow):
 
         # Load settings
         self.loadSettings()
-    
+
+    def url(self):
+        return QUrl("")
+
     # Method to load all settings.
     def loadSettings(self):
         for index in range(0, self.tabs.count()):
