@@ -11,7 +11,7 @@ except:
             super(Filter, self).__init__()
         def match(self, url):
             return None
-from PyQt4.QtCore import Qt, QSettings, QCoreApplication, pyqtSignal, QUrl, QByteArray, QFile, QIODevice
+from PyQt4.QtCore import Qt, QSettings, QCoreApplication, pyqtSignal, QUrl, QByteArray, QFile, QIODevice, QTimer
 from PyQt4.QtGui import QApplication, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
 from PyQt4.QtNetwork import QNetworkCookieJar, QNetworkCookie, QNetworkAccessManager, QNetworkRequest
 from PyQt4.QtWebKit import QWebView, QWebPage
@@ -87,6 +87,11 @@ def loadSettings():
     if type(raw_cookies) is list:
         cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
         cookieJar.setAllCookies(cookies)
+
+def clearHistory():
+    global history
+    history = []
+    cookieJar.setAllCookies([])
 
 # Custom NetworkAccessManager class with support for ad-blocking.
 class NetworkAccessManager(QNetworkAccessManager):
@@ -304,36 +309,55 @@ class MainWindow(QMainWindow):
         newTabToolBar.setStyleSheet("QToolBar { border: 0; background: transparent; }")
         newTabToolBar.addAction(newTabAction)
         self.tabs.setCornerWidget(newTabToolBar, Qt.TopRightCorner)
-        
+
+        nextTabAction = QAction(self)
+        nextTabAction.setShortcut("Ctrl+Tab")
+        nextTabAction.triggered.connect(self.nextTab)
+        self.addAction(nextTabAction)
+
+        previousTabAction = QAction(self)
+        previousTabAction.setShortcut("Ctrl+Shift+Tab")
+        previousTabAction.triggered.connect(self.previousTab)
+        self.addAction(previousTabAction)
+
         # Remove tab action
         removeTabAction = QAction(self)
         removeTabAction.setShortcut("Ctrl+W")
         removeTabAction.triggered.connect(lambda: self.removeTab(self.tabs.currentIndex()))
         self.addAction(removeTabAction)
 
+        # Dummy webpage to provide actions.
+        self.actionsPage = QWebPage(self)
+
+        # Auto-enable actions every second.
+        self.toggleActionsTimer = QTimer(self)
+        self.toggleActionsTimer.timeout.connect(self.toggleActions)
+
         # Back button
-        backAction = QAction(QIcon().fromTheme("go-previous"), "Back", self)
-        backAction.setShortcut("Alt+Left")
-        backAction.triggered.connect(self.back)
-        self.toolBar.addAction(backAction)
+        self.backAction = self.actionsPage.action(QWebPage.Back)
+        self.backAction.setShortcut("Alt+Left")
+        self.backAction.triggered.connect(self.back)
+        self.toolBar.addAction(self.backAction)
         
         # Forward button
-        forwardAction = QAction(QIcon().fromTheme("go-next"), "Forward", self)
-        forwardAction.setShortcut("Alt+Right")
-        forwardAction.triggered.connect(self.forward)
-        self.toolBar.addAction(forwardAction)
+        self.forwardAction = self.actionsPage.action(QWebPage.Forward)
+        self.forwardAction.setShortcut("Alt+Right")
+        self.forwardAction.triggered.connect(self.forward)
+        self.toolBar.addAction(self.forwardAction)
         
         # Stop button
-        stopAction = QAction(QIcon().fromTheme("process-stop"), "Stop", self)
-        stopAction.setShortcuts(["Esc"])
-        stopAction.triggered.connect(self.stop)
-        self.toolBar.addAction(stopAction)
+        self.stopAction = self.actionsPage.action(QWebPage.Stop)
+        self.stopAction.setShortcut("Esc")
+        self.stopAction.triggered.connect(self.stop)
+        self.toolBar.addAction(self.stopAction)
         
         # Reload button
-        reloadAction = QAction(QIcon().fromTheme("view-refresh"), "Reload", self)
-        reloadAction.setShortcuts(["F5", "Ctrl+R"])
-        reloadAction.triggered.connect(self.reload)
-        self.toolBar.addAction(reloadAction)
+        self.reloadAction = self.actionsPage.action(QWebPage.Reload)
+        self.reloadAction.setShortcuts(["F5", "Ctrl+R"])
+        self.reloadAction.triggered.connect(self.reload)
+        self.toolBar.addAction(self.reloadAction)
+
+        self.toggleActionsTimer.start(8)
 
         # Location bar
         self.locationBar = QComboBox(self)
@@ -393,13 +417,29 @@ class MainWindow(QMainWindow):
         printAction.triggered.connect(self.printPage)
         mainMenu.addAction(printAction)
 
+        # Add separator
+        mainMenu.addSeparator()
+        
+        # Clear history action
+        clearHistoryAction = QAction("&Clear Recent History...", self)
+        clearHistoryAction.setShortcut("Ctrl+Shift+Del")
+        clearHistoryAction.triggered.connect(clearHistory)
+        mainMenu.addAction(clearHistoryAction)
+
         # Main menu button
-        self.mainMenuAction = QAction("&Menu", self)
+        self.mainMenuAction = QAction(QIcon().fromTheme("preferences-system"), "&Menu", self)
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F", "Alt+E"])
         self.mainMenuAction.setMenu(mainMenu)
         self.toolBar.addAction(self.mainMenuAction)
         self.toolBar.widgetForAction(self.mainMenuAction).setPopupMode(QToolButton.InstantPopup)
         self.mainMenuAction.triggered.connect(lambda: self.toolBar.widgetForAction(self.mainMenuAction).showMenu())
+
+    # Toggle navigation buttons.
+    def toggleActions(self):
+        self.backAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Back).isEnabled())
+        self.forwardAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Forward).isEnabled())
+        self.stopAction.setEnabled(True)
+        self.reloadAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Reload).isEnabled())
     
     # Go back
     def back(self):
@@ -416,6 +456,7 @@ class MainWindow(QMainWindow):
     # Stop loading current page
     def stop(self):
         self.tabs.currentWidget().stop()
+        self.locationBar.setEditText(self.tabs.currentWidget().url().toString())
 
     # Find text
     def find(self):
@@ -477,16 +518,20 @@ class MainWindow(QMainWindow):
         
         # Update icons so we see the globe icon on new tabs.
         self.updateTabIcons()
-    
-    # Add download toolbar
-    def addDownloadToolBar(self, toolbar):
-        self.addToolBar(Qt.BottomToolBarArea, toolbar)
-    
-    # Update location bar text.
-    def updateLocationText(self, url):
-        currentUrl = self.tabs.currentWidget().url()
-        if url == currentUrl:
-            self.locationBar.setEditText(currentUrl.toString())
+
+    # Go to next tab.
+    def nextTab(self):
+        if self.tabs.currentIndex() == self.tabs.count() - 1:
+            self.tabs.setCurrentIndex(0)
+        else:
+            self.tabs.setCurrentIndex(self.tabs.currentIndex() + 1)
+
+    # Go to previous tab.
+    def previousTab(self):
+        if self.tabs.currentIndex() == 0:
+            self.tabs.setCurrentIndex(self.tabs.count() - 1)
+        else:
+            self.tabs.setCurrentIndex(self.tabs.currentIndex() - 1)
     
     # Update tab titles.
     def updateTabTitles(self):
@@ -505,7 +550,7 @@ class MainWindow(QMainWindow):
             self.tabs.setTabIcon(index, icon)
             if index == self.tabs.currentIndex():
                 self.setWindowIcon(self.tabs.widget(index).icon())
-                
+
     # Remove a tab.
     def removeTab(self, index):
         self.tabs.widget(index).load(QUrl("about:blank"))
@@ -515,6 +560,16 @@ class MainWindow(QMainWindow):
                 self.addTab(url=sys.argv[-1])
             else:
                 self.addTab(url="duckduckgo.com")
+
+    # Add download toolbar
+    def addDownloadToolBar(self, toolbar):
+        self.addToolBar(Qt.BottomToolBarArea, toolbar)
+    
+    # Update location bar text.
+    def updateLocationText(self, url):
+        currentUrl = self.tabs.currentWidget().url()
+        if url == currentUrl:
+            self.locationBar.setEditText(currentUrl.toString())
 
 # Main function to load everything.
 def main():
