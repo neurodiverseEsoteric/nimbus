@@ -176,7 +176,7 @@ class SettingsDialog(QMainWindow):
 
         self.tabs.addTab(GeneralSettingsPanel(self), "&General")
         self.tabs.addTab(NetworkSettingsPanel(self), "&Network")
-        self.tabs.addTab(ExtensionsSettingsPanel(self), "E&xtensions")
+        self.tabs.addTab(ExtensionsSettingsPanel(self), "&Extensions")
 
         # Toolbar
         self.toolBar = QToolBar(self)

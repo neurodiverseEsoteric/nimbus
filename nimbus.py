@@ -5,6 +5,7 @@ import sys
 import os
 import copy
 import common
+import status_bar
 import extension_server
 import settings_dialog
 
@@ -83,6 +84,7 @@ def addHistoryItem(url):
 def saveSettings():
     # Save history.
     global history
+    history = [(item.partition("://")[-1] if "://" in item else item).replace(("www." if item.startswith("www.") else ""), "") for item in history]
     history.sort()
     common.settings.setValue("history", history)
 
@@ -215,6 +217,15 @@ class WebView(QWebView):
         # so that WebView.findNext() and WebView.findPrevious() work.
         self._findText = False
 
+        # This is used to store the current status message.
+        self._statusBarMessage = ""
+
+        # This is used to store the current page loading progress.
+        self._loadProgress = 0
+
+        # This stores the link last hovered over.
+        self._hoveredLink = ""
+
         # Create a NetworkAccessmanager that supports ad-blocking and set it.
         self.nAM = NetworkAccessManager()
         self.page().setNetworkAccessManager(self.nAM)
@@ -263,7 +274,16 @@ class WebView(QWebView):
         # Connect signals.
         self.titleChanged.connect(self.setWindowTitle)
         self.iconChanged.connect(self.setWindowIcon)
+        self.page().linkHovered.connect(self.setStatusBarMessage)
+        self.statusBarMessage.connect(self.setStatusBarMessage)
+        self.loadProgress.connect(self.setLoadProgress)
         self.setWindowTitle("")
+
+    def setStatusBarMessage(self, link="", title="", content=""):
+        self._statusBarMessage = link
+
+    def setLoadProgress(self, progress):
+        self._loadProgress = progress
 
     def setWindowTitle(self, title):
         if len(title) == 0:
@@ -420,6 +440,9 @@ class MainWindow(QMainWindow):
         # Allow closing of tabs.
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.removeTab)
+
+        self.statusBar = status_bar.StatusBar(self)
+        self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
 
         # Set tabs as central widget.
         self.setCentralWidget(self.tabs)
@@ -595,7 +618,7 @@ class MainWindow(QMainWindow):
 
         # Add main menu action/button.
         self.mainMenuAction = QAction(QIcon().fromTheme("preferences-system"), "&Menu", self)
-        self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F", "Alt+E"])
+        self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
         self.mainMenuAction.setMenu(mainMenu)
         self.toolBar.addAction(self.mainMenuAction)
         self.toolBar.widgetForAction(self.mainMenuAction).setPopupMode(QToolButton.InstantPopup)
@@ -695,6 +718,13 @@ class MainWindow(QMainWindow):
         else:
             self.tabs.currentWidget().load(QUrl(common.settings.value("search") % (url,)))
 
+    # Status bar related methods.
+    def setStatusBarMessage(self, message):
+        self.statusBar.setStatusBarMessage(self.tabs.currentWidget()._statusBarMessage)
+
+    def setProgress(self, progress):
+        self.statusBar.setValue(self.tabs.currentWidget()._loadProgress)
+
     # Tab-related methods.
     def currentWidget(self):
         return self.tabs.currentWidget()
@@ -720,6 +750,9 @@ class MainWindow(QMainWindow):
             webview = WebView(self)
 
         # Connect signals
+        webview.loadProgress.connect(self.setProgress)
+        webview.statusBarMessage.connect(self.setStatusBarMessage)
+        webview.page().linkHovered.connect(self.setStatusBarMessage)
         webview.titleChanged.connect(self.updateTabTitles)
         webview.urlChanged.connect(self.updateLocationText)
         webview.iconChanged.connect(self.updateTabIcons)
