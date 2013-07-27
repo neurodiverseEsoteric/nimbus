@@ -287,6 +287,9 @@ class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         
+        # Closed tabs
+        self.closedTabs = []
+        
         # Main toolbar
         self.toolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
         self.addToolBar(self.toolBar)
@@ -380,7 +383,14 @@ class MainWindow(QMainWindow):
 
         # Add new tab action
         mainMenu.addAction(newTabAction)
-        
+
+        # Reopen tab action
+        reopenTabAction = QAction("&Reopen Tab", self)
+        reopenTabAction.setShortcut("Ctrl+Shift+T")
+        reopenTabAction.triggered.connect(self.reopenTab)
+        self.addAction(reopenTabAction)
+        mainMenu.addAction(reopenTabAction)
+
         # Add separator to menu
         mainMenu.addSeparator()
 
@@ -541,7 +551,7 @@ class MainWindow(QMainWindow):
                 title = "New Tab"
             self.tabs.setTabText(index, title[:24] + '...' if len(title) > 24 else title)
             if index == self.tabs.currentIndex():
-                self.setWindowTitle(self.tabs.currentWidget().windowTitle())
+                self.setWindowTitle(title + " - Nimbus")
     
     # Update tab icons.
     def updateTabIcons(self):
@@ -553,6 +563,7 @@ class MainWindow(QMainWindow):
 
     # Remove a tab.
     def removeTab(self, index):
+        self.closedTabs.append(self.tabs.widget(index))
         self.tabs.widget(index).load(QUrl("about:blank"))
         self.tabs.removeTab(index)
         if self.tabs.count() == 0:
@@ -560,6 +571,12 @@ class MainWindow(QMainWindow):
                 self.addTab(url=sys.argv[-1])
             else:
                 self.addTab(url="duckduckgo.com")
+
+    # Undo closed tab.
+    def reopenTab(self):
+        if len(self.closedTabs) > 0:
+            self.addTab(self.closedTabs.pop())
+            self.tabs.widget(self.tabs.count() - 1).back()
 
     # Add download toolbar
     def addDownloadToolBar(self, toolbar):
