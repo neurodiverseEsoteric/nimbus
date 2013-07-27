@@ -259,6 +259,7 @@ class WebView(QWebView):
 
         # Connect signals.
         self.titleChanged.connect(self.setWindowTitle)
+        self.iconChanged.connect(self.setWindowIcon)
         self.setWindowTitle("")
 
     def setWindowTitle(self, title):
@@ -512,8 +513,8 @@ class MainWindow(QMainWindow):
         self.extensionBar = QToolBar(self)
         self.extensionBar.setMovable(False)
         self.extensionBar.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.extensionBar.setStyleSheet(common.blank_toolbar)
-        self.toolBar.addWidget(self.extensionBar)
+        self.extensionBar.setStyleSheet("QToolBar { border: 0; border-right: 1px solid palette(dark); background: transparent; }")
+        self.addToolBar(Qt.LeftToolBarArea, self.extensionBar)
         self.extensionBar.hide()
 
         # Main menu.
@@ -576,7 +577,8 @@ class MainWindow(QMainWindow):
         # Add settings dialog action.
         settingsAction = QAction("&Settings...", self)
         settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
-        settingsAction.triggered.connect(lambda: pdialog.show())
+        settingsAction.triggered.connect(lambda: self.tabs.addTab(pdialog, "Settings"))
+        settingsAction.triggered.connect(lambda: self.tabs.setCurrentIndex(self.tabs.count()-1))
         mainMenu.addAction(settingsAction)
 
         # Add main menu action/button.
@@ -609,18 +611,23 @@ class MainWindow(QMainWindow):
                             newExtension.setIcon(QIcon(icon_path))
                         else:
                             newExtension.setText(extension)
-            self.extensionBar.addSeparator()
 
     # Toggle all the navigation buttons.
     def toggleActions(self):
-        self.backAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Back).isEnabled())
-        self.forwardAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Forward).isEnabled())
+        try:
+            self.backAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Back).isEnabled())
+            self.forwardAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Forward).isEnabled())
 
-        # This is a workaround so that hitting Esc will reset the location
-        # bar text.
-        self.stopAction.setEnabled(True)
+            # This is a workaround so that hitting Esc will reset the location
+            # bar text.
+            self.stopAction.setEnabled(True)
 
-        self.reloadAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Reload).isEnabled())
+            self.reloadAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Reload).isEnabled())
+        except:
+            self.backAction.setEnabled(False)
+            self.forwardAction.setEnabled(False)
+            self.stopAction.setEnabled(False)
+            self.reloadAction.setEnabled(False)
 
     # Navigation methods.
     def back(self):
@@ -723,15 +730,19 @@ class MainWindow(QMainWindow):
 
     def updateTabIcons(self):
         for index in range(0, self.tabs.count()):
-            icon = self.tabs.widget(index).icon()
+            try: icon = self.tabs.widget(index).icon()
+            except: continue
             self.tabs.setTabIcon(index, icon)
             if index == self.tabs.currentIndex():
                 self.setWindowIcon(self.tabs.widget(index).icon())
 
     def removeTab(self, index):
-        if self.tabs.widget(index).history().canGoBack() or self.tabs.widget(index).history().canGoForward() or self.tabs.widget(index).url().toString() not in ("about:blank", ""):
-            self.closedTabs.append(self.tabs.widget(index))
-        self.tabs.widget(index).load(QUrl("about:blank"))
+        try:
+            if self.tabs.widget(index).history().canGoBack() or self.tabs.widget(index).history().canGoForward() or self.tabs.widget(index).url().toString() not in ("about:blank", ""):
+                self.closedTabs.append(self.tabs.widget(index))
+            self.tabs.widget(index).load(QUrl("about:blank"))
+        except:
+            pass
         self.tabs.removeTab(index)
         if self.tabs.count() == 0:
             self.addTab(url="about:blank")
@@ -739,7 +750,8 @@ class MainWindow(QMainWindow):
     def reopenTab(self):
         if len(self.closedTabs) > 0:
             self.addTab(self.closedTabs.pop())
-            self.tabs.widget(self.tabs.count() - 1).back()
+            try: self.tabs.widget(self.tabs.count() - 1).back()
+            except: pass
 
     # This method is used to add a DownloadBar to the window.
     def addDownloadToolBar(self, toolbar):
