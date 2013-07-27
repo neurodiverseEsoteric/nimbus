@@ -525,7 +525,7 @@ class MainWindow(QMainWindow):
         mainMenu.addAction(newIncognitoTabAction)
 
         # Add reopen tab action.
-        reopenTabAction = QAction("&Reopen Tab", self)
+        reopenTabAction = QAction(QIcon().fromTheme("edit-undo"), "&Reopen Tab", self)
         reopenTabAction.setShortcut("Ctrl+Shift+T")
         reopenTabAction.triggered.connect(self.reopenTab)
         self.addAction(reopenTabAction)
@@ -534,19 +534,19 @@ class MainWindow(QMainWindow):
         mainMenu.addSeparator()
 
         # Add find text action.
-        findAction = QAction("&Find...", self)
+        findAction = QAction(QIcon().fromTheme("edit-find"), "&Find...", self)
         findAction.setShortcut("Ctrl+F")
         findAction.triggered.connect(self.find)
         mainMenu.addAction(findAction)
 
         # Add find next action.
-        findNextAction = QAction("Find Ne&xt", self)
+        findNextAction = QAction(QIcon().fromTheme("media-seek-forward"), "Find Ne&xt", self)
         findNextAction.setShortcut("Ctrl+G")
         findNextAction.triggered.connect(self.findNext)
         mainMenu.addAction(findNextAction)
 
         # Add find previous action.
-        findPreviousAction = QAction("Find Pre&vious", self)
+        findPreviousAction = QAction(QIcon().fromTheme("media-seek-backward"), "Find Pre&vious", self)
         findPreviousAction.setShortcut("Ctrl+Shift+G")
         findPreviousAction.triggered.connect(self.findPrevious)
         mainMenu.addAction(findPreviousAction)
@@ -554,13 +554,13 @@ class MainWindow(QMainWindow):
         mainMenu.addSeparator()
 
         # Add print preview action.
-        printPreviewAction = QAction("Print Previe&w", self)
+        printPreviewAction = QAction(QIcon().fromTheme("document-print-preview"), "Print Previe&w", self)
         printPreviewAction.setShortcut("Ctrl+Shift+P")
         printPreviewAction.triggered.connect(self.printPreview)
         mainMenu.addAction(printPreviewAction)
 
         # Add print page action.
-        printAction = QAction("&Print...", self)
+        printAction = QAction(QIcon().fromTheme("document-print"), "&Print...", self)
         printAction.setShortcut("Ctrl+P")
         printAction.triggered.connect(self.printPage)
         mainMenu.addAction(printAction)
@@ -569,13 +569,13 @@ class MainWindow(QMainWindow):
         mainMenu.addSeparator()
 
         # Add clear history action.
-        clearHistoryAction = QAction("&Clear Recent History...", self)
+        clearHistoryAction = QAction(QIcon().fromTheme("edit-clear"), "&Clear Recent History...", self)
         clearHistoryAction.setShortcut("Ctrl+Shift+Del")
         clearHistoryAction.triggered.connect(clearHistory)
         mainMenu.addAction(clearHistoryAction)
 
         # Add settings dialog action.
-        settingsAction = QAction("&Settings...", self)
+        settingsAction = QAction(QIcon().fromTheme("preferences-system"), "&Settings...", self)
         settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
         settingsAction.triggered.connect(lambda: self.tabs.addTab(pdialog, "Settings"))
         settingsAction.triggered.connect(lambda: self.tabs.setCurrentIndex(self.tabs.count()-1))

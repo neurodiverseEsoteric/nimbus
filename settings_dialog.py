@@ -2,7 +2,7 @@
 
 import common
 from PyQt4.QtCore import Qt, QUrl
-from PyQt4.QtGui import QWidget, QLabel, QMainWindow, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton
+from PyQt4.QtGui import QWidget, QIcon, QLabel, QMainWindow, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton
 
 # Basic settings panel.
 class SettingsPanel(QWidget):
@@ -124,6 +124,9 @@ class SettingsDialog(QMainWindow):
 
     def url(self):
         return QUrl("")
+
+    def icon(self):
+        return QIcon().fromTheme("preferences-system")
 
     # Method to load all settings.
     def loadSettings(self):
