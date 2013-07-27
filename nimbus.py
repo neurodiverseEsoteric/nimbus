@@ -203,11 +203,11 @@ class WebView(QWebView):
     downloadStarted = pyqtSignal(QToolBar)
 
     # Initialize class.
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, incognito=False, **kwargs):
         super(WebView, self).__init__(*args, **kwargs)
 
-        # Set persistent storage path to settings_folder.
-        self.settings().enablePersistentStorage(settings_folder)
+        # Private browsing.
+        self.incognito = incognito
 
         # This is used to store the text entered in using WebView.find(),
         # so that WebView.findNext() and WebView.findPrevious() work.
@@ -217,25 +217,52 @@ class WebView(QWebView):
         self.nAM = NetworkAccessManager()
         self.page().setNetworkAccessManager(self.nAM)
 
-        # Set the CookieJar.
-        self.page().networkAccessManager().setCookieJar(cookieJar)
+        # Enable Web Inspector
+        self.settings().setAttribute(self.settings().DeveloperExtrasEnabled, True)
 
-        # Do this so that cookieJar doesn't get deleted along with WebView.
-        cookieJar.setParent(QCoreApplication.instance())
+        # What to do if private browsing is not enabled.
+        if not self.incognito:
+            # Set persistent storage path to settings_folder.
+            self.settings().enablePersistentStorage(settings_folder)
+
+            # Set the CookieJar.
+            self.page().networkAccessManager().setCookieJar(cookieJar)
+
+            # Do this so that cookieJar doesn't get deleted along with WebView.
+            cookieJar.setParent(QCoreApplication.instance())
+
+            # Forward unsupported content.
+            # Since this uses Google's servers, it is disabled in
+            # private browsing mode.
+            self.page().setForwardUnsupportedContent(True)
+            self.page().unsupportedContent.connect(self.handleUnsupportedContent)
+
+            # Recording history should only be done in normal browsing mode.
+            self.urlChanged.connect(self.addHistoryItem)
+
+        # What to do if private browsing is enabled.
+        else:
+            self.settings().setAttribute(self.settings().PrivateBrowsingEnabled, True)
 
         # Enable Netscape plugins.
         self.settings().setAttribute(self.settings().PluginsEnabled, True)
-
-        # Forward unsupported content.
-        self.page().setForwardUnsupportedContent(True)
-        self.page().unsupportedContent.connect(self.handleUnsupportedContent)
 
         # This is what Nimbus should do when faced with a file to download.
         self.page().downloadRequested.connect(self.downloadFile)
 
         # Connect signals.
         self.titleChanged.connect(self.setWindowTitle)
-        self.urlChanged.connect(self.addHistoryItem)
+        self.setWindowTitle("")
+
+    def setWindowTitle(self, title):
+        if len(title) == 0:
+            title = "New Tab"
+        QWebView.setWindowTitle(self, title)
+
+    def icon(self):
+        if self.incognito:
+            return QIcon().fromTheme("face-devilish")
+        return QWebView.icon(self)
 
     # Handler for unsupported content.
     def handleUnsupportedContent(self, reply):
@@ -371,6 +398,11 @@ class MainWindow(QMainWindow):
         newTabAction.setShortcut("Ctrl+T")
         newTabAction.triggered.connect(lambda: self.addTab())
 
+        # New private browsing tab action.
+        newIncognitoTabAction = QAction(QIcon().fromTheme("face-devilish"), "New &Incognito Tab", self)
+        newIncognitoTabAction.setShortcut("Ctrl+Shift+N")
+        newIncognitoTabAction.triggered.connect(lambda: self.addTab(incognito=True))
+
         # This is used so that the new tab button looks halfway decent,
         # and can actually be inserted into the corner of the tab widget.
         newTabToolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
@@ -378,6 +410,7 @@ class MainWindow(QMainWindow):
         # We don't want this widget to have any decorations.
         newTabToolBar.setStyleSheet("QToolBar { border: 0; background: transparent; }")
 
+        newTabToolBar.addAction(newIncognitoTabAction)
         newTabToolBar.addAction(newTabAction)
         self.tabs.setCornerWidget(newTabToolBar, Qt.TopRightCorner)
 
@@ -468,8 +501,9 @@ class MainWindow(QMainWindow):
         # Main menu.
         mainMenu = QMenu(self)
 
-        # Add new tab action to menu.
+        # Add new tab actions to menu.
         mainMenu.addAction(newTabAction)
+        mainMenu.addAction(newIncognitoTabAction)
 
         # Add reopen tab action.
         reopenTabAction = QAction("&Reopen Tab", self)
@@ -609,7 +643,12 @@ class MainWindow(QMainWindow):
 
     def addTab(self, webView=None, **kwargs):
         # If a URL is specified, load it.
-        if "url" in kwargs:
+        if "incognito" in kwargs:
+            webview = WebView(incognito=True, parent=self)
+            if "url" in kwargs:
+                webview.load(QUrl.fromUserInput(kwargs["url"]))
+
+        elif "url" in kwargs:
             url = kwargs["url"]
             webview = WebView(self)
             webview.load(QUrl.fromUserInput(url))
@@ -653,8 +692,6 @@ class MainWindow(QMainWindow):
     def updateTabTitles(self):
         for index in range(0, self.tabs.count()):
             title = self.tabs.widget(index).windowTitle()
-            if len(title) == 0:
-                title = "New Tab"
             self.tabs.setTabText(index, title[:24] + '...' if len(title) > 24 else title)
             if index == self.tabs.currentIndex():
                 self.setWindowTitle(title + " - Nimbus")
