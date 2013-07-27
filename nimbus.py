@@ -25,7 +25,7 @@ except:
 # Extremely specific imports from PyQt4.
 from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QByteArray, QFile, QIODevice, QTimer
 from PyQt4.QtGui import QApplication, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
-from PyQt4.QtNetwork import QNetworkCookieJar, QNetworkCookie, QNetworkAccessManager, QNetworkRequest
+from PyQt4.QtNetwork import QNetworkCookieJar, QNetworkCookie, QNetworkAccessManager, QNetworkRequest, QNetworkProxy
 from PyQt4.QtWebKit import QWebView, QWebPage
 
 # chdir to the app folder.
@@ -219,6 +219,8 @@ class WebView(QWebView):
         # Enable Web Inspector
         self.settings().setAttribute(self.settings().DeveloperExtrasEnabled, True)
 
+        self.updateProxy()
+
         # What to do if private browsing is not enabled.
         if not self.incognito:
             # Set persistent storage path to settings_folder.
@@ -268,6 +270,16 @@ class WebView(QWebView):
         if self.incognito:
             return QIcon().fromTheme("face-devilish")
         return QWebView.icon(self)
+
+    # Function to update proxy list.
+    def updateProxy(self):
+        proxyType = str(common.settings.value("proxy/type"))
+        if proxyType == "None":
+            proxyType = "No"
+        port = common.settings.value("proxy/port")
+        if port == None:
+            port = common.default_port
+        self.page().networkAccessManager().setProxy(QNetworkProxy(eval("QNetworkProxy." + proxyType + "Proxy"), str(common.settings.value("proxy/hostname")), int(port), str(common.settings.value("proxy/user")), str(common.settings.value("proxy/password"))))
 
     # Handler for unsupported content.
     def handleUnsupportedContent(self, reply):

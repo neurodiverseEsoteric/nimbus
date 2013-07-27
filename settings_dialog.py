@@ -12,6 +12,8 @@ class SettingsPanel(QWidget):
         newLayout = QVBoxLayout()
         self.setLayout(newLayout)
         self.layout().setContentsMargins(4,4,4,4)
+    def loadSettings(self):
+        pass
     def saveSettings(self):
         pass
 
@@ -41,24 +43,36 @@ class ProxyConfigPanel(SettingsPanel):
         typeRow.addWidget(self.proxySelect)
 
         # Hostname row.
-        hostNameRow = common.Row(self)
-        self.layout().addWidget(hostNameRow)
+        self.hostNameRow = common.LineEditRow("Hostname:", self)
+        self.hostNameEntry = self.hostNameRow.lineEdit
+        self.layout().addWidget(self.hostNameRow)
 
-        # Create amnother nice label.
-        hostNameLabel = QLabel("Hostname:", self)
-        hostNameRow.addWidget(hostNameLabel)
+        # Port row.
+        self.portRow = common.LineEditRow("Port:", self)
+        self.portRow.lineEdit.setInputMask("99999")
+        self.portEntry = self.portRow.lineEdit
+        self.layout().addWidget(self.portRow)
 
-        self.hostNameEntry = QLineEdit(self)
-        hostNameRow.addWidget(self.hostNameEntry)
+        # User row.
+        self.userRow = common.LineEditRow("User:", self)
+        self.userEntry = self.userRow.lineEdit
+        self.layout().addWidget(self.userRow)
+
+        # Password row.
+        self.passwordRow = common.LineEditRow("Password:", self)
+        self.passwordEntry = self.passwordRow.lineEdit
+        self.layout().addWidget(self.passwordRow)
 
         # Add an expander.
         expander = common.Expander(self)
         self.layout().addWidget(expander)
 
-        self.loadSettings()
-
     def loadSettings(self):
         self.hostNameEntry.setText(str(common.settings.value("proxy/hostname")))
+        port = str(common.settings.value("proxy/port"))
+        if port == "None":
+            port = str(common.default_port)
+        self.portEntry.setText(port)
         for index in range(0, self.proxySelect.count()):
             if self.proxySelect.itemText(index) == common.settings.value("proxy/type"):
                 self.proxySelect.setCurrentIndex(index)
@@ -66,7 +80,11 @@ class ProxyConfigPanel(SettingsPanel):
 
     def saveSettings(self):
         common.settings.setValue("proxy/hostname", self.hostNameEntry.text())
-        common.settings.setValue("proxy/type", self.proxySelect.currentText())
+        proxyType = self.proxySelect.currentText()
+        if proxyType == "None":
+            proxyType = "No"
+        common.settings.setValue("proxy/type", proxyType)
+        common.settings.setValue("proxy/port", int(self.portEntry.text()))
         common.settings.sync()
 
 # Main settings dialog
@@ -100,6 +118,15 @@ class SettingsDialog(QMainWindow):
         applyButton = QPushButton("&Apply", self)
         applyButton.clicked.connect(self.saveSettings)
         self.toolBar.addWidget(applyButton)
+
+        # Load settings
+        self.loadSettings()
+    
+    # Method to load all settings.
+    def loadSettings(self):
+        for index in range(0, self.tabs.count()):
+            self.tabs.widget(index).loadSettings()
+    
     # Method to save all settings.
     def saveSettings(self):
         for index in range(0, self.tabs.count()):
