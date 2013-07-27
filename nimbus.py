@@ -82,12 +82,14 @@ def addHistoryItem(url):
 
 # This function saves the browser's settings.
 def saveSettings():
+    # Save history.
+    global history
+    history.sort()
+    settings.setValue("history", history)
+
     # Save cookies.
     cookies = [cookie.toRawForm().data() for cookie in cookieJar.allCookies()]
     settings.setValue("cookies", cookies)
-
-    # Save history.
-    settings.setValue("history", history)
 
     # Sync any unsaved settings.
     settings.sync()
