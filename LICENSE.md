@@ -36,9 +36,8 @@ details.
 abpy.py
 ================
 
-This file comes from https://github.com/atereshkin/abpy. I am not sure what the
-licensing terms are, however, and am in the process of asking the developer.
-In the meantime, Nimbus can also run without it, though ad-blocking won't work.
+This file comes from https://github.com/atereshkin/abpy. It is released into
+the public domain.
 
 easylist.txt
 ================
