@@ -70,6 +70,7 @@ gdocs_extensions = (".doc", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", "
 # Global cookiejar to store cookies.
 # All WebView instances use this.
 cookieJar = QNetworkCookieJar(QCoreApplication.instance())
+incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
 
 # Global list to store browser history.
 history = []
@@ -242,6 +243,12 @@ class WebView(QWebView):
 
         # What to do if private browsing is enabled.
         else:
+            # Global incognito cookie jar, so that logins are preserved
+            # between incognito tabs.
+            self.page().networkAccessManager().setCookieJar(incognitoCookieJar)
+            incognitoCookieJar.setParent(QCoreApplication.instance())
+
+            # Enable private browsing for QWebSettings.
             self.settings().setAttribute(self.settings().PrivateBrowsingEnabled, True)
 
         # Enable Netscape plugins.
