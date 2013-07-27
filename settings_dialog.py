@@ -69,6 +69,8 @@ class ProxyConfigPanel(SettingsPanel):
 
     def loadSettings(self):
         self.hostNameEntry.setText(str(common.settings.value("proxy/hostname")))
+        self.userEntry.setText(str(common.settings.value("proxy/user")))
+        self.passwordEntry.setText(str(common.settings.value("proxy/password")))
         port = str(common.settings.value("proxy/port"))
         if port == "None":
             port = str(common.default_port)
@@ -85,6 +87,8 @@ class ProxyConfigPanel(SettingsPanel):
             proxyType = "No"
         common.settings.setValue("proxy/type", proxyType)
         common.settings.setValue("proxy/port", int(self.portEntry.text()))
+        common.settings.setValue("proxy/user", self.userEntry.text())
+        common.settings.setValue("proxy/password", self.passwordEntry.text())
         common.settings.sync()
 
 # Main settings dialog
