@@ -6,6 +6,10 @@ import os
 import copy
 import common
 import extension_server
+import settings_dialog
+
+# To avoid warnings, we create this.
+pdialog = None
 
 # Try importing Filter from Adblock module.
 # If it isn't available, create a dummy class to avoid problems.
@@ -19,7 +23,7 @@ except:
             return None
 
 # Extremely specific imports from PyQt4.
-from PyQt4.QtCore import Qt, QSettings, QCoreApplication, pyqtSignal, QUrl, QByteArray, QFile, QIODevice, QTimer
+from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QByteArray, QFile, QIODevice, QTimer
 from PyQt4.QtGui import QApplication, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
 from PyQt4.QtNetwork import QNetworkCookieJar, QNetworkCookie, QNetworkAccessManager, QNetworkRequest
 from PyQt4.QtWebKit import QWebView, QWebPage
@@ -27,15 +31,7 @@ from PyQt4.QtWebKit import QWebView, QWebPage
 # chdir to the app folder.
 os.chdir(common.app_folder)
 
-# Create a global settings manager.
-settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
-
-# This is a convenient variable that gets the settings folder on any platform.
-settings_folder = os.path.dirname(settings.fileName())
-
 # Adblock-related stuff.
-adblock_folder = os.path.join(settings_folder, "adblock")
-easylist = os.path.join(common.app_folder, "easylist.txt")
 adblock_rules = []
 
 # If we don't want to use Adblock, there's a command-line argument for that.
@@ -44,16 +40,16 @@ no_adblock = "--no-adblock" in sys.argv
 # Load Adblock filters if Adblock is not disabled via command-line.
 if not no_adblock:
     # Load easylist.
-    if os.path.exists(easylist):
-        f = open(easylist)
+    if os.path.exists(common.easylist):
+        f = open(common.easylist)
         try: adblock_rules += [rule.rstrip("\n") for rule in f.readlines()]
         except: pass
         f.close()
 
     # Load additional filters.
-    if os.path.exists(adblock_folder):
-        for fname in os.listdir(adblock_folder):
-            f = open(os.path.join(adblock_folder, fname))
+    if os.path.exists(common.adblock_folder):
+        for fname in os.listdir(common.adblock_folder):
+            f = open(os.path.join(common.adblock_folder, fname))
             try: adblock_rules += [rule.rstrip("\n") for rule in f.readlines()]
             except: pass
             f.close()
@@ -88,25 +84,25 @@ def saveSettings():
     # Save history.
     global history
     history.sort()
-    settings.setValue("history", history)
+    common.settings.setValue("history", history)
 
     # Save cookies.
     cookies = [cookie.toRawForm().data() for cookie in cookieJar.allCookies()]
-    settings.setValue("cookies", cookies)
+    common.settings.setValue("cookies", cookies)
 
     # Sync any unsaved settings.
-    settings.sync()
+    common.settings.sync()
 
 # This function loads the browser's settings.
 def loadSettings():
     # Load history.
     global history
-    raw_history = settings.value("history")
+    raw_history = common.settings.value("history")
     if type(raw_history) is list:
-        history = settings.value("history")
+        history = common.settings.value("history")
 
     # Load cookies.
-    raw_cookies = settings.value("cookies")
+    raw_cookies = common.settings.value("cookies")
     if type(raw_cookies) is list:
         cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
         cookieJar.setAllCookies(cookies)
@@ -175,7 +171,7 @@ class DownloadBar(QToolBar):
         super(DownloadBar, self).__init__(parent)
         self.setMovable(False)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.setStyleSheet("QToolBar { border: 0; background: palette(window); }")
+        self.setStyleSheet(common.blank_toolbar.replace("transparent", "palette(window)"))
         label = QLabel(self)
         self.addWidget(label)
         self.progressBar = DownloadProgressBar(reply, destination, self)
@@ -226,7 +222,7 @@ class WebView(QWebView):
         # What to do if private browsing is not enabled.
         if not self.incognito:
             # Set persistent storage path to settings_folder.
-            self.settings().enablePersistentStorage(settings_folder)
+            self.settings().enablePersistentStorage(common.settings_folder)
 
             # Set the CookieJar.
             self.page().networkAccessManager().setCookieJar(cookieJar)
@@ -418,7 +414,7 @@ class MainWindow(QMainWindow):
         newTabToolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
 
         # We don't want this widget to have any decorations.
-        newTabToolBar.setStyleSheet("QToolBar { border: 0; background: transparent; }")
+        newTabToolBar.setStyleSheet(common.blank_toolbar)
 
         newTabToolBar.addAction(newIncognitoTabAction)
         newTabToolBar.addAction(newTabAction)
@@ -504,7 +500,7 @@ class MainWindow(QMainWindow):
         self.extensionBar = QToolBar(self)
         self.extensionBar.setMovable(False)
         self.extensionBar.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.extensionBar.setStyleSheet("QToolBar { border: 0; background: transparent; }")
+        self.extensionBar.setStyleSheet(common.blank_toolbar)
         self.toolBar.addWidget(self.extensionBar)
         self.extensionBar.hide()
 
@@ -564,6 +560,12 @@ class MainWindow(QMainWindow):
         clearHistoryAction.setShortcut("Ctrl+Shift+Del")
         clearHistoryAction.triggered.connect(clearHistory)
         mainMenu.addAction(clearHistoryAction)
+
+        # Add settings dialog action.
+        settingsAction = QAction("&Settings...", self)
+        settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
+        settingsAction.triggered.connect(lambda: pdialog.show())
+        mainMenu.addAction(settingsAction)
 
         # Add main menu action/button.
         self.mainMenuAction = QAction(QIcon().fromTheme("preferences-system"), "&Menu", self)
@@ -753,6 +755,10 @@ def main():
 
     # Create instance of MainWindow.
     win = MainWindow()
+
+    # Create instance of SettingsDialog.
+    global pdialog
+    pdialog = settings_dialog.SettingsDialog()
 
     # Open URLs from command line.
     if len(sys.argv) > 1:
