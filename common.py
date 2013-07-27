@@ -46,7 +46,12 @@ if os.path.isdir(extensions_folder):
 else:
     extensions = []
 extension_buttons = []
-extensions_blacklist = [extension for extension in extensions if extension not in settings.value("extensions/whitelist")]
+extensions_blacklist = []
+
+def reload_extensions_blacklist():
+    extensions_blacklist = [extension for extension in extensions if extension not in settings.value("extensions/whitelist")]
+
+reload_extensions_blacklist()
 
 adblock_folder = os.path.join(settings_folder, "adblock")
 easylist = os.path.join(app_folder, "easylist.txt")

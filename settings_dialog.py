@@ -146,12 +146,16 @@ class ExtensionsSettingsPanel(SettingsPanel):
     def disableExtension(self, item):
         name = item.text()
         self.blacklist.addItem(name)
+        self.blacklist.sortItems(Qt.AscendingOrder)
         self.whitelist.takeItem(self.whitelist.row(item))
+        self.whitelist.sortItems(Qt.AscendingOrder)
 
     def enableExtension(self, item):
         name = item.text()
-        self.whitelist.addItem(name)        
+        self.whitelist.addItem(name)
+        self.whitelist.sortItems(Qt.AscendingOrder)
         self.blacklist.takeItem(self.blacklist.row(item))
+        self.blacklist.sortItems(Qt.AscendingOrder)
 
     def loadSettings(self):
         self.whitelist.clear()
@@ -163,6 +167,7 @@ class ExtensionsSettingsPanel(SettingsPanel):
 
     def saveSettings(self):
         common.settings.setValue("extensions/whitelist", [self.whitelist.item(extension).text() for extension in range(0, self.whitelist.count())])
+        common.reload_extensions_blacklist()
 
 # Main settings dialog
 class SettingsDialog(QMainWindow):
