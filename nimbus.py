@@ -380,6 +380,7 @@ class WebView(QWebView):
 class ExtensionButton(QToolButton):
     def __init__(self, script="", parent=None):
         super(ExtensionButton, self).__init__(parent)
+        common.extension_buttons.append(self)
         self._parent = parent
         self.script = script
     def loadScript(self):
@@ -602,26 +603,40 @@ class MainWindow(QMainWindow):
 
         # Load browser extensions.
         # Ripped off of Ricotta.
-        if os.path.isdir(common.extensions_folder):
-            extensions = sorted(os.listdir(common.extensions_folder))
-            for extension in extensions:
-                extension_path = os.path.join(common.extensions_folder, extension)
-                if os.path.isdir(extension_path):
-                    script_path = os.path.join(extension_path, "script.js")
-                    icon_path = os.path.join(extension_path, "icon.png")
-                    if os.path.isfile(script_path):
-                        f = open(script_path, "r")
-                        script = copy.copy(f.read())
-                        f.close()
-                        newExtension = ExtensionButton(script, self)
-                        newExtension.setToolTip(extension.title())
-                        newExtension.clicked.connect(newExtension.loadScript)
-                        self.extensionBar.show()
-                        self.extensionBar.addWidget(newExtension)
-                        if os.path.isfile(icon_path):
-                            newExtension.setIcon(QIcon(icon_path))
-                        else:
-                            newExtension.setText(extension)
+        self.reloadExtensions()
+
+    def reloadExtensions(self):
+
+        for extension in common.extension_buttons:
+            extension.deleteLater()
+        while len(common.extension_buttons) > 0:
+            common.extension_buttons.pop()
+
+        # Hide extensions toolbar if there aren't any extensions.
+        if len(common.settings.value("extensions/whitelist")) == 0:
+            self.extensionBar.hide()
+            return
+
+        for extension in common.extensions:
+            if extension not in common.settings.value("extensions/whitelist"):
+                continue
+            extension_path = os.path.join(common.extensions_folder, extension)
+            if os.path.isdir(extension_path):
+                script_path = os.path.join(extension_path, "script.js")
+                icon_path = os.path.join(extension_path, "icon.png")
+                if os.path.isfile(script_path):
+                    f = open(script_path, "r")
+                    script = copy.copy(f.read())
+                    f.close()
+                    newExtension = ExtensionButton(script, self)
+                    newExtension.setToolTip(extension.title())
+                    newExtension.clicked.connect(newExtension.loadScript)
+                    self.extensionBar.show()
+                    self.extensionBar.addWidget(newExtension)
+                    if os.path.isfile(icon_path):
+                        newExtension.setIcon(QIcon(icon_path))
+                    else:
+                        newExtension.setText(extension)
 
     # Toggle all the navigation buttons.
     def toggleActions(self):

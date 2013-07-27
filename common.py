@@ -3,7 +3,10 @@
 # Import everything we need.
 import os
 from PyQt4.QtCore import QCoreApplication, QSettings
-from PyQt4.QtGui import QWidget, QHBoxLayout, QLabel, QSizePolicy, QLineEdit
+from PyQt4.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit
+
+# Folder that Nimbus is stored in.
+app_folder = os.path.dirname(os.path.realpath(__file__))
 
 default_settings = {"proxy/type": "None",
                     "proxy/hostname": "",
@@ -11,7 +14,8 @@ default_settings = {"proxy/type": "None",
                     "proxy/user": "",
                     "proxy/password": "",
                     "homepage": "https://github.com/foxhead128/nimbus",
-                    "search": "https://duckduckgo.com/?q=%s"}
+                    "search": "https://duckduckgo.com/?q=%s",
+                    "extensions/whitelist": []}
 default_port = default_settings["proxy/port"]
 
 # Common settings manager.
@@ -35,9 +39,15 @@ webviews = []
 # Stores browser windows.
 windows = []
 
-# Variables for convenience.
-app_folder = os.path.dirname(os.path.realpath(__file__))
+# List of extensions.
 extensions_folder = os.path.join(app_folder, "extensions")
+if os.path.isdir(extensions_folder):
+    extensions = sorted(os.listdir(extensions_folder))
+else:
+    extensions = []
+extension_buttons = []
+extensions_blacklist = [extension for extension in extensions if extension not in settings.value("extensions/whitelist")]
+
 adblock_folder = os.path.join(settings_folder, "adblock")
 easylist = os.path.join(app_folder, "easylist.txt")
 
@@ -51,6 +61,7 @@ class Row(QWidget):
     def addWidget(self, widget):
         self.layout().addWidget(widget)
 
+# This is a row with a label and a QLineEdit.
 class LineEditRow(Row):
     def __init__(self, text="Enter something here:", parent=None):
         super(LineEditRow, self).__init__(parent)
@@ -59,6 +70,17 @@ class LineEditRow(Row):
         self.lineEdit = QLineEdit(self)
         self.addWidget(self.lineEdit)
 
+# Column widget.
+class Column(QWidget):
+    def __init__(self, parent=None):
+        super(Column, self).__init__(parent)
+        newLayout = QVBoxLayout()
+        self.setLayout(newLayout)
+        self.layout().setContentsMargins(0,0,0,0)
+    def addWidget(self, widget):
+        self.layout().addWidget(widget)
+
+# Blank widget to take up space.
 class Expander(QLabel):
     def __init__(self, parent=None):
         super(Expander, self).__init__(parent)
