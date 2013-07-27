@@ -601,6 +601,7 @@ class MainWindow(QMainWindow):
                         script = copy.copy(f.read())
                         f.close()
                         newExtension = ExtensionButton(script, self)
+                        newExtension.setToolTip(extension.title())
                         newExtension.clicked.connect(newExtension.loadScript)
                         self.extensionBar.show()
                         self.extensionBar.addWidget(newExtension)
