@@ -3,6 +3,7 @@
 # Import everything we need.
 import sys
 import os
+import subprocess
 import copy
 import common
 import status_bar
@@ -114,7 +115,7 @@ class DownloadProgressBar(QProgressBar):
             f.close()
             self.progress = [0, 0]
             if sys.platform.startswith("linux"):
-                os.system("notify-send --icon=emblem-downloads \"Download complete: %s\"" % (self.windowTitle(),))
+                subprocess.Popen(["notify-send", "--icon=emblem-downloads", "Download complete: %s" % (self.windowTitle(),)])
 
     # Updates the progress bar.
     def updateProgress(self, received, total):
