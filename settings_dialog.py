@@ -154,8 +154,10 @@ class ExtensionsSettingsPanel(SettingsPanel):
         self.blacklist.takeItem(self.blacklist.row(item))
 
     def loadSettings(self):
+        self.whitelist.clear()
         for extension in common.settings.value("extensions/whitelist"):
             self.whitelist.addItem(extension)
+        self.blacklist.clear()
         for extension in common.extensions_blacklist:
             self.blacklist.addItem(extension)
 
