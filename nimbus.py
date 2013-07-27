@@ -301,7 +301,7 @@ class WebView(QWebView):
     # Redefine createWindow. Emits windowCreated signal so that others
     # can utilize the newly-created WebView instance.
     def createWindow(self, type):
-        webview = WebView(self.parent())
+        webview = WebView(incognito=self.incognito, parent=self.parent())
         self.webViews.append(webview)
         self.windowCreated.emit(webview)
         return webview
