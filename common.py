@@ -9,7 +9,9 @@ default_settings = {"proxy/type": "None",
                     "proxy/hostname": "",
                     "proxy/port": 8080,
                     "proxy/user": "",
-                    "proxy/password": ""}
+                    "proxy/password": "",
+                    "homepage": "https://github.com/foxhead128/nimbus",
+                    "search": "https://duckduckgo.com/?q=%s"}
 default_port = default_settings["proxy/port"]
 
 # Common settings manager.

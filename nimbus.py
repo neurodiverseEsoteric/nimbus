@@ -678,7 +678,7 @@ class MainWindow(QMainWindow):
         if "." in url or ":" in url:
             self.tabs.currentWidget().load(QUrl.fromUserInput(url))
         else:
-            self.tabs.currentWidget().load(QUrl("https://duckduckgo.com/?q=" + url))
+            self.tabs.currentWidget().load(QUrl(common.settings.value("search") % (url,)))
 
     # Tab-related methods.
     def currentWidget(self):
@@ -802,7 +802,9 @@ def main():
             if "." in arg or ":" in arg:
                 win.addTab(url=arg)
 
-    # If there aren't any tabs, open a blank one.
+    # If there aren't any tabs, open homepages.
+    if win.tabs.count() == 0:
+        win.addTab(url=common.settings.value("homepage"))
     if win.tabs.count() == 0:
         win.addTab(url="about:blank")
 

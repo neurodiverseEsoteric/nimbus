@@ -17,10 +17,35 @@ class SettingsPanel(QWidget):
     def saveSettings(self):
         pass
 
-# Proxy configuration panel
-class ProxyConfigPanel(SettingsPanel):
+# General configuration panel
+class GeneralSettingsPanel(SettingsPanel):
     def __init__(self, parent=None):
-        super(ProxyConfigPanel, self).__init__(parent)
+        super(GeneralSettingsPanel, self).__init__(parent)
+
+        # Homepage row.
+        homepageRow = common.LineEditRow("Homepage:", self)
+        self.homepageEntry = homepageRow.lineEdit
+        self.layout().addWidget(homepageRow)
+
+        # Default search.
+        searchRow = common.LineEditRow("Search expression:", self)
+        self.searchEntry = searchRow.lineEdit
+        self.layout().addWidget(searchRow)
+
+        self.layout().addWidget(common.Expander(self))
+
+    def loadSettings(self):
+        self.homepageEntry.setText(str(common.settings.value("homepage")))
+        self.searchEntry.setText(str(common.settings.value("search")))
+
+    def saveSettings(self):
+        common.settings.setValue("homepage", self.homepageEntry.text())
+        common.settings.setValue("search", self.searchEntry.text())
+
+# Proxy configuration panel
+class NetworkSettingsPanel(SettingsPanel):
+    def __init__(self, parent=None):
+        super(NetworkSettingsPanel, self).__init__(parent)
 
         # Proxy label.
         proxyLabel = QLabel("<b>Proxy configuration</b>")
@@ -103,7 +128,8 @@ class SettingsDialog(QMainWindow):
         self.tabs = QTabWidget(self)
         self.setCentralWidget(self.tabs)
 
-        self.tabs.addTab(ProxyConfigPanel(self), "Network")
+        self.tabs.addTab(GeneralSettingsPanel(self), "&General")
+        self.tabs.addTab(NetworkSettingsPanel(self), "&Network")
 
         # Toolbar
         self.toolBar = QToolBar(self)
