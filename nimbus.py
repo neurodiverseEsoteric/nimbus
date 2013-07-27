@@ -289,6 +289,7 @@ class MainWindow(QMainWindow):
         # Tab widget
         self.tabs = QTabWidget(self)
         self.tabs.setDocumentMode(True)
+        self.tabs.setMovable(True)
         self.tabs.currentChanged.connect(self.updateTabTitles)
         self.tabs.currentChanged.connect(lambda: self.updateLocationText(self.tabs.currentWidget().url()))
         self.tabs.setTabsClosable(True)
@@ -526,7 +527,7 @@ def main():
             if "." in arg or ":" in arg:
                 win.addTab(url=arg)
     if win.tabs.count() == 0:
-        win.addTab(url="duckduckgo.com")
+        win.addTab(url="about:blank")
     win.show()
     app.exec_()
 
