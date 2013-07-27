@@ -12,64 +12,20 @@ import settings_dialog
 # To avoid warnings, we create this.
 pdialog = None
 
-# Try importing Filter from Adblock module.
-# If it isn't available, create a dummy class to avoid problems.
-try:
-    from abpy import Filter
-except:
-    class Filter(object):
-        def __init__(self, rules):
-            super(Filter, self).__init__()
-        def match(self, url):
-            return None
-
 # Extremely specific imports from PyQt4.
 from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QByteArray, QFile, QIODevice, QTimer
 from PyQt4.QtGui import QApplication, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
-from PyQt4.QtNetwork import QNetworkCookieJar, QNetworkCookie, QNetworkAccessManager, QNetworkRequest, QNetworkProxy
+from PyQt4.QtNetwork import QNetworkCookie, QNetworkAccessManager, QNetworkRequest, QNetworkProxy
 from PyQt4.QtWebKit import QWebView, QWebPage
 
 # chdir to the app folder.
 os.chdir(common.app_folder)
-
-# Adblock-related stuff.
-adblock_rules = []
-
-# If we don't want to use Adblock, there's a command-line argument for that.
-no_adblock = "--no-adblock" in sys.argv
-
-# Load Adblock filters if Adblock is not disabled via command-line.
-if not no_adblock:
-    # Load easylist.
-    if os.path.exists(common.easylist):
-        f = open(common.easylist)
-        try: adblock_rules += [rule.rstrip("\n") for rule in f.readlines()]
-        except: pass
-        f.close()
-
-    # Load additional filters.
-    if os.path.exists(common.adblock_folder):
-        for fname in os.listdir(common.adblock_folder):
-            f = open(os.path.join(common.adblock_folder, fname))
-            try: adblock_rules += [rule.rstrip("\n") for rule in f.readlines()]
-            except: pass
-            f.close()
-
-# Create instance of Adblock Filter.
-adblock_filter = Filter(adblock_rules)
 
 # Create extension server.
 server_thread = extension_server.ExtensionServerThread()
 
 # List of file extensions supported by Google Docs.
 gdocs_extensions = (".doc", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")
-
-# Global cookiejar to store cookies.
-# All WebView instances use this.
-cookieJar = QNetworkCookieJar(QCoreApplication.instance())
-
-# All incognito WebView instances use this one instead.
-incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
 
 # Global list to store browser history.
 history = []
@@ -89,7 +45,7 @@ def saveSettings():
     common.settings.setValue("history", history)
 
     # Save cookies.
-    cookies = [cookie.toRawForm().data() for cookie in cookieJar.allCookies()]
+    cookies = [cookie.toRawForm().data() for cookie in common.cookieJar.allCookies()]
     common.settings.setValue("cookies", cookies)
 
     # Sync any unsaved settings.
@@ -107,14 +63,14 @@ def loadSettings():
     raw_cookies = common.settings.value("cookies")
     if type(raw_cookies) is list:
         cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
-        cookieJar.setAllCookies(cookies)
+        common.cookieJar.setAllCookies(cookies)
 
 # This function clears out the browsing history and cookies.
 # Changes are written to the disk upon application quit.
 def clearHistory():
     global history
     history = []
-    cookieJar.setAllCookies([])
+    common.cookieJar.setAllCookies([])
 
 # Custom NetworkAccessManager class with support for ad-blocking.
 class NetworkAccessManager(QNetworkAccessManager):
@@ -122,7 +78,7 @@ class NetworkAccessManager(QNetworkAccessManager):
         super(NetworkAccessManager, self).__init__(*args, **kwargs)
     def createRequest(self, op, request, device=None):
         url = request.url().toString()
-        x = adblock_filter.match(url)
+        x = common.adblock_filter.match(url)
         if x != None:
             return QNetworkAccessManager.createRequest(self, QNetworkAccessManager.GetOperation, QNetworkRequest(QUrl()))
         else:
@@ -173,7 +129,7 @@ class DownloadBar(QToolBar):
         super(DownloadBar, self).__init__(parent)
         self.setMovable(False)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.setStyleSheet(common.blank_toolbar.replace("transparent", "palette(window)"))
+        self.setStyleSheet(common.blank_toolbar)
         label = QLabel(self)
         self.addWidget(label)
         self.progressBar = DownloadProgressBar(reply, destination, self)
@@ -241,10 +197,10 @@ class WebView(QWebView):
             self.settings().enablePersistentStorage(common.settings_folder)
 
             # Set the CookieJar.
-            self.page().networkAccessManager().setCookieJar(cookieJar)
+            self.page().networkAccessManager().setCookieJar(common.cookieJar)
 
             # Do this so that cookieJar doesn't get deleted along with WebView.
-            cookieJar.setParent(QCoreApplication.instance())
+            common.cookieJar.setParent(QCoreApplication.instance())
 
             # Forward unsupported content.
             # Since this uses Google's servers, it is disabled in
@@ -259,8 +215,8 @@ class WebView(QWebView):
         else:
             # Global incognito cookie jar, so that logins are preserved
             # between incognito tabs.
-            self.page().networkAccessManager().setCookieJar(incognitoCookieJar)
-            incognitoCookieJar.setParent(QCoreApplication.instance())
+            self.page().networkAccessManager().setCookieJar(common.incognitoCookieJar)
+            common.incognitoCookieJar.setParent(QCoreApplication.instance())
 
             # Enable private browsing for QWebSettings.
             self.settings().setAttribute(self.settings().PrivateBrowsingEnabled, True)
@@ -443,6 +399,7 @@ class MainWindow(QMainWindow):
 
         self.statusBar = status_bar.StatusBar(self)
         self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
+        self.addToolBarBreak(Qt.BottomToolBarArea)
 
         # Set tabs as central widget.
         self.setCentralWidget(self.tabs)
@@ -814,7 +771,7 @@ class MainWindow(QMainWindow):
 
     # This method is used to add a DownloadBar to the window.
     def addDownloadToolBar(self, toolbar):
-        self.addToolBar(Qt.BottomToolBarArea, toolbar)
+        self.statusBar.addToolBar(toolbar)
 
     # Method to update the location bar text.
     def updateLocationText(self, url):
@@ -824,6 +781,9 @@ class MainWindow(QMainWindow):
 
 # Main function to load everything.
 def main():
+
+    # Load adblock rules.
+    common.load_adblock_rules()
 
     # Create app.
     app = QApplication(sys.argv)
