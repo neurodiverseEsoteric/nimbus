@@ -24,6 +24,9 @@ os.chdir(common.app_folder)
 # Create extension server.
 server_thread = extension_server.ExtensionServerThread()
 
+# Create thread to load adblock filters.
+adblock_filter_loader = common.AdblockFilterLoader()
+
 # List of file extensions supported by Google Docs.
 gdocs_extensions = (".doc", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")
 
@@ -109,6 +112,8 @@ class DownloadProgressBar(QProgressBar):
             f.flush()
             f.close()
             self.progress = [0, 0]
+            if sys.platform.startswith("linux"):
+                os.system("notify-send --icon=emblem-downloads \"Download complete: %s\"" % (self.windowTitle(),))
 
     # Updates the progress bar.
     def updateProgress(self, received, total):
@@ -677,10 +682,12 @@ class MainWindow(QMainWindow):
 
     # Status bar related methods.
     def setStatusBarMessage(self, message):
-        self.statusBar.setStatusBarMessage(self.tabs.currentWidget()._statusBarMessage)
+        try: self.statusBar.setStatusBarMessage(self.tabs.currentWidget()._statusBarMessage)
+        except: self.statusBar.setStatusBarMessage("")
 
     def setProgress(self, progress):
-        self.statusBar.setValue(self.tabs.currentWidget()._loadProgress)
+        try: self.statusBar.setValue(self.tabs.currentWidget()._loadProgress)
+        except: self.statusBar.setValue(0)
 
     # Tab-related methods.
     def currentWidget(self):
@@ -782,11 +789,11 @@ class MainWindow(QMainWindow):
 # Main function to load everything.
 def main():
 
-    # Load adblock rules.
-    common.load_adblock_rules()
-
     # Create app.
     app = QApplication(sys.argv)
+
+    # Load adblock rules.
+    adblock_filter_loader.start()
 
     # Start extension server.
     server_thread.start()

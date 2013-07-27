@@ -4,7 +4,7 @@
 import os
 import abpy
 import pickle
-from PyQt4.QtCore import QCoreApplication, QSettings
+from PyQt4.QtCore import QCoreApplication, QSettings, QThread
 from PyQt4.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit
 from PyQt4.QtNetwork import QNetworkCookieJar
 
@@ -106,6 +106,13 @@ def load_adblock_rules():
 
     # Create instance of abpy.Filter.
     adblock_filter = abpy.Filter(adblock_rules)
+
+# Thread to load Adblock filters.
+class AdblockFilterLoader(QThread):
+    def __init__(self, parent=None):
+        super(AdblockFilterLoader, self).__init__(parent)
+    def run(self):
+        load_adblock_rules()
 
 # Row widget.
 class Row(QWidget):
