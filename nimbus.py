@@ -44,6 +44,7 @@ def saveSettings():
     # Save history.
     global history
     history = [(item.partition("://")[-1] if "://" in item else item).replace(("www." if item.startswith("www.") else ""), "") for item in history]
+    history = list(set(history))
     history.sort()
     common.settings.setValue("history", history)
 
