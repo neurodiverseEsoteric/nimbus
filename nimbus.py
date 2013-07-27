@@ -240,7 +240,30 @@ class WebView(QWebView):
         self.page().linkHovered.connect(self.setStatusBarMessage)
         self.statusBarMessage.connect(self.setStatusBarMessage)
         self.loadProgress.connect(self.setLoadProgress)
+
+        # PyQt4 doesn't support <audio> and <video> tags on Windows.
+        # This is a little hack to work around it.
+        if sys.platform.startswith("win"):
+            self.loadFinished.connect(self.replaceAVTags)
+
         self.setWindowTitle("")
+
+    # Method to replace all <audio> and <video> tags with <embed> tags.
+    def replaceAVTags(self):
+        audioVideo = self.page().mainFrame().findAllElements("audio, video")
+        for element in audioVideo:
+            attributes = []
+            if not "width" in element.attributeNames():
+                attributes.append("width=352")
+            if not "height" in element.attributeNames():
+                attributes.append("height=240")
+            if not "autostart" in element.attributeNames():
+                attributes.append("autostart=false")
+            attributes += ["%s=\"%s\"" % (attribute, element.attribute(attribute),) for attribute in element.attributeNames()]
+            if element.firstChild() != None:
+                attributes += ["%s=\"%s\"" % (attribute, element.firstChild().attribute(attribute),) for attribute in element.firstChild().attributeNames()]
+            embed = "<embed %s></embed>" % (" ".join(attributes),)
+            element.replace(embed)
 
     def setStatusBarMessage(self, link="", title="", content=""):
         self._statusBarMessage = link
