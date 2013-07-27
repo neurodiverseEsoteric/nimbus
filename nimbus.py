@@ -563,14 +563,12 @@ class MainWindow(QMainWindow):
 
     # Remove a tab.
     def removeTab(self, index):
-        self.closedTabs.append(self.tabs.widget(index))
+        if self.tabs.widget(index).history().canGoBack() or self.tabs.widget(index).history().canGoForward() or self.tabs.widget(index).url().toString() not in ("about:blank", ""):
+            self.closedTabs.append(self.tabs.widget(index))
         self.tabs.widget(index).load(QUrl("about:blank"))
         self.tabs.removeTab(index)
         if self.tabs.count() == 0:
-            if len(sys.argv) > 1:
-                self.addTab(url=sys.argv[-1])
-            else:
-                self.addTab(url="duckduckgo.com")
+            self.addTab(url="about:blank")
 
     # Undo closed tab.
     def reopenTab(self):
