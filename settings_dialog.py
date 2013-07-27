@@ -119,6 +119,12 @@ class SettingsDialog(QMainWindow):
         applyButton.clicked.connect(self.saveSettings)
         self.toolBar.addWidget(applyButton)
 
+        # Apply button
+        cancelButton = QPushButton("&Cancel", self)
+        cancelButton.clicked.connect(self.loadSettings)
+        cancelButton.clicked.connect(self.hide)
+        self.toolBar.addWidget(cancelButton)
+
         # Load settings
         self.loadSettings()
     
