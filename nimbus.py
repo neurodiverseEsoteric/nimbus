@@ -380,8 +380,9 @@ class MainWindow(QMainWindow):
         # Allow rearranging of tabs.
         self.tabs.setMovable(True)
 
-        # Update tab titles when the current tab is changed.
+        # Update tab titles and icons when the current tab is changed.
         self.tabs.currentChanged.connect(self.updateTabTitles)
+        self.tabs.currentChanged.connect(self.updateTabIcons)
 
         # Hacky way of updating the location bar text when the tab is changed.
         self.tabs.currentChanged.connect(lambda: self.updateLocationText(self.tabs.currentWidget().url()))
