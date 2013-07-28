@@ -94,7 +94,7 @@ def reset_extensions():
     global extension_buttons
     for extension in extension_buttons:
         extension.deleteLater()
-    while len(common.extension_buttons) > 0:
+    while len(extension_buttons) > 0:
         extension_buttons.pop()
 
 # Reload extension blacklist.
