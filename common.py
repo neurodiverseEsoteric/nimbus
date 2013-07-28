@@ -46,6 +46,12 @@ default_settings = {"proxy/type": "None",
                     "proxy/port": 8080,
                     "proxy/user": "",
                     "proxy/password": "",
+                    "network/DnsPrefetchEnabled": False,
+                    "network/XSSAuditingEnabled": False,
+                    "content/AutoLoadImages": True,
+                    "content/JavascriptEnabled": True,
+                    "content/PluginsEnabled": True,
+                    "content/TiledBackingStoreEnabled": False,
                     "homepage": "https://github.com/foxhead128/nimbus",
                     "search": "https://duckduckgo.com/?q=%s",
                     "extensions/whitelist": [],
@@ -58,6 +64,9 @@ for setting, value in default_settings.items():
         settings.setValue(setting, value)
 
 settings.sync()
+
+def setting_to_bool(value=""):
+    return bool(eval(str(settings.value(value)).title()))
 
 # This is a global variable that gets the settings folder on any platform.
 settings_folder = os.path.dirname(settings.fileName())

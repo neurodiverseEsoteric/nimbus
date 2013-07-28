@@ -207,6 +207,8 @@ class WebView(QWebView):
         self.settings().setAttribute(self.settings().DeveloperExtrasEnabled, True)
 
         self.updateProxy()
+        self.updateNetworkSettings()
+        self.updateContentSettings()
 
         # What to do if private browsing is not enabled.
         if not self.incognito:
@@ -306,6 +308,16 @@ class WebView(QWebView):
         if password == "":
             password = None
         self.page().networkAccessManager().setProxy(QNetworkProxy(eval("QNetworkProxy." + proxyType + "Proxy"), str(common.settings.value("proxy/hostname")), int(port), user, password))
+
+    def updateContentSettings(self):
+        self.settings().setAttribute(self.settings().AutoLoadImages, common.setting_to_bool("content/AutoLoadImages"))
+        self.settings().setAttribute(self.settings().JavascriptEnabled, common.setting_to_bool("content/JavascriptEnabled"))
+        self.settings().setAttribute(self.settings().PluginsEnabled, common.setting_to_bool("content/PluginsEnabled"))
+        self.settings().setAttribute(self.settings().TiledBackingStoreEnabled, common.setting_to_bool("content/TiledBackingStoreEnabled"))
+
+    def updateNetworkSettings(self):
+        self.settings().setAttribute(self.settings().XSSAuditingEnabled, common.setting_to_bool("network/XSSAuditingEnabled"))
+        self.settings().setAttribute(self.settings().DnsPrefetchEnabled, common.setting_to_bool("network/DnsPrefetchEnabled"))
 
     # Handler for unsupported content.
     def handleUnsupportedContent(self, reply):

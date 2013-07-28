@@ -2,7 +2,7 @@
 
 import common
 from PyQt4.QtCore import Qt, QUrl
-from PyQt4.QtGui import QWidget, QIcon, QLabel, QMainWindow, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+from PyQt4.QtGui import QWidget, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
 
 # Basic settings panel.
 class SettingsPanel(QWidget):
@@ -41,11 +41,56 @@ class GeneralSettingsPanel(SettingsPanel):
     def saveSettings(self):
         common.settings.setValue("homepage", self.homepageEntry.text())
         common.settings.setValue("search", self.searchEntry.text())
+        common.settings.sync()
+
+# Content settings panel
+class ContentSettingsPanel(SettingsPanel):
+    def __init__(self, parent=None):
+        super(ContentSettingsPanel, self).__init__(parent)
+
+        # Checkbox to toggle auto loading of images.
+        self.imagesToggle = QCheckBox("Automatically load images", self)
+        self.layout().addWidget(self.imagesToggle)
+
+        # Checkbox to toggle Javascript.
+        self.javascriptToggle = QCheckBox("Enable Javascript", self)
+        self.layout().addWidget(self.javascriptToggle)
+
+        # Checkbox to toggle plugins.
+        self.pluginsToggle = QCheckBox("Enable NPAPI plugins", self)
+        self.layout().addWidget(self.pluginsToggle)
+
+        # Checkbox to toggle tiled backing.
+        self.tiledBackingStoreToggle = QCheckBox("Enable tiled backing store", self)
+        self.layout().addWidget(self.tiledBackingStoreToggle)
+
+        self.layout().addWidget(common.Expander(self))
+
+    def loadSettings(self):
+        self.imagesToggle.setChecked(common.setting_to_bool("content/AutoLoadImages"))
+        self.javascriptToggle.setChecked(common.setting_to_bool("content/JavascriptEnabled"))
+        self.pluginsToggle.setChecked(common.setting_to_bool("content/PluginsEnabled"))
+        self.tiledBackingStoreToggle.setChecked(common.setting_to_bool("content/TiledBackingStoreEnabled"))
+
+    def saveSettings(self):
+        common.settings.setValue("content/AutoLoadImages", self.imagesToggle.isChecked())
+        common.settings.setValue("content/JavascriptEnabled", self.javascriptToggle.isChecked())
+        common.settings.setValue("content/PluginsEnabled", self.pluginsToggle.isChecked())
+        common.settings.setValue("content/TiledBackingStoreEnabled", self.tiledBackingStoreToggle.isChecked())
+        common.settings.sync()
 
 # Network configuration panel
 class NetworkSettingsPanel(SettingsPanel):
     def __init__(self, parent=None):
         super(NetworkSettingsPanel, self).__init__(parent)
+
+        # Checkbox to toggle DNS prefetching.
+        self.dnsPrefetchingToggle = QCheckBox("Enable DNS prefetching")
+        self.layout().addWidget(self.dnsPrefetchingToggle)
+
+        # Checkbox to toggle XSS auditing.
+        self.xssAuditingToggle = QCheckBox("Enable XSS auditing")
+        self.layout().addWidget(self.xssAuditingToggle)
 
         # Proxy label.
         proxyLabel = QLabel("<b>Proxy configuration</b>")
@@ -96,6 +141,8 @@ class NetworkSettingsPanel(SettingsPanel):
         self.hostNameEntry.setText(str(common.settings.value("proxy/hostname")))
         self.userEntry.setText(str(common.settings.value("proxy/user")))
         self.passwordEntry.setText(str(common.settings.value("proxy/password")))
+        self.xssAuditingToggle.setChecked(common.setting_to_bool("network/XSSAuditingEnabled"))
+        self.dnsPrefetchingToggle.setChecked(common.setting_to_bool("network/DnsPrefetchingEnabled"))
         port = str(common.settings.value("proxy/port"))
         if port == "None":
             port = str(common.default_port)
@@ -110,6 +157,8 @@ class NetworkSettingsPanel(SettingsPanel):
         proxyType = self.proxySelect.currentText()
         if proxyType == "None":
             proxyType = "No"
+        common.settings.setValue("network/XSSAuditingEnabled", self.xssAuditingToggle.isChecked())
+        common.settings.setValue("network/DnsPrefetchingEnabled", self.dnsPrefetchingToggle.isChecked())
         common.settings.setValue("proxy/type", proxyType)
         common.settings.setValue("proxy/port", int(self.portEntry.text()))
         common.settings.setValue("proxy/user", self.userEntry.text())
@@ -168,6 +217,7 @@ class ExtensionsSettingsPanel(SettingsPanel):
     def saveSettings(self):
         common.settings.setValue("extensions/whitelist", [self.whitelist.item(extension).text() for extension in range(0, self.whitelist.count())])
         common.reload_extensions_blacklist()
+        common.settings.sync()
 
 # Main settings dialog
 class SettingsDialog(QMainWindow):
@@ -182,6 +232,7 @@ class SettingsDialog(QMainWindow):
         self.setCentralWidget(self.tabs)
 
         self.tabs.addTab(GeneralSettingsPanel(self), "&General")
+        self.tabs.addTab(ContentSettingsPanel(self), "&Content")
         self.tabs.addTab(NetworkSettingsPanel(self), "&Network")
         self.tabs.addTab(ExtensionsSettingsPanel(self), "&Extensions")
 
@@ -225,3 +276,5 @@ class SettingsDialog(QMainWindow):
             window.reloadExtensions()
         for webview in common.webviews:
             webview.updateProxy()
+            webview.updateNetworkSettings()
+            webview.updateContentSettings()
