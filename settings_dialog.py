@@ -64,6 +64,10 @@ class ContentSettingsPanel(SettingsPanel):
         self.tiledBackingStoreToggle = QCheckBox("Enable tiled backing store", self)
         self.layout().addWidget(self.tiledBackingStoreToggle)
 
+        # Checkbox to toggle site specific quirks.
+        self.siteSpecificQuirksToggle = QCheckBox("Enable site specific quirks", self)
+        self.layout().addWidget(self.siteSpecificQuirksToggle)
+
         self.layout().addWidget(common.Expander(self))
 
     def loadSettings(self):
@@ -71,12 +75,14 @@ class ContentSettingsPanel(SettingsPanel):
         self.javascriptToggle.setChecked(common.setting_to_bool("content/JavascriptEnabled"))
         self.pluginsToggle.setChecked(common.setting_to_bool("content/PluginsEnabled"))
         self.tiledBackingStoreToggle.setChecked(common.setting_to_bool("content/TiledBackingStoreEnabled"))
+        self.siteSpecificQuirksToggle.setChecked(common.setting_to_bool("content/SiteSpecificQuirksEnabled"))
 
     def saveSettings(self):
         common.settings.setValue("content/AutoLoadImages", self.imagesToggle.isChecked())
         common.settings.setValue("content/JavascriptEnabled", self.javascriptToggle.isChecked())
         common.settings.setValue("content/PluginsEnabled", self.pluginsToggle.isChecked())
         common.settings.setValue("content/TiledBackingStoreEnabled", self.tiledBackingStoreToggle.isChecked())
+        common.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())
         common.settings.sync()
 
 # Network configuration panel

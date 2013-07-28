@@ -314,6 +314,7 @@ class WebView(QWebView):
         self.settings().setAttribute(self.settings().JavascriptEnabled, common.setting_to_bool("content/JavascriptEnabled"))
         self.settings().setAttribute(self.settings().PluginsEnabled, common.setting_to_bool("content/PluginsEnabled"))
         self.settings().setAttribute(self.settings().TiledBackingStoreEnabled, common.setting_to_bool("content/TiledBackingStoreEnabled"))
+        self.settings().setAttribute(self.settings().SiteSpecificQuirksEnabled, common.setting_to_bool("content/SiteSpecificQuirksEnabled"))
 
     def updateNetworkSettings(self):
         self.settings().setAttribute(self.settings().XSSAuditingEnabled, common.setting_to_bool("network/XSSAuditingEnabled"))
