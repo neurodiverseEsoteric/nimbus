@@ -327,6 +327,18 @@ class WebView(QWebView):
             # Emit signal.
             self.downloadStarted.emit(downloadDialog)
 
+    # Save current page.
+    def savePage(self):
+        fname = QFileDialog.getSaveFileName(None, "Save As...", os.path.join(os.path.expanduser("~"), self.url().toString().split("/")[-1]), "All files (*)")
+        if fname:
+            content = self.page().mainFrame().toHtml()
+            try: f = open(fname, "w")
+            except: pass
+            else:
+                try: f.write(content)
+                except: pass
+                f.close()
+
     # Add history item to the browser history.
     def addHistoryItem(self, url):
         addHistoryItem(url.toString())
@@ -398,7 +410,11 @@ class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
+        # Add self to global list of windows.
         common.windows.append(self)
+
+        # Set window icon.
+        self.setWindowIcon(common.complete_icon("internet-web-browser"))
 
         # List of closed tabs.
         self.closedTabs = []
@@ -552,6 +568,14 @@ class MainWindow(QMainWindow):
         reopenTabAction.triggered.connect(self.reopenTab)
         self.addAction(reopenTabAction)
         mainMenu.addAction(reopenTabAction)
+
+        mainMenu.addSeparator()
+
+        # Save page action.
+        savePageAction = QAction(common.complete_icon("document-save-as"), "Save Page &As...", self)
+        savePageAction.setShortcut("Ctrl+S")
+        savePageAction.triggered.connect(lambda: self.tabs.currentWidget().savePage())
+        mainMenu.addAction(savePageAction)
 
         mainMenu.addSeparator()
 
@@ -781,8 +805,6 @@ class MainWindow(QMainWindow):
             try: icon = self.tabs.widget(index).icon()
             except: continue
             self.tabs.setTabIcon(index, icon)
-            if index == self.tabs.currentIndex():
-                self.setWindowIcon(self.tabs.widget(index).icon())
 
     def removeTab(self, index):
         try:
