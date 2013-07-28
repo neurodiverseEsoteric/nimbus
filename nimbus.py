@@ -222,12 +222,6 @@ class WebView(QWebView):
             # Do this so that cookieJar doesn't get deleted along with WebView.
             common.cookieJar.setParent(QCoreApplication.instance())
 
-            # Forward unsupported content.
-            # Since this uses Google's servers, it is disabled in
-            # private browsing mode.
-            self.page().setForwardUnsupportedContent(True)
-            self.page().unsupportedContent.connect(self.handleUnsupportedContent)
-
             # Recording history should only be done in normal browsing mode.
             self.urlChanged.connect(self.addHistoryItem)
 
@@ -240,6 +234,10 @@ class WebView(QWebView):
 
             # Enable private browsing for QWebSettings.
             self.settings().setAttribute(self.settings().PrivateBrowsingEnabled, True)
+
+        # Handle unsupported content.
+        self.page().setForwardUnsupportedContent(True)
+        self.page().unsupportedContent.connect(self.handleUnsupportedContent)
 
         # Enable Netscape plugins.
         self.settings().setAttribute(self.settings().PluginsEnabled, True)
@@ -326,7 +324,9 @@ class WebView(QWebView):
     def handleUnsupportedContent(self, reply):
         url = reply.url().toString()
 
-        if not "file://" in url: # Make sure the file isn't local.
+        # Make sure the file isn't local, that Google Docs viewer is
+        # enabled, and private browsing isn't enabled.
+        if not "file://" in url and common.setting_to_bool("content/UseGoogleDocsViewer") and not self.incognito:
             
             # Check to see if the file can be loaded in Google Docs viewer.
             for extension in gdocs_extensions:

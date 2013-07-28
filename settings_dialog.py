@@ -49,31 +49,35 @@ class ContentSettingsPanel(SettingsPanel):
         super(ContentSettingsPanel, self).__init__(parent)
 
         # Checkbox to toggle auto loading of images.
-        self.imagesToggle = QCheckBox("Automatically load images", self)
+        self.imagesToggle = QCheckBox("Automatically load &images", self)
         self.layout().addWidget(self.imagesToggle)
 
         # Checkbox to toggle Javascript.
-        self.javascriptToggle = QCheckBox("Enable Javascript", self)
+        self.javascriptToggle = QCheckBox("Enable &Javascript", self)
         self.layout().addWidget(self.javascriptToggle)
 
         # Checkbox to toggle plugins.
-        self.pluginsToggle = QCheckBox("Enable NPAPI plugins", self)
+        self.pluginsToggle = QCheckBox("Enable NPAPI &plugins", self)
         self.layout().addWidget(self.pluginsToggle)
 
         # Checkbox to toggle ad blocking.
-        self.adblockToggle = QCheckBox("Enable ad blocking", self)
+        self.adblockToggle = QCheckBox("Enable ad &blocking", self)
         self.layout().addWidget(self.adblockToggle)
 
         # Checkbox to toggle handling of HTML5 audio and video using plugins.
-        self.mediaToggle = QCheckBox("Use plugins to handle HTML5 audio and video", self)
+        self.mediaToggle = QCheckBox("Use plugins to handle &HTML5 audio and video", self)
         self.layout().addWidget(self.mediaToggle)
 
+        # Checkbox to toggle using Google Docs viewer.
+        self.googleDocsToggle = QCheckBox("Use Google Docs &viewer to load unsupported content", self)
+        self.layout().addWidget(self.googleDocsToggle)
+
         # Checkbox to toggle tiled backing.
-        self.tiledBackingStoreToggle = QCheckBox("Enable tiled backing store", self)
+        self.tiledBackingStoreToggle = QCheckBox("Enable &tiled backing store", self)
         self.layout().addWidget(self.tiledBackingStoreToggle)
 
         # Checkbox to toggle site specific quirks.
-        self.siteSpecificQuirksToggle = QCheckBox("Enable site specific quirks", self)
+        self.siteSpecificQuirksToggle = QCheckBox("Enable site specific &quirks", self)
         self.layout().addWidget(self.siteSpecificQuirksToggle)
 
         self.layout().addWidget(common.Expander(self))
@@ -84,6 +88,7 @@ class ContentSettingsPanel(SettingsPanel):
         self.pluginsToggle.setChecked(common.setting_to_bool("content/PluginsEnabled"))
         self.adblockToggle.setChecked(common.setting_to_bool("content/AdblockEnabled"))
         self.mediaToggle.setChecked(common.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"))
+        self.googleDocsToggle.setChecked(common.setting_to_bool("content/UseGoogleDocsViewer"))
         self.tiledBackingStoreToggle.setChecked(common.setting_to_bool("content/TiledBackingStoreEnabled"))
         self.siteSpecificQuirksToggle.setChecked(common.setting_to_bool("content/SiteSpecificQuirksEnabled"))
 
@@ -94,6 +99,7 @@ class ContentSettingsPanel(SettingsPanel):
         common.settings.setValue("content/AdblockEnabled", self.adblockToggle.isChecked())
         common.settings.setValue("content/ReplaceHTML5MediaTagsWithEmbedTags", self.mediaToggle.isChecked())
         common.adblock_filter_loader.start()
+        common.settings.setValue("content/UseGoogleDocsViewer", self.googleDocsToggle.isChecked())
         common.settings.setValue("content/TiledBackingStoreEnabled", self.tiledBackingStoreToggle.isChecked())
         common.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())
         common.settings.sync()
@@ -104,11 +110,11 @@ class NetworkSettingsPanel(SettingsPanel):
         super(NetworkSettingsPanel, self).__init__(parent)
 
         # Checkbox to toggle DNS prefetching.
-        self.dnsPrefetchingToggle = QCheckBox("Enable DNS prefetching")
+        self.dnsPrefetchingToggle = QCheckBox("Enable DNS &prefetching")
         self.layout().addWidget(self.dnsPrefetchingToggle)
 
         # Checkbox to toggle XSS auditing.
-        self.xssAuditingToggle = QCheckBox("Enable XSS auditing")
+        self.xssAuditingToggle = QCheckBox("Enable &XSS auditing")
         self.layout().addWidget(self.xssAuditingToggle)
 
         # Proxy label.
