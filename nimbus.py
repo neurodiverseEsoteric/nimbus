@@ -820,8 +820,7 @@ class MainWindow(QMainWindow):
         except:
             pass
         self.tabs.removeTab(index)
-        if self.tabs.count() == 0:
-            self.addTab(url="about:blank")
+        self.close()
 
     def reopenTab(self):
         if len(self.closedTabs) > 0:
