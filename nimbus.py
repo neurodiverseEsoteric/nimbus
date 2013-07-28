@@ -258,6 +258,14 @@ class WebView(QWebView):
 
         self.setWindowTitle("")
 
+    def mousePressEvent(self, ev):
+        if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
+            ev.ignore()
+            newWindow = self.createWindow(QWebPage.WebBrowserWindow)
+            newWindow.load(QUrl(self._statusBarMessage))
+        else:
+            return QWebView.mousePressEvent(self, ev)
+
     # Method to replace all <audio> and <video> tags with <embed> tags.
     def replaceAVTags(self):
         if not common.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"):
