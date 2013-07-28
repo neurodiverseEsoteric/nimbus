@@ -646,7 +646,7 @@ class MainWindow(QMainWindow):
                     if os.path.isfile(icon_path):
                         newExtension.setIcon(QIcon(icon_path))
                     else:
-                        newExtension.setText(extension)
+                        newExtension.setIcon(common.complete_icon("applications-other"))
 
     # Toggle all the navigation buttons.
     def toggleActions(self):
