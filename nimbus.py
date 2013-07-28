@@ -14,9 +14,13 @@ import settings_dialog
 pdialog = None
 
 # Python DBus
-import dbus
-import dbus.service
-from dbus.mainloop.qt import DBusQtMainLoop
+has_dbus = True
+try:
+    import dbus
+    import dbus.service
+    from dbus.mainloop.qt import DBusQtMainLoop
+except:
+    has_dbus = False
 
 # Extremely specific imports from PyQt4.
 from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QByteArray, QFile, QIODevice, QTimer
@@ -252,13 +256,14 @@ class WebView(QWebView):
 
         # PyQt4 doesn't support <audio> and <video> tags on Windows.
         # This is a little hack to work around it.
-        if sys.platform.startswith("win"):
-            self.loadFinished.connect(self.replaceAVTags)
+        self.loadFinished.connect(self.replaceAVTags)
 
         self.setWindowTitle("")
 
     # Method to replace all <audio> and <video> tags with <embed> tags.
     def replaceAVTags(self):
+        if not common.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"):
+            return
         audioVideo = self.page().mainFrame().findAllElements("audio, video")
         for element in audioVideo:
             attributes = []
@@ -869,24 +874,25 @@ class MainWindow(QMainWindow):
             self.locationBar.setEditText(currentUrl.toString())
 
 # DBus server.
-class DBusServer(dbus.service.Object):
-    def __init__(self):
-        busName = dbus.service.BusName("org.nimbus.Nimbus", bus=dbus.SessionBus())
-        dbus.service.Object.__init__(self, busName, "/Nimbus")
+if has_dbus:
+    class DBusServer(dbus.service.Object):
+        def __init__(self):
+            busName = dbus.service.BusName("org.nimbus.Nimbus", bus=dbus.SessionBus())
+            dbus.service.Object.__init__(self, busName, "/Nimbus")
 
-    @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
-    def addWindow(self, url="about:blank"):
-        win = MainWindow()
-        win.addTab(url=url)
-        win.show()
-        return url
+        @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
+        def addWindow(self, url="about:blank"):
+            win = MainWindow()
+            win.addTab(url=url)
+            win.show()
+            return url
 
-    @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
-    def addTab(self, url="about:blank"):
-        for window in common.windows[::-1]:
-            if window.isVisible():
-                window.addTab(url=url)
-                return url
+        @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
+        def addTab(self, url="about:blank"):
+            for window in common.windows[::-1]:
+                if window.isVisible():
+                    window.addTab(url=url)
+                    return url
 
 # Main function to load everything.
 def main():
@@ -905,13 +911,15 @@ def main():
         f.close()
 
     # Start DBus loop
-    DBusQtMainLoop(set_as_default = True)
+    if has_dbus:
+        DBusQtMainLoop(set_as_default = True)
 
     # Create app.
     app = QApplication(sys.argv)
 
     # Create DBus server
-    server = DBusServer()
+    if has_dbus:
+        server = DBusServer()
 
     # Load adblock rules.
     common.adblock_filter_loader.start()

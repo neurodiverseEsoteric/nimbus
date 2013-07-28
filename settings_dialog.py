@@ -64,6 +64,10 @@ class ContentSettingsPanel(SettingsPanel):
         self.adblockToggle = QCheckBox("Enable ad blocking", self)
         self.layout().addWidget(self.adblockToggle)
 
+        # Checkbox to toggle handling of HTML5 audio and video using plugins.
+        self.mediaToggle = QCheckBox("Use plugins to handle HTML5 audio and video", self)
+        self.layout().addWidget(self.mediaToggle)
+
         # Checkbox to toggle tiled backing.
         self.tiledBackingStoreToggle = QCheckBox("Enable tiled backing store", self)
         self.layout().addWidget(self.tiledBackingStoreToggle)
@@ -79,6 +83,7 @@ class ContentSettingsPanel(SettingsPanel):
         self.javascriptToggle.setChecked(common.setting_to_bool("content/JavascriptEnabled"))
         self.pluginsToggle.setChecked(common.setting_to_bool("content/PluginsEnabled"))
         self.adblockToggle.setChecked(common.setting_to_bool("content/AdblockEnabled"))
+        self.mediaToggle.setChecked(common.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"))
         self.tiledBackingStoreToggle.setChecked(common.setting_to_bool("content/TiledBackingStoreEnabled"))
         self.siteSpecificQuirksToggle.setChecked(common.setting_to_bool("content/SiteSpecificQuirksEnabled"))
 
@@ -87,6 +92,7 @@ class ContentSettingsPanel(SettingsPanel):
         common.settings.setValue("content/JavascriptEnabled", self.javascriptToggle.isChecked())
         common.settings.setValue("content/PluginsEnabled", self.pluginsToggle.isChecked())
         common.settings.setValue("content/AdblockEnabled", self.adblockToggle.isChecked())
+        common.settings.setValue("content/ReplaceHTML5MediaTagsWithEmbedTags", self.mediaToggle.isChecked())
         common.adblock_filter_loader.start()
         common.settings.setValue("content/TiledBackingStoreEnabled", self.tiledBackingStoreToggle.isChecked())
         common.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())

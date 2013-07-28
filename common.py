@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 # Import everything we need.
+import sys
 import os
 import abpy
 import pickle
@@ -12,6 +13,7 @@ from PyQt4.QtNetwork import QNetworkCookieJar
 class Filter(object):
     def __init__(self, rules):
         super(Filter, self).__init__()
+        self.index = {}
     def match(self, url):
         return None
 
@@ -52,6 +54,7 @@ default_settings = {"proxy/type": "None",
                     "content/JavascriptEnabled": True,
                     "content/PluginsEnabled": True,
                     "content/AdblockEnabled": True,
+                    "content/ReplaceHTML5MediaTagsWithEmbedTags": (True if "win" in sys.platform else False),
                     "content/TiledBackingStoreEnabled": False,
                     "content/SiteSpecificQuirksEnabled": True,
                     "homepage": "https://github.com/foxhead128/nimbus",
@@ -124,6 +127,7 @@ adblock_rules = []
 def load_adblock_rules():
     global adblock_filter
     global adblock_rules
+    global shelved_filter
 
     if len(adblock_rules) < 1:
         # Load easylist.
@@ -145,6 +149,7 @@ def load_adblock_rules():
         adblock_filter = shelved_filter
     else:
         adblock_filter = abpy.Filter(adblock_rules)
+        shelved_filter = adblock_filter
 
 # Thread to load Adblock filters.
 class AdblockFilterLoader(QThread):
@@ -156,7 +161,8 @@ class AdblockFilterLoader(QThread):
         else:
             global adblock_filter
             global shelved_filter
-            shelved_filter = adblock_filter
+            if len(adblock_filter.index.keys()) > 0:
+                shelved_filter = adblock_filter
             adblock_filter = abpy.Filter([])
 
 # Create thread to load adblock filters.
