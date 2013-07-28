@@ -820,7 +820,8 @@ class MainWindow(QMainWindow):
         except:
             pass
         self.tabs.removeTab(index)
-        self.close()
+        if self.tabs.count() == 0:
+            self.close()
 
     def reopenTab(self):
         if len(self.closedTabs) > 0:
