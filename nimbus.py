@@ -15,7 +15,7 @@ pdialog = None
 
 # Extremely specific imports from PyQt4.
 from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QByteArray, QFile, QIODevice, QTimer
-from PyQt4.QtGui import QApplication, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
+from PyQt4.QtGui import QApplication, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
 from PyQt4.QtNetwork import QNetworkCookie, QNetworkAccessManager, QNetworkRequest, QNetworkProxy
 from PyQt4.QtWebKit import QWebView, QWebPage
 
@@ -76,6 +76,8 @@ def clearHistory():
     global history
     history = []
     common.cookieJar.setAllCookies([])
+    common.incognitoCookieJar.setAllCookies([])
+    saveSettings()
 
 # Custom NetworkAccessManager class with support for ad-blocking.
 class NetworkAccessManager(QNetworkAccessManager):
@@ -621,9 +623,9 @@ class MainWindow(QMainWindow):
         mainMenu.addSeparator()
 
         # Add clear history action.
-        clearHistoryAction = QAction(common.complete_icon("edit-clear"), "&Clear Recent History...", self)
+        clearHistoryAction = QAction(common.complete_icon("edit-clear"), "&Clear All History...", self)
         clearHistoryAction.setShortcut("Ctrl+Shift+Del")
-        clearHistoryAction.triggered.connect(clearHistory)
+        clearHistoryAction.triggered.connect(self.clearHistory)
         mainMenu.addAction(clearHistoryAction)
 
         # Add settings dialog action.
@@ -645,6 +647,7 @@ class MainWindow(QMainWindow):
         # Ripped off of Ricotta.
         self.reloadExtensions()
 
+    # Reload extensions.
     def reloadExtensions(self):
 
         # Hide extensions toolbar if there aren't any extensions.
@@ -720,6 +723,14 @@ class MainWindow(QMainWindow):
 
     def printPreview(self):
         self.tabs.currentWidget().printPreview()
+
+    # Clears the history after a prompt.
+    def clearHistory(self):
+        question = QMessageBox.question(None, "Clear History",
+            "Delete cookies and browsing history?", QMessageBox.Yes | 
+            QMessageBox.No, QMessageBox.No)
+        if question == QMessageBox.Yes:
+            clearHistory()
 
     # Method to load a URL.
     def load(self, url=False):
