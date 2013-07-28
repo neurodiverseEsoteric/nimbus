@@ -260,9 +260,10 @@ class WebView(QWebView):
 
     def mousePressEvent(self, ev):
         if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
+            url = self._statusBarMessage
             ev.ignore()
             newWindow = self.createWindow(QWebPage.WebBrowserWindow)
-            newWindow.load(QUrl(self._statusBarMessage))
+            newWindow.load(QUrl(url))
         else:
             return QWebView.mousePressEvent(self, ev)
 
