@@ -220,6 +220,7 @@ class SettingsDialog(QMainWindow):
     def saveSettings(self):
         for index in range(0, self.tabs.count()):
             self.tabs.widget(index).saveSettings()
+        common.reset_extensions()
         for window in common.windows:
             window.reloadExtensions()
         for webview in common.webviews:

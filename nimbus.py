@@ -562,6 +562,12 @@ class MainWindow(QMainWindow):
         mainMenu.addAction(newTabAction)
         mainMenu.addAction(newIncognitoTabAction)
 
+        # Add new window action.
+        newWindowAction = QAction(common.complete_icon("window-new"), "&New Window", self)
+        newWindowAction.setShortcut("Ctrl+N")
+        newWindowAction.triggered.connect(self.addWindow)
+        mainMenu.addAction(newWindowAction)
+
         # Add reopen tab action.
         reopenTabAction = QAction(common.complete_icon("edit-undo"), "&Reopen Tab", self)
         reopenTabAction.setShortcut("Ctrl+Shift+T")
@@ -640,11 +646,6 @@ class MainWindow(QMainWindow):
         self.reloadExtensions()
 
     def reloadExtensions(self):
-
-        for extension in common.extension_buttons:
-            extension.deleteLater()
-        while len(common.extension_buttons) > 0:
-            common.extension_buttons.pop()
 
         # Hide extensions toolbar if there aren't any extensions.
         if len(common.settings.value("extensions/whitelist")) == 0:
@@ -741,6 +742,11 @@ class MainWindow(QMainWindow):
     # Tab-related methods.
     def currentWidget(self):
         return self.tabs.currentWidget()
+
+    def addWindow(self):
+        win = MainWindow()
+        win.addTab(url="about:blank")
+        win.show()
 
     def addTab(self, webView=None, **kwargs):
         # If a URL is specified, load it.

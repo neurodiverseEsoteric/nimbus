@@ -89,6 +89,14 @@ def reload_extensions_blacklist():
     global extensions_blacklist
     extensions_blacklist = [extension for extension in extensions if extension not in settings.value("extensions/whitelist")]
 
+# Clear extensions.
+def reset_extensions():
+    global extension_buttons
+    for extension in extension_buttons:
+        extension.deleteLater()
+    while len(common.extension_buttons) > 0:
+        extension_buttons.pop()
+
 # Reload extension blacklist.
 reload_extensions_blacklist()
 
