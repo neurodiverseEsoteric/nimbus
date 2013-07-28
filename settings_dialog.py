@@ -209,7 +209,7 @@ class SettingsDialog(QMainWindow):
         return QUrl("")
 
     def icon(self):
-        return QIcon().fromTheme("preferences-system")
+        return common.complete_icon("preferences-system")
 
     # Method to load all settings.
     def loadSettings(self):
