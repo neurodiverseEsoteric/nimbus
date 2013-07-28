@@ -11,6 +11,7 @@ class StatusBar(QToolBar):
         super(StatusBar, self).__init__(parent)
         self.setMovable(False)
         self.fullStatusBar = common.Column(self)
+        self.fullStatusBar.layout().setSpacing(0)
         self.addWidget(self.fullStatusBar)
         self.downloadsBar = QMainWindow(self)
         self.fullStatusBar.addWidget(self.downloadsBar)
