@@ -439,7 +439,9 @@ class MainWindow(QMainWindow):
         common.windows.append(self)
 
         # Set window icon.
-        self.setWindowIcon(common.complete_icon("internet-web-browser"))
+        webBrowserIcon = common.complete_icon("internet-web-browser")
+        webBrowserIcon.addFile(common.app_icon("internet-web-browser.svg"))
+        self.setWindowIcon(webBrowserIcon)
 
         # List of closed tabs.
         self.closedTabs = []
@@ -960,4 +962,8 @@ def main():
 
 # Start program
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except:
+        try: os.remove(common.lock_file)
+        except: pass
