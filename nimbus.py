@@ -13,6 +13,11 @@ import settings_dialog
 # To avoid warnings, we create this.
 pdialog = None
 
+# Python DBus
+import dbus
+import dbus.service
+from dbus.mainloop.qt import DBusQtMainLoop
+
 # Extremely specific imports from PyQt4.
 from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QByteArray, QFile, QIODevice, QTimer
 from PyQt4.QtGui import QApplication, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
@@ -55,6 +60,9 @@ def saveSettings():
 
     # Sync any unsaved settings.
     common.settings.sync()
+
+    try: os.remove(common.lock_file)
+    except: pass
 
 # This function loads the browser's settings.
 def loadSettings():
@@ -850,11 +858,50 @@ class MainWindow(QMainWindow):
         if url == currentUrl:
             self.locationBar.setEditText(currentUrl.toString())
 
+# DBus server.
+class DBusServer(dbus.service.Object):
+    def __init__(self):
+        busName = dbus.service.BusName("org.nimbus.Nimbus", bus=dbus.SessionBus())
+        dbus.service.Object.__init__(self, busName, "/Nimbus")
+
+    @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
+    def addWindow(self, url="about:blank"):
+        win = MainWindow()
+        win.addTab(url=url)
+        win.show()
+        return url
+
+    @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
+    def addTab(self, url="about:blank"):
+        for window in common.windows[::-1]:
+            if window.isVisible():
+                window.addTab(url=url)
+                return url
+
 # Main function to load everything.
 def main():
 
+    # If there is a lock file, send the existing Nimbus session new tabs via DBus.
+    if os.path.isfile(common.lock_file):
+        for arg in sys.argv[1:]:
+            if "." in arg or ":" in arg:
+                subprocess.Popen(["qdbus", "org.nimbus.Nimbus", "/Nimbus", "addTab", arg])
+        sys.exit()
+
+    #  Otherwise, create the lock file.
+    else:
+        f = open(common.lock_file, "w")
+        f.write("")
+        f.close()
+
+    # Start DBus loop
+    DBusQtMainLoop(set_as_default = True)
+
     # Create app.
     app = QApplication(sys.argv)
+
+    # Create DBus server
+    server = DBusServer()
 
     # Load adblock rules.
     adblock_filter_loader.start()

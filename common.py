@@ -62,6 +62,8 @@ settings.sync()
 # This is a global variable that gets the settings folder on any platform.
 settings_folder = os.path.dirname(settings.fileName())
 
+lock_file = os.path.join(settings_folder, ".lock")
+
 # This stylesheet is applied to toolbars that are blank.
 blank_toolbar = "QToolBar { border: 0; background: transparent; }"
 
