@@ -551,7 +551,7 @@ class MainWindow(QMainWindow):
         self.extensionBar = QToolBar(self)
         self.extensionBar.setMovable(False)
         self.extensionBar.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.extensionBar.setStyleSheet("QToolBar { border: 0; border-right: 1px solid palette(dark); background: transparent; }")
+        self.extensionBar.setStyleSheet("QToolBar { border: 0; border-right: 1px solid palette(dark); background: palette(window); }")
         self.addToolBar(Qt.LeftToolBarArea, self.extensionBar)
         self.extensionBar.hide()
 
