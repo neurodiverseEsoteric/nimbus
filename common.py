@@ -5,7 +5,7 @@ import os
 import abpy
 import pickle
 from PyQt4.QtCore import QCoreApplication, QSettings, QThread
-from PyQt4.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit
+from PyQt4.QtGui import QIcon, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit
 from PyQt4.QtNetwork import QNetworkCookieJar
 
 # Dummy adblock filter class.
@@ -17,6 +17,18 @@ class Filter(object):
 
 # Folder that Nimbus is stored in.
 app_folder = os.path.dirname(os.path.realpath(__file__))
+
+# Icons folder
+app_icons_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "icons")
+
+# Get an application icon.
+def app_icon(name):
+    return os.path.join(app_icons_folder, name)
+
+# Returns a QIcon
+def complete_icon(name):
+    try: return QIcon().fromTheme(name, QIcon(app_icon(name + ".png")))
+    except: return QIcon()
 
 # Global cookiejar to store cookies.
 # All nimbus.WebView instances use this.
