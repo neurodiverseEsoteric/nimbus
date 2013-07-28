@@ -51,6 +51,7 @@ default_settings = {"proxy/type": "None",
                     "content/AutoLoadImages": True,
                     "content/JavascriptEnabled": True,
                     "content/PluginsEnabled": True,
+                    "content/AdblockEnabled": True,
                     "content/TiledBackingStoreEnabled": False,
                     "content/SiteSpecificQuirksEnabled": True,
                     "homepage": "https://github.com/foxhead128/nimbus",
@@ -116,35 +117,50 @@ reload_extensions_blacklist()
 adblock_folder = os.path.join(settings_folder, "adblock")
 easylist = os.path.join(app_folder, "easylist.txt")
 adblock_filter = Filter([])
+shelved_filter = None
+adblock_rules = []
 
 # Load adblock rules.
 def load_adblock_rules():
     global adblock_filter
-    adblock_rules = []
+    global adblock_rules
 
-    # Load easylist.
-    if os.path.exists(easylist):
-        f = open(easylist)
-        try: adblock_rules += [rule.rstrip("\n") for rule in f.readlines()]
-        except: pass
-        f.close()
-     # Load additional filters.
-    if os.path.exists(adblock_folder):
-        for fname in os.listdir(adblock_folder):
-            f = open(os.path.join(adblock_folder, fname))
+    if len(adblock_rules) < 1:
+        # Load easylist.
+        if os.path.exists(easylist):
+            f = open(easylist)
             try: adblock_rules += [rule.rstrip("\n") for rule in f.readlines()]
             except: pass
             f.close()
+        # Load additional filters.
+        if os.path.exists(adblock_folder):
+           for fname in os.listdir(adblock_folder):
+               f = open(os.path.join(adblock_folder, fname))
+               try: adblock_rules += [rule.rstrip("\n") for rule in f.readlines()]
+               except: pass
+               f.close()
 
     # Create instance of abpy.Filter.
-    adblock_filter = abpy.Filter(adblock_rules)
+    if shelved_filter:
+        adblock_filter = shelved_filter
+    else:
+        adblock_filter = abpy.Filter(adblock_rules)
 
 # Thread to load Adblock filters.
 class AdblockFilterLoader(QThread):
     def __init__(self, parent=None):
         super(AdblockFilterLoader, self).__init__(parent)
     def run(self):
-        load_adblock_rules()
+        if setting_to_bool("content/AdblockEnabled"):
+            load_adblock_rules()
+        else:
+            global adblock_filter
+            global shelved_filter
+            shelved_filter = adblock_filter
+            adblock_filter = abpy.Filter([])
+
+# Create thread to load adblock filters.
+adblock_filter_loader = AdblockFilterLoader()
 
 # Row widget.
 class Row(QWidget):

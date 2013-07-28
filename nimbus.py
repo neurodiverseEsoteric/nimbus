@@ -30,9 +30,6 @@ os.chdir(common.app_folder)
 # Create extension server.
 server_thread = extension_server.ExtensionServerThread()
 
-# Create thread to load adblock filters.
-adblock_filter_loader = common.AdblockFilterLoader()
-
 # List of file extensions supported by Google Docs.
 gdocs_extensions = (".doc", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")
 
@@ -917,7 +914,7 @@ def main():
     server = DBusServer()
 
     # Load adblock rules.
-    adblock_filter_loader.start()
+    common.adblock_filter_loader.start()
 
     # Start extension server.
     server_thread.start()
