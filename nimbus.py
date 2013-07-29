@@ -874,7 +874,7 @@ class MainWindow(QMainWindow):
 
     def removeTab(self, index):
         try:
-            if self.tabs.widget(index).history().canGoBack() or self.tabs.widget(index).history().canGoForward() or self.tabs.widget(index).url().toString() not in ("about:blank", ""):
+            if self.tabs.widget(index).history().canGoBack() or self.tabs.widget(index).history().canGoForward() or self.tabs.widget(index).url().toString() not in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString()):
                 self.closedTabs.append(self.tabs.widget(index))
             self.tabs.widget(index).load(QUrl("about:blank"))
         except:
