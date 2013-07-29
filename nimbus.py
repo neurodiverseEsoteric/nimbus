@@ -258,6 +258,8 @@ class WebView(QWebView):
 
         self.setWindowTitle("")
 
+        self.load(QUrl("about:blank"))
+
     def mousePressEvent(self, ev):
         if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
             url = self._statusBarMessage
@@ -266,6 +268,15 @@ class WebView(QWebView):
             newWindow.load(QUrl(url))
         else:
             return QWebView.mousePressEvent(self, ev)
+
+    def load(self, url):
+        if url.toString() == "about:blank":
+            if os.path.exists(common.new_tab_page):
+                QWebView.load(self, QUrl.fromUserInput(common.new_tab_page))
+            else:
+                QWebView.load(self, url)
+        else:
+            QWebView.load(self, url)
 
     # Method to replace all <audio> and <video> tags with <embed> tags.
     def replaceAVTags(self):
@@ -363,9 +374,13 @@ class WebView(QWebView):
 
     # Save current page.
     def savePage(self):
-        fname = QFileDialog.getSaveFileName(None, "Save As...", os.path.join(os.path.expanduser("~"), self.url().toString().split("/")[-1]), "All files (*)")
+        content = self.page().mainFrame().toHtml()
+        if QUrl.fromUserInput(common.new_tab_page) == self.url() or self.url().toString() in ("about:blank", ""):
+            fname = common.new_tab_page
+            content = content.replace("&lt;", "<").replace("&gt;", ">")
+        else:
+            fname = QFileDialog.getSaveFileName(None, "Save As...", os.path.join(os.path.expanduser("~"), self.url().toString().split("/")[-1]), "All files (*)")
         if fname:
-            content = self.page().mainFrame().toHtml()
             try: f = open(fname, "w")
             except: pass
             else:

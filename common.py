@@ -77,6 +77,10 @@ def setting_to_bool(value=""):
 # This is a global variable that gets the settings folder on any platform.
 settings_folder = os.path.dirname(settings.fileName())
 
+# New tab page.
+new_tab_page = os.path.join(settings_folder, "new-tab-page.html")
+
+# Lock file.
 lock_file = os.path.join(settings_folder, ".lock")
 
 # This stylesheet is applied to toolbars that are blank.
