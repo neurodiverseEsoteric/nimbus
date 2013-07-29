@@ -32,7 +32,7 @@ class GeneralSettingsPanel(SettingsPanel):
         self.searchEntry = searchRow.lineEdit
         self.layout().addWidget(searchRow)
 
-        self.closeWindowToggle = QCheckBox("Close window with last tab", self)
+        self.closeWindowToggle = QCheckBox("Close &window with last tab", self)
         self.layout().addWidget(self.closeWindowToggle)
 
         self.layout().addWidget(common.Expander(self))
