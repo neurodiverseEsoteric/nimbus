@@ -32,15 +32,20 @@ class GeneralSettingsPanel(SettingsPanel):
         self.searchEntry = searchRow.lineEdit
         self.layout().addWidget(searchRow)
 
+        self.closeWindowToggle = QCheckBox("Close window with last tab", self)
+        self.layout().addWidget(self.closeWindowToggle)
+
         self.layout().addWidget(common.Expander(self))
 
     def loadSettings(self):
-        self.homepageEntry.setText(str(common.settings.value("homepage")))
-        self.searchEntry.setText(str(common.settings.value("search")))
+        self.homepageEntry.setText(str(common.settings.value("general/Homepage")))
+        self.searchEntry.setText(str(common.settings.value("general/Search")))
+        self.closeWindowToggle.setChecked(common.setting_to_bool("general/CloseWindowWithLastTab"))
 
     def saveSettings(self):
-        common.settings.setValue("homepage", self.homepageEntry.text())
-        common.settings.setValue("search", self.searchEntry.text())
+        common.settings.setValue("general/Homepage", self.homepageEntry.text())
+        common.settings.setValue("general/Search", self.searchEntry.text())
+        common.settings.setValue("general/CloseWindowWithLastTab", self.closeWindowToggle.isChecked())
         common.settings.sync()
 
 # Content settings panel
@@ -163,31 +168,31 @@ class NetworkSettingsPanel(SettingsPanel):
         self.layout().addWidget(expander)
 
     def loadSettings(self):
-        self.hostNameEntry.setText(str(common.settings.value("proxy/hostname")))
-        self.userEntry.setText(str(common.settings.value("proxy/user")))
-        self.passwordEntry.setText(str(common.settings.value("proxy/password")))
+        self.hostNameEntry.setText(str(common.settings.value("proxy/Hostname")))
+        self.userEntry.setText(str(common.settings.value("proxy/User")))
+        self.passwordEntry.setText(str(common.settings.value("proxy/Password")))
         self.xssAuditingToggle.setChecked(common.setting_to_bool("network/XSSAuditingEnabled"))
         self.dnsPrefetchingToggle.setChecked(common.setting_to_bool("network/DnsPrefetchingEnabled"))
-        port = str(common.settings.value("proxy/port"))
+        port = str(common.settings.value("proxy/Port"))
         if port == "None":
             port = str(common.default_port)
         self.portEntry.setText(port)
         for index in range(0, self.proxySelect.count()):
-            if self.proxySelect.itemText(index) == common.settings.value("proxy/type"):
+            if self.proxySelect.itemText(index) == common.settings.value("proxy/Type"):
                 self.proxySelect.setCurrentIndex(index)
                 break
 
     def saveSettings(self):
-        common.settings.setValue("proxy/hostname", self.hostNameEntry.text())
+        common.settings.setValue("proxy/Hostname", self.hostNameEntry.text())
         proxyType = self.proxySelect.currentText()
         if proxyType == "None":
             proxyType = "No"
         common.settings.setValue("network/XSSAuditingEnabled", self.xssAuditingToggle.isChecked())
         common.settings.setValue("network/DnsPrefetchingEnabled", self.dnsPrefetchingToggle.isChecked())
-        common.settings.setValue("proxy/type", proxyType)
-        common.settings.setValue("proxy/port", int(self.portEntry.text()))
-        common.settings.setValue("proxy/user", self.userEntry.text())
-        common.settings.setValue("proxy/password", self.passwordEntry.text())
+        common.settings.setValue("proxy/Type", proxyType)
+        common.settings.setValue("proxy/Port", int(self.portEntry.text()))
+        common.settings.setValue("proxy/User", self.userEntry.text())
+        common.settings.setValue("proxy/Password", self.passwordEntry.text())
         common.settings.sync()
 
 # Extension configuration panel
@@ -233,14 +238,14 @@ class ExtensionsSettingsPanel(SettingsPanel):
 
     def loadSettings(self):
         self.whitelist.clear()
-        for extension in common.settings.value("extensions/whitelist"):
+        for extension in common.settings.value("extensions/Whitelist"):
             self.whitelist.addItem(extension)
         self.blacklist.clear()
         for extension in common.extensions_blacklist:
             self.blacklist.addItem(extension)
 
     def saveSettings(self):
-        common.settings.setValue("extensions/whitelist", [self.whitelist.item(extension).text() for extension in range(0, self.whitelist.count())])
+        common.settings.setValue("extensions/Whitelist", [self.whitelist.item(extension).text() for extension in range(0, self.whitelist.count())])
         common.reload_extensions_blacklist()
         common.settings.sync()
 

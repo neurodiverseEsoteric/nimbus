@@ -53,11 +53,11 @@ def saveSettings():
     history = [(item.partition("://")[-1] if "://" in item else item).replace(("www." if item.startswith("www.") else ""), "") for item in history]
     history = list(set(history))
     history.sort()
-    common.settings.setValue("history", history)
+    common.settings.setValue("data/History", history)
 
     # Save cookies.
     cookies = [cookie.toRawForm().data() for cookie in common.cookieJar.allCookies()]
-    common.settings.setValue("cookies", cookies)
+    common.settings.setValue("data/Cookies", cookies)
 
     # Sync any unsaved settings.
     common.settings.sync()
@@ -69,12 +69,12 @@ def saveSettings():
 def loadSettings():
     # Load history.
     global history
-    raw_history = common.settings.value("history")
+    raw_history = common.settings.value("data/History")
     if type(raw_history) is list:
-        history = common.settings.value("history")
+        history = raw_history
 
     # Load cookies.
-    raw_cookies = common.settings.value("cookies")
+    raw_cookies = common.settings.value("data/Cookies")
     if type(raw_cookies) is list:
         cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
         common.cookieJar.setAllCookies(cookies)
@@ -315,19 +315,19 @@ class WebView(QWebView):
 
     # Function to update proxy list.
     def updateProxy(self):
-        proxyType = str(common.settings.value("proxy/type"))
+        proxyType = str(common.settings.value("proxy/Type"))
         if proxyType == "None":
             proxyType = "No"
-        port = common.settings.value("proxy/port")
+        port = common.settings.value("proxy/Port")
         if port == None:
             port = common.default_port
-        user = str(common.settings.value("proxy/user"))
+        user = str(common.settings.value("proxy/User"))
         if user == "":
             user = None
-        password = str(common.settings.value("proxy/password"))
+        password = str(common.settings.value("proxy/Password"))
         if password == "":
             password = None
-        self.page().networkAccessManager().setProxy(QNetworkProxy(eval("QNetworkProxy." + proxyType + "Proxy"), str(common.settings.value("proxy/hostname")), int(port), user, password))
+        self.page().networkAccessManager().setProxy(QNetworkProxy(eval("QNetworkProxy." + proxyType + "Proxy"), str(common.settings.value("proxy/Hostname")), int(port), user, password))
 
     def updateContentSettings(self):
         self.settings().setAttribute(self.settings().AutoLoadImages, common.setting_to_bool("content/AutoLoadImages"))
@@ -700,12 +700,12 @@ class MainWindow(QMainWindow):
     def reloadExtensions(self):
 
         # Hide extensions toolbar if there aren't any extensions.
-        if len(common.settings.value("extensions/whitelist")) == 0:
+        if len(common.settings.value("extensions/Whitelist")) == 0:
             self.extensionBar.hide()
             return
 
         for extension in common.extensions:
-            if extension not in common.settings.value("extensions/whitelist"):
+            if extension not in common.settings.value("extensions/Whitelist"):
                 continue
             extension_path = os.path.join(common.extensions_folder, extension)
             if os.path.isdir(extension_path):
@@ -788,7 +788,7 @@ class MainWindow(QMainWindow):
         if "." in url or ":" in url:
             self.tabs.currentWidget().load(QUrl.fromUserInput(url))
         else:
-            self.tabs.currentWidget().load(QUrl(common.settings.value("search") % (url,)))
+            self.tabs.currentWidget().load(QUrl(common.settings.value("general/Search") % (url,)))
 
     # Status bar related methods.
     def setStatusBarMessage(self, message):
@@ -874,14 +874,21 @@ class MainWindow(QMainWindow):
 
     def removeTab(self, index):
         try:
-            if self.tabs.widget(index).history().canGoBack() or self.tabs.widget(index).history().canGoForward() or self.tabs.widget(index).url().toString() not in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString()):
-                self.closedTabs.append(self.tabs.widget(index))
-            self.tabs.widget(index).load(QUrl("about:blank"))
+            webView = self.tabs.widget(index)
+            if webView.history().canGoBack() or webview.history().canGoForward() or webView.url().toString() not in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString()):
+                self.closedTabs.append(webView)
+                webView.load(QUrl("about:blank"))
+            else:
+                webView.deleteLater()
+                common.webviews.remove(webView)
         except:
             pass
         self.tabs.removeTab(index)
         if self.tabs.count() == 0:
-            self.close()
+            if common.setting_to_bool("general/CloseWindowWithLastTab"):
+                self.close()
+            else:
+                self.addTab(url="about:blank")
 
     def reopenTab(self):
         if len(self.closedTabs) > 0:
@@ -974,7 +981,7 @@ def main():
 
     # If there aren't any tabs, open homepages.
     if win.tabs.count() == 0:
-        win.addTab(url=common.settings.value("homepage"))
+        win.addTab(url=common.settings.value("general/Homepage"))
     if win.tabs.count() == 0:
         win.addTab(url="about:blank")
 

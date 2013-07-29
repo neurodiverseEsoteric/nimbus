@@ -43,11 +43,11 @@ incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
 
 # Default settings.
-default_settings = {"proxy/type": "None",
-                    "proxy/hostname": "",
-                    "proxy/port": 8080,
-                    "proxy/user": "",
-                    "proxy/password": "",
+default_settings = {"proxy/Type": "None",
+                    "proxy/Hostname": "",
+                    "proxy/Port": 8080,
+                    "proxy/User": "",
+                    "proxy/Password": "",
                     "network/DnsPrefetchEnabled": False,
                     "network/XSSAuditingEnabled": False,
                     "content/AutoLoadImages": True,
@@ -58,11 +58,11 @@ default_settings = {"proxy/type": "None",
                     "content/UseGoogleDocsViewer": True,
                     "content/TiledBackingStoreEnabled": False,
                     "content/SiteSpecificQuirksEnabled": True,
-                    "homepage": "https://github.com/foxhead128/nimbus",
-                    "search": "https://duckduckgo.com/?q=%s",
-                    "extensions/whitelist": [],
-                    "sessionCount": 0}
-default_port = default_settings["proxy/port"]
+                    "general/Homepage": "https://github.com/foxhead128/nimbus",
+                    "general/Search": "https://duckduckgo.com/?q=%s",
+                    "general/CloseWindowWithLastTab": True,
+                    "extensions/Whitelist": []}
+default_port = default_settings["proxy/Port"]
 
 # Set up default values.
 for setting, value in default_settings.items():
