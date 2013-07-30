@@ -377,7 +377,7 @@ class WebView(QWebView):
         content = self.page().mainFrame().toHtml()
         if QUrl.fromUserInput(common.new_tab_page) == self.url() or self.url().toString() in ("about:blank", ""):
             fname = common.new_tab_page
-            content = content.replace("&lt;", "<").replace("&gt;", ">")
+            content = content.replace("&lt;", "<").replace("&gt;", ">").replace("<body contenteditable=\"true\">", "<body>")
         else:
             fname = QFileDialog.getSaveFileName(None, "Save As...", os.path.join(os.path.expanduser("~"), self.url().toString().split("/")[-1]), "All files (*)")
         if fname:
