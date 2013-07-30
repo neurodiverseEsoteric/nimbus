@@ -3,6 +3,7 @@
 # Import everything we need.
 import sys
 import os
+import json
 import subprocess
 import copy
 import traceback
@@ -51,14 +52,16 @@ def addHistoryItem(url):
 def saveSettings():
     # Save history.
     global history
-    history = [(item.partition("://")[-1] if "://" in item else item).replace(("www." if item.startswith("www.") else ""), "") for item in history]
+    history = [(item.partition("://")[-1] if "://" in item else item) for item in history]
+    history = [item.replace(("www." if item.startswith("www.") else ""), "") for item in history]
     history = list(set(history))
     history.sort()
-    common.settings.setValue("data/History", history)
+    history = json.dumps(history)
+    common.data.setValue("data/History", history)
 
     # Save cookies.
-    cookies = [cookie.toRawForm().data() for cookie in common.cookieJar.allCookies()]
-    common.settings.setValue("data/Cookies", cookies)
+    cookies = json.dumps([cookie.toRawForm().data().decode("utf-8") for cookie in common.cookieJar.allCookies()])
+    common.data.setValue("data/Cookies", cookies)
 
     # Sync any unsaved settings.
     common.settings.sync()
@@ -70,12 +73,13 @@ def saveSettings():
 def loadSettings():
     # Load history.
     global history
-    raw_history = common.settings.value("data/History")
-    if type(raw_history) is list:
-        history = raw_history
+    raw_history = common.data.value("data/History")
+    if type(raw_history) is str:
+        history = json.loads(raw_history)
 
     # Load cookies.
-    raw_cookies = common.settings.value("data/Cookies")
+    try: raw_cookies = json.loads(str(common.data.value("data/Cookies")))
+    except: return
     if type(raw_cookies) is list:
         cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
         common.cookieJar.setAllCookies(cookies)

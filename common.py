@@ -41,6 +41,7 @@ incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
 
 # Common settings manager.
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
+data = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "data", QCoreApplication.instance())
 
 # Default settings.
 default_settings = {"proxy/Type": "None",
