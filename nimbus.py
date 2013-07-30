@@ -97,6 +97,14 @@ def clearHistory():
 class NetworkAccessManager(QNetworkAccessManager):
     def __init__(self, *args, **kwargs):
         super(NetworkAccessManager, self).__init__(*args, **kwargs)
+        self.authenticationRequired.connect(self.provideAuthentication)
+    def provideAuthentication(self, reply, auth):
+        username = QInputDialog.getText(None, "Authentication", "Enter your username:", QLineEdit.Normal)
+        if username[1]:
+            auth.setUser(username[0])
+            password = QInputDialog.getText(None, "Authentication", "Enter your password:", QLineEdit.Password)
+            if password[1]:
+                auth.setPassword(password[0])
     def createRequest(self, op, request, device=None):
         url = request.url().toString()
         x = common.adblock_filter.match(url)
