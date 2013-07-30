@@ -6,7 +6,7 @@ import os
 import abpy
 import pickle
 from PyQt4.QtCore import QCoreApplication, QSettings, QThread
-from PyQt4.QtGui import QIcon, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit
+from PyQt4.QtGui import QIcon, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
 from PyQt4.QtNetwork import QNetworkCookieJar
 
 # Dummy adblock filter class.
@@ -208,3 +208,14 @@ class Expander(QLabel):
         super(Expander, self).__init__(parent)
         self.setText("")
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+# Toolbar that looks like a menubar.
+class MenuToolBar(QToolBar):
+    def __init__(self, *args, **kwargs):
+        super(MenuToolBar, self).__init__(*args, **kwargs)
+    def paintEvent(self, event):
+        painter = QStylePainter(self)
+        option = QStyleOptionToolBar()
+        self.initStyleOption(option)
+        style = self.style()
+        style.drawControl(QStyle.CE_MenuBarEmptyArea, option, painter, self)

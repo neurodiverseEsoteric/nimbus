@@ -17,7 +17,7 @@ class StatusBar(QToolBar):
         self.fullStatusBar.addWidget(self.downloadsBar)
         statusBar = common.Row(self)
         self.fullStatusBar.addWidget(statusBar)
-        self.setStyleSheet(common.blank_toolbar + " QMainWindow { background: transparent; border: 0; border-top: 1px solid palette(dark); min-height: 1px; }")
+        self.setStyleSheet(common.blank_toolbar.replace("}", " border-top: 1px solid palette(dark); }") + " QMainWindow { background: transparent; border: 0; }")
         self.display = QLineEdit(self)
         self.display.setReadOnly(True)
         self.display.setFocusPolicy(Qt.NoFocus)

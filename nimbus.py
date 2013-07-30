@@ -5,6 +5,7 @@ import sys
 import os
 import subprocess
 import copy
+import traceback
 import common
 import status_bar
 import extension_server
@@ -459,6 +460,10 @@ class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
+        # These are used to store where the mouse pressed down.
+        self.mouseX = False
+        self.mouseY = False
+
         # Add self to global list of windows.
         common.windows.append(self)
 
@@ -471,7 +476,7 @@ class MainWindow(QMainWindow):
         self.closedTabs = []
 
         # Main toolbar.
-        self.toolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
+        self.toolBar = common.MenuToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
         self.addToolBar(self.toolBar)
 
         # Tab widget for tabbed browsing.
@@ -695,6 +700,20 @@ class MainWindow(QMainWindow):
         # Load browser extensions.
         # Ripped off of Ricotta.
         self.reloadExtensions()
+
+    def mousePressEvent(self, ev):
+        if ev.button() != Qt.LeftButton:
+            return QMainWindow.mousePressEvent(self, ev)
+        else:
+            self.mouseX = ev.globalX()
+            self.origX = self.x()
+            self.mouseY = ev.globalY()
+            self.origY = self.y()
+
+    def mouseMoveEvent(self, ev):
+        if self.mouseX and self.mouseY and not self.isMaximized():
+            self.move(self.origX + ev.globalX() - self.mouseX,
+self.origY + ev.globalY() - self.mouseY)
 
     # Reload extensions.
     def reloadExtensions(self):
@@ -998,3 +1017,4 @@ if __name__ == "__main__":
     except:
         try: os.remove(common.lock_file)
         except: pass
+        traceback.print_exc()
