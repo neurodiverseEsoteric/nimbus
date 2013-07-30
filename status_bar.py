@@ -3,6 +3,7 @@
 # This is a browser status bar class.
 
 import common
+import custom_widgets
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QToolBar, QFrame, QMainWindow, QLineEdit, QProgressBar
 
@@ -10,12 +11,12 @@ class StatusBar(QToolBar):
     def __init__(self, parent=None):
         super(StatusBar, self).__init__(parent)
         self.setMovable(False)
-        self.fullStatusBar = common.Column(self)
+        self.fullStatusBar = custom_widgets.Column(self)
         self.fullStatusBar.layout().setSpacing(0)
         self.addWidget(self.fullStatusBar)
         self.downloadsBar = QMainWindow(self)
         self.fullStatusBar.addWidget(self.downloadsBar)
-        statusBar = common.Row(self)
+        statusBar = custom_widgets.Row(self)
         self.fullStatusBar.addWidget(statusBar)
         self.setStyleSheet(common.blank_toolbar.replace("}", " border-top: 1px solid palette(dark); }") + " QMainWindow { background: transparent; border: 0; }")
         self.display = QLineEdit(self)

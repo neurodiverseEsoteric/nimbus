@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import common
+import custom_widgets
 from PyQt4.QtCore import Qt, QUrl
 from PyQt4.QtGui import QWidget, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
 
@@ -23,19 +24,19 @@ class GeneralSettingsPanel(SettingsPanel):
         super(GeneralSettingsPanel, self).__init__(parent)
 
         # Homepage row.
-        homepageRow = common.LineEditRow("Homepage:", self)
+        homepageRow = custom_widgets.LineEditRow("Homepage:", self)
         self.homepageEntry = homepageRow.lineEdit
         self.layout().addWidget(homepageRow)
 
         # Default search.
-        searchRow = common.LineEditRow("Search expression:", self)
+        searchRow = custom_widgets.LineEditRow("Search expression:", self)
         self.searchEntry = searchRow.lineEdit
         self.layout().addWidget(searchRow)
 
         self.closeWindowToggle = QCheckBox("Close &window with last tab", self)
         self.layout().addWidget(self.closeWindowToggle)
 
-        self.layout().addWidget(common.Expander(self))
+        self.layout().addWidget(custom_widgets.Expander(self))
 
     def loadSettings(self):
         self.homepageEntry.setText(str(common.settings.value("general/Homepage")))
@@ -85,7 +86,7 @@ class ContentSettingsPanel(SettingsPanel):
         self.siteSpecificQuirksToggle = QCheckBox("Enable site specific &quirks", self)
         self.layout().addWidget(self.siteSpecificQuirksToggle)
 
-        self.layout().addWidget(common.Expander(self))
+        self.layout().addWidget(custom_widgets.Expander(self))
 
     def loadSettings(self):
         self.imagesToggle.setChecked(common.setting_to_bool("content/AutoLoadImages"))
@@ -127,7 +128,7 @@ class NetworkSettingsPanel(SettingsPanel):
         self.layout().addWidget(proxyLabel)
 
         # Type row.
-        typeRow = common.Row(self)
+        typeRow = custom_widgets.Row(self)
         self.layout().addWidget(typeRow)
 
         # Create a nice label.
@@ -143,28 +144,28 @@ class NetworkSettingsPanel(SettingsPanel):
         typeRow.addWidget(self.proxySelect)
 
         # Hostname row.
-        self.hostNameRow = common.LineEditRow("Hostname:", self)
+        self.hostNameRow = custom_widgets.LineEditRow("Hostname:", self)
         self.hostNameEntry = self.hostNameRow.lineEdit
         self.layout().addWidget(self.hostNameRow)
 
         # Port row.
-        self.portRow = common.LineEditRow("Port:", self)
+        self.portRow = custom_widgets.LineEditRow("Port:", self)
         self.portRow.lineEdit.setInputMask("99999")
         self.portEntry = self.portRow.lineEdit
         self.layout().addWidget(self.portRow)
 
         # User row.
-        self.userRow = common.LineEditRow("User:", self)
+        self.userRow = custom_widgets.LineEditRow("User:", self)
         self.userEntry = self.userRow.lineEdit
         self.layout().addWidget(self.userRow)
 
         # Password row.
-        self.passwordRow = common.LineEditRow("Password:", self)
+        self.passwordRow = custom_widgets.LineEditRow("Password:", self)
         self.passwordEntry = self.passwordRow.lineEdit
         self.layout().addWidget(self.passwordRow)
 
         # Add an expander.
-        expander = common.Expander(self)
+        expander = custom_widgets.Expander(self)
         self.layout().addWidget(expander)
 
     def loadSettings(self):
@@ -201,11 +202,11 @@ class ExtensionsSettingsPanel(SettingsPanel):
         super(ExtensionsSettingsPanel, self).__init__(parent)
 
         # List row
-        listRow = common.Row(self)
+        listRow = custom_widgets.Row(self)
         self.layout().addWidget(listRow)
 
         # Extensions whitelist.
-        whitelistColumn = common.Column(self)
+        whitelistColumn = custom_widgets.Column(self)
         listRow.addWidget(whitelistColumn)
         whitelistColumn.addWidget(QLabel("Enabled extensions:", self))
         self.whitelist = QListWidget(self)
@@ -213,14 +214,14 @@ class ExtensionsSettingsPanel(SettingsPanel):
         whitelistColumn.addWidget(self.whitelist)
 
         # Extensions blacklist.
-        blacklistColumn = common.Column(self)
+        blacklistColumn = custom_widgets.Column(self)
         listRow.addWidget(blacklistColumn)
         blacklistColumn.addWidget(QLabel("Disabled extensions:", self))
         self.blacklist = QListWidget(self)
         self.blacklist.itemActivated.connect(self.enableExtension)
         blacklistColumn.addWidget(self.blacklist)
 
-        self.layout().addWidget(common.Expander(self))
+        self.layout().addWidget(custom_widgets.Expander(self))
 
     def disableExtension(self, item):
         name = item.text()

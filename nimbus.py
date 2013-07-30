@@ -8,6 +8,7 @@ import subprocess
 import copy
 import traceback
 import common
+import custom_widgets
 import status_bar
 import extension_server
 import settings_dialog
@@ -488,7 +489,7 @@ class MainWindow(QMainWindow):
         self.closedTabs = []
 
         # Main toolbar.
-        self.toolBar = common.MenuToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
+        self.toolBar = custom_widgets.MenuToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
         self.addToolBar(self.toolBar)
 
         # Tab widget for tabbed browsing.
