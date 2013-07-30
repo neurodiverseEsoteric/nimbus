@@ -967,7 +967,7 @@ def main():
         for arg in sys.argv[1:]:
             if "." in arg or ":" in arg:
                 subprocess.Popen(["qdbus", "org.nimbus.Nimbus", "/Nimbus", "addTab", arg])
-        sys.exit()
+        return
 
     #  Otherwise, create the lock file.
     else:
