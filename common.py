@@ -18,10 +18,10 @@ class Filter(object):
         return None
 
 # Folder that Nimbus is stored in.
-app_folder = os.path.dirname(os.path.realpath(__file__))
+app_folder = os.path.dirname(os.path.realpath(__file__)) if sys.executable != os.path.dirname(__file__) else os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 # Icons folder
-app_icons_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), "icons")
+app_icons_folder = os.path.join(app_folder, "icons")
 
 # Get an application icon.
 def app_icon(name):
