@@ -74,9 +74,9 @@ class ContentSettingsPanel(SettingsPanel):
         self.mediaToggle = QCheckBox("Use plugins to handle &HTML5 audio and video", self)
         self.layout().addWidget(self.mediaToggle)
 
-        # Checkbox to toggle using Google Docs viewer.
-        self.googleDocsToggle = QCheckBox("Use Google Docs &viewer to load unsupported content", self)
-        self.layout().addWidget(self.googleDocsToggle)
+        # Checkbox to toggle using online content viewers.
+        self.contentViewersToggle = QCheckBox("Use online content &viewers to load unsupported content", self)
+        self.layout().addWidget(self.contentViewersToggle)
 
         # Checkbox to toggle tiled backing.
         self.tiledBackingStoreToggle = QCheckBox("Enable &tiled backing store", self)
@@ -94,7 +94,7 @@ class ContentSettingsPanel(SettingsPanel):
         self.pluginsToggle.setChecked(common.setting_to_bool("content/PluginsEnabled"))
         self.adblockToggle.setChecked(common.setting_to_bool("content/AdblockEnabled"))
         self.mediaToggle.setChecked(common.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"))
-        self.googleDocsToggle.setChecked(common.setting_to_bool("content/UseGoogleDocsViewer"))
+        self.contentViewersToggle.setChecked(common.setting_to_bool("content/UseOnlineContentViewers"))
         self.tiledBackingStoreToggle.setChecked(common.setting_to_bool("content/TiledBackingStoreEnabled"))
         self.siteSpecificQuirksToggle.setChecked(common.setting_to_bool("content/SiteSpecificQuirksEnabled"))
 
@@ -105,7 +105,7 @@ class ContentSettingsPanel(SettingsPanel):
         common.settings.setValue("content/AdblockEnabled", self.adblockToggle.isChecked())
         common.settings.setValue("content/ReplaceHTML5MediaTagsWithEmbedTags", self.mediaToggle.isChecked())
         common.adblock_filter_loader.start()
-        common.settings.setValue("content/UseGoogleDocsViewer", self.googleDocsToggle.isChecked())
+        common.settings.setValue("content/UseOnlineContentViewers", self.contentViewersToggle.isChecked())
         common.settings.setValue("content/TiledBackingStoreEnabled", self.tiledBackingStoreToggle.isChecked())
         common.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())
         common.settings.sync()

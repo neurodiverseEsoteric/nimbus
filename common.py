@@ -56,7 +56,7 @@ default_settings = {"proxy/Type": "None",
                     "content/PluginsEnabled": True,
                     "content/AdblockEnabled": False,
                     "content/ReplaceHTML5MediaTagsWithEmbedTags": (True if "win" in sys.platform else False),
-                    "content/UseGoogleDocsViewer": True,
+                    "content/UseUnsupportedContentViewers": True,
                     "content/TiledBackingStoreEnabled": False,
                     "content/SiteSpecificQuirksEnabled": True,
                     "general/Homepage": "https://github.com/foxhead128/nimbus",
@@ -130,12 +130,7 @@ shelved_filter = None
 adblock_rules = []
 
 # Content viewers
-content_viewers = (("http://foaas.com%s", ("#foaas")),
-                   ("http://www.google.com/search?q=%s", ("#g", "#google")),
-                   ("http://search.yahoo.com/search?p=%s", ("#y", "#yahoo")),
-                   ("http://en.wikipedia.org/w/index.php?search=%s", ("#w", "#wikipedia")),
-                   ("http://www.bing.com/search?q=%s", ("#b", "#bing")),
-                   ("https://docs.google.com/viewer?embedded=true&url=%s", (".doc", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")),
+content_viewers = (("https://docs.google.com/viewer?embedded=true&url=%s", (".doc", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")),
                    ("http://view.samurajdata.se/ps.php?url=%s&submit=View!", (".doc", ".pdf", ".ps", ".gz")))
 
 # Load adblock rules.

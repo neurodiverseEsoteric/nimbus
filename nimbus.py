@@ -37,8 +37,6 @@ os.chdir(common.app_folder)
 # Create extension server.
 server_thread = extension_server.ExtensionServerThread()
 
-# List of file extensions supported by Google Docs.
-
 # Global list to store browser history.
 history = []
 
@@ -360,16 +358,15 @@ class WebView(QWebView):
     def handleUnsupportedContent(self, reply):
         url = reply.url().toString()
 
-        # Make sure the file isn't local, that Google Docs viewer is
+        # Make sure the file isn't local, that content viewers are
         # enabled, and private browsing isn't enabled.
         self.loadInViewer(url)
         
         self.downloadFile(reply.request())
 
     def loadInViewer(self, url):
-        if not "file://" in url and common.setting_to_bool("content/UseGoogleDocsViewer") and not self.incognito:
+        if not "file://" in url and common.setting_to_bool("content/UseOnlineContentViewers") and not self.incognito:
             for viewer in common.content_viewers:
-            # Check to see if the file can be loaded in Google Docs viewer.
                 try:
                     for extension in viewer[1]:
                         if url.lower().endswith(extension):
@@ -825,12 +822,10 @@ self.origY + ev.globalY() - self.mouseY)
     def load(self, url=False):
         if not url:
             url = self.locationBar.currentText()
-        if (QUrl.fromUserInput(url).scheme() in ("http", "https") and "." in url) or os.path.exists(url):
+        if "." in url or ":" in url:
             self.tabs.currentWidget().load(QUrl.fromUserInput(url))
-        elif not "." in url and not "#" in url:
-            self.tabs.currentWidget().load(QUrl(common.settings.value("general/Search") % (url,)))
         else:
-            self.tabs.currentWidget().load(QUrl(url))
+            self.tabs.currentWidget().load(QUrl(common.settings.value("general/Search") % (url,)))
 
     # Status bar related methods.
     def setStatusBarMessage(self, message):
