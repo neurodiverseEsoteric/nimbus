@@ -287,10 +287,7 @@ class WebView(QWebView):
             else:
                 QWebView.load(self, url)
         else:
-            url2 = url.toString()
-            viewerLoaded = self.loadInViewer(url2)
-            if not viewerLoaded:
-                QWebView.load(self, url)
+            QWebView.load(self, url)
 
     # Method to replace all <audio> and <video> tags with <embed> tags.
     def replaceAVTags(self):
