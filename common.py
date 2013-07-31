@@ -4,18 +4,14 @@
 import sys
 import os
 import abpy
-import pickle
-from PyQt4.QtCore import QCoreApplication, QSettings, QThread
-from PyQt4.QtGui import QIcon
-from PyQt4.QtNetwork import QNetworkCookieJar
+import json
+from PyQt4.QtCore import QByteArray, QCoreApplication, QSettings, QThread
+from PyQt4.QtGui import QIcon, QInputDialog, QLineEdit
+from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie
 
-# Dummy adblock filter class.
-class Filter(object):
-    def __init__(self, rules):
-        super(Filter, self).__init__()
-        self.index = {}
-    def match(self, url):
-        return None
+#####################
+# DIRECTORY-RELATED #
+#####################
 
 # Folder that Nimbus is stored in.
 app_folder = os.path.dirname(os.path.realpath(__file__)) if sys.executable != os.path.dirname(__file__) else os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -23,21 +19,9 @@ app_folder = os.path.dirname(os.path.realpath(__file__)) if sys.executable != os
 # Icons folder
 app_icons_folder = os.path.join(app_folder, "icons")
 
-# Get an application icon.
-def app_icon(name):
-    return os.path.join(app_icons_folder, name)
-
-# Returns a QIcon
-def complete_icon(name):
-    try: return QIcon().fromTheme(name, QIcon(app_icon(name + ".png")))
-    except: return QIcon()
-
-# Global cookiejar to store cookies.
-# All nimbus.WebView instances use this.
-cookieJar = QNetworkCookieJar(QCoreApplication.instance())
-
-# All incognito nimbus.WebView instances use this one instead.
-incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
+####################
+# SETTINGS-RELATED #
+####################
 
 # Common settings manager.
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
@@ -78,52 +62,23 @@ def setting_to_bool(value=""):
 # This is a global variable that gets the settings folder on any platform.
 settings_folder = os.path.dirname(settings.fileName())
 
-# New tab page.
-new_tab_page = os.path.join(settings_folder, "new-tab-page.html")
 
-# Lock file used to determine if program is running.
-# This is obsolete. Nimbus now uses D-Bus to determine whether it is running or not.
-lock_file = os.path.join(settings_folder, ".lock")
+# This stores the cache.
+network_cache_folder = os.path.join(settings_folder, "Cache")
 
-# This stylesheet is applied to toolbars that are blank.
-blank_toolbar = "QToolBar { border: 0; background: transparent; }"
+###################
+# ADBLOCK-RELATED #
+###################
 
-# Stores WebView instances.
-webviews = []
+# Dummy adblock filter class.
+class Filter(object):
+    def __init__(self, rules):
+        super(Filter, self).__init__()
+        self.index = {}
+    def match(self, url):
+        return None
 
-# Stores browser windows.
-windows = []
-
-# List of extensions.
-extensions_folder = os.path.join(app_folder, "extensions")
-if os.path.isdir(extensions_folder):
-    extensions = sorted(os.listdir(extensions_folder))
-else:
-    extensions = []
-
-# Stores all extension buttons.
-extension_buttons = []
-
-# List of extensions not to load.
-extensions_blacklist = []
-
-# Reloads extension blacklist.
-def reload_extensions_blacklist():
-    global extensions_blacklist
-    extensions_blacklist = [extension for extension in extensions if extension not in settings.value("extensions/whitelist")]
-
-# Clear extensions.
-def reset_extensions():
-    global extension_buttons
-    for extension in extension_buttons:
-        extension.deleteLater()
-    while len(extension_buttons) > 0:
-        extension_buttons.pop()
-
-# Reload extension blacklist.
-reload_extensions_blacklist()
-
-# Adblock related functions.
+# Global stuff.
 adblock_folder = os.path.join(settings_folder, "adblock")
 easylist = os.path.join(app_folder, "easylist.txt")
 adblock_filter = Filter([])
@@ -179,3 +134,145 @@ class AdblockFilterLoader(QThread):
 
 # Create thread to load adblock filters.
 adblock_filter_loader = AdblockFilterLoader()
+
+# Get an application icon.
+def app_icon(name):
+    return os.path.join(app_icons_folder, name)
+
+# Returns a QIcon
+def complete_icon(name):
+    try: return QIcon().fromTheme(name, QIcon(app_icon(name + ".png")))
+    except: return QIcon()
+
+# Global list to store history.
+history = []
+
+# Global cookiejar to store cookies.
+# All nimbus.WebView instances use this.
+cookieJar = QNetworkCookieJar(QCoreApplication.instance())
+
+# All incognito nimbus.WebView instances use this one instead.
+incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
+
+# Global disk cache.
+diskCache = QNetworkDiskCache(QCoreApplication.instance())
+
+# Custom NetworkAccessManager class with support for ad-blocking.
+class NetworkAccessManager(QNetworkAccessManager):
+    diskCache = diskCache
+    diskCache.setCacheDirectory(network_cache_folder)
+    def __init__(self, *args, **kwargs):
+        super(NetworkAccessManager, self).__init__(*args, **kwargs)
+        self.setCache(self.diskCache)
+        self.diskCache.setParent(QCoreApplication.instance())
+        self.authenticationRequired.connect(self.provideAuthentication)
+    def provideAuthentication(self, reply, auth):
+        username = QInputDialog.getText(None, "Authentication", "Enter your username:", QLineEdit.Normal)
+        if username[1]:
+            auth.setUser(username[0])
+            password = QInputDialog.getText(None, "Authentication", "Enter your password:", QLineEdit.Password)
+            if password[1]:
+                auth.setPassword(password[0])
+    def createRequest(self, op, request, device=None):
+        url = request.url().toString()
+        x = adblock_filter.match(url)
+        if x != None:
+            return QNetworkAccessManager.createRequest(self, QNetworkAccessManager.GetOperation, QNetworkRequest(QUrl()))
+        else:
+            return QNetworkAccessManager.createRequest(self, op, request, device)
+
+# Create global instance of NetworkAccessManager.
+networkAccessManager = NetworkAccessManager()
+
+# This function loads the browser's settings.
+def loadData():
+    # Load history.
+    global history
+    raw_history = data.value("data/History")
+    if type(raw_history) is str:
+        history = json.loads(raw_history)
+
+    # Load cookies.
+    try: raw_cookies = json.loads(str(data.value("data/Cookies")))
+    except: return
+    if type(raw_cookies) is list:
+        cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
+        cookieJar.setAllCookies(cookies)
+
+# This function saves the browser's settings.
+def saveData():
+    # Save history.
+    global history
+    history = [(item.partition("://")[-1] if "://" in item else item) for item in history]
+    history = [item.replace(("www." if item.startswith("www.") else ""), "") for item in history]
+    history = list(set(history))
+    history.sort()
+    data.setValue("data/History", json.dumps(history))
+
+    # Save cookies.
+    cookies = json.dumps([cookie.toRawForm().data().decode("utf-8") for cookie in cookieJar.allCookies()])
+    data.setValue("data/Cookies", cookies)
+
+    # Sync any unsaved settings.
+    data.sync()
+
+# Clear history.
+def clearHistory():
+    global history
+    history = []
+    saveData()
+
+# Clear cookies.
+def clearCookies():
+    cookieJar.setAllCookies([])
+    incognitoCookieJar.setAllCookies([])
+    saveData()
+
+# Clear cache:
+def clearCache():
+    networkAccessManager.cache().clear()
+
+# New tab page.
+new_tab_page = os.path.join(settings_folder, "new-tab-page.html")
+
+# Lock file used to determine if program is running.
+# This is obsolete. Nimbus now uses D-Bus to determine whether it is running or not.
+lock_file = os.path.join(settings_folder, ".lock")
+
+# This stylesheet is applied to toolbars that are blank.
+blank_toolbar = "QToolBar { border: 0; background: transparent; }"
+
+# Stores WebView instances.
+webviews = []
+
+# Stores browser windows.
+windows = []
+
+# List of extensions.
+extensions_folder = os.path.join(app_folder, "extensions")
+if os.path.isdir(extensions_folder):
+    extensions = sorted(os.listdir(extensions_folder))
+else:
+    extensions = []
+
+# Stores all extension buttons.
+extension_buttons = []
+
+# List of extensions not to load.
+extensions_blacklist = []
+
+# Reloads extension blacklist.
+def reload_extensions_blacklist():
+    global extensions_blacklist
+    extensions_blacklist = [extension for extension in extensions if extension not in settings.value("extensions/whitelist")]
+
+# Clear extensions.
+def reset_extensions():
+    global extension_buttons
+    for extension in extension_buttons:
+        extension.deleteLater()
+    while len(extension_buttons) > 0:
+        extension_buttons.pop()
+
+# Reload extension blacklist.
+reload_extensions_blacklist()

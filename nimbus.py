@@ -3,12 +3,13 @@
 # Import everything we need.
 import sys
 import os
-import json
 import subprocess
 import copy
 import traceback
+import shutil
 import common
 import custom_widgets
+import clear_history_dialog
 import status_bar
 import extension_server
 import settings_dialog
@@ -26,9 +27,9 @@ except:
     has_dbus = False
 
 # Extremely specific imports from PyQt4.
-from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QByteArray, QFile, QIODevice, QTimer
+from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
 from PyQt4.QtGui import QApplication, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
-from PyQt4.QtNetwork import QNetworkCookie, QNetworkAccessManager, QNetworkRequest, QNetworkProxy
+from PyQt4.QtNetwork import QNetworkProxy
 from PyQt4.QtWebKit import QWebView, QWebPage
 
 # chdir to the app folder.
@@ -37,76 +38,10 @@ os.chdir(common.app_folder)
 # Create extension server.
 server_thread = extension_server.ExtensionServerThread()
 
-# Global list to store browser history.
-history = []
-
 # Add an item to the browser history.
 def addHistoryItem(url):
-    global history
-    if not url in history and len(url) < 84:
-        history.append(url)
-
-# This function saves the browser's settings.
-def saveSettings():
-    # Save history.
-    global history
-    history = [(item.partition("://")[-1] if "://" in item else item) for item in history]
-    history = [item.replace(("www." if item.startswith("www.") else ""), "") for item in history]
-    history = list(set(history))
-    history.sort()
-    history = json.dumps(history)
-    common.data.setValue("data/History", history)
-
-    # Save cookies.
-    cookies = json.dumps([cookie.toRawForm().data().decode("utf-8") for cookie in common.cookieJar.allCookies()])
-    common.data.setValue("data/Cookies", cookies)
-
-    # Sync any unsaved settings.
-    common.settings.sync()
-
-# This function loads the browser's settings.
-def loadSettings():
-    # Load history.
-    global history
-    raw_history = common.data.value("data/History")
-    if type(raw_history) is str:
-        history = json.loads(raw_history)
-
-    # Load cookies.
-    try: raw_cookies = json.loads(str(common.data.value("data/Cookies")))
-    except: return
-    if type(raw_cookies) is list:
-        cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
-        common.cookieJar.setAllCookies(cookies)
-
-# This function clears out the browsing history and cookies.
-# Changes are written to the disk upon application quit.
-def clearHistory():
-    global history
-    history = []
-    common.cookieJar.setAllCookies([])
-    common.incognitoCookieJar.setAllCookies([])
-    saveSettings()
-
-# Custom NetworkAccessManager class with support for ad-blocking.
-class NetworkAccessManager(QNetworkAccessManager):
-    def __init__(self, *args, **kwargs):
-        super(NetworkAccessManager, self).__init__(*args, **kwargs)
-        self.authenticationRequired.connect(self.provideAuthentication)
-    def provideAuthentication(self, reply, auth):
-        username = QInputDialog.getText(None, "Authentication", "Enter your username:", QLineEdit.Normal)
-        if username[1]:
-            auth.setUser(username[0])
-            password = QInputDialog.getText(None, "Authentication", "Enter your password:", QLineEdit.Password)
-            if password[1]:
-                auth.setPassword(password[0])
-    def createRequest(self, op, request, device=None):
-        url = request.url().toString()
-        x = common.adblock_filter.match(url)
-        if x != None:
-            return QNetworkAccessManager.createRequest(self, QNetworkAccessManager.GetOperation, QNetworkRequest(QUrl()))
-        else:
-            return QNetworkAccessManager.createRequest(self, op, request, device)
+    if not url in common.history and len(url) < 84:
+        common.history.append(url)
 
 # Progress bar used for downloads.
 # This was ripped off of Ryouko.
@@ -209,8 +144,9 @@ class WebView(QWebView):
         self._hoveredLink = ""
 
         # Create a NetworkAccessmanager that supports ad-blocking and set it.
-        self.nAM = NetworkAccessManager()
+        self.nAM = common.networkAccessManager
         self.page().setNetworkAccessManager(self.nAM)
+        self.nAM.setParent(QCoreApplication.instance())
 
         # Enable Web Inspector
         self.settings().setAttribute(self.settings().DeveloperExtrasEnabled, True)
@@ -587,7 +523,7 @@ class MainWindow(QMainWindow):
         self.locationBar = QComboBox(self)
 
         # Load stored browser history.
-        for url in history:
+        for url in common.history:
             self.locationBar.addItem(url)
 
         # Combo boxes are not normally editable by default.
@@ -800,11 +736,7 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Clears the history after a prompt.
     def clearHistory(self):
-        question = QMessageBox.question(None, "Clear History",
-            "Delete cookies and browsing history?", QMessageBox.Yes | 
-            QMessageBox.No, QMessageBox.No)
-        if question == QMessageBox.Yes:
-            clearHistory()
+        chistorydialog.display()
 
     # Method to load a URL.
     def load(self, url=False):
@@ -990,10 +922,10 @@ def main():
     server_thread.start()
 
     # On quit, save settings.
-    app.aboutToQuit.connect(saveSettings)
+    app.aboutToQuit.connect(common.saveData)
 
     # Load settings.
-    loadSettings()
+    common.loadData()
 
     # Create instance of MainWindow.
     win = MainWindow()
@@ -1001,6 +933,9 @@ def main():
     # Create instance of SettingsDialog.
     global pdialog
     pdialog = settings_dialog.SettingsDialog()
+
+    global chistorydialog
+    chistorydialog = clear_history_dialog.ClearHistoryDialog()
 
     # Open URLs from command line.
     if len(sys.argv) > 1:
