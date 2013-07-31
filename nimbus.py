@@ -38,7 +38,6 @@ os.chdir(common.app_folder)
 server_thread = extension_server.ExtensionServerThread()
 
 # List of file extensions supported by Google Docs.
-gdocs_extensions = (".doc", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")
 
 # Global list to store browser history.
 history = []
@@ -290,7 +289,10 @@ class WebView(QWebView):
             else:
                 QWebView.load(self, url)
         else:
-            QWebView.load(self, url)
+            url2 = url.toString()
+            viewerLoaded = self.loadInViewer(url2)
+            if not viewerLoaded:
+                QWebView.load(self, url)
 
     # Method to replace all <audio> and <video> tags with <embed> tags.
     def replaceAVTags(self):
@@ -360,15 +362,21 @@ class WebView(QWebView):
 
         # Make sure the file isn't local, that Google Docs viewer is
         # enabled, and private browsing isn't enabled.
-        if not "file://" in url and common.setting_to_bool("content/UseGoogleDocsViewer") and not self.incognito:
-            
-            # Check to see if the file can be loaded in Google Docs viewer.
-            for extension in gdocs_extensions:
-                if url.lower().endswith(extension):
-                    self.load(QUrl("https://docs.google.com/viewer?embedded=true&url=" + url))
-                    return
+        self.loadInViewer(url)
         
         self.downloadFile(reply.request())
+
+    def loadInViewer(self, url):
+        if not "file://" in url and common.setting_to_bool("content/UseGoogleDocsViewer") and not self.incognito:
+            for viewer in common.content_viewers:
+            # Check to see if the file can be loaded in Google Docs viewer.
+                try:
+                    for extension in viewer[1]:
+                        if url.lower().endswith(extension):
+                            QWebView.load(self, QUrl(viewer[0] % (url,)))
+                            return True
+                except: pass
+        return False
 
     # Download file.
     def downloadFile(self, request):
@@ -817,10 +825,12 @@ self.origY + ev.globalY() - self.mouseY)
     def load(self, url=False):
         if not url:
             url = self.locationBar.currentText()
-        if "." in url or ":" in url:
+        if (QUrl.fromUserInput(url).scheme() in ("http", "https") and "." in url) or os.path.exists(url):
             self.tabs.currentWidget().load(QUrl.fromUserInput(url))
-        else:
+        elif not "." in url and not "#" in url:
             self.tabs.currentWidget().load(QUrl(common.settings.value("general/Search") % (url,)))
+        else:
+            self.tabs.currentWidget().load(QUrl(url))
 
     # Status bar related methods.
     def setStatusBarMessage(self, message):

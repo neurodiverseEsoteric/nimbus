@@ -129,6 +129,15 @@ adblock_filter = Filter([])
 shelved_filter = None
 adblock_rules = []
 
+# Content viewers
+content_viewers = (("http://foaas.com%s", ("#foaas")),
+                   ("http://www.google.com/search?q=%s", ("#g", "#google")),
+                   ("http://search.yahoo.com/search?p=%s", ("#y", "#yahoo")),
+                   ("http://en.wikipedia.org/w/index.php?search=%s", ("#w", "#wikipedia")),
+                   ("http://www.bing.com/search?q=%s", ("#b", "#bing")),
+                   ("https://docs.google.com/viewer?embedded=true&url=%s", (".doc", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")),
+                   ("http://view.samurajdata.se/ps.php?url=%s&submit=View!", (".doc", ".pdf", ".ps", ".gz")))
+
 # Load adblock rules.
 def load_adblock_rules():
     global adblock_filter
