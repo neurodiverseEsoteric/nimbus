@@ -5,7 +5,7 @@ import sys
 import os
 import abpy
 import json
-from PyQt4.QtCore import QByteArray, QCoreApplication, QSettings, QThread
+from PyQt4.QtCore import QByteArray, QCoreApplication, QSettings, QThread, QUrl
 from PyQt4.QtGui import QIcon, QInputDialog, QLineEdit
 from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie
 
