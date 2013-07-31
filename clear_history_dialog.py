@@ -31,6 +31,7 @@ class ClearHistoryDialog(QMainWindow):
         self.dataType.addItem("Cookies")
         self.dataType.addItem("Cache")
         self.dataType.addItem("Persistent Storage")
+        self.dataType.addItem("Everything")
         self.layout.addWidget(self.dataType)
         self.toolBar = QToolBar(self)
         self.toolBar.setStyleSheet(common.blank_toolbar)
@@ -52,13 +53,14 @@ class ClearHistoryDialog(QMainWindow):
         self.activateWindow()
 
     def clearHistory(self):
-        if self.dataType.currentIndex() == 0:
+        clear_everything = (self.dataType.currentIndex() == 4)
+        if self.dataType.currentIndex() == 0 or clear_everything:
             common.clearHistory()
-        elif self.dataType.currentIndex() == 1:
+        if self.dataType.currentIndex() == 1 or clear_everything:
             common.clearCookies()
-        elif self.dataType.currentIndex() == 2:
+        if self.dataType.currentIndex() == 2 or clear_everything:
             common.clearCache()
-        elif self.dataType.currentIndex() == 3:
+        if self.dataType.currentIndex() == 3 or clear_everything:
             webpageicondb = os.path.join(common.settings_folder, "WebpageIcons.db")
             if sys.platform.startswith("linux"):
                 os.system("shred -v \"%s\"" % (webpageicondb,))
