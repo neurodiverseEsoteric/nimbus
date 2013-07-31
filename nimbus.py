@@ -357,20 +357,17 @@ class WebView(QWebView):
 
         # Make sure the file isn't local, that content viewers are
         # enabled, and private browsing isn't enabled.
-        self.loadInViewer(url)
-        
-        self.downloadFile(reply.request())
-
-    def loadInViewer(self, url):
         if not "file://" in url and common.setting_to_bool("content/UseOnlineContentViewers") and not self.incognito:
             for viewer in common.content_viewers:
                 try:
                     for extension in viewer[1]:
                         if url.lower().endswith(extension):
                             QWebView.load(self, QUrl(viewer[0] % (url,)))
-                            return True
-                except: pass
-        return False
+                            return
+                except:
+                    pass
+
+        self.downloadFile(reply.request())
 
     # Download file.
     def downloadFile(self, request):
