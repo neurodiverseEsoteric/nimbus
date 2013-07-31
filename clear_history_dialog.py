@@ -4,6 +4,7 @@ import sys
 import os
 import subprocess
 import common
+import traceback
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWidget, QVBoxLayout, QLabel, QMainWindow, QAction, QToolBar, QComboBox, QPushButton
 
@@ -63,12 +64,14 @@ class ClearHistoryDialog(QMainWindow):
             common.clearCache()
         if self.dataType.currentIndex() == 3 or clear_everything:
             for subpath in ("WebpageIcons.db", "LocalStorage", "Databases",):
-                path = os.path.join(common.settings_folder, subpath)
-                try: os.remove(path)
-                except:
+                path = os.path.abspath(os.path.join(common.settings_folder, subpath))
+                if os.path.isfile(path):
+                    try: os.remove(path)
+                    except: traceback.print_exc()
+                elif os.path.isdir(path):
                     if sys.platform.startswith("win"):
                         try: subprocess.Popen(["rd", path])
-                        except: pass
+                        except: traceback.print_exc()
                     else:
                         try: subprocess.Popen(["rm", "-rf", path])
-                        except: pass
+                        except: traceback.print_exc()
