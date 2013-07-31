@@ -62,5 +62,5 @@ class ClearHistoryDialog(QMainWindow):
             webpageicondb = os.path.join(common.settings_folder, "WebpageIcons.db")
             if sys.platform.startswith("linux"):
                 os.system("shred -v \"%s\"" % (webpageicondb,))
-            try: os.remove(webpageiconsdb)
+            try: os.remove(webpageicondb)
             except: pass
