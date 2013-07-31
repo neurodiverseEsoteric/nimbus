@@ -250,9 +250,6 @@ class WebView(QWebView):
         self.page().setForwardUnsupportedContent(True)
         self.page().unsupportedContent.connect(self.handleUnsupportedContent)
 
-        # Enable Netscape plugins.
-        self.settings().setAttribute(self.settings().PluginsEnabled, True)
-
         # This is what Nimbus should do when faced with a file to download.
         self.page().downloadRequested.connect(self.downloadFile)
 
