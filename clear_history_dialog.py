@@ -2,7 +2,6 @@
 
 import sys
 import os
-import shutil
 import subprocess
 import common
 from PyQt4.QtCore import Qt
@@ -67,5 +66,9 @@ class ClearHistoryDialog(QMainWindow):
                 path = os.path.join(common.settings_folder, subpath)
                 try: os.remove(path)
                 except:
-                    try: shutil.rmtree(path)
-                    except: pass
+                    if sys.platform.startswith("win"):
+                        try: subprocess.Popen(["rd", path])
+                        except: pass
+                    else:
+                        try: subprocess.Popen(["rm", "-rf", path])
+                        except: pass

@@ -6,7 +6,6 @@ import os
 import subprocess
 import copy
 import traceback
-import shutil
 import common
 import custom_widgets
 import clear_history_dialog
