@@ -64,9 +64,6 @@ def saveSettings():
     # Sync any unsaved settings.
     common.settings.sync()
 
-    try: os.remove(common.lock_file)
-    except: pass
-
 # This function loads the browser's settings.
 def loadSettings():
     # Load history.
@@ -937,8 +934,8 @@ self.origY + ev.globalY() - self.mouseY)
 # DBus server.
 if has_dbus:
     class DBusServer(dbus.service.Object):
-        def __init__(self):
-            busName = dbus.service.BusName("org.nimbus.Nimbus", bus=dbus.SessionBus())
+        def __init__(self, bus=None):
+            busName = dbus.service.BusName("org.nimbus.Nimbus", bus=bus)
             dbus.service.Object.__init__(self, busName, "/Nimbus")
 
         @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
@@ -957,30 +954,34 @@ if has_dbus:
 
 # Main function to load everything.
 def main():
-
-    # If there is a lock file, send the existing Nimbus session new tabs via DBus.
-    if os.path.isfile(common.lock_file):
-        for arg in sys.argv[1:]:
-            if "." in arg or ":" in arg:
-                subprocess.Popen(["qdbus", "org.nimbus.Nimbus", "/Nimbus", "addTab", arg])
-        return
-
-    #  Otherwise, create the lock file.
-    else:
-        f = open(common.lock_file, "w")
-        f.write("")
-        f.close()
-
     # Start DBus loop
     if has_dbus:
-        DBusQtMainLoop(set_as_default = True)
+        mainloop = DBusQtMainLoop(set_as_default = True)
+        dbus.set_default_main_loop(mainloop)
 
     # Create app.
     app = QApplication(sys.argv)
 
+    if has_dbus:
+        bus = dbus.SessionBus()
+
+    try: proxy = bus.get_object("org.nimbus.Nimbus", "/Nimbus")
+    except: dbus_present = False
+    else: dbus_present = True
+
+    # If there is a lock file, send the existing Nimbus session new tabs via DBus.
+    if dbus_present:
+        for arg in sys.argv[1:]:
+            if "." in arg or ":" in arg:
+                proxy.addTab(arg)
+                #subprocess.Popen(["qdbus", "org.nimbus.Nimbus", "/Nimbus", "addTab", arg])
+        return
+
+    #  Otherwise, create the lock file.
+
     # Create DBus server
     if has_dbus:
-        server = DBusServer()
+        server = DBusServer(bus)
 
     # Load adblock rules.
     common.adblock_filter_loader.start()
@@ -1024,6 +1025,4 @@ if __name__ == "__main__":
     try:
         main()
     except:
-        try: os.remove(common.lock_file)
-        except: pass
         traceback.print_exc()

@@ -81,7 +81,8 @@ settings_folder = os.path.dirname(settings.fileName())
 # New tab page.
 new_tab_page = os.path.join(settings_folder, "new-tab-page.html")
 
-# Lock file.
+# Lock file used to determine if program is running.
+# This is obsolete. Nimbus now uses D-Bus to determine whether it is running or not.
 lock_file = os.path.join(settings_folder, ".lock")
 
 # This stylesheet is applied to toolbars that are blank.
