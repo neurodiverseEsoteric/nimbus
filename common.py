@@ -161,10 +161,11 @@ diskCache = QNetworkDiskCache(QCoreApplication.instance())
 class NetworkAccessManager(QNetworkAccessManager):
     diskCache = diskCache
     diskCache.setCacheDirectory(network_cache_folder)
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, nocache=False, **kwargs):
         super(NetworkAccessManager, self).__init__(*args, **kwargs)
-        self.setCache(self.diskCache)
-        self.diskCache.setParent(QCoreApplication.instance())
+        if not nocache:
+            self.setCache(self.diskCache)
+            self.diskCache.setParent(QCoreApplication.instance())
         self.authenticationRequired.connect(self.provideAuthentication)
     def provideAuthentication(self, reply, auth):
         username = QInputDialog.getText(None, "Authentication", "Enter your username:", QLineEdit.Normal)
@@ -183,6 +184,7 @@ class NetworkAccessManager(QNetworkAccessManager):
 
 # Create global instance of NetworkAccessManager.
 networkAccessManager = NetworkAccessManager()
+incognitoNetworkAccessManager = NetworkAccessManager(nocache=True)
 
 # This function loads the browser's settings.
 def loadData():

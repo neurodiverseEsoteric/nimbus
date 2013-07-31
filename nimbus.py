@@ -144,9 +144,14 @@ class WebView(QWebView):
         self._hoveredLink = ""
 
         # Create a NetworkAccessmanager that supports ad-blocking and set it.
-        self.nAM = common.networkAccessManager
-        self.page().setNetworkAccessManager(self.nAM)
-        self.nAM.setParent(QCoreApplication.instance())
+        if not self.incognito:
+            self.nAM = common.networkAccessManager
+            self.page().setNetworkAccessManager(self.nAM)
+            self.nAM.setParent(QCoreApplication.instance())
+        else:
+            self.nAM = common.incognitoNetworkAccessManager
+            self.page().setNetworkAccessManager(self.nAM)
+            self.nAM.setParent(QCoreApplication.instance())
 
         # Enable Web Inspector
         self.settings().setAttribute(self.settings().DeveloperExtrasEnabled, True)
