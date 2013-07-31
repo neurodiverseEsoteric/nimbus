@@ -2,6 +2,8 @@
 
 import sys
 import os
+import shutil
+import subprocess
 import common
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWidget, QVBoxLayout, QLabel, QMainWindow, QAction, QToolBar, QComboBox, QPushButton
@@ -61,8 +63,9 @@ class ClearHistoryDialog(QMainWindow):
         if self.dataType.currentIndex() == 2 or clear_everything:
             common.clearCache()
         if self.dataType.currentIndex() == 3 or clear_everything:
-            webpageicondb = os.path.join(common.settings_folder, "WebpageIcons.db")
-            if sys.platform.startswith("linux"):
-                os.system("shred -v \"%s\"" % (webpageicondb,))
-            try: os.remove(webpageicondb)
-            except: pass
+            for subpath in ("WebpageIcons.db", "LocalStorage", "Databases",):
+                path = os.path.join(common.settings_folder, subpath)
+                try: os.remove(path)
+                except:
+                    try: shutil.rmtree(path)
+                    except: pass
