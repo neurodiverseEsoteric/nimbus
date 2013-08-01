@@ -205,6 +205,11 @@ class WebView(QWebView):
 
         self.load(QUrl("about:blank"))
 
+    def deleteLater(self):
+        try: common.webviews.remove(self)
+        except: pass
+        QWebView.deleteLater(self)
+
     def mousePressEvent(self, ev):
         if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
             url = self._statusBarMessage
@@ -838,10 +843,16 @@ self.origY + ev.globalY() - self.mouseY)
             webView = self.tabs.widget(index)
             if webView.history().canGoBack() or webView.history().canGoForward() or webView.url().toString() not in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),):
                 self.closedTabs.append(webView)
+                if len(self.closedTabs) > 10:
+                    self.closedTabs[0].deleteLater()
+                    try: common.webviews.remove(webView)
+                    except: pass
+                    self.closedTabs.pop(0)
                 webView.load(QUrl("about:blank"))
             else:
                 webView.deleteLater()
-                common.webviews.remove(webView)
+                try: common.webviews.remove(webView)
+                except: pass
         except:
             traceback.print_exc()
         self.tabs.removeTab(index)
