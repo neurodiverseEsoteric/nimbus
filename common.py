@@ -252,10 +252,17 @@ windows = []
 
 # List of extensions.
 extensions_folder = os.path.join(app_folder, "extensions")
-if os.path.isdir(extensions_folder):
-    extensions = sorted(os.listdir(extensions_folder))
-else:
-    extensions = []
+extensions = []
+
+# Reloads extensions.
+def reload_extensions():
+    global extensions
+    if os.path.isdir(extensions_folder):
+        extensions = sorted(os.listdir(extensions_folder))
+    else:
+        extensions = []
+
+reload_extensions()
 
 # Stores all extension buttons.
 extension_buttons = []

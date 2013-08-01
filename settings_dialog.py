@@ -238,6 +238,8 @@ class ExtensionsSettingsPanel(SettingsPanel):
         self.blacklist.sortItems(Qt.AscendingOrder)
 
     def loadSettings(self):
+        common.reload_extensions()
+        common.reload_extensions_blacklist()
         self.whitelist.clear()
         for extension in common.settings.value("extensions/Whitelist"):
             self.whitelist.addItem(extension)
