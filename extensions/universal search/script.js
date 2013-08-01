@@ -11,7 +11,7 @@ var nimbussterms = "k";
 while (nimbussterms == "k") {
     nimbussterms = prompt('Search (enter k for keywords):',"");
     if (nimbussterms == "k") {
-        window.alert('Keywords:\nd: DuckDuckGo\nw: Wikipedia\nw: Yahoo\ng: Google Search\ni: Google Image Search\nm: Google Music Search\nb: Bing\ny: Yahoo\n\n');
+        window.alert('Keywords:\nd: DuckDuckGo\nw: Wikipedia\nw: Yahoo\ng: Google Search\ni: Google Image Search\nm: Google Music Search\nb: Bing\ny: Yahoo');
     }
     else {
         var kwfalse = true;
