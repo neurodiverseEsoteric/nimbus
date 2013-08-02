@@ -158,10 +158,10 @@ incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
 diskCache = QNetworkDiskCache(QCoreApplication.instance())
 
 # Subclass of QNetworkReply that loads a local folder.
-class DirectoryReply(QNetworkReply):
-    def __init__(self, parent, url, operation):
+class NetworkReply(QNetworkReply):
+    def __init__(self, parent, url, operation, content=""):
         QNetworkReply.__init__(self, parent)
-        self.content = "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" classid=\"directoryView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>"
+        self.content = content
         self.offset = 0
         self.setHeader(QNetworkRequest.ContentTypeHeader, "text/html; charset=UTF-8")
         self.setHeader(QNetworkRequest.ContentLengthHeader, len(self.content))
@@ -180,8 +180,6 @@ class DirectoryReply(QNetworkReply):
         return True
 
     def readData(self, maxSize):
-        #print "readData called with", maxSize    
-        #print "offset is", self.offset
         if self.offset < len(self.content):
             end = min(self.offset + maxSize, len(self.content))
             data = self.content[self.offset:end]
@@ -210,8 +208,7 @@ class NetworkAccessManager(QNetworkAccessManager):
         url = request.url()
         x = adblock_filter.match(url.toString())
         if url.scheme() == "file" and os.path.isdir(os.path.abspath(url.path())):
-            return DirectoryReply(self, url, self.GetOperation)
-            return reply
+            return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" data=\"" + url.toString() + "\"classid=\"directoryView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
         if x != None:
             return QNetworkAccessManager.createRequest(self, QNetworkAccessManager.GetOperation, QNetworkRequest(QUrl()))
         else:
