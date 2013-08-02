@@ -246,7 +246,7 @@ class WebView(QWebView):
     def load(self, url):
         if type(url) is QListWidgetItem:
             url = QUrl.fromUserInput(url.text())
-        dirname = url.toString().split("://")[-1]
+        dirname = url.path()
         if url.toString() == "about:blank":
             if os.path.exists(common.new_tab_page):
                 QWebView.load(self, QUrl.fromUserInput(common.new_tab_page))
@@ -319,11 +319,12 @@ class WebView(QWebView):
 
     # Handler for unsupported content.
     def handleUnsupportedContent(self, reply):
-        url = reply.url().toString()
+        url2 = reply.url()
+        url = url2.toString()
 
         # Make sure the file isn't local, that content viewers are
         # enabled, and private browsing isn't enabled.
-        if not "file://" in url and common.setting_to_bool("content/UseOnlineContentViewers") and not self.incognito:
+        if not url2.scheme() == "file" and common.setting_to_bool("content/UseOnlineContentViewers") and not self.incognito:
             for viewer in common.content_viewers:
                 try:
                     for extension in viewer[1]:
