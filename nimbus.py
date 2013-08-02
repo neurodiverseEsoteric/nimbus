@@ -27,7 +27,7 @@ except:
 
 # Extremely specific imports from PyQt4.
 from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
-from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
+from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber
 from PyQt4.QtNetwork import QNetworkProxy
 from PyQt4.QtWebKit import QWebView, QWebPage
 
@@ -104,24 +104,38 @@ class DownloadBar(QToolBar):
 
 # Custom WebPage class with support for filesystem.
 class WebPage(QWebPage):
+    plugins = (("calendar", QCalendarWidget),
+               ("slider", QSlider),
+               ("progressbar", QProgressBar),
+               ("fontcombobox", QFontComboBox),
+               ("lcdnumber", QLCDNumber))
     def createPlugin(self, classid, url, paramNames, paramValues):
-        if classid.lower() == "fileview":
-            fileview = QListWidget(self.view())
-            #try:
-            if 1:
-                u = url.path()
-                u2 = QUrl(u).path()
-                fileview.addItem(os.path.dirname(u2))
-                if os.path.isdir(u2):
-                    l = os.listdir(u2)
-                    l.sort()
-                    for fname in l:
-                        fileview.addItem(os.path.join(u2, fname))
-                fileview.itemDoubleClicked.connect(lambda item: self.mainFrame().load(QUrl(item.text())))
-                fileview.itemActivated.connect(lambda item: self.mainFrame().load(QUrl(item.text())))
-            #except: pass
-            #else: return fileview
-            return fileview
+        if classid.lower() == "directoryview":
+            directoryview = QListWidget(self.view())
+            try:
+                if 1:
+                    u = url.path()
+                    u2 = QUrl(u).path()
+                    directoryview.addItem(os.path.dirname(u2))
+                    if os.path.isdir(u2):
+                        l = os.listdir(u2)
+                        l.sort()
+                        for fname in l:
+                            directoryview.addItem(os.path.join(u2, fname))
+                    directoryview.itemDoubleClicked.connect(lambda item: self.mainFrame().load(QUrl(item.text())))
+                    directoryview.itemActivated.connect(lambda item: self.mainFrame().load(QUrl(item.text())))
+            except: pass
+            else: return directoryview
+        else:
+            for name, widgetclass in self.plugins:
+                if classid.lower() == name:
+                    widget = widgetclass(self.view())
+                    widgetid = name.title()
+                    pnames = [name.lower() for name in paramNames]
+                    if "id" in pnames:
+                        widgetid = paramValues[pnames.index("id")]
+                    self.mainFrame().addToJavaScriptWindowObject(widgetid, widget)
+                    return widget
         return
 
 # Custom WebView class with support for ad-blocking, new tabs, downloads,

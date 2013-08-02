@@ -161,7 +161,7 @@ diskCache = QNetworkDiskCache(QCoreApplication.instance())
 class DirectoryReply(QNetworkReply):
     def __init__(self, parent, url, operation):
         QNetworkReply.__init__(self, parent)
-        self.content = "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" data=\"" + url.toString() + "\" classid=\"fileView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>"
+        self.content = "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" classid=\"directoryView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>"
         self.offset = 0
         self.setHeader(QNetworkRequest.ContentTypeHeader, "text/html; charset=UTF-8")
         self.setHeader(QNetworkRequest.ContentLengthHeader, len(self.content))
