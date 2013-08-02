@@ -27,7 +27,7 @@ except:
 
 # Extremely specific imports from PyQt4.
 from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
-from PyQt4.QtGui import QApplication, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
+from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel
 from PyQt4.QtNetwork import QNetworkProxy
 from PyQt4.QtWebKit import QWebView, QWebPage
 
@@ -102,6 +102,28 @@ class DownloadBar(QToolBar):
         abortAction.triggered.connect(self.deleteLater)
         self.addAction(abortAction)
 
+# Custom WebPage class with support for filesystem.
+class WebPage(QWebPage):
+    def createPlugin(self, classid, url, paramNames, paramValues):
+        if classid.lower() == "fileview":
+            fileview = QListWidget(self.view())
+            #try:
+            if 1:
+                u = url.path()
+                u2 = QUrl(u).path()
+                fileview.addItem(os.path.dirname(u2))
+                if os.path.isdir(u2):
+                    l = os.listdir(u2)
+                    l.sort()
+                    for fname in l:
+                        fileview.addItem(os.path.join(u2, fname))
+                fileview.itemDoubleClicked.connect(lambda item: self.mainFrame().load(QUrl(item.text())))
+                fileview.itemActivated.connect(lambda item: self.mainFrame().load(QUrl(item.text())))
+            #except: pass
+            #else: return fileview
+            return fileview
+        return
+
 # Custom WebView class with support for ad-blocking, new tabs, downloads,
 # recording history, and more.
 class WebView(QWebView):
@@ -141,6 +163,8 @@ class WebView(QWebView):
 
         # This stores the link last hovered over.
         self._hoveredLink = ""
+
+        self.setPage(WebPage(self))
 
         # Create a NetworkAccessmanager that supports ad-blocking and set it.
         if not self.incognito:
@@ -220,6 +244,9 @@ class WebView(QWebView):
             return QWebView.mousePressEvent(self, ev)
 
     def load(self, url):
+        if type(url) is QListWidgetItem:
+            url = QUrl.fromUserInput(url.text())
+        dirname = url.toString().split("://")[-1]
         if url.toString() == "about:blank":
             if os.path.exists(common.new_tab_page):
                 QWebView.load(self, QUrl.fromUserInput(common.new_tab_page))
@@ -543,7 +570,8 @@ class MainWindow(QMainWindow):
         self.locationBar.setSizePolicy(QLineEdit().sizePolicy())
 
         # Load a page when Enter is pressed.
-        self.locationBar.activated.connect(lambda: self.load(self.locationBar.currentText()))
+        self.locationBar.lineEdit().returnPressed.connect(lambda: self.load(self.locationBar.lineEdit().text()))
+        self.locationBar.view().activated.connect(lambda index: self.load(index.data()))
 
         self.toolBar.addWidget(self.locationBar)
 
@@ -761,7 +789,7 @@ self.origY + ev.globalY() - self.mouseY)
     def load(self, url=False):
         if not url:
             url = self.locationBar.currentText()
-        if "." in url or ":" in url:
+        if "." in url or ":" in url or os.path.exists(url):
             self.tabs.currentWidget().load(QUrl.fromUserInput(url))
         else:
             self.tabs.currentWidget().load(QUrl(common.settings.value("general/Search") % (url,)))

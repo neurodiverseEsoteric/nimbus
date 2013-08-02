@@ -5,9 +5,9 @@ import sys
 import os
 import abpy
 import json
-from PyQt4.QtCore import QByteArray, QCoreApplication, QSettings, QThread, QUrl
+from PyQt4.QtCore import QTimer, SIGNAL, QByteArray, QCoreApplication, QSettings, QThread, QUrl
 from PyQt4.QtGui import QIcon, QInputDialog, QLineEdit
-from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie
+from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
 
 #####################
 # DIRECTORY-RELATED #
@@ -157,6 +157,38 @@ incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
 # Global disk cache.
 diskCache = QNetworkDiskCache(QCoreApplication.instance())
 
+# Subclass of QNetworkReply that loads a local folder.
+class DirectoryReply(QNetworkReply):
+    def __init__(self, parent, url, operation):
+        QNetworkReply.__init__(self, parent)
+        self.content = "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" data=\"" + url.toString() + "\" classid=\"fileView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>"
+        self.offset = 0
+        self.setHeader(QNetworkRequest.ContentTypeHeader, "text/html; charset=UTF-8")
+        self.setHeader(QNetworkRequest.ContentLengthHeader, len(self.content))
+        QTimer.singleShot(0, self, SIGNAL("readyRead()"))
+        QTimer.singleShot(0, self, SIGNAL("finished()"))
+        self.open(self.ReadOnly | self.Unbuffered)
+        self.setUrl(url)
+
+    def abort(self):
+        pass
+
+    def bytesAvailable(self):
+        return len(self.content) - self.offset
+    
+    def isSequential(self):
+        return True
+
+    def readData(self, maxSize):
+        #print "readData called with", maxSize    
+        #print "offset is", self.offset
+        if self.offset < len(self.content):
+            end = min(self.offset + maxSize, len(self.content))
+            data = self.content[self.offset:end]
+            data = data.encode("utf-8")
+            self.offset = end
+            return bytes(data)
+
 # Custom NetworkAccessManager class with support for ad-blocking.
 class NetworkAccessManager(QNetworkAccessManager):
     diskCache = diskCache
@@ -175,8 +207,11 @@ class NetworkAccessManager(QNetworkAccessManager):
             if password[1]:
                 auth.setPassword(password[0])
     def createRequest(self, op, request, device=None):
-        url = request.url().toString()
-        x = adblock_filter.match(url)
+        url = request.url()
+        x = adblock_filter.match(url.toString())
+        if url.scheme() == "file" and os.path.isdir(os.path.abspath(url.path())):
+            return DirectoryReply(self, url, self.GetOperation)
+            return reply
         if x != None:
             return QNetworkAccessManager.createRequest(self, QNetworkAccessManager.GetOperation, QNetworkRequest(QUrl()))
         else:
