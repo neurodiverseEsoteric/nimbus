@@ -640,6 +640,16 @@ class MainWindow(QMainWindow):
         settingsAction.triggered.connect(lambda: self.tabs.setCurrentIndex(self.tabs.count()-1))
         mainMenu.addAction(settingsAction)
 
+        mainMenu.addSeparator()
+
+        aboutQtAction = QAction(common.complete_icon("qt"), "About &Qt", self)
+        aboutQtAction.triggered.connect(QApplication.aboutQt)
+        mainMenu.addAction(aboutQtAction)
+
+        aboutAction = QAction(common.complete_icon("help-about"), "A&bout Nimbus", self)
+        aboutAction.triggered.connect(lambda: QMessageBox.about(self, "Nimbus", "<h1>Nimbus</h1>PyQt4 web browser."))
+        mainMenu.addAction(aboutAction)
+
         # Add main menu action/button.
         self.mainMenuAction = QAction(common.complete_icon("document-properties"), "&Menu", self)
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
