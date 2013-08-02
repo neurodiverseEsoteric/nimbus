@@ -926,15 +926,13 @@ def main():
     except: dbus_present = False
     else: dbus_present = True
 
-    # If there is a lock file, send the existing Nimbus session new tabs via DBus.
+    # If Nimbus detects the existence of another Nimbus process, it will
+    # send all the requested URLs to the existing process and exit.
     if dbus_present:
         for arg in sys.argv[1:]:
             if "." in arg or ":" in arg:
                 proxy.addTab(arg)
-                #subprocess.Popen(["qdbus", "org.nimbus.Nimbus", "/Nimbus", "addTab", arg])
         return
-
-    #  Otherwise, create the lock file.
 
     # Create DBus server
     if has_dbus:
