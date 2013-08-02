@@ -27,7 +27,7 @@ except:
 
 # Extremely specific imports from PyQt4.
 from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
-from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber
+from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial
 from PyQt4.QtNetwork import QNetworkProxy
 from PyQt4.QtWebKit import QWebView, QWebPage
 
@@ -104,11 +104,14 @@ class DownloadBar(QToolBar):
 
 # Custom WebPage class with support for filesystem.
 class WebPage(QWebPage):
-    plugins = (("calendar", QCalendarWidget),
-               ("slider", QSlider),
-               ("progressbar", QProgressBar),
-               ("fontcombobox", QFontComboBox),
-               ("lcdnumber", QLCDNumber))
+    plugins = (("qcalendarwidget", QCalendarWidget),
+               ("qslider", QSlider),
+               ("qprogressbar", QProgressBar),
+               ("qfontcombobox", QFontComboBox),
+               ("qlcdnumber", QLCDNumber),
+               ("qimage", QImage),
+               ("qdatetimeedit", QDateTimeEdit),
+               ("qdial", QDial))
     def createPlugin(self, classid, url, paramNames, paramValues):
         if classid.lower() == "directoryview":
             directoryview = QListWidget(self.view())
