@@ -685,7 +685,7 @@ class MainWindow(QMainWindow):
         # Add settings dialog action.
         settingsAction = QAction(common.complete_icon("preferences-system"), "&Settings...", self)
         settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
-        settingsAction.triggered.connect(lambda: self.addTab(url="chrome://settings"))
+        settingsAction.triggered.connect(lambda: self.addTab(url="file://nimbus/settings"))
         settingsAction.triggered.connect(lambda: self.tabs.setCurrentIndex(self.tabs.count()-1))
         mainMenu.addAction(settingsAction)
 
