@@ -113,7 +113,10 @@ class WebPage(QWebPage):
                ("qdatetimeedit", QDateTimeEdit),
                ("qdial", QDial))
     def createPlugin(self, classid, url, paramNames, paramValues):
-        if classid.lower() == "directoryview":
+        if classid.lower() == "settingsdialog":
+            sdialog = settings_dialog.SettingsDialog(self.view())
+            return sdialog
+        elif classid.lower() == "directoryview":
             directoryview = QListWidget(self.view())
             try:
                 if 1:
@@ -682,7 +685,7 @@ class MainWindow(QMainWindow):
         # Add settings dialog action.
         settingsAction = QAction(common.complete_icon("preferences-system"), "&Settings...", self)
         settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
-        settingsAction.triggered.connect(lambda: self.tabs.addTab(pdialog, "Settings"))
+        settingsAction.triggered.connect(lambda: self.addTab(url="chrome://settings"))
         settingsAction.triggered.connect(lambda: self.tabs.setCurrentIndex(self.tabs.count()-1))
         mainMenu.addAction(settingsAction)
 
@@ -1000,8 +1003,8 @@ def main():
     win = MainWindow()
 
     # Create instance of SettingsDialog.
-    global pdialog
-    pdialog = settings_dialog.SettingsDialog()
+    #global pdialog
+    #pdialog = settings_dialog.SettingsDialog()
 
     global chistorydialog
     chistorydialog = clear_history_dialog.ClearHistoryDialog()

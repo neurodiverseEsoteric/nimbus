@@ -253,16 +253,21 @@ class ExtensionsSettingsPanel(SettingsPanel):
         common.settings.sync()
 
 # Main settings dialog
-class SettingsDialog(QMainWindow):
+class SettingsDialog(QWidget):
     def __init__(self, parent=None):
         super(SettingsDialog, self).__init__(parent)
+
+        # Set layout.
+        _layout = QVBoxLayout(self)
+        _layout.setContentsMargins(0,0,0,0)
+        self.setLayout(_layout)
 
         # Set window title.
         self.setWindowTitle("Settings")
 
         # Tab widget
         self.tabs = QTabWidget(self)
-        self.setCentralWidget(self.tabs)
+        self.layout().addWidget(self.tabs)
 
         self.tabs.addTab(GeneralSettingsPanel(self), "&General")
         self.tabs.addTab(ContentSettingsPanel(self), "&Content")
@@ -274,7 +279,7 @@ class SettingsDialog(QMainWindow):
         self.toolBar.setMovable(False)
         self.toolBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.toolBar.setStyleSheet(common.blank_toolbar)
-        self.addToolBar(Qt.BottomToolBarArea, self.toolBar)
+        self.layout().addWidget(self.toolBar)
 
         # Apply button
         applyButton = QPushButton("&Apply", self)
@@ -311,3 +316,13 @@ class SettingsDialog(QMainWindow):
             webview.updateProxy()
             webview.updateNetworkSettings()
             webview.updateContentSettings()
+
+class SettingsDialogWrapper(QWidget):
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+        _layout = QVBoxLayout(self)
+        _layout.setContentsMargins(0,0,0,0)
+        _layout.setSpacing(0)
+        self.setLayout(_layout)
+        self.settingsDialog = SettingsDialog(self)
+        self.layout().addWidget(self.settingsDialog)

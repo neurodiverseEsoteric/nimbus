@@ -208,7 +208,9 @@ class NetworkAccessManager(QNetworkAccessManager):
         url = request.url()
         x = adblock_filter.match(url.toString())
         if url.scheme() == "file" and os.path.isdir(os.path.abspath(url.path())):
-            return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" data=\"" + url.toString() + "\"classid=\"directoryView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
+            return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" data=\"" + url.toString() + "\" classid=\"directoryView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
+        elif url.scheme() == "file" and not os.path.isfile(os.path.abspath(url.path())):
+            return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>Settings</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
         if x != None:
             return QNetworkAccessManager.createRequest(self, QNetworkAccessManager.GetOperation, QNetworkRequest(QUrl()))
         else:
