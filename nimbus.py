@@ -403,25 +403,20 @@ class WebView(QWebView):
             f.close()
 
     def savePageToCache(self):
-        def savePage():
-            if not self.incognito:
-                if not os.path.exists(common.offline_cache_folder):
-                    try: os.mkdir(common.offline_cache_folder)
-                    except: return
-                content = self.page().mainFrame().toHtml()
-                m = hashlib.md5()
-                m.update(common.shortenURL(self.url().toString()).encode('utf-8'))
-                h = m.hexdigest()
-                try: f = open(os.path.join(common.offline_cache_folder, h), "w")
+        if not self.incognito:
+            if not os.path.exists(common.offline_cache_folder):
+                try: os.mkdir(common.offline_cache_folder)
+                except: return
+            content = self.page().mainFrame().toHtml()
+            m = hashlib.md5()
+            m.update(common.shortenURL(self.url().toString()).encode('utf-8'))
+            h = m.hexdigest()
+            try: f = open(os.path.join(common.offline_cache_folder, h), "w")
+            except: traceback.print_exc()
+            else:
+                try: f.write(content)
                 except: traceback.print_exc()
-                else:
-                    try: f.write(content)
-                    except: traceback.print_exc()
-                    f.close()
-        #thread = threading.Thread(target=savePage)
-        #thread.start()
-        #thread.join()
-        savePage()
+                f.close()
 
     # Save current page.
     def savePage(self):
