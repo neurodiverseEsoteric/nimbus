@@ -419,9 +419,10 @@ class WebView(QWebView):
                     try: f.write(content)
                     except: traceback.print_exc()
                     f.close()
-        thread = threading.Thread(target=savePage)
-        thread.start()
-        thread.join()
+        #thread = threading.Thread(target=savePage)
+        #thread.start()
+        #thread.join()
+        savePage()
 
     # Save current page.
     def savePage(self):
