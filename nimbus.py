@@ -5,6 +5,7 @@ import sys
 import os
 import base64
 import subprocess
+import threading
 import copy
 import traceback
 import hashlib
@@ -169,6 +170,9 @@ class WebView(QWebView):
 
         # Add this webview to the list of webviews.
         common.webviews.append(self)
+        self._url = ""
+
+        self._cacheLoaded = False
 
         # Private browsing.
         self.incognito = incognito
@@ -197,6 +201,7 @@ class WebView(QWebView):
             self.nAM = common.incognitoNetworkAccessManager
             self.page().setNetworkAccessManager(self.nAM)
             self.nAM.setParent(QCoreApplication.instance())
+        self.nAM.finished.connect(self.requestFinished)
 
         # Enable Web Inspector
         self.settings().setAttribute(self.settings().DeveloperExtrasEnabled, True)
@@ -266,21 +271,29 @@ class WebView(QWebView):
         else:
             return QWebView.mousePressEvent(self, ev)
 
+    def requestFinished(self, reply):
+        print(reply.error())
+        if reply.error() in (3,4,104,) and not self._cacheLoaded:
+            self._cacheLoaded = True
+            self.loadPageFromCache(self._url)
+
     def load(self, url):
         if type(url) is QListWidgetItem:
             url = QUrl.fromUserInput(url.text())
+        self._cacheLoaded = False
         dirname = url.path()
+        self._url = url.toString()
         if url.scheme() == "nimbus":
             x = "data:text/html;charset=utf-8;base64," + base64.b64encode(("<!DOCTYPE html><html><head><title>Settings</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>".replace('\n', '')).encode('utf-8')).decode('utf-8')
             QWebView.load(self, QUrl(x))
             return
         if url.toString() == "about:blank":
             if os.path.exists(common.new_tab_page):
-                QWebView.load(self, QUrl.fromUserInput(common.new_tab_page))
+                loadwin = QWebView.load(self, QUrl.fromUserInput(common.new_tab_page))
             else:
-                QWebView.load(self, url)
+                loadwin = QWebView.load(self, url)
         else:
-            QWebView.load(self, url)
+            loadwin = QWebView.load(self, url)
 
     # Method to replace all <audio> and <video> tags with <embed> tags.
     def replaceAVTags(self):
@@ -379,21 +392,36 @@ class WebView(QWebView):
             # Emit signal.
             self.downloadStarted.emit(downloadDialog)
 
-    def savePageToCache(self):
-        if not self.incognito:
-            if not os.path.exists(common.offline_cache_folder):
-                try: os.mkdir(common.offline_cache_folder)
-                except: return
-            content = self.page().mainFrame().toHtml()
-            m = hashlib.md5()
-            m.update(self.url().toString().encode('utf-8'))
-            h = m.hexdigest()
-            try: f = open(os.path.join(common.offline_cache_folder, h), "w")
+    def loadPageFromCache(self, url):
+        m = hashlib.md5()
+        m.update(common.shortenURL(url).encode('utf-8'))
+        h = m.hexdigest()
+        try: f = open(os.path.join(common.offline_cache_folder, h), "r")
+        except: traceback.print_exc()
+        else:
+            try: self.setHtml(f.read())
             except: traceback.print_exc()
-            else:
-                try: f.write(content)
+            f.close()
+
+    def savePageToCache(self):
+        def savePage():
+            if not self.incognito:
+                if not os.path.exists(common.offline_cache_folder):
+                    try: os.mkdir(common.offline_cache_folder)
+                    except: return
+                content = self.page().mainFrame().toHtml()
+                m = hashlib.md5()
+                m.update(common.shortenURL(self.url().toString()).encode('utf-8'))
+                h = m.hexdigest()
+                try: f = open(os.path.join(common.offline_cache_folder, h), "w")
                 except: traceback.print_exc()
-                f.close()
+                else:
+                    try: f.write(content)
+                    except: traceback.print_exc()
+                    f.close()
+        thread = threading.Thread(target=savePage)
+        thread.start()
+        thread.join()
 
     # Save current page.
     def savePage(self):

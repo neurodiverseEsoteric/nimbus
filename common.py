@@ -235,6 +235,11 @@ def loadData():
         cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
         cookieJar.setAllCookies(cookies)
 
+def shortenURL(url):
+    url2 = (url.partition("://")[-1] if "://" in url else url)
+    url2 = url2.replace(("www." if url2.startswith("www.") else ""), "")
+    return url2
+
 # This function saves the browser's settings.
 def saveData():
     # Save history.
