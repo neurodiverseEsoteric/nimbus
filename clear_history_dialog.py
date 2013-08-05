@@ -55,13 +55,21 @@ class ClearHistoryDialog(QMainWindow):
         self.activateWindow()
 
     def clearHistory(self):
-        clear_everything = (self.dataType.currentIndex() == 4)
+        clear_everything = (self.dataType.currentIndex() == 5)
         if self.dataType.currentIndex() == 0 or clear_everything:
             common.clearHistory()
         if self.dataType.currentIndex() == 1 or clear_everything:
             common.clearCookies()
         if self.dataType.currentIndex() == 2 or clear_everything:
             common.clearCache()
+            path = common.offline_cache_folder
+            if os.path.isdir(path):
+                if sys.platform.startswith("win"):
+                    try: subprocess.Popen(["rd", path])
+                    except: traceback.print_exc()
+                else:
+                    try: subprocess.Popen(["rm", "-rf", path])
+                    except: traceback.print_exc()
         if self.dataType.currentIndex() == 3 or clear_everything:
             for subpath in ("WebpageIcons.db", "LocalStorage", "Databases",):
                 path = os.path.abspath(os.path.join(common.settings_folder, subpath))
