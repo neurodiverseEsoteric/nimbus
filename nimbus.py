@@ -3,9 +3,11 @@
 # Import everything we need.
 import sys
 import os
+import base64
 import subprocess
 import copy
 import traceback
+import hashlib
 import common
 import custom_widgets
 import clear_history_dialog
@@ -244,6 +246,7 @@ class WebView(QWebView):
         # PyQt4 doesn't support <audio> and <video> tags on Windows.
         # This is a little hack to work around it.
         self.loadFinished.connect(self.replaceAVTags)
+        self.loadFinished.connect(self.savePageToCache)
 
         self.setWindowTitle("")
 
@@ -267,6 +270,10 @@ class WebView(QWebView):
         if type(url) is QListWidgetItem:
             url = QUrl.fromUserInput(url.text())
         dirname = url.path()
+        if url.scheme() == "nimbus":
+            x = "data:text/html;charset=utf-8;base64," + base64.b64encode(("<!DOCTYPE html><html><head><title>Settings</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>".replace('\n', '')).encode('utf-8')).decode('utf-8')
+            QWebView.load(self, QUrl(x))
+            return
         if url.toString() == "about:blank":
             if os.path.exists(common.new_tab_page):
                 QWebView.load(self, QUrl.fromUserInput(common.new_tab_page))
@@ -371,6 +378,22 @@ class WebView(QWebView):
 
             # Emit signal.
             self.downloadStarted.emit(downloadDialog)
+
+    def savePageToCache(self):
+        if not self.incognito:
+            if not os.path.exists(common.offline_cache_folder):
+                try: os.mkdir(common.offline_cache_folder)
+                except: return
+            content = self.page().mainFrame().toHtml()
+            m = hashlib.md5()
+            m.update(self.url().toString().encode('utf-8'))
+            h = m.hexdigest()
+            try: f = open(os.path.join(common.offline_cache_folder, h), "w")
+            except: traceback.print_exc()
+            else:
+                try: f.write(content)
+                except: traceback.print_exc()
+                f.close()
 
     # Save current page.
     def savePage(self):
@@ -685,7 +708,7 @@ class MainWindow(QMainWindow):
         # Add settings dialog action.
         settingsAction = QAction(common.complete_icon("preferences-system"), "&Settings...", self)
         settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
-        settingsAction.triggered.connect(lambda: self.addTab(url="file://nimbus/settings"))
+        settingsAction.triggered.connect(lambda: self.addTab(url="nimbus://settings"))
         settingsAction.triggered.connect(lambda: self.tabs.setCurrentIndex(self.tabs.count()-1))
         mainMenu.addAction(settingsAction)
 

@@ -62,9 +62,9 @@ def setting_to_bool(value=""):
 # This is a global variable that gets the settings folder on any platform.
 settings_folder = os.path.dirname(settings.fileName())
 
-
 # This stores the cache.
 network_cache_folder = os.path.join(settings_folder, "Cache")
+offline_cache_folder = os.path.join(settings_folder, "OfflineCache")
 
 ###################
 # ADBLOCK-RELATED #
