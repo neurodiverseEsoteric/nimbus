@@ -272,7 +272,6 @@ class WebView(QWebView):
             return QWebView.mousePressEvent(self, ev)
 
     def requestFinished(self, reply):
-        print(reply.error())
         if reply.error() in (3,4,104,) and not self._cacheLoaded:
             self._cacheLoaded = True
             self.loadPageFromCache(self._url)
