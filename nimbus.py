@@ -34,12 +34,14 @@ try:
     from PySide.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial
     from PySide.QtNetwork import QNetworkProxy
     from PySide.QtWebKit import QWebView, QWebPage
+    pyside = True
 except:
     from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
     from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial
     from PyQt4.QtNetwork import QNetworkProxy
     from PyQt4.QtWebKit import QWebView, QWebPage
     Signal = pyqtSignal
+    pyside = False
 
 # chdir to the app folder.
 os.chdir(common.app_folder)
@@ -73,7 +75,10 @@ class DownloadProgressBar(QProgressBar):
             data = self.networkReply.readAll()
             f = QFile(self.destination)
             f.open(QIODevice.WriteOnly)
-            f.writeData(data)
+            if pyside:
+                f.writeData(data, len(data))
+            else:
+                f.writeData(data)
             f.flush()
             f.close()
             self.progress = [0, 0]
