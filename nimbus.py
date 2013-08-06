@@ -392,6 +392,8 @@ class WebView(QWebView):
             
             # Create a DownloadBar instance and append it to list of
             # downloads.
+            if type(fname) is tuple:
+                fname = fname[0]
             downloadDialog = DownloadBar(reply, fname, None)
             self.downloads.append(downloadDialog)
 
