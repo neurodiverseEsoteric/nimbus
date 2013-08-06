@@ -4,8 +4,12 @@
 
 import common
 import custom_widgets
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QToolBar, QFrame, QMainWindow, QLineEdit, QProgressBar
+try:
+    from PySide.QtCore import Qt
+    from PySide.QtGui import QToolBar, QFrame, QMainWindow, QLineEdit, QProgressBar
+except:
+    from PyQt4.QtCore import Qt
+    from PyQt4.QtGui import QToolBar, QFrame, QMainWindow, QLineEdit, QProgressBar
 
 class StatusBar(QToolBar):
     def __init__(self, parent=None):

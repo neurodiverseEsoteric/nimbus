@@ -2,8 +2,12 @@
 
 import common
 import custom_widgets
-from PyQt4.QtCore import Qt, QUrl
-from PyQt4.QtGui import QWidget, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+try:
+    from PySide.QtCore import Qt, QUrl
+    from PySide.QtGui import QWidget, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+except:
+    from PyQt4.QtCore import Qt, QUrl
+    from PyQt4.QtGui import QWidget, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
 
 # Basic settings panel.
 class SettingsPanel(QWidget):

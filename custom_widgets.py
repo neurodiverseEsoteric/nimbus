@@ -2,7 +2,10 @@
 
 # Custom widgets.
 
-from PyQt4.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
+try:
+    from PySide.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
+except:
+    from PyQt4.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
 
 # Row widget.
 class Row(QWidget):

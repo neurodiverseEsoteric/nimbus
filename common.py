@@ -5,9 +5,14 @@ import sys
 import os
 import abpy
 import json
-from PyQt4.QtCore import QTimer, SIGNAL, QByteArray, QCoreApplication, QSettings, QThread, QUrl
-from PyQt4.QtGui import QIcon, QInputDialog, QLineEdit
-from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
+try:
+    from PySide.QtCore import QTimer, SIGNAL, QByteArray, QCoreApplication, QSettings, QThread, QUrl
+    from PySide.QtGui import QIcon, QInputDialog, QLineEdit
+    from PySide.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
+except:
+    from PyQt4.QtCore import QTimer, SIGNAL, QByteArray, QCoreApplication, QSettings, QThread, QUrl
+    from PyQt4.QtGui import QIcon, QInputDialog, QLineEdit
+    from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
 
 #####################
 # DIRECTORY-RELATED #

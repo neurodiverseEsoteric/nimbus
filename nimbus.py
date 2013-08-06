@@ -28,11 +28,18 @@ try:
 except:
     has_dbus = False
 
-# Extremely specific imports from PyQt4.
-from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
-from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial
-from PyQt4.QtNetwork import QNetworkProxy
-from PyQt4.QtWebKit import QWebView, QWebPage
+# Extremely specific imports from PySide.
+try:
+    from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QFile, QIODevice, QTimer
+    from PySide.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial
+    from PySide.QtNetwork import QNetworkProxy
+    from PySide.QtWebKit import QWebView, QWebPage
+except:
+    from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
+    from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial
+    from PyQt4.QtNetwork import QNetworkProxy
+    from PyQt4.QtWebKit import QWebView, QWebPage
+    Signal = pyqtSignal
 
 # chdir to the app folder.
 os.chdir(common.app_folder)
@@ -159,10 +166,10 @@ class WebView(QWebView):
     downloads = []
 
     # This is a signal used to inform everyone a new window was created.
-    windowCreated = pyqtSignal(QWebView)
+    windowCreated = Signal(QWebView)
 
     # This is a signal used to tell everyone a download has started.
-    downloadStarted = pyqtSignal(QToolBar)
+    downloadStarted = Signal(QToolBar)
 
     # Initialize class.
     def __init__(self, *args, incognito=False, **kwargs):
@@ -248,7 +255,7 @@ class WebView(QWebView):
         self.statusBarMessage.connect(self.setStatusBarMessage)
         self.loadProgress.connect(self.setLoadProgress)
 
-        # PyQt4 doesn't support <audio> and <video> tags on Windows.
+        # PySide doesn't support <audio> and <video> tags on Windows.
         # This is a little hack to work around it.
         self.loadFinished.connect(self.replaceAVTags)
         self.loadFinished.connect(self.savePageToCache)
@@ -742,7 +749,7 @@ class MainWindow(QMainWindow):
         mainMenu.addAction(aboutQtAction)
 
         aboutAction = QAction(common.complete_icon("help-about"), "A&bout Nimbus", self)
-        aboutAction.triggered.connect(lambda: QMessageBox.about(self, "Nimbus", "<h1>Nimbus</h1>PyQt4 web browser."))
+        aboutAction.triggered.connect(lambda: QMessageBox.about(self, "Nimbus", "<h1>Nimbus</h1>PySide web browser."))
         mainMenu.addAction(aboutAction)
 
         # Add main menu action/button.
