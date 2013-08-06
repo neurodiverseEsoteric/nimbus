@@ -76,7 +76,7 @@ class DownloadProgressBar(QProgressBar):
             f = QFile(self.destination)
             f.open(QIODevice.WriteOnly)
             if pyside:
-                f.writeData(data, len(data))
+                f.writeData(str(data.data()), len(data.data()))
             else:
                 f.writeData(data)
             f.flush()
@@ -1055,6 +1055,7 @@ def main():
 
     # On quit, save settings.
     app.aboutToQuit.connect(common.saveData)
+    app.aboutToQuit.connect(server_thread.quit)
 
     # Load settings.
     common.loadData()

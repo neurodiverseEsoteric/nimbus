@@ -136,6 +136,7 @@ class AdblockFilterLoader(QThread):
             if len(adblock_filter.index.keys()) > 0:
                 shelved_filter = adblock_filter
             adblock_filter = abpy.Filter([])
+        self.quit()
 
 # Create thread to load adblock filters.
 adblock_filter_loader = AdblockFilterLoader()
