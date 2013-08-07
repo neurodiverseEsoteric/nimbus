@@ -28,7 +28,7 @@ try:
 except:
     has_dbus = False
 
-# Extremely specific imports from PySide.
+# Extremely specific imports from PySide/PyQt4.
 try:
     from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QFile, QIODevice, QTimer
     from PySide.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
@@ -257,7 +257,7 @@ class WebView(QWebView):
         self.statusBarMessage.connect(self.setStatusBarMessage)
         self.loadProgress.connect(self.setLoadProgress)
 
-        # PySide doesn't support <audio> and <video> tags on Windows.
+        # PyQt4 doesn't support <audio> and <video> tags on Windows.
         # This is a little hack to work around it.
         self.loadFinished.connect(self.replaceAVTags)
         self.loadFinished.connect(self.savePageToCache)
@@ -753,7 +753,7 @@ class MainWindow(QMainWindow):
         mainMenu.addAction(aboutQtAction)
 
         aboutAction = QAction(common.complete_icon("help-about"), "A&bout Nimbus", self)
-        aboutAction.triggered.connect(lambda: QMessageBox.about(self, "Nimbus", "<h1>Nimbus</h1>PySide web browser."))
+        aboutAction.triggered.connect(lambda: QMessageBox.about(self, "Nimbus", "<h3>Nimbus</h3>PyQt4/PySide web browser."))
         mainMenu.addAction(aboutAction)
 
         # Add main menu action/button.
