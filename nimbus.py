@@ -1111,6 +1111,10 @@ def main():
     trayicon = SystemTrayIcon(QCoreApplication.instance())
     trayicon.show()
 
+    # Create instance of clear history dialog.
+    global chistorydialog
+    chistorydialog = clear_history_dialog.ClearHistoryDialog()
+
     # Create DBus server
     if has_dbus:
         server = DBusServer(bus)
@@ -1127,30 +1131,24 @@ def main():
     # Load settings.
     common.loadData()
 
-    # Create instance of MainWindow.
-    win = MainWindow()
+    if not "--daemon" in sys.argv:
+        # Create instance of MainWindow.
+        win = MainWindow()
 
-    # Create instance of SettingsDialog.
-    #global pdialog
-    #pdialog = settings_dialog.SettingsDialog()
+        # Open URLs from command line.
+        if len(sys.argv) > 1:
+            for arg in sys.argv[1:]:
+                if "." in arg or ":" in arg:
+                    win.addTab(url=arg)
 
-    global chistorydialog
-    chistorydialog = clear_history_dialog.ClearHistoryDialog()
+        # If there aren't any tabs, open homepages.
+        if win.tabs.count() == 0:
+            win.addTab(url=common.settings.value("general/Homepage"))
+        if win.tabs.count() == 0:
+            win.addTab(url="about:blank")
 
-    # Open URLs from command line.
-    if len(sys.argv) > 1:
-        for arg in sys.argv[1:]:
-            if "." in arg or ":" in arg:
-                win.addTab(url=arg)
-
-    # If there aren't any tabs, open homepages.
-    if win.tabs.count() == 0:
-        win.addTab(url=common.settings.value("general/Homepage"))
-    if win.tabs.count() == 0:
-        win.addTab(url="about:blank")
-
-    # Show window.
-    win.show()
+        # Show window.
+        win.show()
 
     # Start app.
     app.exec_()
