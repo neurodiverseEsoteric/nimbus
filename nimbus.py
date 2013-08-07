@@ -432,7 +432,7 @@ class WebView(QWebView):
     # Save current page.
     def savePage(self):
         content = self.page().mainFrame().toHtml()
-        if QUrl.fromUserInput(common.new_tab_page) == self.url() or self.url().toString() in ("about:blank", ""):
+        if QUrl.fromUserInput(common.new_tab_page) == self.url() or self.url().toString() in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),):
             fname = common.new_tab_page
             content = content.replace("&lt;", "<").replace("&gt;", ">").replace("<body contenteditable=\"true\">", "<body>")
         else:
@@ -841,7 +841,7 @@ self.origY + ev.globalY() - self.mouseY)
 
     def deblankAll(self):
         for index in range(0, self.tabs.count()):
-            if self.tabs.widget(index).url().toString() == "about:blank":
+            if self.tabs.widget(index).url().toString() in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),):
                 self.tabs.widget(index).back()
 
     # Navigation methods.
@@ -997,7 +997,7 @@ self.origY + ev.globalY() - self.mouseY)
             webview = self.closedTabs.pop()
             self.addTab(webview)
             try:
-                if webview.url().toString() == "about:blank":
+                if webview.url().toString() in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),):
                     webview.back()
             except: pass
 
@@ -1016,6 +1016,14 @@ def addWindow(url="about:blank"):
     win = MainWindow()
     win.addTab(url=url)
     win.show()
+
+# Reopen window method.
+def reopenWindow():
+    for window in common.windows[::-1]:
+        if not window.isVisible():
+            window.show()
+            window.deblankAll()
+            return
 
 # Preparations to quit.
 def prepareQuit():
@@ -1039,6 +1047,11 @@ class SystemTrayIcon(QSystemTrayIcon):
         newWindowAction = QAction(common.complete_icon("window-new"), "&New Window", self)
         newWindowAction.triggered.connect(addWindow)
         self.menu.addAction(newWindowAction)
+
+        # Reopen window action
+        reopenWindowAction = QAction(common.complete_icon("edit-undo"), "&Reopen Window", self)
+        reopenWindowAction.triggered.connect(reopenWindow)
+        self.menu.addAction(reopenWindowAction)
 
         # Quit action
         quitAction = QAction(common.complete_icon("application-exit"), "&Quit", self)
