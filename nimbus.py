@@ -760,7 +760,7 @@ class MainWindow(QMainWindow):
         mainMenu.addAction(aboutQtAction)
 
         aboutAction = QAction(common.complete_icon("help-about"), "A&bout Nimbus", self)
-        aboutAction.triggered.connect(lambda: QMessageBox.about(self, "Nimbus", "<h3>Nimbus</h3>Python/Qt4-based web browser."))
+        aboutAction.triggered.connect(lambda: QMessageBox.about(self, "Nimbus", "<h3>Nimbus</h3>Python/Qt 4-based web browser."))
         mainMenu.addAction(aboutAction)
 
         # Add main menu action/button.
