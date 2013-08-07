@@ -31,13 +31,13 @@ except:
 # Extremely specific imports from PySide.
 try:
     from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QFile, QIODevice, QTimer
-    from PySide.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial
+    from PySide.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PySide.QtNetwork import QNetworkProxy
     from PySide.QtWebKit import QWebView, QWebPage
     pyside = True
 except:
     from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
-    from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial
+    from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PyQt4.QtNetwork import QNetworkProxy
     from PyQt4.QtWebKit import QWebView, QWebPage
     Signal = pyqtSignal
@@ -75,10 +75,7 @@ class DownloadProgressBar(QProgressBar):
             data = self.networkReply.readAll()
             f = QFile(self.destination)
             f.open(QIODevice.WriteOnly)
-            if pyside:
-                f.writeData(str(data.data()), len(data.data()))
-            else:
-                f.writeData(data)
+            f.write(data)
             f.flush()
             f.close()
             self.progress = [0, 0]
@@ -771,6 +768,8 @@ class MainWindow(QMainWindow):
         # Ripped off of Ricotta.
         self.reloadExtensions()
 
+    # This is so you can grab the window by its toolbar and move it.
+    # It's an ugly hack, but it works.
     def mousePressEvent(self, ev):
         if ev.button() != Qt.LeftButton:
             return QMainWindow.mousePressEvent(self, ev)
@@ -888,10 +887,8 @@ self.origY + ev.globalY() - self.mouseY)
     def currentWidget(self):
         return self.tabs.currentWidget()
 
-    def addWindow(self):
-        win = MainWindow()
-        win.addTab(url="about:blank")
-        win.show()
+    def addWindow(self, url="about:blank"):
+        addWindow(url)
 
     def addTab(self, webView=None, **kwargs):
         # If a URL is specified, load it.
@@ -997,6 +994,40 @@ self.origY + ev.globalY() - self.mouseY)
         if url == currentUrl:
             self.locationBar.setEditText(currentUrl.toString())
 
+# Redundancy is redundant.
+def addWindow(url="about:blank"):
+    win = MainWindow()
+    win.addTab(url=url)
+    win.show()
+
+# Preparations to quit.
+def prepareQuit():
+    common.saveData()
+    common.adblock_filter_loader.quit()
+    common.adblock_filter_loader.wait()
+    server_thread.httpd.shutdown()
+    server_thread.quit()
+    server_thread.wait()
+
+# System tray icon.
+class SystemTrayIcon(QSystemTrayIcon):
+    def __init__(self, parent):
+        super(SystemTrayIcon, self).__init__(common.complete_icon("internet-web-browser"), parent)
+
+        # Set context menu.
+        self.menu = QMenu(None)
+        self.setContextMenu(self.menu)
+
+        # New window action
+        newWindowAction = QAction(common.complete_icon("window-new"), "&New Window", self)
+        newWindowAction.triggered.connect(addWindow)
+        self.menu.addAction(newWindowAction)
+
+        # Quit action
+        quitAction = QAction(common.complete_icon("application-exit"), "&Quit", self)
+        quitAction.triggered.connect(QCoreApplication.quit)
+        self.menu.addAction(quitAction)
+
 # DBus server.
 if has_dbus:
     class DBusServer(dbus.service.Object):
@@ -1006,9 +1037,7 @@ if has_dbus:
 
         @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
         def addWindow(self, url="about:blank"):
-            win = MainWindow()
-            win.addTab(url=url)
-            win.show()
+            addWindow(url)
             return url
 
         @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
@@ -1017,6 +1046,8 @@ if has_dbus:
                 if window.isVisible():
                     window.addTab(url=url)
                     return url
+            self.addWindow(url)
+            return url
 
 # Main function to load everything.
 def main():
@@ -1027,6 +1058,10 @@ def main():
 
     # Create app.
     app = QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
+
+    trayicon = SystemTrayIcon(QCoreApplication.instance())
+    trayicon.show()
 
     if has_dbus:
         bus = dbus.SessionBus()
@@ -1054,8 +1089,7 @@ def main():
     server_thread.start()
 
     # On quit, save settings.
-    app.aboutToQuit.connect(common.saveData)
-    app.aboutToQuit.connect(server_thread.quit)
+    app.aboutToQuit.connect(prepareQuit)
 
     # Load settings.
     common.loadData()

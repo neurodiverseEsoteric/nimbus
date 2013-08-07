@@ -24,7 +24,7 @@ class ExtensionServerThread(QThread):
         server_address = ('127.0.0.1', port)
 
         HandlerClass.protocol_version = Protocol
-        httpd = ServerClass(server_address, HandlerClass)
+        self.httpd = ServerClass(server_address, HandlerClass)
 
-        sa = httpd.socket.getsockname()
-        httpd.serve_forever()
+        sa = self.httpd.socket.getsockname()
+        self.httpd.serve_forever()
