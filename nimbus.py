@@ -1060,9 +1060,6 @@ def main():
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
 
-    trayicon = SystemTrayIcon(QCoreApplication.instance())
-    trayicon.show()
-
     if has_dbus:
         bus = dbus.SessionBus()
 
@@ -1077,6 +1074,9 @@ def main():
             if "." in arg or ":" in arg:
                 proxy.addTab(arg)
         return
+
+    trayicon = SystemTrayIcon(QCoreApplication.instance())
+    trayicon.show()
 
     # Create DBus server
     if has_dbus:
