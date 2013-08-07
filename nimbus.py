@@ -1039,6 +1039,9 @@ class SystemTrayIcon(QSystemTrayIcon):
     def __init__(self, parent):
         super(SystemTrayIcon, self).__init__(common.complete_icon("internet-web-browser"), parent)
 
+        # Set tooltip.
+        self.setToolTip("Nimbus")
+
         # Set context menu.
         self.menu = QMenu(None)
         self.setContextMenu(self.menu)
