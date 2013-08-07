@@ -569,7 +569,7 @@ class MainWindow(QMainWindow):
 
         # New private browsing tab action.
         newIncognitoTabAction = QAction(common.complete_icon("face-devilish"), "New &Incognito Tab", self)
-        newIncognitoTabAction.setShortcut("Ctrl+Shift+N")
+        newIncognitoTabAction.setShortcut("Ctrl+Shift+I")
         newIncognitoTabAction.triggered.connect(lambda: self.addTab(incognito=True))
 
         # This is used so that the new tab button looks halfway decent,
@@ -688,6 +688,13 @@ class MainWindow(QMainWindow):
         self.addAction(reopenTabAction)
         mainMenu.addAction(reopenTabAction)
 
+        # Add reopen window action.
+        reopenWindowAction = QAction(common.complete_icon("reopen-window"), "R&eopen Window", self)
+        reopenWindowAction.setShortcut("Ctrl+Shift+N")
+        reopenWindowAction.triggered.connect(reopenWindow)
+        self.addAction(reopenWindowAction)
+        mainMenu.addAction(reopenWindowAction)
+
         mainMenu.addSeparator()
 
         # Save page action.
@@ -787,6 +794,9 @@ self.origY + ev.globalY() - self.mouseY)
     # Blank all tabs when window is closed.
     def closeEvent(self, ev):
         self.blankAll()
+        if len(common.windows) > 10:
+            common.windows[0].deleteLater()
+            common.windows.pop(0)
 
     # Reload extensions.
     def reloadExtensions(self):
@@ -1052,7 +1062,7 @@ class SystemTrayIcon(QSystemTrayIcon):
         self.menu.addAction(newWindowAction)
 
         # Reopen window action
-        reopenWindowAction = QAction(common.complete_icon("edit-undo"), "&Reopen Window", self)
+        reopenWindowAction = QAction(common.complete_icon("reopen-window"), "&Reopen Window", self)
         reopenWindowAction.triggered.connect(reopenWindow)
         self.menu.addAction(reopenWindowAction)
 
