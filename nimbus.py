@@ -784,6 +784,10 @@ class MainWindow(QMainWindow):
             self.move(self.origX + ev.globalX() - self.mouseX,
 self.origY + ev.globalY() - self.mouseY)
 
+    # Blank all tabs when window is closed.
+    def closeEvent(self, ev):
+        self.blankAll()
+
     # Reload extensions.
     def reloadExtensions(self):
 
@@ -829,6 +833,16 @@ self.origY + ev.globalY() - self.mouseY)
             self.forwardAction.setEnabled(False)
             self.stopAction.setEnabled(False)
             self.reloadAction.setEnabled(False)
+
+    # Blank all tabs.
+    def blankAll(self):
+        for index in range(0, self.tabs.count()):
+            self.tabs.widget(index).load(QUrl("about:blank"))
+
+    def deblankAll(self):
+        for index in range(0, self.tabs.count()):
+            if self.tabs.widget(index).url().toString() == "about:blank":
+                self.tabs.widget(index).back()
 
     # Navigation methods.
     def back(self):
@@ -980,8 +994,11 @@ self.origY + ev.globalY() - self.mouseY)
 
     def reopenTab(self):
         if len(self.closedTabs) > 0:
-            self.addTab(self.closedTabs.pop())
-            try: self.tabs.widget(self.tabs.count() - 1).back()
+            webview = self.closedTabs.pop()
+            self.addTab(webview)
+            try:
+                if webview.url().toString() == "about:blank":
+                    webview.back()
             except: pass
 
     # This method is used to add a DownloadBar to the window.
