@@ -26,7 +26,7 @@ while (nimbussterms == "k") {
             }
         }
         if (kwfalse) {
-            window.location.href=nimbuskws['d '].replace("\%s", nimbussterms.replace('g ', ""));
+            window.location.href=nimbuskws['d '].replace("\%s", nimbussterms.replace('d ', ""));
         }
     }
 }
