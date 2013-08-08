@@ -142,12 +142,12 @@ class AdblockFilterLoader(QThread):
 adblock_filter_loader = AdblockFilterLoader()
 
 # Get an application icon.
-def app_icon(name):
+def icon(name):
     return os.path.join(app_icons_folder, name)
 
 # Returns a QIcon
 def complete_icon(name):
-    try: return QIcon().fromTheme(name, QIcon(app_icon(name + ".png")))
+    try: return QIcon().fromTheme(name, QIcon(icon(name + ".png")))
     except: return QIcon()
 
 # Global list to store history.

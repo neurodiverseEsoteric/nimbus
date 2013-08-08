@@ -109,7 +109,7 @@ class DownloadBar(QToolBar):
         self.progressBar.networkReply.finished.connect(self.deleteLater)
         self.addWidget(self.progressBar)
         label.setText(os.path.split(self.progressBar.destination)[1])
-        abortAction = QAction(QIcon().fromTheme("process-stop", QIcon(common.app_icon("process-stop.png"))), "Abort", self)
+        abortAction = QAction(QIcon().fromTheme("process-stop", QIcon(common.icon("process-stop.png"))), "Abort", self)
         abortAction.triggered.connect(self.progressBar.abort)
         abortAction.triggered.connect(self.deleteLater)
         self.addAction(abortAction)
@@ -524,9 +524,7 @@ class MainWindow(QMainWindow):
         common.windows.append(self)
 
         # Set window icon.
-        webBrowserIcon = common.complete_icon("internet-web-browser")
-        webBrowserIcon.addFile(common.app_icon("internet-web-browser.svg"))
-        self.setWindowIcon(webBrowserIcon)
+        self.setWindowIcon(common.app_icon)
 
         # List of closed tabs.
         self.closedTabs = []
@@ -1047,7 +1045,7 @@ def prepareQuit():
 # System tray icon.
 class SystemTrayIcon(QSystemTrayIcon):
     def __init__(self, parent):
-        super(SystemTrayIcon, self).__init__(common.complete_icon("internet-web-browser"), parent)
+        super(SystemTrayIcon, self).__init__(common.app_icon, parent)
 
         # Set tooltip.
         self.setToolTip("Nimbus")
@@ -1102,6 +1100,17 @@ def main():
     # Create app.
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
+
+    common.app_icon = common.complete_icon("nimbus")
+    common.app_icon.addFile(common.icon("nimbus-16.png"))
+    common.app_icon.addFile(common.icon("nimbus-22.png"))
+    common.app_icon.addFile(common.icon("nimbus-24.png"))
+    common.app_icon.addFile(common.icon("nimbus-32.png"))
+    common.app_icon.addFile(common.icon("nimbus-48.png"))
+    common.app_icon.addFile(common.icon("nimbus-64.png"))
+    common.app_icon.addFile(common.icon("nimbus-72.png"))
+    common.app_icon.addFile(common.icon("nimbus-128.png"))
+    common.app_icon.addFile(common.icon("nimbus-256.png"))
 
     if has_dbus:
         bus = dbus.SessionBus()

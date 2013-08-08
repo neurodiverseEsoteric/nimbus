@@ -10,11 +10,12 @@ nimbuskws['t '] = "http://thesaurus.com/browse/\%s";
 nimbuskws['b '] = "http://www.bing.com/search?q=\%s";
 nimbuskws['y '] = "http://search.yahoo.com/search?p=\%s";
 nimbuskws['da '] = "http://www.deviantart.com/?q=\%s";
+nimbuskws['oca '] = "http://openclipart.org/search/?query=\%s";
 var nimbussterms = "k";
 while (nimbussterms == "k") {
     nimbussterms = prompt('Search (enter k for keywords):',"");
     if (nimbussterms == "k") {
-        window.alert('Keywords:\nd: DuckDuckGo\nw: Wikipedia\nwk: Wiktionary\ng: Google Search\ni: Google Image Search\nm: Google Music Search\ntr: Google Translate\nt: Thesaurus.com\nb: Bing\ny: Yahoo\nda: deviantART');
+        window.alert('Keywords:\nd: DuckDuckGo\nw: Wikipedia\nwk: Wiktionary\ng: Google Search\ni: Google Image Search\nm: Google Music Search\ntr: Google Translate\nt: Thesaurus.com\nb: Bing\ny: Yahoo\nda: deviantART\noca: Openclipart');
     }
     else {
         var kwfalse = true;
