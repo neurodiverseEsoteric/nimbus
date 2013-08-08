@@ -805,7 +805,10 @@ self.origY + ev.globalY() - self.mouseY)
     def reloadExtensions(self):
 
         # Hide extensions toolbar if there aren't any extensions.
-        if len(common.settings.value("extensions/Whitelist")) == 0:
+        if common.settings.value("extensions/Whitelist") == None:
+            self.extensionBar.hide()
+            return
+        elif len(common.settings.value("extensions/Whitelist")) == 0:
             self.extensionBar.hide()
             return
 
