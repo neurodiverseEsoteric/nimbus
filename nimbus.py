@@ -1125,6 +1125,7 @@ def main():
     common.app_icon.addFile(common.icon("nimbus-48.png"))
     common.app_icon.addFile(common.icon("nimbus-64.png"))
     common.app_icon.addFile(common.icon("nimbus-72.png"))
+    common.app_icon.addFile(common.icon("nimbus-80.png"))
     common.app_icon.addFile(common.icon("nimbus-128.png"))
     common.app_icon.addFile(common.icon("nimbus-256.png"))
 
