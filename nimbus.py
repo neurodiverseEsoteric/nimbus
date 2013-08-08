@@ -1053,10 +1053,10 @@ def addWindow(url=None):
 def reopenWindow():
     for window in common.windows[::-1]:
         if not window.isVisible():
-            window.show()
-            window.deblankAll()
             if window.tabs.count() == 0:
                 window.reopenTab()
+            window.show()
+            window.deblankAll()
             return
 
 # Preparations to quit.
