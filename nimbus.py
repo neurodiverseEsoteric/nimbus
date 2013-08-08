@@ -547,7 +547,7 @@ class MainWindow(QMainWindow):
         self.tabs.currentChanged.connect(self.updateTabIcons)
 
         # Hacky way of updating the location bar text when the tab is changed.
-        self.tabs.currentChanged.connect(lambda: self.updateLocationText(self.tabs.currentWidget().url()))
+        self.tabs.currentChanged.connect(self.updateLocationText)
 
         # Allow closing of tabs.
         self.tabs.setTabsClosable(True)
@@ -627,6 +627,11 @@ class MainWindow(QMainWindow):
         self.reloadAction.setShortcuts(["F5", "Ctrl+R"])
         self.reloadAction.triggered.connect(self.reload)
         self.toolBar.addAction(self.reloadAction)
+
+        self.homeAction = QAction(common.complete_icon("go-home"), "Go Home", self)
+        self.homeAction.setShortcut("Alt+Home")
+        self.homeAction.triggered.connect(self.goHome)
+        self.toolBar.addAction(self.homeAction)
 
         # Start timer.
         self.toggleActionsTimer.start(8)
@@ -773,6 +778,9 @@ class MainWindow(QMainWindow):
         # Ripped off of Ricotta.
         self.reloadExtensions()
 
+        if self.tabs.count() < 1:
+            self.addTab(url=common.settings.value("general/Homepage"))
+
     # This is so you can grab the window by its toolbar and move it.
     # It's an ugly hack, but it works.
     def mousePressEvent(self, ev):
@@ -865,6 +873,9 @@ self.origY + ev.globalY() - self.mouseY)
     def stop(self):
         self.tabs.currentWidget().stop()
         self.locationBar.setEditText(self.tabs.currentWidget().url().toString())
+
+    def goHome(self):
+        self.tabs.currentWidget().load(QUrl.fromUserInput(common.settings.value("general/Homepage")))
 
     # Find text/Text search methods.
     def find(self):
@@ -1014,10 +1025,15 @@ self.origY + ev.globalY() - self.mouseY)
         self.statusBar.addToolBar(toolbar)
 
     # Method to update the location bar text.
-    def updateLocationText(self, url):
-        currentUrl = self.tabs.currentWidget().url()
-        if url == currentUrl:
-            self.locationBar.setEditText(currentUrl.toString())
+    def updateLocationText(self, url=None):
+        try:
+            if url == None:
+                url = self.tabs.currentWidget().url()
+            currentUrl = self.tabs.currentWidget().url()
+            if url == currentUrl:
+                self.locationBar.setEditText(currentUrl.toString())
+        except:
+            pass
 
 # Redundancy is redundant.
 def addWindow(url="about:blank"):
@@ -1159,12 +1175,6 @@ def main():
             for arg in sys.argv[1:]:
                 if "." in arg or ":" in arg:
                     win.addTab(url=arg)
-
-        # If there aren't any tabs, open homepages.
-        if win.tabs.count() == 0:
-            win.addTab(url=common.settings.value("general/Homepage"))
-        if win.tabs.count() == 0:
-            win.addTab(url="about:blank")
 
         # Show window.
         win.show()
