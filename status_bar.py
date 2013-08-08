@@ -2,14 +2,14 @@
 
 # This is a browser status bar class.
 
-import common
+from common import blank_toolbar
 import custom_widgets
 try:
     from PySide.QtCore import Qt
-    from PySide.QtGui import QToolBar, QFrame, QMainWindow, QLineEdit, QProgressBar
+    from PySide.QtGui import QToolBar, QStatusBar, QFrame, QMainWindow, QLineEdit, QProgressBar, QSizeGrip
 except:
     from PyQt4.QtCore import Qt
-    from PyQt4.QtGui import QToolBar, QFrame, QMainWindow, QLineEdit, QProgressBar
+    from PyQt4.QtGui import QToolBar, QStatusBar, QFrame, QMainWindow, QLineEdit, QProgressBar, QSizeGrip
 
 class StatusBar(QToolBar):
     def __init__(self, parent=None):
@@ -20,18 +20,13 @@ class StatusBar(QToolBar):
         self.addWidget(self.fullStatusBar)
         self.downloadsBar = QMainWindow(self)
         self.fullStatusBar.addWidget(self.downloadsBar)
-        statusBar = custom_widgets.Row(self)
-        self.fullStatusBar.addWidget(statusBar)
-        self.setStyleSheet(common.blank_toolbar.replace("}", " border-top: 1px solid palette(dark); }") + " QMainWindow { background: transparent; border: 0; }")
-        self.display = QLineEdit(self)
-        self.display.setReadOnly(True)
-        self.display.setFocusPolicy(Qt.NoFocus)
-        self.display.setStyleSheet("QLineEdit { min-height: 1em; max-height: 1em; border: 0; background: transparent; }")
-        statusBar.addWidget(self.display)
-        self.progressBar = QProgressBar(self)
+        self.statusBar = QStatusBar(self)
+        self.fullStatusBar.addWidget(self.statusBar)
+        self.setStyleSheet(blank_toolbar + " QMainWindow { background: transparent; border: 0; }")
+        self.progressBar = QProgressBar(self.statusBar)
         self.progressBar.hide()
         self.progressBar.setStyleSheet("min-height: 1em; max-height: 1em; min-width: 200px; max-width: 200px;")
-        statusBar.addWidget(self.progressBar)
+        self.statusBar.addWidget(self.progressBar)
     def setValue(self, value=0):
         if value in (0, 100):
             self.progressBar.hide()
@@ -39,8 +34,8 @@ class StatusBar(QToolBar):
             self.progressBar.show()
         self.progressBar.setValue(value)
     def statusBarMessage(self):
-        return self.display.text()
+        return self.statusBar.currentMessage()
     def setStatusBarMessage(self, text=""):
-        self.display.setText(text)
+        self.statusBar.showMessage(text)
     def addToolBar(self, toolbar):
         self.downloadsBar.addToolBar(toolbar)
