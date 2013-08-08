@@ -778,9 +778,6 @@ class MainWindow(QMainWindow):
         # Ripped off of Ricotta.
         self.reloadExtensions()
 
-        if self.tabs.count() < 1:
-            self.addTab(url=common.settings.value("general/Homepage"))
-
     # This is so you can grab the window by its toolbar and move it.
     # It's an ugly hack, but it works.
     def mousePressEvent(self, ev):
@@ -920,7 +917,7 @@ self.origY + ev.globalY() - self.mouseY)
     def currentWidget(self):
         return self.tabs.currentWidget()
 
-    def addWindow(self, url="about:blank"):
+    def addWindow(self, url=None):
         addWindow(url)
 
     def addTab(self, webView=None, **kwargs):
@@ -1036,9 +1033,12 @@ self.origY + ev.globalY() - self.mouseY)
             pass
 
 # Redundancy is redundant.
-def addWindow(url="about:blank"):
+def addWindow(url=None):
     win = MainWindow()
-    win.addTab(url=url)
+    if url == None:
+        win.addTab(url=common.settings.value("general/Homepage"))
+    else:
+        win.addTab(url=url)
     win.show()
 
 # Reopen window method.
@@ -1093,7 +1093,7 @@ if has_dbus:
             dbus.service.Object.__init__(self, busName, "/Nimbus")
 
         @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
-        def addWindow(self, url="about:blank"):
+        def addWindow(self, url=None):
             addWindow(url)
             return url
 
@@ -1176,6 +1176,9 @@ def main():
             for arg in sys.argv[1:]:
                 if "." in arg or ":" in arg:
                     win.addTab(url=arg)
+
+        if win.tabs.count() < 1:
+            win.addTab(url=common.settings.value("general/Homepage"))
 
         # Show window.
         win.show()
