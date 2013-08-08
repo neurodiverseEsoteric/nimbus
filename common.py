@@ -318,7 +318,10 @@ extensions_blacklist = []
 # Reloads extension blacklist.
 def reload_extensions_blacklist():
     global extensions_blacklist
-    extensions_blacklist = [extension for extension in extensions if extension not in settings.value("extensions/whitelist")]
+    if settings.value("extensions/whitelist") != None:
+        extensions_blacklist = [extension for extension in extensions if extension not in settings.value("extensions/whitelist")]
+    else:
+        extensions_blacklist = [extension for extension in extensions]
 
 # Clear extensions.
 def reset_extensions():

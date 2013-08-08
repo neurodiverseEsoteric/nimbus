@@ -245,8 +245,11 @@ class ExtensionsSettingsPanel(SettingsPanel):
         common.reload_extensions()
         common.reload_extensions_blacklist()
         self.whitelist.clear()
-        for extension in common.settings.value("extensions/Whitelist"):
-            self.whitelist.addItem(extension)
+        if common.settings.value("extensions/Whitelist") == None:
+            pass
+        else:
+            for extension in common.settings.value("extensions/Whitelist"):
+                self.whitelist.addItem(extension)
         self.blacklist.clear()
         for extension in common.extensions_blacklist:
             self.blacklist.addItem(extension)
