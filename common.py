@@ -14,6 +14,11 @@ except:
     from PyQt4.QtGui import QIcon, QInputDialog, QLineEdit
     from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
 
+# WIDGET RELATED #
+
+# This is a global store for the settings dialog.
+settingsDialog = None
+
 #####################
 # DIRECTORY-RELATED #
 #####################
@@ -51,6 +56,7 @@ default_settings = {"proxy/Type": "None",
                     "general/Homepage": "https://github.com/foxhead128/nimbus",
                     "general/Search": "https://duckduckgo.com/?q=%s",
                     "general/CloseWindowWithLastTab": True,
+                    "general/OpenSettingsInTab": True,
                     "extensions/Whitelist": []}
 default_port = default_settings["proxy/Port"]
 
@@ -299,6 +305,26 @@ windows = []
 extensions_folder = os.path.join(app_folder, "extensions")
 extensions = []
 
+# Stores all extension buttons.
+extension_buttons = []
+
+# List of extensions to load.
+extensions_whitelist = []
+
+# List of extensions not to load.
+extensions_blacklist = []
+
+# Reloads extension blacklist.
+def reload_extensions2():
+    global extensions_blacklist
+    global extensions_whitelist
+    try:
+        extensions_blacklist = [extension for extension in extensions if extension not in json.loads(settings.value("extensions/whitelist"))]
+        extensions_whitelist = [extension for extension in extensions if extension in json.loads(settings.value("extensions/whitelist"))]
+    except:
+        extensions_blacklist = [extension for extension in extensions]
+        extensions_whitelist = []
+
 # Reloads extensions.
 def reload_extensions():
     global extensions
@@ -306,22 +332,9 @@ def reload_extensions():
         extensions = sorted(os.listdir(extensions_folder))
     else:
         extensions = []
+    reload_extensions2()
 
 reload_extensions()
-
-# Stores all extension buttons.
-extension_buttons = []
-
-# List of extensions not to load.
-extensions_blacklist = []
-
-# Reloads extension blacklist.
-def reload_extensions_blacklist():
-    global extensions_blacklist
-    if settings.value("extensions/whitelist") != None:
-        extensions_blacklist = [extension for extension in extensions if extension not in settings.value("extensions/whitelist")]
-    else:
-        extensions_blacklist = [extension for extension in extensions]
 
 # Clear extensions.
 def reset_extensions():
@@ -330,6 +343,3 @@ def reset_extensions():
         extension.deleteLater()
     while len(extension_buttons) > 0:
         extension_buttons.pop()
-
-# Reload extension blacklist.
-reload_extensions_blacklist()

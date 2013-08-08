@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import json
 import common
 import custom_widgets
 try:
@@ -37,8 +38,12 @@ class GeneralSettingsPanel(SettingsPanel):
         self.searchEntry = searchRow.lineEdit
         self.layout().addWidget(searchRow)
 
+        # Checkbox to toggle closing of window with last tab.
         self.closeWindowToggle = QCheckBox("Close &window with last tab", self)
         self.layout().addWidget(self.closeWindowToggle)
+
+        self.settingsTabToggle = QCheckBox("Open &settings in tab")
+        self.layout().addWidget(self.settingsTabToggle)
 
         self.layout().addWidget(custom_widgets.Expander(self))
 
@@ -46,11 +51,13 @@ class GeneralSettingsPanel(SettingsPanel):
         self.homepageEntry.setText(str(common.settings.value("general/Homepage")))
         self.searchEntry.setText(str(common.settings.value("general/Search")))
         self.closeWindowToggle.setChecked(common.setting_to_bool("general/CloseWindowWithLastTab"))
+        self.settingsTabToggle.setChecked(common.setting_to_bool("general/OpenSettingsInTab"))
 
     def saveSettings(self):
         common.settings.setValue("general/Homepage", self.homepageEntry.text())
         common.settings.setValue("general/Search", self.searchEntry.text())
         common.settings.setValue("general/CloseWindowWithLastTab", self.closeWindowToggle.isChecked())
+        common.settings.setValue("general/OpenSettingsInTab", self.settingsTabToggle.isChecked())
         common.settings.sync()
 
 # Content settings panel
@@ -243,20 +250,16 @@ class ExtensionsSettingsPanel(SettingsPanel):
 
     def loadSettings(self):
         common.reload_extensions()
-        common.reload_extensions_blacklist()
         self.whitelist.clear()
-        if common.settings.value("extensions/Whitelist") == None:
-            pass
-        else:
-            for extension in common.settings.value("extensions/Whitelist"):
-                self.whitelist.addItem(extension)
+        for extension in common.extensions_whitelist:
+            self.whitelist.addItem(extension)
         self.blacklist.clear()
         for extension in common.extensions_blacklist:
             self.blacklist.addItem(extension)
 
     def saveSettings(self):
-        common.settings.setValue("extensions/Whitelist", [self.whitelist.item(extension).text() for extension in range(0, self.whitelist.count())])
-        common.reload_extensions_blacklist()
+        common.settings.setValue("extensions/Whitelist", json.dumps([self.whitelist.item(extension).text() for extension in range(0, self.whitelist.count())]))
+        common.reload_extensions()
         common.settings.sync()
 
 # Main settings dialog

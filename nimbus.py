@@ -16,9 +16,6 @@ import status_bar
 import extension_server
 import settings_dialog
 
-# To avoid warnings, we create this.
-pdialog = None
-
 # Python DBus
 has_dbus = True
 try:
@@ -752,7 +749,7 @@ class MainWindow(QMainWindow):
         # Add settings dialog action.
         settingsAction = QAction(common.complete_icon("preferences-system"), "&Settings...", self)
         settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
-        settingsAction.triggered.connect(lambda: self.addTab(url="nimbus://settings"))
+        settingsAction.triggered.connect(self.openSettings)
         settingsAction.triggered.connect(lambda: self.tabs.setCurrentIndex(self.tabs.count()-1))
         mainMenu.addAction(settingsAction)
 
@@ -801,14 +798,22 @@ self.origY + ev.globalY() - self.mouseY)
             common.windows[0].deleteLater()
             common.windows.pop(0)
 
+    # Open settings dialog.
+    def openSettings(self):
+        if common.setting_to_bool("general/OpenSettingsInTab"):
+            self.addTab(url="nimbus://settings")
+        else:
+            common.settingsDialog.reload()
+            common.settingsDialog.show()
+
     # Reload extensions.
     def reloadExtensions(self):
 
         # Hide extensions toolbar if there aren't any extensions.
-        if common.settings.value("extensions/Whitelist") == None:
+        if common.extensions_whitelist == None:
             self.extensionBar.hide()
             return
-        elif len(common.settings.value("extensions/Whitelist")) == 0:
+        elif len(common.extensions_whitelist) == 0:
             self.extensionBar.hide()
             return
 
@@ -1050,6 +1055,8 @@ def reopenWindow():
         if not window.isVisible():
             window.show()
             window.deblankAll()
+            if window.tabs.count() == 0:
+                window.reopenTab()
             return
 
 # Preparations to quit.
@@ -1153,6 +1160,10 @@ def main():
     # Create instance of clear history dialog.
     global chistorydialog
     chistorydialog = clear_history_dialog.ClearHistoryDialog()
+
+    # Set up settings dialog.
+    common.settingsDialog = WebView(incognito=True, parent=None)
+    common.settingsDialog.load(QUrl("nimbus://settings"))
 
     # Create DBus server
     if has_dbus:
