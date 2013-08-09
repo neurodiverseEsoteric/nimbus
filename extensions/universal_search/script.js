@@ -10,12 +10,14 @@ nimbuskws['t '] = "http://thesaurus.com/browse/\%s";
 nimbuskws['b '] = "http://www.bing.com/search?q=\%s";
 nimbuskws['y '] = "http://search.yahoo.com/search?p=\%s";
 nimbuskws['da '] = "http://www.deviantart.com/?q=\%s";
+nimbuskws['azl '] = "http://search.azlyrics.com/search.php?q=\%s";
+nimbuskws['mtl '] = "http://www.metrolyrics.com/search?search=\%s";
 nimbuskws['oca '] = "http://openclipart.org/search/?query=\%s";
 var nimbussterms = "k";
 while (nimbussterms == "k") {
     nimbussterms = prompt('Search (enter k for keywords):',"");
     if (nimbussterms == "k") {
-        window.alert('Keywords:\nd: DuckDuckGo\nw: Wikipedia\nwk: Wiktionary\ng: Google Search\ni: Google Image Search\nm: Google Music Search\ntr: Google Translate\nt: Thesaurus.com\nb: Bing\ny: Yahoo\nda: deviantART\noca: Openclipart');
+        window.alert('Keywords:\nd: DuckDuckGo\nw: Wikipedia\nwk: Wiktionary\ng: Google Search\ni: Google Image Search\nm: Google Music Search\ntr: Google Translate\nt: Thesaurus.com\nb: Bing\ny: Yahoo\nda: deviantART\nazl: A-Z Lyrics\nmtl: MetroLyrics\noca: Openclipart');
     }
     else {
         var kwfalse = true;
