@@ -796,7 +796,7 @@ self.origY + ev.globalY() - self.mouseY)
     # Blank all tabs when window is closed.
     def closeEvent(self, ev):
         self.blankAll()
-        while len(common.windows) > common.setting_to_int("general/ReopenableWindowCount"):
+        if len(common.windows) > common.setting_to_int("general/ReopenableWindowCount"):
             common.windows[0].deleteLater()
             common.windows.pop(0)
 
@@ -1058,6 +1058,7 @@ def reopenWindow():
             if window.tabs.count() == 0:
                 window.reopenTab()
             window.show()
+            common.windows.append(common.windows.pop(common.windows.index(window)))
             window.deblankAll()
             return
 
