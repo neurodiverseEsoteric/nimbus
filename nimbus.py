@@ -1046,7 +1046,7 @@ self.origY + ev.globalY() - self.mouseY)
     # Method to update the location bar text.
     def updateLocationText(self, url=None):
         try:
-            if url == None:
+            if type(url) != QUrl:
                 url = self.tabs.currentWidget().url()
             currentUrl = self.tabs.currentWidget().url()
             if url == currentUrl:
