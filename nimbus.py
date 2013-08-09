@@ -651,6 +651,9 @@ class MainWindow(QMainWindow):
         self.locationBar.lineEdit().returnPressed.connect(lambda: self.load(self.locationBar.lineEdit().text()))
         self.locationBar.view().activated.connect(lambda index: self.load(index.data()))
 
+        self.locationBar.setStyleSheet("""QComboBox {
+min-width: 6em;
+}""")
         self.toolBar.addWidget(self.locationBar)
 
         # Ctrl+L/Alt+D focuses the location bar.
