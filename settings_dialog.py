@@ -45,6 +45,16 @@ class GeneralSettingsPanel(SettingsPanel):
         self.settingsTabToggle = QCheckBox("Open &settings in tab")
         self.layout().addWidget(self.settingsTabToggle)
 
+        self.reopenableTabCountRow = custom_widgets.LineEditRow("Number of reopenable tabs:", self)
+        self.reopenableTabCount = self.reopenableTabCountRow.lineEdit
+        self.reopenableTabCount.setInputMask("99999")
+        self.layout().addWidget(self.reopenableTabCountRow)
+
+        self.reopenableWindowCountRow = custom_widgets.LineEditRow("Number of reopenable windows:", self)
+        self.reopenableWindowCount = self.reopenableWindowCountRow.lineEdit
+        self.reopenableWindowCount.setInputMask("99999")
+        self.layout().addWidget(self.reopenableWindowCountRow)
+
         self.layout().addWidget(custom_widgets.Expander(self))
 
     def loadSettings(self):
@@ -52,12 +62,16 @@ class GeneralSettingsPanel(SettingsPanel):
         self.searchEntry.setText(str(common.settings.value("general/Search")))
         self.closeWindowToggle.setChecked(common.setting_to_bool("general/CloseWindowWithLastTab"))
         self.settingsTabToggle.setChecked(common.setting_to_bool("general/OpenSettingsInTab"))
+        self.reopenableTabCount.setText(common.settings.value("general/ReopenableTabCount"))
+        self.reopenableWindowCount.setText(common.settings.value("general/ReopenableWindowCount"))
 
     def saveSettings(self):
         common.settings.setValue("general/Homepage", self.homepageEntry.text())
         common.settings.setValue("general/Search", self.searchEntry.text())
         common.settings.setValue("general/CloseWindowWithLastTab", self.closeWindowToggle.isChecked())
         common.settings.setValue("general/OpenSettingsInTab", self.settingsTabToggle.isChecked())
+        common.settings.setValue("general/ReopenableWindowCount", self.reopenableWindowCount.text())
+        common.settings.setValue("general/ReopenableTabCount", self.reopenableTabCount.text())
         common.settings.sync()
 
 # Content settings panel

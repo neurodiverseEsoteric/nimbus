@@ -57,7 +57,9 @@ default_settings = {"proxy/Type": "None",
                     "general/Search": "https://duckduckgo.com/?q=%s",
                     "general/CloseWindowWithLastTab": True,
                     "general/OpenSettingsInTab": True,
-                    "extensions/Whitelist": []}
+                    "extensions/Whitelist": [],
+                    "general/ReopenableTabCount": 10,
+                    "general/ReopenableWindowCount": 10}
 default_port = default_settings["proxy/Port"]
 
 # Set up default values.
@@ -69,6 +71,10 @@ settings.sync()
 
 def setting_to_bool(value=""):
     return bool(eval(str(settings.value(value)).title()))
+
+def setting_to_int(value=""):
+    try: return int(settings.value(value))
+    except: return 0
 
 # This is a global variable that gets the settings folder on any platform.
 settings_folder = os.path.dirname(settings.fileName())

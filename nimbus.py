@@ -249,7 +249,6 @@ class WebView(QWebView):
 
         # Connect signals.
         self.titleChanged.connect(self.setWindowTitle)
-        self.iconChanged.connect(self.setWindowIcon)
         self.page().linkHovered.connect(self.setStatusBarMessage)
         self.statusBarMessage.connect(self.setStatusBarMessage)
         self.loadProgress.connect(self.setLoadProgress)
@@ -797,7 +796,7 @@ self.origY + ev.globalY() - self.mouseY)
     # Blank all tabs when window is closed.
     def closeEvent(self, ev):
         self.blankAll()
-        if len(common.windows) > 10:
+        if len(common.windows) > common.setting_to_int("general/ReopenableWindowCount"):
             common.windows[0].deleteLater()
             common.windows.pop(0)
 
@@ -1000,7 +999,7 @@ self.origY + ev.globalY() - self.mouseY)
             webView = self.tabs.widget(index)
             if webView.history().canGoBack() or webView.history().canGoForward() or webView.url().toString() not in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),):
                 self.closedTabs.append(webView)
-                if len(self.closedTabs) > 10:
+                while len(self.closedTabs) > common.setting_to_int("general/ReopenableTabCount"):
                     self.closedTabs[0].deleteLater()
                     try: common.webviews.remove(webView)
                     except: pass
