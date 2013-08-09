@@ -276,6 +276,7 @@ class WebView(QWebView):
         else:
             return QWebView.mousePressEvent(self, ev)
 
+    # This loads a page from the cache if certain network errors occur.
     def requestFinished(self, reply):
         if reply.error() in (3,4,104,) and not self._cacheLoaded:
             self._cacheLoaded = True
