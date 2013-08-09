@@ -429,7 +429,7 @@ class WebView(QWebView):
     # Save current page.
     def savePage(self):
         content = self.page().mainFrame().toHtml()
-        if QUrl.fromUserInput(common.new_tab_page) == self.url() or self.url().toString() in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),):
+        if self.url().toString() in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),) and not self._cacheLoaded:
             fname = common.new_tab_page
             content = content.replace("&lt;", "<").replace("&gt;", ">").replace("<body contenteditable=\"true\">", "<body>")
         else:
