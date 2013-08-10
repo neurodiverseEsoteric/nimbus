@@ -1067,11 +1067,11 @@ def addWindow(url=None):
 def reopenWindow():
     for window in common.windows[::-1]:
         if not window.isVisible():
+            common.windows.append(common.windows.pop(common.windows.index(window)))
+            window.deblankAll()
             if window.tabs.count() == 0:
                 window.reopenTab()
             window.show()
-            common.windows.append(common.windows.pop(common.windows.index(window)))
-            window.deblankAll()
             return
 
 # Preparations to quit.
