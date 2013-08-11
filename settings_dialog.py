@@ -3,6 +3,7 @@
 import json
 import common
 import custom_widgets
+from translate import tr
 try:
     from PySide.QtCore import Qt, QUrl
     from PySide.QtGui import QWidget, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
@@ -29,28 +30,28 @@ class GeneralSettingsPanel(SettingsPanel):
         super(GeneralSettingsPanel, self).__init__(parent)
 
         # Homepage row.
-        homepageRow = custom_widgets.LineEditRow("Homepage:", self)
+        homepageRow = custom_widgets.LineEditRow(tr("Homepage:"), self)
         self.homepageEntry = homepageRow.lineEdit
         self.layout().addWidget(homepageRow)
 
         # Default search.
-        searchRow = custom_widgets.LineEditRow("Search expression:", self)
+        searchRow = custom_widgets.LineEditRow(tr("Search expression:"), self)
         self.searchEntry = searchRow.lineEdit
         self.layout().addWidget(searchRow)
 
         # Checkbox to toggle closing of window with last tab.
-        self.closeWindowToggle = QCheckBox("Close &window with last tab", self)
+        self.closeWindowToggle = QCheckBox(tr("Close &window with last tab"), self)
         self.layout().addWidget(self.closeWindowToggle)
 
-        self.settingsTabToggle = QCheckBox("Open &settings in tab")
+        self.settingsTabToggle = QCheckBox(tr("Open &settings in tab"))
         self.layout().addWidget(self.settingsTabToggle)
 
-        self.reopenableTabCountRow = custom_widgets.SpinBoxRow("Number of reopenable tabs:", self)
+        self.reopenableTabCountRow = custom_widgets.SpinBoxRow(tr("Number of reopenable tabs:"), self)
         self.reopenableTabCount = self.reopenableTabCountRow.spinBox
         self.reopenableTabCount.setMaximum(9999)
         self.layout().addWidget(self.reopenableTabCountRow)
 
-        self.reopenableWindowCountRow = custom_widgets.SpinBoxRow("Number of reopenable windows:", self)
+        self.reopenableWindowCountRow = custom_widgets.SpinBoxRow(tr("Number of reopenable windows:"), self)
         self.reopenableWindowCount = self.reopenableWindowCountRow.spinBox
         self.reopenableWindowCount.setMaximum(9999)
         self.layout().addWidget(self.reopenableWindowCountRow)
@@ -80,46 +81,46 @@ class ContentSettingsPanel(SettingsPanel):
         super(ContentSettingsPanel, self).__init__(parent)
 
         # Checkbox to toggle auto loading of images.
-        self.imagesToggle = QCheckBox("Automatically load &images", self)
+        self.imagesToggle = QCheckBox(tr("Automatically load &images"), self)
         self.layout().addWidget(self.imagesToggle)
 
         # Checkbox to toggle element backgrounds.
-        self.elementBackgroundsToggle = QCheckBox("Print e&lement backgrounds", self)
+        self.elementBackgroundsToggle = QCheckBox(tr("Print e&lement backgrounds"), self)
         self.layout().addWidget(self.elementBackgroundsToggle)
 
         # Checkbox to toggle Javascript.
-        self.javascriptToggle = QCheckBox("Enable Java&Script", self)
+        self.javascriptToggle = QCheckBox(tr("Enable Java&Script"), self)
         self.layout().addWidget(self.javascriptToggle)
 
         # Checkbox to toggle Java.
-        self.javaToggle = QCheckBox("Enable &Java", self)
+        self.javaToggle = QCheckBox(tr("Enable &Java"), self)
         self.layout().addWidget(self.javaToggle)
 
         # Checkbox to toggle plugins.
-        self.pluginsToggle = QCheckBox("Enable &plugins", self)
+        self.pluginsToggle = QCheckBox(tr("Enable &plugins"), self)
         self.layout().addWidget(self.pluginsToggle)
 
         # Checkbox to toggle handling of HTML5 audio and video using plugins.
-        self.mediaToggle = QCheckBox("Use plugins to handle &HTML5 audio and video", self)
+        self.mediaToggle = QCheckBox(tr("Use plugins to handle &HTML5 audio and video"), self)
         self.layout().addWidget(self.mediaToggle)
 
         # Checkbox to toggle ad blocking.
-        self.adblockToggle = QCheckBox("Enable ad &blocking", self)
+        self.adblockToggle = QCheckBox(tr("Enable ad &blocking"), self)
         self.layout().addWidget(self.adblockToggle)
 
         # Checkbox to toggle using online content viewers.
-        self.contentViewersToggle = QCheckBox("Use online content &viewers to load unsupported content", self)
+        self.contentViewersToggle = QCheckBox(tr("Use online content &viewers to load unsupported content"), self)
         self.layout().addWidget(self.contentViewersToggle)
 
         # Checkbox to toggle tiled backing.
-        self.tiledBackingStoreToggle = QCheckBox("Enable tiled backing store", self)
+        self.tiledBackingStoreToggle = QCheckBox(tr("Enable tiled backing store"), self)
         self.layout().addWidget(self.tiledBackingStoreToggle)
 
-        self.frameFlattenToggle = QCheckBox("Expand subframes to fit contents", self)
+        self.frameFlattenToggle = QCheckBox(tr("Expand subframes to fit contents"), self)
         self.layout().addWidget(self.frameFlattenToggle)
 
         # Checkbox to toggle site specific quirks.
-        self.siteSpecificQuirksToggle = QCheckBox("Enable site specific &quirks", self)
+        self.siteSpecificQuirksToggle = QCheckBox(tr("Enable site specific &quirks"), self)
         self.layout().addWidget(self.siteSpecificQuirksToggle)
 
         self.layout().addWidget(custom_widgets.Expander(self))
@@ -158,15 +159,15 @@ class NetworkSettingsPanel(SettingsPanel):
         super(NetworkSettingsPanel, self).__init__(parent)
 
         # Checkbox to toggle DNS prefetching.
-        self.dnsPrefetchingToggle = QCheckBox("Enable DNS &prefetching")
+        self.dnsPrefetchingToggle = QCheckBox(tr("Enable DNS &prefetching"))
         self.layout().addWidget(self.dnsPrefetchingToggle)
 
         # Checkbox to toggle XSS auditing.
-        self.xssAuditingToggle = QCheckBox("Enable &XSS auditing")
+        self.xssAuditingToggle = QCheckBox(tr("Enable &XSS auditing"))
         self.layout().addWidget(self.xssAuditingToggle)
 
         # Proxy label.
-        proxyLabel = QLabel("<b>Proxy configuration</b>")
+        proxyLabel = QLabel(tr("<b>Proxy configuration</b>"))
         self.layout().addWidget(proxyLabel)
 
         # Type row.
@@ -174,7 +175,7 @@ class NetworkSettingsPanel(SettingsPanel):
         self.layout().addWidget(typeRow)
 
         # Create a nice label.
-        typeLabel = QLabel("Type:", self)
+        typeLabel = QLabel(tr("Type:"), self)
         typeRow.addWidget(typeLabel)
 
         # Combo box to select proxy type.
@@ -190,25 +191,26 @@ class NetworkSettingsPanel(SettingsPanel):
         self.layout().addWidget(self.hostNamePortRow)
 
         # Hostname row.
-        self.hostNameRow = custom_widgets.LineEditRow("Hostname:", self)
+        self.hostNameRow = custom_widgets.LineEditRow(tr("Hostname:"), self)
         self.hostNameEntry = self.hostNameRow.lineEdit
         self.hostNamePortRow.addWidget(self.hostNameRow)
 
         # Port row.
-        self.portRow = custom_widgets.SpinBoxRow("Port:", self)
+        self.portRow = custom_widgets.SpinBoxRow(tr("Port:"), self)
         self.portRow.expander.hide()
         self.portEntry = self.portRow.spinBox
         self.portEntry.setMaximum(99999)
         self.hostNamePortRow.addWidget(self.portRow)
 
         # User row.
-        self.userRow = custom_widgets.LineEditRow("User:", self)
+        self.userRow = custom_widgets.LineEditRow(tr("User:"), self)
         self.userEntry = self.userRow.lineEdit
         self.layout().addWidget(self.userRow)
 
         # Password row.
-        self.passwordRow = custom_widgets.LineEditRow("Password:", self)
+        self.passwordRow = custom_widgets.LineEditRow(tr("Password:"), self)
         self.passwordEntry = self.passwordRow.lineEdit
+        self.passwordEntry.setEchoMode(QLineEdit.Password)
         self.layout().addWidget(self.passwordRow)
 
         # Add an expander.
@@ -255,7 +257,7 @@ class ExtensionsSettingsPanel(SettingsPanel):
         # Extensions whitelist.
         whitelistColumn = custom_widgets.Column(self)
         listRow.addWidget(whitelistColumn)
-        whitelistColumn.addWidget(QLabel("Enabled extensions:", self))
+        whitelistColumn.addWidget(QLabel(tr("Enabled extensions:"), self))
         self.whitelist = QListWidget(self)
         self.whitelist.itemActivated.connect(self.disableExtension)
         whitelistColumn.addWidget(self.whitelist)
@@ -263,7 +265,7 @@ class ExtensionsSettingsPanel(SettingsPanel):
         # Extensions blacklist.
         blacklistColumn = custom_widgets.Column(self)
         listRow.addWidget(blacklistColumn)
-        blacklistColumn.addWidget(QLabel("Disabled extensions:", self))
+        blacklistColumn.addWidget(QLabel(tr("Disabled extensions:"), self))
         self.blacklist = QListWidget(self)
         self.blacklist.itemActivated.connect(self.enableExtension)
         blacklistColumn.addWidget(self.blacklist)
@@ -309,16 +311,16 @@ class SettingsDialog(QWidget):
         self.setLayout(_layout)
 
         # Set window title.
-        self.setWindowTitle("Settings")
+        self.setWindowTitle(tr("Settings"))
 
         # Tab widget
         self.tabs = QTabWidget(self)
         self.layout().addWidget(self.tabs)
 
-        self.tabs.addTab(GeneralSettingsPanel(self), "&General")
-        self.tabs.addTab(ContentSettingsPanel(self), "&Content")
-        self.tabs.addTab(NetworkSettingsPanel(self), "&Network")
-        self.tabs.addTab(ExtensionsSettingsPanel(self), "&Extensions")
+        self.tabs.addTab(GeneralSettingsPanel(self), tr("&General"))
+        self.tabs.addTab(ContentSettingsPanel(self), tr("&Content"))
+        self.tabs.addTab(NetworkSettingsPanel(self), tr("&Network"))
+        self.tabs.addTab(ExtensionsSettingsPanel(self), tr("&Extensions"))
 
         # Toolbar
         self.toolBar = QToolBar(self)
@@ -328,12 +330,12 @@ class SettingsDialog(QWidget):
         self.layout().addWidget(self.toolBar)
 
         # Apply button
-        applyButton = QPushButton("&Apply", self)
+        applyButton = QPushButton(tr("&Apply"), self)
         applyButton.clicked.connect(self.saveSettings)
         self.toolBar.addWidget(applyButton)
 
         # Reload settings button
-        reloadButton = QPushButton("&Reload", self)
+        reloadButton = QPushButton(tr("&Reload"), self)
         reloadButton.clicked.connect(self.loadSettings)
         self.toolBar.addWidget(reloadButton)
 
