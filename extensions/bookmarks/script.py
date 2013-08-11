@@ -25,7 +25,7 @@ common.bookmarksDock.setWidget(common.bookmarksWidget)
 def loadBookmark(item):
     import json
     if item.text() == "Add bookmark":
-        url = QInputDialog.getText(None, "Add Bookmark", "Enter a URL here:")
+        url = QInputDialog.getText(None, "Add Bookmark", "Enter a URL here:", QLineEdit.Normal, common.bookmarkExtensionWidget._parent.tabs.currentWidget().url().toString())
         if url[1]:
             common.bookmarksWidget.addItem(url[0])
             common.bookmarks.append(url[0])
