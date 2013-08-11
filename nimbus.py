@@ -849,7 +849,7 @@ self.origY + ev.globalY() - self.mouseY)
             return
 
         for extension in common.extensions:
-            if extension not in common.settings.value("extensions/Whitelist"):
+            if extension not in common.extensions_whitelist:
                 continue
             extension_path = os.path.join(common.extensions_folder, extension)
             if os.path.isdir(extension_path):
