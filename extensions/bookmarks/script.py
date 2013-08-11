@@ -5,11 +5,13 @@ try: from PySide.QtGui import QDockWidget
 except: from PyQt4.QtGui import QDockWidget
 common.bookmarkExtensionWidget = self
 mainWindow = common.bookmarkExtensionWidget._parent
-bookmarks = common.settings.value("extensions/Bookmarks")
+bookmarks = common.data.value("data/Bookmarks")
+if not bookmarks:
+    bookmarks = common.settings.value("extensions/Bookmarks")
 if not bookmarks:
     common.bookmarks = []
-    common.settings.setValue("extensions/Bookmarks", json.dumps(common.bookmarks))
-    common.settings.sync()
+    common.data.setValue("data/Bookmarks", json.dumps(common.bookmarks))
+    common.data.sync()
 else:
     common.bookmarks = json.loads(bookmarks)
 nimbussterms = "k"
@@ -33,8 +35,8 @@ def removeBookmark():
         common.bookmarksWidget.takeItem(common.bookmarksWidget.row(currentItem))
         try: common.bookmarks.remove(url)
         except: pass
-        common.settings.setValue("extensions/Bookmarks", json.dumps(common.bookmarks))
-        common.settings.sync()
+        common.data.setValue("data/Bookmarks", json.dumps(common.bookmarks))
+        common.data.sync()
 deleteAction.triggered.connect(removeBookmark)
 def loadBookmark(item):
     import json
@@ -43,8 +45,8 @@ def loadBookmark(item):
         if url[1]:
             common.bookmarksWidget.addItem(url[0])
             common.bookmarks.append(url[0])
-            common.settings.setValue("extensions/Bookmarks", json.dumps(common.bookmarks))
-            common.settings.sync()
+            common.data.setValue("data/Bookmarks", json.dumps(common.bookmarks))
+            common.data.sync()
     else:
         common.bookmarkExtensionWidget._parent.tabs.currentWidget().load(QUrl.fromUserInput(item.text()))
 common.bookmarksWidget.itemActivated.connect(loadBookmark)
