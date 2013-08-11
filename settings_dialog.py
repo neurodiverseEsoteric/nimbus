@@ -83,29 +83,40 @@ class ContentSettingsPanel(SettingsPanel):
         self.imagesToggle = QCheckBox("Automatically load &images", self)
         self.layout().addWidget(self.imagesToggle)
 
+        # Checkbox to toggle element backgrounds.
+        self.elementBackgroundsToggle = QCheckBox("Print e&lement backgrounds", self)
+        self.layout().addWidget(self.elementBackgroundsToggle)
+
         # Checkbox to toggle Javascript.
-        self.javascriptToggle = QCheckBox("Enable &Javascript", self)
+        self.javascriptToggle = QCheckBox("Enable Java&Script", self)
         self.layout().addWidget(self.javascriptToggle)
 
-        # Checkbox to toggle plugins.
-        self.pluginsToggle = QCheckBox("Enable NPAPI &plugins", self)
-        self.layout().addWidget(self.pluginsToggle)
+        # Checkbox to toggle Java.
+        self.javaToggle = QCheckBox("Enable &Java", self)
+        self.layout().addWidget(self.javaToggle)
 
-        # Checkbox to toggle ad blocking.
-        self.adblockToggle = QCheckBox("Enable ad &blocking", self)
-        self.layout().addWidget(self.adblockToggle)
+        # Checkbox to toggle plugins.
+        self.pluginsToggle = QCheckBox("Enable &plugins", self)
+        self.layout().addWidget(self.pluginsToggle)
 
         # Checkbox to toggle handling of HTML5 audio and video using plugins.
         self.mediaToggle = QCheckBox("Use plugins to handle &HTML5 audio and video", self)
         self.layout().addWidget(self.mediaToggle)
+
+        # Checkbox to toggle ad blocking.
+        self.adblockToggle = QCheckBox("Enable ad &blocking", self)
+        self.layout().addWidget(self.adblockToggle)
 
         # Checkbox to toggle using online content viewers.
         self.contentViewersToggle = QCheckBox("Use online content &viewers to load unsupported content", self)
         self.layout().addWidget(self.contentViewersToggle)
 
         # Checkbox to toggle tiled backing.
-        self.tiledBackingStoreToggle = QCheckBox("Enable &tiled backing store", self)
+        self.tiledBackingStoreToggle = QCheckBox("Enable tiled backing store", self)
         self.layout().addWidget(self.tiledBackingStoreToggle)
+
+        self.frameFlattenToggle = QCheckBox("Expand subframes to fit contents", self)
+        self.layout().addWidget(self.frameFlattenToggle)
 
         # Checkbox to toggle site specific quirks.
         self.siteSpecificQuirksToggle = QCheckBox("Enable site specific &quirks", self)
@@ -116,22 +127,28 @@ class ContentSettingsPanel(SettingsPanel):
     def loadSettings(self):
         self.imagesToggle.setChecked(common.setting_to_bool("content/AutoLoadImages"))
         self.javascriptToggle.setChecked(common.setting_to_bool("content/JavascriptEnabled"))
+        self.javaToggle.setChecked(common.setting_to_bool("content/JavaEnabled"))
+        self.elementBackgroundsToggle.setChecked(common.setting_to_bool("content/PrintElementBackgrounds"))
         self.pluginsToggle.setChecked(common.setting_to_bool("content/PluginsEnabled"))
         self.adblockToggle.setChecked(common.setting_to_bool("content/AdblockEnabled"))
         self.mediaToggle.setChecked(common.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"))
         self.contentViewersToggle.setChecked(common.setting_to_bool("content/UseOnlineContentViewers"))
         self.tiledBackingStoreToggle.setChecked(common.setting_to_bool("content/TiledBackingStoreEnabled"))
+        self.frameFlattenToggle.setChecked(common.setting_to_bool("content/FrameFlatteningEnabled"))
         self.siteSpecificQuirksToggle.setChecked(common.setting_to_bool("content/SiteSpecificQuirksEnabled"))
 
     def saveSettings(self):
         common.settings.setValue("content/AutoLoadImages", self.imagesToggle.isChecked())
         common.settings.setValue("content/JavascriptEnabled", self.javascriptToggle.isChecked())
+        common.settings.setValue("content/JavaEnabled", self.javaToggle.isChecked())
+        common.settings.setValue("content/PrintElementBackgrounds   ", self.elementBackgroundsToggle.isChecked())
         common.settings.setValue("content/PluginsEnabled", self.pluginsToggle.isChecked())
         common.settings.setValue("content/AdblockEnabled", self.adblockToggle.isChecked())
         common.settings.setValue("content/ReplaceHTML5MediaTagsWithEmbedTags", self.mediaToggle.isChecked())
         common.adblock_filter_loader.start()
         common.settings.setValue("content/UseOnlineContentViewers", self.contentViewersToggle.isChecked())
         common.settings.setValue("content/TiledBackingStoreEnabled", self.tiledBackingStoreToggle.isChecked())
+        common.settings.setValue("content/FrameFlatteningEnabled", self.frameFlattenToggle.isChecked())
         common.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())
         common.settings.sync()
 
