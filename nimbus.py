@@ -1171,8 +1171,10 @@ if has_dbus:
             for window in common.windows[::-1]:
                 if window.isVisible():
                     window.addTab(url=url)
+                    common.windows[-1].activateWindow()
                     return url
             self.addWindow(url)
+            common.windows[-1].activateWindow()
             return url
 
 # Main function to load everything.
