@@ -3,9 +3,22 @@
 # Custom widgets.
 
 try:
-    from PySide.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
+    from PySide.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
 except:
-    from PyQt4.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
+    from PyQt4.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
+
+# Blank widget to take up space.
+class Expander(QLabel):
+    def __init__(self, parent=None):
+        super(Expander, self).__init__(parent)
+        self.setText("")
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+class HorizontalExpander(QLabel):
+    def __init__(self, parent=None):
+        super(HorizontalExpander, self).__init__(parent)
+        self.setText("")
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
 # Row widget.
 class Row(QWidget):
@@ -26,6 +39,17 @@ class LineEditRow(Row):
         self.lineEdit = QLineEdit(self)
         self.addWidget(self.lineEdit)
 
+# This is a row with a label and a QSpinBox.
+class SpinBoxRow(Row):
+    def __init__(self, text="Enter something here:", parent=None):
+        super(SpinBoxRow, self).__init__(parent)
+        self.label = QLabel(text, self)
+        self.addWidget(self.label)
+        self.spinBox = QSpinBox(self)
+        self.addWidget(self.spinBox)
+        self.expander = HorizontalExpander()
+        self.addWidget(self.expander)
+
 # Column widget.
 class Column(QWidget):
     def __init__(self, parent=None):
@@ -35,13 +59,6 @@ class Column(QWidget):
         self.layout().setContentsMargins(0,0,0,0)
     def addWidget(self, widget):
         self.layout().addWidget(widget)
-
-# Blank widget to take up space.
-class Expander(QLabel):
-    def __init__(self, parent=None):
-        super(Expander, self).__init__(parent)
-        self.setText("")
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
 # Toolbar that looks like a menubar.
 class MenuToolBar(QToolBar):

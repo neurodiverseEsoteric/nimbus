@@ -45,14 +45,14 @@ class GeneralSettingsPanel(SettingsPanel):
         self.settingsTabToggle = QCheckBox("Open &settings in tab")
         self.layout().addWidget(self.settingsTabToggle)
 
-        self.reopenableTabCountRow = custom_widgets.LineEditRow("Number of reopenable tabs:", self)
-        self.reopenableTabCount = self.reopenableTabCountRow.lineEdit
-        self.reopenableTabCount.setInputMask("99999")
+        self.reopenableTabCountRow = custom_widgets.SpinBoxRow("Number of reopenable tabs:", self)
+        self.reopenableTabCount = self.reopenableTabCountRow.spinBox
+        self.reopenableTabCount.setMaximum(9999)
         self.layout().addWidget(self.reopenableTabCountRow)
 
-        self.reopenableWindowCountRow = custom_widgets.LineEditRow("Number of reopenable windows:", self)
-        self.reopenableWindowCount = self.reopenableWindowCountRow.lineEdit
-        self.reopenableWindowCount.setInputMask("99999")
+        self.reopenableWindowCountRow = custom_widgets.SpinBoxRow("Number of reopenable windows:", self)
+        self.reopenableWindowCount = self.reopenableWindowCountRow.spinBox
+        self.reopenableWindowCount.setMaximum(9999)
         self.layout().addWidget(self.reopenableWindowCountRow)
 
         self.layout().addWidget(custom_widgets.Expander(self))
@@ -62,8 +62,8 @@ class GeneralSettingsPanel(SettingsPanel):
         self.searchEntry.setText(str(common.settings.value("general/Search")))
         self.closeWindowToggle.setChecked(common.setting_to_bool("general/CloseWindowWithLastTab"))
         self.settingsTabToggle.setChecked(common.setting_to_bool("general/OpenSettingsInTab"))
-        self.reopenableTabCount.setText(common.settings.value("general/ReopenableTabCount"))
-        self.reopenableWindowCount.setText(common.settings.value("general/ReopenableWindowCount"))
+        self.reopenableTabCount.setValue(common.setting_to_int("general/ReopenableTabCount"))
+        self.reopenableWindowCount.setValue(common.setting_to_int("general/ReopenableWindowCount"))
 
     def saveSettings(self):
         common.settings.setValue("general/Homepage", self.homepageEntry.text())
@@ -168,16 +168,21 @@ class NetworkSettingsPanel(SettingsPanel):
         self.proxySelect.addItem('Http')
         typeRow.addWidget(self.proxySelect)
 
+        # Hostname and port row.
+        self.hostNamePortRow = custom_widgets.Row()
+        self.layout().addWidget(self.hostNamePortRow)
+
         # Hostname row.
         self.hostNameRow = custom_widgets.LineEditRow("Hostname:", self)
         self.hostNameEntry = self.hostNameRow.lineEdit
-        self.layout().addWidget(self.hostNameRow)
+        self.hostNamePortRow.addWidget(self.hostNameRow)
 
         # Port row.
-        self.portRow = custom_widgets.LineEditRow("Port:", self)
-        self.portRow.lineEdit.setInputMask("99999")
-        self.portEntry = self.portRow.lineEdit
-        self.layout().addWidget(self.portRow)
+        self.portRow = custom_widgets.SpinBoxRow("Port:", self)
+        self.portRow.expander.hide()
+        self.portEntry = self.portRow.spinBox
+        self.portEntry.setMaximum(99999)
+        self.hostNamePortRow.addWidget(self.portRow)
 
         # User row.
         self.userRow = custom_widgets.LineEditRow("User:", self)
@@ -199,10 +204,10 @@ class NetworkSettingsPanel(SettingsPanel):
         self.passwordEntry.setText(str(common.settings.value("proxy/Password")))
         self.xssAuditingToggle.setChecked(common.setting_to_bool("network/XSSAuditingEnabled"))
         self.dnsPrefetchingToggle.setChecked(common.setting_to_bool("network/DnsPrefetchingEnabled"))
-        port = str(common.settings.value("proxy/Port"))
+        port = common.setting_to_int("proxy/Port")
         if port == "None":
             port = str(common.default_port)
-        self.portEntry.setText(port)
+        self.portEntry.setValue(port)
         for index in range(0, self.proxySelect.count()):
             if self.proxySelect.itemText(index) == common.settings.value("proxy/Type"):
                 self.proxySelect.setCurrentIndex(index)
@@ -216,7 +221,7 @@ class NetworkSettingsPanel(SettingsPanel):
         common.settings.setValue("network/XSSAuditingEnabled", self.xssAuditingToggle.isChecked())
         common.settings.setValue("network/DnsPrefetchingEnabled", self.dnsPrefetchingToggle.isChecked())
         common.settings.setValue("proxy/Type", proxyType)
-        common.settings.setValue("proxy/Port", int(self.portEntry.text()))
+        common.settings.setValue("proxy/Port", self.portEntry.value())
         common.settings.setValue("proxy/User", self.userEntry.text())
         common.settings.setValue("proxy/Password", self.passwordEntry.text())
         common.settings.sync()
