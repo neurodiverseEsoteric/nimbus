@@ -400,12 +400,14 @@ class WebView(QWebView):
     # Download file.
     def downloadFile(self, request):
 
-        # Get file name for destination.
+        # If the file type can be converted to plain text, use savePage
+        # method instead.
         for mimeType in ("text", "svg", "html", "xml", "xhtml",):
             if mimeType in str(self._contentMimeType):
                 self.savePage()
                 return
 
+        # Get file name for destination.
         fname = QFileDialog.getSaveFileName(None, "Save As...", os.path.join(os.path.expanduser("~"), request.url().toString().split("/")[-1]), "All files (*)")
         if fname:
             reply = self.page().networkAccessManager().get(request)
