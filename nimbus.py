@@ -507,7 +507,10 @@ class ExtensionButton(QToolButton):
         self._parent = parent
         self.script = script
     def loadScript(self):
-        self._parent.currentWidget().page().mainFrame().evaluateJavaScript(self.script)
+        try: exec(self.script)
+        except:
+            traceback.print_exc()
+            self._parent.currentWidget().page().mainFrame().evaluateJavaScript(self.script)
 
 # Custom MainWindow class.
 # This contains basic navigation controls, a location bar, and a menu.
@@ -836,7 +839,9 @@ self.origY + ev.globalY() - self.mouseY)
                 continue
             extension_path = os.path.join(common.extensions_folder, extension)
             if os.path.isdir(extension_path):
-                script_path = os.path.join(extension_path, "script.js")
+                script_path = os.path.join(extension_path, "script.py")
+                if not os.path.isfile(script_path):
+                    script_path = os.path.join(extension_path, "script.js")
                 icon_path = os.path.join(extension_path, "icon.png")
                 if os.path.isfile(script_path):
                     f = open(script_path, "r")
