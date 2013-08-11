@@ -28,13 +28,13 @@ except:
 # Extremely specific imports from PySide/PyQt4.
 try:
     from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QFile, QIODevice, QTimer
-    from PySide.QtGui import QApplication, QKeySequence, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
+    from PySide.QtGui import QApplication, QKeySequence, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
     from PySide.QtWebKit import QWebView, QWebPage
     pyside = True
 except:
     from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
-    from PyQt4.QtGui import QApplication, QKeySequence, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
+    from PyQt4.QtGui import QApplication, QKeySequence, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
     from PyQt4.QtWebKit import QWebView, QWebPage
     Signal = pyqtSignal
@@ -122,7 +122,8 @@ class WebPage(QWebPage):
                ("qlcdnumber", QLCDNumber),
                ("qimage", QImage),
                ("qdatetimeedit", QDateTimeEdit),
-               ("qdial", QDial))
+               ("qdial", QDial),
+               ("qspinbox", QSpinBox))
     def createPlugin(self, classid, url, paramNames, paramValues):
         if classid.lower() == "settingsdialog":
             sdialog = settings_dialog.SettingsDialog(self.view())
@@ -147,7 +148,7 @@ class WebPage(QWebPage):
             for name, widgetclass in self.plugins:
                 if classid.lower() == name:
                     widget = widgetclass(self.view())
-                    widgetid = name.title()
+                    widgetid = classid
                     pnames = [name.lower() for name in paramNames]
                     if "id" in pnames:
                         widgetid = paramValues[pnames.index("id")]
@@ -970,7 +971,7 @@ self.origY + ev.globalY() - self.mouseY)
     def addWindow(self, url=None):
         addWindow(url)
 
-    def addTab(self, webView=None, **kwargs):
+    def addTab(self, webView=None, index=None, focus=True, **kwargs):
         # If a URL is specified, load it.
         if "incognito" in kwargs:
             webview = WebView(incognito=True, parent=self)
@@ -997,14 +998,18 @@ self.origY + ev.globalY() - self.mouseY)
         webview.titleChanged.connect(self.updateTabTitles)
         webview.urlChanged.connect(self.updateLocationText)
         webview.iconChanged.connect(self.updateTabIcons)
-        webview.windowCreated.connect(self.addTab)
+        webview.windowCreated.connect(lambda webView: self.addTab(webView=webView, index=self.tabs.currentIndex()+1, focus=False))
         webview.downloadStarted.connect(self.addDownloadToolBar)
 
         # Add tab
-        self.tabs.addTab(webview, "New Tab")
+        if type(index) is not int:
+            self.tabs.addTab(webview, "New Tab")
+        else:
+            self.tabs.insertTab(index, webview, "New Tab")
 
         # Switch to new tab
-        self.tabs.setCurrentIndex(self.tabs.count()-1)
+        if focus:
+            self.tabs.setCurrentIndex(self.tabs.count()-1)
 
         # Update icons so we see the globe icon on new tabs.
         self.updateTabIcons()
