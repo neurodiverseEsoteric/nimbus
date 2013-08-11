@@ -4,6 +4,7 @@
 import sys
 import os
 import base64
+import urllib.request
 import subprocess
 import threading
 import copy
@@ -29,13 +30,13 @@ except:
 try:
     from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QFile, QIODevice, QTimer
     from PySide.QtGui import QApplication, QKeySequence, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
-    from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
+    from PySide.QtNetwork import QNetworkProxy, QNetworkRequest, QNetworkAccessManager
     from PySide.QtWebKit import QWebView, QWebPage
     pyside = True
 except:
     from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
     from PyQt4.QtGui import QApplication, QKeySequence, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
-    from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
+    from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest, QNetworkAccessManager
     from PyQt4.QtWebKit import QWebView, QWebPage
     Signal = pyqtSignal
     pyside = False
@@ -260,6 +261,7 @@ class WebView(QWebView):
         # This is a little hack to work around it.
         self.loadFinished.connect(self.replaceAVTags)
         self.loadFinished.connect(self.savePageToCache)
+        self.loadFinished.connect(self.ready)
 
         self.setWindowTitle("")
 
@@ -269,6 +271,15 @@ class WebView(QWebView):
         try: common.webviews.remove(self)
         except: pass
         QWebView.deleteLater(self)
+
+    def ready(self, response):
+        try: contentType = urllib.request.urlopen(self.url().toString()).info()
+        except: return
+        print(contentType["Content-Type"])
+        contentType = contentType["Content-Type"]
+        if type(contentType) is str:
+            self.contentMimeType = copy.copy(contentType)
+            print(self.contentMimeType)
 
     def mousePressEvent(self, ev):
         if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
@@ -391,6 +402,11 @@ class WebView(QWebView):
     def downloadFile(self, request):
 
         # Get file name for destination.
+        for mimeType in ("text", "svg", "html", "xml", "xhtml",):
+            if mimeType in self.contentMimeType:
+                self.savePage()
+                return
+
         fname = QFileDialog.getSaveFileName(None, "Save As...", os.path.join(os.path.expanduser("~"), request.url().toString().split("/")[-1]), "All files (*)")
         if fname:
             reply = self.page().networkAccessManager().get(request)
@@ -716,14 +732,8 @@ min-width: 6em;
         # Save page action.
         savePageAction = QAction(common.complete_icon("document-save-as"), "Save Page &As...", self)
         savePageAction.setShortcut("Ctrl+S")
-        savePageAction.triggered.connect(lambda: self.tabs.currentWidget().savePage())
+        savePageAction.triggered.connect(lambda: self.tabs.currentWidget().downloadFile(QNetworkRequest(self.tabs.currentWidget().url())))
         mainMenu.addAction(savePageAction)
-
-        # Download page action.
-        downloadContentAction = QAction(common.complete_icon("emblem-downloads"), "&Download Content As...", self)
-        downloadContentAction.setShortcut("Ctrl+Shift+S")
-        downloadContentAction.triggered.connect(lambda: self.tabs.currentWidget().downloadFile(QNetworkRequest(self.tabs.currentWidget().url())))
-        mainMenu.addAction(downloadContentAction)
 
         mainMenu.addSeparator()
 

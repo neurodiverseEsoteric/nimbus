@@ -5,6 +5,7 @@ import sys
 import os
 import abpy
 import json
+import traceback
 try:
     from PySide.QtCore import QTimer, SIGNAL, QByteArray, QCoreApplication, QSettings, QThread, QUrl
     from PySide.QtGui import QIcon, QInputDialog, QLineEdit
