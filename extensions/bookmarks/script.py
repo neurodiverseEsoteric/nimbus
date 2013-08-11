@@ -22,6 +22,19 @@ common.bookmarksWidget.addItem("Add bookmark")
 for bookmark in common.bookmarks:
     common.bookmarksWidget.addItem(bookmark)
 common.bookmarksDock.setWidget(common.bookmarksWidget)
+deleteAction = QAction(common.bookmarksWidget)
+deleteAction.setShortcut("Del")
+common.bookmarksWidget.addAction(deleteAction)
+def removeBookmark():
+    import json
+    currentItem = common.bookmarksWidget.currentItem()
+    url = currentItem.text()
+    common.bookmarksWidget.takeItem(common.bookmarksWidget.row(currentItem))
+    try: common.bookmarks.remove(url)
+    except: pass
+    common.settings.setValue("extensions/Bookmarks", json.dumps(common.bookmarks))
+    common.settings.sync()
+deleteAction.triggered.connect(removeBookmark)
 def loadBookmark(item):
     import json
     if item.text() == "Add bookmark":

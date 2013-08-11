@@ -875,7 +875,7 @@ self.origY + ev.globalY() - self.mouseY)
             # bar text.
             self.stopAction.setEnabled(True)
 
-            self.reloadAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Reload).isEnabled())
+            self.reloadAction.setEnabled(True)
         except:
             self.backAction.setEnabled(False)
             self.forwardAction.setEnabled(False)
