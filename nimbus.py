@@ -77,7 +77,9 @@ class DownloadProgressBar(QProgressBar):
             f.close()
             self.progress = [0, 0]
             if sys.platform.startswith("linux"):
-                subprocess.Popen(["notify-send", "--icon=emblem-downloads", "Download complete: %s" % (self.windowTitle(),)])
+                subprocess.Popen(["notify-send", "--icon=emblem-downloads", "Download complete: %s" % (os.path.split(self.destination)[1],)])
+            else:
+                common.trayIcon.showMessage("Download complete", os.path.split(self.destination)[1])
 
     # Updates the progress bar.
     def updateProgress(self, received, total):
@@ -771,13 +773,23 @@ min-width: 6em;
 
         mainMenu.addSeparator()
 
+        # About Qt action.
         aboutQtAction = QAction(common.complete_icon("qt"), "About &Qt", self)
         aboutQtAction.triggered.connect(QApplication.aboutQt)
         mainMenu.addAction(aboutQtAction)
 
+        # About Nimbus action.
         aboutAction = QAction(common.complete_icon("help-about"), "A&bout Nimbus", self)
         aboutAction.triggered.connect(lambda: QMessageBox.about(self, "Nimbus", "<h3>Nimbus</h3>Python 3/Qt 4-based web browser."))
         mainMenu.addAction(aboutAction)
+
+        mainMenu.addSeparator()
+
+        # Quit action.
+        quitAction = QAction(common.complete_icon("application-exit"), "Quit", self)
+        quitAction.setShortcut("Ctrl+Shift+Q")
+        quitAction.triggered.connect(QCoreApplication.quit)
+        mainMenu.addAction(quitAction)
 
         # Add main menu action/button.
         self.mainMenuAction = QAction(common.complete_icon("document-properties"), "&Menu", self)
@@ -1182,8 +1194,8 @@ def main():
                 proxy.addTab(arg)
         return
 
-    trayicon = SystemTrayIcon(QCoreApplication.instance())
-    trayicon.show()
+    common.trayIcon = SystemTrayIcon(QCoreApplication.instance())
+    common.trayIcon.show()
 
     # Create instance of clear history dialog.
     global chistorydialog
