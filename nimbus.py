@@ -28,13 +28,13 @@ except:
 # Extremely specific imports from PySide/PyQt4.
 try:
     from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QFile, QIODevice, QTimer
-    from PySide.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
+    from PySide.QtGui import QApplication, QKeySequence, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
     from PySide.QtWebKit import QWebView, QWebPage
     pyside = True
 except:
     from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
-    from PyQt4.QtGui import QApplication, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
+    from PyQt4.QtGui import QApplication, QKeySequence, QListWidget, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
     from PyQt4.QtWebKit import QWebView, QWebPage
     Signal = pyqtSignal
@@ -501,8 +501,10 @@ class WebView(QWebView):
 
 # Extension button class.
 class ExtensionButton(QToolButton):
-    def __init__(self, script="", parent=None):
+    def __init__(self, script="", shortcut=None, parent=None):
         super(ExtensionButton, self).__init__(parent)
+        if shortcut:
+            self.setShortcut(QKeySequence.fromString(shortcut))
         common.extension_buttons.append(self)
         self._parent = parent
         self.script = script
@@ -843,11 +845,17 @@ self.origY + ev.globalY() - self.mouseY)
                 if not os.path.isfile(script_path):
                     script_path = os.path.join(extension_path, "script.js")
                 icon_path = os.path.join(extension_path, "icon.png")
+                shortcut_path = os.path.join(extension_path, "shortcut.txt")
                 if os.path.isfile(script_path):
                     f = open(script_path, "r")
                     script = copy.copy(f.read())
                     f.close()
-                    newExtension = ExtensionButton(script, self)
+                    shortcut = None
+                    if os.path.exists(shortcut_path):
+                        f = open(shortcut_path, "r")
+                        shortcut = copy.copy(f.read().replace("\n", ""))
+                        f.close()
+                    newExtension = ExtensionButton(script, shortcut, self)
                     newExtension.setToolTip(extension.replace("_", " ").title())
                     newExtension.clicked.connect(newExtension.loadScript)
                     self.extensionBar.show()
