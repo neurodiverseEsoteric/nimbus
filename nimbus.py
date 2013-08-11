@@ -11,6 +11,8 @@ import copy
 import traceback
 import hashlib
 import common
+import translate
+from translate import tr
 import custom_widgets
 import clear_history_dialog
 import status_bar
@@ -78,9 +80,9 @@ class DownloadProgressBar(QProgressBar):
             f.close()
             self.progress = [0, 0]
             if sys.platform.startswith("linux"):
-                subprocess.Popen(["notify-send", "--icon=emblem-downloads", "Download complete: %s" % (os.path.split(self.destination)[1],)])
+                subprocess.Popen(["notify-send", "--icon=emblem-downloads", tr("Download complete: %s") % (os.path.split(self.destination)[1],)])
             else:
-                common.trayIcon.showMessage("Download complete", os.path.split(self.destination)[1])
+                common.trayIcon.showMessage(tr("Download complete"), os.path.split(self.destination)[1])
 
     # Updates the progress bar.
     def updateProgress(self, received, total):
@@ -109,7 +111,7 @@ class DownloadBar(QToolBar):
         self.progressBar.networkReply.finished.connect(self.deleteLater)
         self.addWidget(self.progressBar)
         label.setText(os.path.split(self.progressBar.destination)[1])
-        abortAction = QAction(QIcon().fromTheme("process-stop", QIcon(common.icon("process-stop.png"))), "Abort", self)
+        abortAction = QAction(QIcon().fromTheme("process-stop", QIcon(common.icon("process-stop.png"))), tr("Abort"), self)
         abortAction.triggered.connect(self.progressBar.abort)
         abortAction.triggered.connect(self.deleteLater)
         self.addAction(abortAction)
@@ -302,7 +304,7 @@ class WebView(QWebView):
         dirname = url.path()
         self._url = url.toString()
         if url.scheme() == "nimbus":
-            x = "data:text/html;charset=utf-8;base64," + base64.b64encode(("<!DOCTYPE html><html><head><title>Settings</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>".replace('\n', '')).encode('utf-8')).decode('utf-8')
+            x = "data:text/html;charset=utf-8;base64," + base64.b64encode(("<!DOCTYPE html><html><head><title>" + tr("Settings") + "</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>".replace('\n', '')).encode('utf-8')).decode('utf-8')
             QWebView.load(self, QUrl(x))
             return
         if url.toString() == "about:blank":
@@ -340,7 +342,7 @@ class WebView(QWebView):
 
     def setWindowTitle(self, title):
         if len(title) == 0:
-            title = "New Tab"
+            title = tr("New Tab")
         QWebView.setWindowTitle(self, title)
 
     def icon(self):
@@ -408,7 +410,7 @@ class WebView(QWebView):
                 return
 
         # Get file name for destination.
-        fname = QFileDialog.getSaveFileName(None, "Save As...", os.path.join(os.path.expanduser("~"), request.url().toString().split("/")[-1]), "All files (*)")
+        fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(os.path.expanduser("~"), request.url().toString().split("/")[-1]), tr("All files (*)"))
         if fname:
             reply = self.page().networkAccessManager().get(request)
             
@@ -456,7 +458,7 @@ class WebView(QWebView):
             fname = common.new_tab_page
             content = content.replace("&lt;", "<").replace("&gt;", ">").replace("<body contenteditable=\"true\">", "<body>")
         else:
-            fname = QFileDialog.getSaveFileName(None, "Save As...", os.path.join(os.path.expanduser("~"), self.url().toString().split("/")[-1]), "All files (*)")
+            fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(os.path.expanduser("~"), self.url().toString().split("/")[-1]), tr("All files (*)"))
         if fname:
             if type(fname) is tuple:
                 fname = fname[0]
@@ -483,7 +485,7 @@ class WebView(QWebView):
     def find(self):
         if type(self._findText) is not str:
             self._findText = ""
-        find = QInputDialog.getText(None, "Find", "Search for:", QLineEdit.Normal, self._findText)
+        find = QInputDialog.getText(None, tr("Find"), tr("Search for:"), QLineEdit.Normal, self._findText)
         if find:
             self._findText = find[0]
         else:
@@ -588,12 +590,12 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tabs)
 
         # New tab action.
-        newTabAction = QAction(common.complete_icon("list-add"), "New &Tab", self)
+        newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)
         newTabAction.setShortcut("Ctrl+T")
         newTabAction.triggered.connect(lambda: self.addTab())
 
         # New private browsing tab action.
-        newIncognitoTabAction = QAction(common.complete_icon("face-devilish"), "New &Incognito Tab", self)
+        newIncognitoTabAction = QAction(common.complete_icon("face-devilish"), tr("New &Incognito Tab"), self)
         newIncognitoTabAction.setShortcut("Ctrl+Shift+I")
         newIncognitoTabAction.triggered.connect(lambda: self.addTab(incognito=True))
 
@@ -655,7 +657,7 @@ class MainWindow(QMainWindow):
         self.reloadAction.triggered.connect(self.reload)
         self.toolBar.addAction(self.reloadAction)
 
-        self.homeAction = QAction(common.complete_icon("go-home"), "Go Home", self)
+        self.homeAction = QAction(common.complete_icon("go-home"), tr("Go Home"), self)
         self.homeAction.setShortcut("Alt+Home")
         self.homeAction.triggered.connect(self.goHome)
         self.toolBar.addAction(self.homeAction)
@@ -709,20 +711,20 @@ min-width: 6em;
         mainMenu.addAction(newIncognitoTabAction)
 
         # Add new window action.
-        newWindowAction = QAction(common.complete_icon("window-new"), "&New Window", self)
+        newWindowAction = QAction(common.complete_icon("window-new"), tr("&New Window"), self)
         newWindowAction.setShortcut("Ctrl+N")
         newWindowAction.triggered.connect(self.addWindow)
         mainMenu.addAction(newWindowAction)
 
         # Add reopen tab action.
-        reopenTabAction = QAction(common.complete_icon("edit-undo"), "&Reopen Tab", self)
+        reopenTabAction = QAction(common.complete_icon("edit-undo"), tr("&Reopen Tab"), self)
         reopenTabAction.setShortcut("Ctrl+Shift+T")
         reopenTabAction.triggered.connect(self.reopenTab)
         self.addAction(reopenTabAction)
         mainMenu.addAction(reopenTabAction)
 
         # Add reopen window action.
-        reopenWindowAction = QAction(common.complete_icon("reopen-window"), "R&eopen Window", self)
+        reopenWindowAction = QAction(common.complete_icon("reopen-window"), tr("R&eopen Window"), self)
         reopenWindowAction.setShortcut("Ctrl+Shift+N")
         reopenWindowAction.triggered.connect(reopenWindow)
         self.addAction(reopenWindowAction)
@@ -731,7 +733,7 @@ min-width: 6em;
         mainMenu.addSeparator()
 
         # Save page action.
-        savePageAction = QAction(common.complete_icon("document-save-as"), "Save Page &As...", self)
+        savePageAction = QAction(common.complete_icon("document-save-as"), tr("Save Page &As..."), self)
         savePageAction.setShortcut("Ctrl+S")
         savePageAction.triggered.connect(lambda: self.tabs.currentWidget().downloadFile(QNetworkRequest(self.tabs.currentWidget().url())))
         mainMenu.addAction(savePageAction)
@@ -739,19 +741,19 @@ min-width: 6em;
         mainMenu.addSeparator()
 
         # Add find text action.
-        findAction = QAction(common.complete_icon("edit-find"), "&Find...", self)
+        findAction = QAction(common.complete_icon("edit-find"), tr("&Find..."), self)
         findAction.setShortcut("Ctrl+F")
         findAction.triggered.connect(self.find)
         mainMenu.addAction(findAction)
 
         # Add find next action.
-        findNextAction = QAction(common.complete_icon("media-seek-forward"), "Find Ne&xt", self)
+        findNextAction = QAction(common.complete_icon("media-seek-forward"), tr("Find Ne&xt"), self)
         findNextAction.setShortcut("Ctrl+G")
         findNextAction.triggered.connect(self.findNext)
         mainMenu.addAction(findNextAction)
 
         # Add find previous action.
-        findPreviousAction = QAction(common.complete_icon("media-seek-backward"), "Find Pre&vious", self)
+        findPreviousAction = QAction(common.complete_icon("media-seek-backward"), tr("Find Pre&vious"), self)
         findPreviousAction.setShortcut("Ctrl+Shift+G")
         findPreviousAction.triggered.connect(self.findPrevious)
         mainMenu.addAction(findPreviousAction)
@@ -759,13 +761,13 @@ min-width: 6em;
         mainMenu.addSeparator()
 
         # Add print preview action.
-        printPreviewAction = QAction(common.complete_icon("document-print-preview"), "Print Previe&w", self)
+        printPreviewAction = QAction(common.complete_icon("document-print-preview"), tr("Print Previe&w"), self)
         printPreviewAction.setShortcut("Ctrl+Shift+P")
         printPreviewAction.triggered.connect(self.printPreview)
         mainMenu.addAction(printPreviewAction)
 
         # Add print page action.
-        printAction = QAction(common.complete_icon("document-print"), "&Print...", self)
+        printAction = QAction(common.complete_icon("document-print"), tr("&Print..."), self)
         printAction.setShortcut("Ctrl+P")
         printAction.triggered.connect(self.printPage)
         mainMenu.addAction(printAction)
@@ -774,13 +776,13 @@ min-width: 6em;
         mainMenu.addSeparator()
 
         # Add clear history action.
-        clearHistoryAction = QAction(common.complete_icon("edit-clear"), "&Clear All History...", self)
+        clearHistoryAction = QAction(common.complete_icon("edit-clear"), tr("&Clear Data..."), self)
         clearHistoryAction.setShortcut("Ctrl+Shift+Del")
         clearHistoryAction.triggered.connect(self.clearHistory)
         mainMenu.addAction(clearHistoryAction)
 
         # Add settings dialog action.
-        settingsAction = QAction(common.complete_icon("preferences-system"), "&Settings...", self)
+        settingsAction = QAction(common.complete_icon("preferences-system"), tr("&Settings..."), self)
         settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
         settingsAction.triggered.connect(self.openSettings)
         settingsAction.triggered.connect(lambda: self.tabs.setCurrentIndex(self.tabs.count()-1))
@@ -789,25 +791,25 @@ min-width: 6em;
         mainMenu.addSeparator()
 
         # About Qt action.
-        aboutQtAction = QAction(common.complete_icon("qt"), "About &Qt", self)
+        aboutQtAction = QAction(common.complete_icon("qt"), tr("About &Qt"), self)
         aboutQtAction.triggered.connect(QApplication.aboutQt)
         mainMenu.addAction(aboutQtAction)
 
         # About Nimbus action.
-        aboutAction = QAction(common.complete_icon("help-about"), "A&bout Nimbus", self)
-        aboutAction.triggered.connect(lambda: QMessageBox.about(self, "Nimbus", "<h3>Nimbus</h3>Python 3/Qt 4-based web browser."))
+        aboutAction = QAction(common.complete_icon("help-about"), tr("A&bout Nimbus"), self)
+        aboutAction.triggered.connect(lambda: QMessageBox.about(self, tr("Nimbus"), tr("<h3>Nimbus</h3>Python 3/Qt 4-based web browser.")))
         mainMenu.addAction(aboutAction)
 
         mainMenu.addSeparator()
 
         # Quit action.
-        quitAction = QAction(common.complete_icon("application-exit"), "Quit", self)
+        quitAction = QAction(common.complete_icon("application-exit"), tr("Quit"), self)
         quitAction.setShortcut("Ctrl+Shift+Q")
         quitAction.triggered.connect(QCoreApplication.quit)
         mainMenu.addAction(quitAction)
 
         # Add main menu action/button.
-        self.mainMenuAction = QAction(common.complete_icon("document-properties"), "&Menu", self)
+        self.mainMenuAction = QAction(common.complete_icon("document-properties"), tr("&Menu"), self)
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
         self.mainMenuAction.setMenu(mainMenu)
         self.toolBar.addAction(self.mainMenuAction)
@@ -1014,9 +1016,9 @@ self.origY + ev.globalY() - self.mouseY)
 
         # Add tab
         if type(index) is not int:
-            self.tabs.addTab(webview, "New Tab")
+            self.tabs.addTab(webview, tr("New Tab"))
         else:
-            self.tabs.insertTab(index, webview, "New Tab")
+            self.tabs.insertTab(index, webview, tr("New Tab"))
 
         # Switch to new tab
         if focus:
@@ -1042,7 +1044,7 @@ self.origY + ev.globalY() - self.mouseY)
             title = self.tabs.widget(index).windowTitle()
             self.tabs.setTabText(index, title[:24] + '...' if len(title) > 24 else title)
             if index == self.tabs.currentIndex():
-                self.setWindowTitle(title + " - Nimbus")
+                self.setWindowTitle(title + " - " + tr("Nimbus"))
 
     def updateTabIcons(self):
         for index in range(0, self.tabs.count()):
@@ -1133,24 +1135,24 @@ class SystemTrayIcon(QSystemTrayIcon):
         super(SystemTrayIcon, self).__init__(common.app_icon, parent)
 
         # Set tooltip.
-        self.setToolTip("Nimbus")
+        self.setToolTip(tr("Nimbus"))
 
         # Set context menu.
         self.menu = QMenu(None)
         self.setContextMenu(self.menu)
 
         # New window action
-        newWindowAction = QAction(common.complete_icon("window-new"), "&New Window", self)
+        newWindowAction = QAction(common.complete_icon("window-new"), tr("&New Window"), self)
         newWindowAction.triggered.connect(addWindow)
         self.menu.addAction(newWindowAction)
 
         # Reopen window action
-        reopenWindowAction = QAction(common.complete_icon("reopen-window"), "&Reopen Window", self)
+        reopenWindowAction = QAction(common.complete_icon("reopen-window"), tr("R&eopen Window"), self)
         reopenWindowAction.triggered.connect(reopenWindow)
         self.menu.addAction(reopenWindowAction)
 
         # Quit action
-        quitAction = QAction(common.complete_icon("application-exit"), "&Quit", self)
+        quitAction = QAction(common.complete_icon("application-exit"), tr("Quit"), self)
         quitAction.triggered.connect(QCoreApplication.quit)
         self.menu.addAction(quitAction)
 
@@ -1186,6 +1188,7 @@ def main():
 
     # Create app.
     app = QApplication(sys.argv)
+    app.installTranslator(translate.translator)
     app.setQuitOnLastWindowClosed(False)
 
     common.app_icon = common.complete_icon("nimbus")
