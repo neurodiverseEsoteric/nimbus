@@ -183,6 +183,7 @@ class WebView(QWebView):
         self._url = ""
 
         self._cacheLoaded = False
+        self._contentMimeType = None
 
         # Private browsing.
         self.incognito = incognito
@@ -275,11 +276,9 @@ class WebView(QWebView):
     def ready(self, response):
         try: contentType = urllib.request.urlopen(self.url().toString()).info()
         except: return
-        print(contentType["Content-Type"])
         contentType = contentType["Content-Type"]
         if type(contentType) is str:
-            self.contentMimeType = copy.copy(contentType)
-            print(self.contentMimeType)
+            self._contentMimeType = copy.copy(contentType)
 
     def mousePressEvent(self, ev):
         if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
@@ -403,7 +402,7 @@ class WebView(QWebView):
 
         # Get file name for destination.
         for mimeType in ("text", "svg", "html", "xml", "xhtml",):
-            if mimeType in self.contentMimeType:
+            if mimeType in str(self._contentMimeType):
                 self.savePage()
                 return
 
