@@ -1,8 +1,6 @@
 import json
 try: common.bookmarksDock.deleteLater()
 except: pass
-try: from PySide.QtGui import QDockWidget
-except: from PyQt4.QtGui import QDockWidget
 common.bookmarkExtensionWidget = self
 mainWindow = common.bookmarkExtensionWidget._parent
 bookmarks = common.data.value("data/Bookmarks")
