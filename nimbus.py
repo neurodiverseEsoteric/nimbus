@@ -194,7 +194,6 @@ class WebView(QWebView):
         self._url = ""
 
         self._cacheLoaded = False
-        self._contentMimeType = None
 
         # Private browsing.
         self.incognito = incognito
@@ -273,7 +272,6 @@ class WebView(QWebView):
         # This is a little hack to work around it.
         self.loadFinished.connect(self.replaceAVTags)
         self.loadFinished.connect(self.savePageToCache)
-        self.loadFinished.connect(self.ready)
 
         self.setWindowTitle("")
 
@@ -283,13 +281,6 @@ class WebView(QWebView):
         try: common.webviews.remove(self)
         except: pass
         QWebView.deleteLater(self)
-
-    def ready(self, response):
-        try: contentType = urllib.request.urlopen(self.url().toString()).info()
-        except: return
-        contentType = contentType["Content-Type"]
-        if type(contentType) is str:
-            self._contentMimeType = copy.copy(contentType)
 
     def mousePressEvent(self, ev):
         if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
@@ -411,10 +402,14 @@ class WebView(QWebView):
     # Download file.
     def downloadFile(self, request):
 
+        try: contentMimeType = urllib.request.urlopen(request.url().toString()).info()
+        except: contentMimeType = "None"
+        else: contentMimeType = str(contentMimeType["Content-Type"])
+
         # If the file type can be converted to plain text, use savePage
         # method instead.
         for mimeType in ("text", "svg", "html", "xml", "xhtml",):
-            if mimeType in str(self._contentMimeType):
+            if mimeType in contentMimeType:
                 self.savePage()
                 return
 
