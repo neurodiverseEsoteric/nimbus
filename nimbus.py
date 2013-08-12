@@ -36,6 +36,11 @@ try:
 except:
     has_dbus = False
 
+try: exec
+except:
+    def exec(code):
+        pass
+
 # Extremely specific imports from PySide/PyQt4.
 try:
     from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QFile, QIODevice, QTimer
