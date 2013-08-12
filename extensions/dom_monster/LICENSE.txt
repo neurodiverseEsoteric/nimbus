@@ -1,6 +1,3 @@
-License
-================
-
 Copyright (c) 2009-2011 Amy Hoy & Thomas Fuchs
 http://mir.aculo.us/dom-monster
 
