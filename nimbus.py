@@ -474,6 +474,10 @@ class WebView(QWebView):
                 try: f.write(content)
                 except: pass
                 f.close()
+                if sys.platform.startswith("linux"):
+                    subprocess.Popen(["notify-send", "--icon=emblem-downloads", tr("Download complete: %s") % (os.path.split(fname)[1],)])
+                else:
+                    common.trayIcon.showMessage(tr("Download complete"), os.path.split(fname)[1])
 
     # Add history item to the browser history.
     def addHistoryItem(self, url):
