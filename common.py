@@ -24,8 +24,8 @@ except:
     from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
 
 # Python locale
-try: app_locale = locale.getlocale()[0]
-except: app_locale = QLocale.system().name()
+try: app_locale = str(locale.getlocale()[0])
+except: app_locale = str(QLocale.system().name())
 
 # WIDGET RELATED #
 
