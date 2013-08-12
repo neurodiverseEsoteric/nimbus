@@ -243,7 +243,7 @@
     </message>
     <message>
         <source>Save As...</source>
-        <translation>&amp;Guardar como...</translation>
+        <translation>Guardar como...</translation>
     </message>
     <message>
         <source>Save Page &amp;As...</source>
