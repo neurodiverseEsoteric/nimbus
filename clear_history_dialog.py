@@ -12,6 +12,7 @@ import os
 import subprocess
 import common
 import traceback
+from translate import tr
 try:
     from PySide.QtCore import Qt
     from PySide.QtGui import QWidget, QVBoxLayout, QLabel, QMainWindow, QAction, QToolBar, QComboBox, QPushButton
@@ -26,7 +27,7 @@ class ClearHistoryDialog(QMainWindow):
         self.setWindowFlags(Qt.Dialog)
         self.setWindowModality(Qt.ApplicationModal)
 
-        self.setWindowTitle("Clear History")
+        self.setWindowTitle(tr("Clear History"))
 
         closeWindowAction = QAction(self)
         closeWindowAction.setShortcuts(["Esc", "Ctrl+W", "Ctrl+Shift+Del"])
@@ -37,24 +38,24 @@ class ClearHistoryDialog(QMainWindow):
         self.layout = QVBoxLayout()
         self.contents.setLayout(self.layout)
         self.setCentralWidget(self.contents)
-        label = QLabel("What to clear:", self)
+        label = QLabel(tr("What to clear:"), self)
         self.layout.addWidget(label)
         self.dataType = QComboBox(self)
-        self.dataType.addItem("History")
-        self.dataType.addItem("Cookies")
-        self.dataType.addItem("Cache")
-        self.dataType.addItem("Persistent Storage")
-        self.dataType.addItem("Everything")
+        self.dataType.addItem(tr("History"))
+        self.dataType.addItem(tr("Cookies"))
+        self.dataType.addItem(tr("Cache"))
+        self.dataType.addItem(tr("Persistent Storage"))
+        self.dataType.addItem(tr("Everything"))
         self.layout.addWidget(self.dataType)
         self.toolBar = QToolBar(self)
         self.toolBar.setStyleSheet(common.blank_toolbar)
         self.toolBar.setMovable(False)
         self.toolBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.addToolBar(Qt.BottomToolBarArea, self.toolBar)
-        self.clearHistoryButton = QPushButton("Clear", self)
+        self.clearHistoryButton = QPushButton(tr("Clear"), self)
         self.clearHistoryButton.clicked.connect(self.clearHistory)
         self.toolBar.addWidget(self.clearHistoryButton)
-        self.closeButton = QPushButton("Close", self)
+        self.closeButton = QPushButton(tr("Close"), self)
         self.closeButton.clicked.connect(self.close)
         self.toolBar.addWidget(self.closeButton)
 

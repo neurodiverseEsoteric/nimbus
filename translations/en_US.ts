@@ -34,8 +34,24 @@
         <translation>Automatically load &amp;images</translation>
     </message>
     <message>
+        <source>Cache</source>
+        <translation>Cache</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Clear</translation>
+    </message>
+    <message>
         <source>&amp;Clear Data...</source>
         <translation>&amp;Clear Data...</translation>
+    </message>
+    <message>
+        <source>Clear History</source>
+        <translation>Clear History</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Close</translation>
     </message>
     <message>
         <source>Close &amp;window with last tab</source>
@@ -44,6 +60,10 @@
     <message>
         <source>&amp;Content</source>
         <translation>&amp;Content</translation>
+    </message>
+    <message>
+        <source>Cookies</source>
+        <translation>Cookies</translation>
     </message>
     <message>
         <source>Disabled extensions:</source>
@@ -94,6 +114,10 @@
         <translation>Enabled extensions:</translation>
     </message>
     <message>
+        <source>Everything</source>
+        <translation>Everything</translation>
+    </message>
+    <message>
         <source>Expand subframes to fit contents</source>
         <translation>Expand subframes to fit contents</translation>
     </message>
@@ -124,6 +148,10 @@
     <message>
         <source>Go Home</source>
         <translation>Go Home</translation>
+    </message>
+    <message>
+        <source>History</source>
+        <translation>History</translation>
     </message>
     <message>
         <source>Homepage:</source>
@@ -176,6 +204,10 @@
     <message>
         <source>Password:</source>
         <translation>Password:</translation>
+    </message>
+    <message>
+        <source>Persistent Storage</source>
+        <translation>Persistent Storage</translation>
     </message>
     <message>
         <source>Port:</source>
@@ -248,6 +280,10 @@
     <message>
         <source>User:</source>
         <translation>User:</translation>
+    </message>
+    <message>
+        <source>What to clear:</source>
+        <translation>What to clear:</translation>
     </message>
 </context>
 </TS>

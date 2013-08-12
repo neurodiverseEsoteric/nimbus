@@ -34,8 +34,24 @@
         <translation>Cargar &amp;imágenes automáticamente</translation>
     </message>
     <message>
+        <source>Cache</source>
+        <translation>Cache</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Limpiar</translation>
+    </message>
+    <message>
         <source>&amp;Clear Data...</source>
         <translation>&amp;Limpiar...</translation>
+    </message>
+    <message>
+        <source>Clear History</source>
+        <translation>Limpiar historial</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Cerrar</translation>
     </message>
     <message>
         <source>Close &amp;window with last tab</source>
@@ -44,6 +60,10 @@
     <message>
         <source>&amp;Content</source>
         <translation>&amp;Contenido</translation>
+    </message>
+    <message>
+        <source>Cookies</source>
+        <translation>Cookies</translation>
     </message>
     <message>
         <source>Disabled extensions:</source>
@@ -94,6 +114,10 @@
         <translation>Complementos activadas:</translation>
     </message>
     <message>
+        <source>Everything</source>
+        <translation>Todo</translation>
+    </message>
+    <message>
         <source>Expand subframes to fit contents</source>
         <translation>Expandir iframes para encajar el contenido</translation>
     </message>
@@ -124,6 +148,10 @@
     <message>
         <source>Go Home</source>
         <translation>Ir a página de inicio</translation>
+    </message>
+    <message>
+        <source>History</source>
+        <translation>Historial</translation>
     </message>
     <message>
         <source>Homepage:</source>
@@ -176,6 +204,10 @@
     <message>
         <source>Password:</source>
         <translation>Contraseña:</translation>
+    </message>
+    <message>
+        <source>Persistent Storage</source>
+        <translation>Almacenamiento persistente</translation>
     </message>
     <message>
         <source>Port:</source>
@@ -248,6 +280,10 @@
     <message>
         <source>User:</source>
         <translation>Usuario:</translation>
+    </message>
+    <message>
+        <source>What to clear:</source>
+        <translation>Limpiar:</translation>
     </message>
 </context>
 </TS>
