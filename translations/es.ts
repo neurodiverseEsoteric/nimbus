@@ -162,6 +162,10 @@
         <translation>Nombre de host:</translation>
     </message>
     <message>
+        <source>Maximum cache size:</source>
+        <translation>Máximo tamaño de cache:</translation>
+    </message>
+    <message>
         <source>&amp;Menu</source>
         <translation>&amp;Menú</translation>
     </message>
@@ -232,6 +236,10 @@
     <message>
         <source>&amp;Reload</source>
         <translation>Actuali&amp;zar</translation>
+    </message>
+    <message>
+        <source>Remember &amp;history</source>
+        <translation type="unfinished">Remember &amp;history</translation>
     </message>
     <message>
         <source>&amp;Reopen Tab</source>
