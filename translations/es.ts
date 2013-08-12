@@ -3,7 +3,7 @@
     <name>General</name>
     <message>
         <source>&lt;h3&gt;Nimbus&lt;/h3&gt;Python 3/Qt 4-based web browser.</source>
-        <translation>&lt;h3&gt;Nimbus&lt;/h3&gt;Navegador de web de Python 3/Qt 4.</translation>
+        <translation>&lt;h3&gt;Nimbus&lt;/h3&gt;Navegador de web en Python 3/Qt 4.</translation>
     </message>
     <message>
         <source>&lt;b&gt;Proxy configuration&lt;/b&gt;</source>
@@ -19,7 +19,7 @@
     </message>
     <message>
         <source>A&amp;bout Nimbus</source>
-        <translation>Acerca de Nim&amp;bus</translation>
+        <translation>&amp;Acerca de Nimbus</translation>
     </message>
     <message>
         <source>All files (*)</source>
@@ -35,7 +35,7 @@
     </message>
     <message>
         <source>&amp;Clear Data...</source>
-        <translation>&amp;Borrar datos...</translation>
+        <translation>&amp;Limpiar...</translation>
     </message>
     <message>
         <source>Close &amp;window with last tab</source>
@@ -83,7 +83,7 @@
     </message>
     <message>
         <source>Enable tiled backing store</source>
-        <translation>Activar tiled backing store</translation>
+        <translation type="unfinished">Activar tiled backing store</translation>
     </message>
     <message>
         <source>Enable &amp;XSS auditing</source>
@@ -111,11 +111,11 @@
     </message>
     <message>
         <source>Find Ne&amp;xt</source>
-        <translation>Buscar de &amp;Nuevo</translation>
+        <translation>Buscar de &amp;nuevo</translation>
     </message>
     <message>
         <source>Find Pre&amp;vious</source>
-        <translation>Buscar Pre&amp;vio</translation>
+        <translation>Buscar &amp;Previo</translation>
     </message>
     <message>
         <source>&amp;General</source>
@@ -187,7 +187,7 @@
     </message>
     <message>
         <source>Print e&amp;lement backgrounds</source>
-        <translation>Print e&amp;lement backgrounds</translation>
+        <translation type="unfinished">Print e&amp;lement backgrounds</translation>
     </message>
     <message>
         <source>Print Previe&amp;w</source>
@@ -231,7 +231,7 @@
     </message>
     <message>
         <source>&amp;Settings...</source>
-        <translation>Prefere&amp;ncias...</translation>
+        <translation>Pre&amp;ferencias...</translation>
     </message>
     <message>
         <source>Type:</source>
