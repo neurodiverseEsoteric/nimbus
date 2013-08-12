@@ -18,6 +18,7 @@ except: from PyQt4.QtCore import QCoreApplication, QLocale, QTranslator, QObject
 # Translation.
 translations_folder = os.path.join(app_folder, "translations")
 locale = QLocale()
+print(locale.name())
 translator = QTranslator(QCoreApplication.instance())
 translator.load(locale.name(), translations_folder)
 

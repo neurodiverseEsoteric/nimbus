@@ -3,119 +3,119 @@
     <name>General</name>
     <message>
         <source>&lt;h3&gt;Nimbus&lt;/h3&gt;Python 3/Qt 4-based web browser.</source>
-        <translation>&lt;h3&gt;Nimbus&lt;/h3&gt;Python 3/Qt 4-based web browser.</translation>
+        <translation>&lt;h3&gt;Nimbus&lt;/h3&gt;Navegador de web de Python 3/Qt 4.</translation>
     </message>
     <message>
         <source>&lt;b&gt;Proxy configuration&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Proxy configuration&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;Configuración del servidor proxy&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Abort</source>
-        <translation>Abort</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>About &amp;Qt</source>
-        <translation>About &amp;Qt</translation>
+        <translation>Acerca de &amp;Qt</translation>
     </message>
     <message>
         <source>A&amp;bout Nimbus</source>
-        <translation>A&amp;bout Nimbus</translation>
+        <translation>Acerca de Nim&amp;bus</translation>
     </message>
     <message>
         <source>All files (*)</source>
-        <translation>All files (*)</translation>
+        <translation>Todos archivos (*)</translation>
     </message>
     <message>
         <source>&amp;Apply</source>
-        <translation>&amp;Apply</translation>
+        <translation>&amp;Aplicar</translation>
     </message>
     <message>
         <source>Automatically load &amp;images</source>
-        <translation>Automatically load &amp;images</translation>
+        <translation>Cargar &amp;imágenes automáticamente</translation>
     </message>
     <message>
         <source>&amp;Clear Data...</source>
-        <translation>&amp;Clear Data...</translation>
+        <translation>&amp;Borrar datos...</translation>
     </message>
     <message>
         <source>Close &amp;window with last tab</source>
-        <translation>Close &amp;window with last tab</translation>
+        <translation>Cerrar una &amp;ventana con la pestaña última</translation>
     </message>
     <message>
         <source>&amp;Content</source>
-        <translation>&amp;Content</translation>
+        <translation>&amp;Contenido</translation>
     </message>
     <message>
         <source>Disabled extensions:</source>
-        <translation>Disabled extensions:</translation>
+        <translation>Complementos deshabilitadas:</translation>
     </message>
     <message>
         <source>Download complete: %s</source>
-        <translation>Download complete: %s</translation>
+        <translation>Hecho: %s</translation>
     </message>
     <message>
         <source>Download complete</source>
-        <translation>Download complete</translation>
+        <translation>Hecho</translation>
     </message>
     <message>
         <source>Enable ad &amp;blocking</source>
-        <translation>Enable ad &amp;blocking</translation>
+        <translation>Activar &amp;bloqueo de publicidad</translation>
     </message>
     <message>
         <source>Enable DNS &amp;prefetching</source>
-        <translation>Enable DNS &amp;prefetching</translation>
+        <translation>Activar &amp;precarga de DNS</translation>
     </message>
     <message>
         <source>Enable &amp;Java</source>
-        <translation>Enable &amp;Java</translation>
+        <translation>Activar &amp;Java</translation>
     </message>
     <message>
         <source>Enable Java&amp;Script</source>
-        <translation>Enable Java&amp;Script</translation>
+        <translation>Activar Java&amp;Script</translation>
     </message>
     <message>
         <source>Enable &amp;plugins</source>
-        <translation>Enable &amp;plugins</translation>
+        <translation>Activar &amp;plugins</translation>
     </message>
     <message>
         <source>Enable site specific &amp;quirks</source>
-        <translation>Enable site specific &amp;quirks</translation>
+        <translation>Activar peculiaridades específicas del sitio</translation>
     </message>
     <message>
         <source>Enable tiled backing store</source>
-        <translation>Enable tiled backing store</translation>
+        <translation>Activar tiled backing store</translation>
     </message>
     <message>
         <source>Enable &amp;XSS auditing</source>
-        <translation>Enable &amp;XSS auditing</translation>
+        <translation>Activar auditoría de &amp;XSS</translation>
     </message>
     <message>
         <source>Enabled extensions:</source>
-        <translation>Enabled extensions:</translation>
+        <translation>Complementos activadas:</translation>
     </message>
     <message>
         <source>Expand subframes to fit contents</source>
-        <translation>Expand subframes to fit contents</translation>
+        <translation>Expandir iframes para encajar el contenido</translation>
     </message>
     <message>
         <source>&amp;Extensions</source>
-        <translation>&amp;Extensions</translation>
+        <translation>Compl&amp;ementos</translation>
     </message>
     <message>
         <source>Find</source>
-        <translation>Find</translation>
+        <translation>Buscar</translation>
     </message>
     <message>
         <source>&amp;Find...</source>
-        <translation>&amp;Find...</translation>
+        <translation>&amp;Buscar...</translation>
     </message>
     <message>
         <source>Find Ne&amp;xt</source>
-        <translation>Find Ne&amp;xt</translation>
+        <translation>Buscar de &amp;Nuevo</translation>
     </message>
     <message>
         <source>Find Pre&amp;vious</source>
-        <translation>Find Pre&amp;vious</translation>
+        <translation>Buscar Pre&amp;vio</translation>
     </message>
     <message>
         <source>&amp;General</source>
@@ -123,39 +123,39 @@
     </message>
     <message>
         <source>Go Home</source>
-        <translation>Go Home</translation>
+        <translation>Ir a página de inicio</translation>
     </message>
     <message>
         <source>Homepage:</source>
-        <translation>Homepage:</translation>
+        <translation>Página de inicio:</translation>
     </message>
     <message>
         <source>Hostname:</source>
-        <translation>Hostname:</translation>
+        <translation>Nombre de host:</translation>
     </message>
     <message>
         <source>&amp;Menu</source>
-        <translation>&amp;Menu</translation>
+        <translation>&amp;Menú</translation>
     </message>
     <message>
         <source>&amp;Network</source>
-        <translation>&amp;Network</translation>
+        <translation>&amp;Red</translation>
     </message>
     <message>
         <source>New Tab</source>
-        <translation>New Tab</translation>
+        <translation>Nueva pestaña</translation>
     </message>
     <message>
         <source>New &amp;Incognito Tab</source>
-        <translation>New &amp;Incognito Tab</translation>
+        <translation>Nueva pestaña de &amp;incógnito</translation>
     </message>
     <message>
         <source>New &amp;Tab</source>
-        <translation>New &amp;Tab</translation>
+        <translation>Nueva pes&amp;taña</translation>
     </message>
     <message>
         <source>&amp;New Window</source>
-        <translation>&amp;New Window</translation>
+        <translation>&amp;Nueva ventana</translation>
     </message>
     <message>
         <source>Nimbus</source>
@@ -163,19 +163,19 @@
     </message>
     <message>
         <source>Number of reopenable tabs:</source>
-        <translation>Number of reopenable tabs:</translation>
+        <translation>Número máximo de operaciones "Deshacer cerrar pestaña":</translation>
     </message>
     <message>
         <source>Number of reopenable windows:</source>
-        <translation>Number of reopenable windows:</translation>
+        <translation>Número máximo de operaciones "Deshacer cerrar ventana":</translation>
     </message>
     <message>
         <source>Open &amp;settings in tab</source>
-        <translation>Open &amp;settings in tab</translation>
+        <translation>Abrir estos prefere&amp;ncias en un nueva pestaña</translation>
     </message>
     <message>
         <source>Password:</source>
-        <translation>Password:</translation>
+        <translation>Contraseña:</translation>
     </message>
     <message>
         <source>Port:</source>
@@ -183,7 +183,7 @@
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>&amp;Print...</translation>
+        <translation>Im&amp;primir...</translation>
     </message>
     <message>
         <source>Print e&amp;lement backgrounds</source>
@@ -191,63 +191,63 @@
     </message>
     <message>
         <source>Print Previe&amp;w</source>
-        <translation>Print Previe&amp;w</translation>
+        <translation>Pre&amp;visualización de la impresión</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation>Quit</translation>
+        <translation>Salir</translation>
     </message>
     <message>
         <source>&amp;Reload</source>
-        <translation>&amp;Reload</translation>
+        <translation>Actualiza&amp;r</translation>
     </message>
     <message>
         <source>&amp;Reopen Tab</source>
-        <translation>&amp;Reopen Tab</translation>
+        <translation>Deshace&amp;r cerrado de pestaña</translation>
     </message>
     <message>
         <source>R&amp;eopen Window</source>
-        <translation>R&amp;eopen Window</translation>
+        <translation>D&amp;eshacer cerrado de ventana</translation>
     </message>
     <message>
         <source>Save As...</source>
-        <translation>Save As...</translation>
+        <translation>&amp;Guardar como...</translation>
     </message>
     <message>
         <source>Save Page &amp;As...</source>
-        <translation>Save Page &amp;As...</translation>
+        <translation>&amp;Guardar como...</translation>
     </message>
     <message>
         <source>Search expression:</source>
-        <translation>Search expression:</translation>
+        <translation>Expresión de buscar:</translation>
     </message>
     <message>
         <source>Search for:</source>
-        <translation>Search for:</translation>
+        <translation>Buscar para:</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation>Settings</translation>
+        <translation>Preferencias</translation>
     </message>
     <message>
         <source>&amp;Settings...</source>
-        <translation>&amp;Settings...</translation>
+        <translation>Prefere&amp;ncias...</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation>Type:</translation>
+        <translation>Tipo:</translation>
     </message>
     <message>
         <source>Use online content &amp;viewers to load unsupported content</source>
-        <translation>Use online content &amp;viewers to load unsupported content</translation>
+        <translation>Usar los &amp;visores de web para cargar contenido cuando sea aplicable</translation>
     </message>
     <message>
         <source>Use plugins to handle &amp;HTML5 audio and video</source>
-        <translation>Use plugins to handle &amp;HTML5 audio and video</translation>
+        <translation>Usar plugins para cargar audio y vídeo de &amp;HTML5</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation>User:</translation>
+        <translation>Usuario:</translation>
     </message>
 </context>
 </TS>
