@@ -312,8 +312,6 @@ class ExtensionsSettingsPanel(SettingsPanel):
         self.blacklist.itemActivated.connect(self.enableExtension)
         blacklistColumn.addWidget(self.blacklist)
 
-        self.layout().addWidget(custom_widgets.Expander(self))
-
     def disableExtension(self, item):
         name = item.text()
         self.blacklist.addItem(name)
