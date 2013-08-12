@@ -231,7 +231,7 @@
     </message>
     <message>
         <source>&amp;Reload</source>
-        <translation>Actualiza&amp;r</translation>
+        <translation>Actuali&amp;zar</translation>
     </message>
     <message>
         <source>&amp;Reopen Tab</source>

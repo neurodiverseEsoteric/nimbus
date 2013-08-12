@@ -14,7 +14,6 @@ if not bookmarks:
     common.data.sync()
 else:
     common.bookmarks = json.loads(bookmarks)
-nimbussterms = "k"
 common.bookmarksDock = QDockWidget(mainWindow)
 common.bookmarksDock.setContextMenuPolicy(Qt.CustomContextMenu)
 common.bookmarksDock.setFeatures(QDockWidget.DockWidgetClosable)
