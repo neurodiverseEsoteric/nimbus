@@ -18,9 +18,9 @@ class Geolocation(QObject):
     def getCurrentPosition(self, success, error, options):
         position = geolocate()
         return {"coords": {"latitude": position["Latitude"], "longitude": position["Longitude"], "altitude": 0, "accuracy": 0, "altitudeAccuracy": 0, "heading": 0, "speed": 0}, "timestamp": time.time()}
-    def watchPosition(self):
+    def watchPosition(self, success, error, options):
         pass
-    def clearWatch(self):
+    def clearWatch(self, id):
         pass
 
 if __name__ == "__main__":
