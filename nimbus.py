@@ -548,6 +548,8 @@ class ExtensionButton(QToolButton):
         common.extension_buttons.append(self)
         self._parent = parent
         self.script = script
+    def parent(self):
+        return self._parent
     def loadScript(self):
         try: exec(self.script)
         except:

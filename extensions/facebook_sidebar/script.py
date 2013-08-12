@@ -1,20 +1,26 @@
 if not self.isCheckable():
     self.setCheckable(True)
     self.setChecked(True)
-try: self._parent.facebookDock
+try: self.parent().facebookDock
 except:
+    def addTab(webView):
+        for window in common.windows[::-1]:
+            if window.isActiveWindow():
+                window.addTab(webView=webView, focus=True)
+    self.addTab = addTab
     try: from PySide.QtGui import QDockWidget
     except: from PyQt4.QtGui import QDockWidget
-    self._parent.lastPassExtensionWidget = self
-    self._parent.facebookDock = QDockWidget(self._parent)
-    self._parent.facebookDock.setMaximumWidth(320)
-    self._parent.facebookDock.setContextMenuPolicy(Qt.CustomContextMenu)
-    self._parent.facebookDock.setFeatures(QDockWidget.DockWidgetClosable)
-    self._parent.facebookView = WebView(self._parent.facebookDock)
-    self._parent.facebookDock.setWindowTitle("Facebook")
-    self._parent.facebookView.load(QUrl("https://m.facebook.com/"))
-    self._parent.facebookDock.setWidget(self._parent.facebookView)
-    self._parent.addDockWidget(Qt.LeftDockWidgetArea, self._parent.facebookDock)
+    self.parent().lastPassExtensionWidget = self
+    self.parent().facebookDock = QDockWidget(self.parent())
+    self.parent().facebookDock.setWindowTitle("Facebook")
+    self.parent().facebookDock.setMaximumWidth(320)
+    self.parent().facebookDock.setContextMenuPolicy(Qt.CustomContextMenu)
+    self.parent().facebookDock.setFeatures(QDockWidget.DockWidgetClosable)
+    self.parent().facebookView = WebView(self.parent().facebookDock)
+    self.parent().facebookView.windowCreated.connect(addTab)
+    self.parent().facebookView.load(QUrl("https://m.facebook.com/"))
+    self.parent().facebookDock.setWidget(self.parent().facebookView)
+    self.parent().addDockWidget(Qt.LeftDockWidgetArea, self.parent().facebookDock)
 else:
-    self._parent.addDockWidget(Qt.LeftDockWidgetArea, self._parent.facebookDock)
-    self._parent.facebookDock.setVisible(not self._parent.facebookDock.isVisible())
+    self.parent().addDockWidget(Qt.LeftDockWidgetArea, self.parent().facebookDock)
+    self.parent().facebookDock.setVisible(not self.parent().facebookDock.isVisible())
