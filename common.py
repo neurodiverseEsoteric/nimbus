@@ -14,6 +14,7 @@ import os
 import abpy
 import json
 import locale
+import browser
 try:
     from PySide.QtCore import QTimer, SIGNAL, QLocale, QByteArray, QCoreApplication, QSettings, QThread, QUrl
     from PySide.QtGui import QIcon, QInputDialog, QLineEdit
@@ -324,8 +325,8 @@ blank_toolbar = "QToolBar { border: 0; background: transparent; }"
 # Stores WebView instances.
 webviews = []
 
-# Stores browser windows.
-windows = []
+# Deprecated. Use browser.windows instead.
+windows = browser.windows
 
 # List of extensions.
 extensions_folder = os.path.join(app_folder, "extensions")

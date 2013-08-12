@@ -11,6 +11,7 @@
 
 import json
 import common
+import browser
 import custom_widgets
 import clear_history_dialog
 from translate import tr
@@ -399,7 +400,7 @@ class SettingsDialog(QWidget):
         for index in range(0, self.tabs.count()):
             self.tabs.widget(index).saveSettings()
         common.reset_extensions()
-        for window in common.windows:
+        for window in browser.windows:
             window.reloadExtensions()
         for webview in common.webviews:
             webview.updateProxy()

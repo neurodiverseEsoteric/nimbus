@@ -4,7 +4,7 @@ if not self.isCheckable():
 try: self.parentWindow().facebookDock
 except:
     def addTab(webView):
-        for window in common.windows[::-1]:
+        for window in browser.windows[::-1]:
             if window.isActiveWindow():
                 window.addTab(webView=webView, focus=True)
     self.addTab = addTab

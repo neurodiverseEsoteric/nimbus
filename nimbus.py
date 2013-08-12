@@ -19,6 +19,7 @@ import copy
 import traceback
 import hashlib
 import common
+import browser
 import translate
 from translate import tr
 import custom_widgets
@@ -567,7 +568,7 @@ class MainWindow(QMainWindow):
         self.mouseY = False
 
         # Add self to global list of windows.
-        common.windows.append(self)
+        browser.windows.append(self)
 
         # Set window icon.
         self.setWindowIcon(common.app_icon)
@@ -861,11 +862,11 @@ self.origY + ev.globalY() - self.mouseY)
     # Blank all tabs when window is closed.
     def closeEvent(self, ev):
         self.blankAll()
-        if len(common.windows) - 1 > common.setting_to_int("general/ReopenableWindowCount"):
-            for window in common.windows:
+        if len(browser.windows) - 1 > common.setting_to_int("general/ReopenableWindowCount"):
+            for window in browser.windows:
                 if not window.isVisible():
                     window.deleteLater()
-                    common.windows.pop(common.windows.index(window))
+                    browser.windows.pop(browser.windows.index(window))
                     break
 
     # Open settings dialog.
@@ -1133,9 +1134,9 @@ def addWindow(url=None):
 
 # Reopen window method.
 def reopenWindow():
-    for window in common.windows[::-1]:
+    for window in browser.windows[::-1]:
         if not window.isVisible():
-            common.windows.append(common.windows.pop(common.windows.index(window)))
+            browser.windows.append(browser.windows.pop(browser.windows.index(window)))
             window.deblankAll()
             if window.tabs.count() == 0:
                 window.reopenTab()
@@ -1192,13 +1193,13 @@ if has_dbus:
 
         @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
         def addTab(self, url="about:blank"):
-            for window in common.windows[::-1]:
+            for window in browser.windows[::-1]:
                 if window.isVisible():
                     window.addTab(url=url)
-                    common.windows[-1].activateWindow()
+                    browser.windows[-1].activateWindow()
                     return url
             self.addWindow(url)
-            common.windows[-1].activateWindow()
+            browser.windows[-1].activateWindow()
             return url
 
 # Main function to load everything.
