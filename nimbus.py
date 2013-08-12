@@ -297,8 +297,10 @@ class WebView(QWebView):
 
     def ready(self, response):
         if self._contentType == None and response.url() == self.url():
-            try: self._contentType = response.header(QNetworkRequest.ContentTypeHeader)
-            except: self._contentType = "None"
+            try: contentType = response.header(QNetworkRequest.ContentTypeHeader)
+            except: contentType = None
+            if contentType != None:
+                self._contentType = contentType
 
     def mousePressEvent(self, ev):
         if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
