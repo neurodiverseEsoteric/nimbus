@@ -1,5 +1,10 @@
 #! /usr/bin/env python3
 
+###################
+## status_bar.py ##
+###################
+
+# Description
 # This is a browser status bar class.
 
 from common import blank_toolbar

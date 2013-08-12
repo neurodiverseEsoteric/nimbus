@@ -1,5 +1,12 @@
 #! /usr/bin/env python3
 
+#############################
+## clear_history_dialog.py ##
+#############################
+
+# Description:
+# This module contains a dialog used for clearing out Nimbus' history.
+
 import sys
 import os
 import subprocess

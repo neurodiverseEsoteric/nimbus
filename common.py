@@ -1,5 +1,13 @@
 #! /usr/bin/env python3
 
+###############
+## common.py ##
+###############
+
+# Description:
+# This module contains global variables and objects used by the rest of
+# Nimbus' components.
+
 # Import everything we need.
 import sys
 import os

@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 
+##################
+## translate.py ##
+##################
+
+# Description:
+# This module contains objects and functions pertaining to
+# internationalization
+
 import traceback
 import os.path
 from common import app_folder

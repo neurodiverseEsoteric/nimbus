@@ -1,5 +1,13 @@
 #! /usr/bin/env python3
 
+###############
+## nimbus.py ##
+###############
+
+# Description:
+# This is the core module that contains all the very specific components
+# related to loading Nimbus.
+
 # Import everything we need.
 import sys
 import os
@@ -43,7 +51,8 @@ except:
     Signal = pyqtSignal
     pyside = False
 
-# chdir to the app folder.
+# chdir to the app folder. This way, we won't have issues related to
+# relative paths.
 os.chdir(common.app_folder)
 
 # Create extension server.
@@ -1189,20 +1198,12 @@ def main():
     # Create app.
     app = QApplication(sys.argv)
     app.installTranslator(translate.translator)
+
+    # We want Nimbus to stay open when the last window is closed,
+    # so we set this.
     app.setQuitOnLastWindowClosed(False)
 
-    common.app_icon = common.complete_icon("nimbus")
-    common.app_icon.addFile(common.icon("nimbus-16.png"))
-    common.app_icon.addFile(common.icon("nimbus-22.png"))
-    common.app_icon.addFile(common.icon("nimbus-24.png"))
-    common.app_icon.addFile(common.icon("nimbus-32.png"))
-    common.app_icon.addFile(common.icon("nimbus-48.png"))
-    common.app_icon.addFile(common.icon("nimbus-64.png"))
-    common.app_icon.addFile(common.icon("nimbus-72.png"))
-    common.app_icon.addFile(common.icon("nimbus-80.png"))
-    common.app_icon.addFile(common.icon("nimbus-128.png"))
-    common.app_icon.addFile(common.icon("nimbus-256.png"))
-
+    # If D-Bus is present...
     if has_dbus:
         bus = dbus.SessionBus()
 
@@ -1218,6 +1219,20 @@ def main():
                 proxy.addTab(arg)
         return
 
+    # Hack together the browser's icon. This needs to be improved.
+    common.app_icon = common.complete_icon("nimbus")
+    common.app_icon.addFile(common.icon("nimbus-16.png"))
+    common.app_icon.addFile(common.icon("nimbus-22.png"))
+    common.app_icon.addFile(common.icon("nimbus-24.png"))
+    common.app_icon.addFile(common.icon("nimbus-32.png"))
+    common.app_icon.addFile(common.icon("nimbus-48.png"))
+    common.app_icon.addFile(common.icon("nimbus-64.png"))
+    common.app_icon.addFile(common.icon("nimbus-72.png"))
+    common.app_icon.addFile(common.icon("nimbus-80.png"))
+    common.app_icon.addFile(common.icon("nimbus-128.png"))
+    common.app_icon.addFile(common.icon("nimbus-256.png"))
+
+    # Create tray icon.
     common.trayIcon = SystemTrayIcon(QCoreApplication.instance())
     common.trayIcon.show()
 

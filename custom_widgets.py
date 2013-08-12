@@ -1,6 +1,11 @@
 #! /usr/bin/env python3
 
-# Custom widgets.
+#######################
+## custom_widgets.py ##
+#######################
+
+# Description:
+# Custom widgets used by Nimbus.
 
 try:
     from PySide.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
