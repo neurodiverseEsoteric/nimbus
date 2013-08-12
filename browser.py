@@ -6,3 +6,4 @@ def activeWindow():
     for window in windows[::-1]:
         if window.isActiveWindow():
             return window
+    return window

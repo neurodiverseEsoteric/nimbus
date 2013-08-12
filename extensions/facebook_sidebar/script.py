@@ -14,5 +14,4 @@ except:
     self.parentWindow().facebookDock.setWidget(self.parentWindow().facebookView)
     self.parentWindow().addDockWidget(Qt.LeftDockWidgetArea, self.parentWindow().facebookDock)
 else:
-    self.parentWindow().addDockWidget(Qt.LeftDockWidgetArea, self.parentWindow().facebookDock)
     self.parentWindow().facebookDock.setVisible(not self.parentWindow().facebookDock.isVisible())
