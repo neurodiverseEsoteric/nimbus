@@ -12,7 +12,6 @@
 import sys
 import os
 import base64
-import urllib.request
 import subprocess
 import threading
 import copy
@@ -204,6 +203,9 @@ class WebView(QWebView):
         # Private browsing.
         self.incognito = incognito
 
+        # Stores the mime type of the current page.
+        self._contentType = None
+
         # This is used to store the text entered in using WebView.find(),
         # so that WebView.findNext() and WebView.findPrevious() work.
         self._findText = False
@@ -276,17 +278,27 @@ class WebView(QWebView):
 
         # PyQt4 doesn't support <audio> and <video> tags on Windows.
         # This is a little hack to work around it.
+        self.loadStarted.connect(self.resetContentType)
         self.loadFinished.connect(self.replaceAVTags)
         self.loadFinished.connect(self.savePageToCache)
+        self.page().networkAccessManager().finished.connect(self.ready)
 
         self.setWindowTitle("")
 
         self.load(QUrl("about:blank"))
 
+    def resetContentType(self):
+        self._contentType = None
+
     def deleteLater(self):
         try: common.webviews.remove(self)
         except: pass
         QWebView.deleteLater(self)
+
+    def ready(self, response):
+        if self._contentType == None and response.url() == self.url():
+            try: self._contentType = response.header(QNetworkRequest.ContentTypeHeader)
+            except: self._contentType = "None"
 
     def mousePressEvent(self, ev):
         if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
@@ -410,14 +422,10 @@ class WebView(QWebView):
 
         if request.url() == self.url():
 
-            try: contentMimeType = urllib.request.urlopen(request.url().toString()).info()
-            except: contentMimeType = "None"
-            else: contentMimeType = str(contentMimeType["Content-Type"])
-
             # If the file type can be converted to plain text, use savePage
             # method instead.
             for mimeType in ("text", "svg", "html", "xml", "xhtml",):
-                if mimeType in contentMimeType:
+                if mimeType in self._contentType:
                     self.savePage()
                     return
 
