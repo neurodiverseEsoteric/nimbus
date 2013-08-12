@@ -402,16 +402,18 @@ class WebView(QWebView):
     # Download file.
     def downloadFile(self, request):
 
-        try: contentMimeType = urllib.request.urlopen(request.url().toString()).info()
-        except: contentMimeType = "None"
-        else: contentMimeType = str(contentMimeType["Content-Type"])
+        if request.url() == self.url():
 
-        # If the file type can be converted to plain text, use savePage
-        # method instead.
-        for mimeType in ("text", "svg", "html", "xml", "xhtml",):
-            if mimeType in contentMimeType:
-                self.savePage()
-                return
+            try: contentMimeType = urllib.request.urlopen(request.url().toString()).info()
+            except: contentMimeType = "None"
+            else: contentMimeType = str(contentMimeType["Content-Type"])
+
+            # If the file type can be converted to plain text, use savePage
+            # method instead.
+            for mimeType in ("text", "svg", "html", "xml", "xhtml",):
+                if mimeType in contentMimeType:
+                    self.savePage()
+                    return
 
         # Get file name for destination.
         fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(os.path.expanduser("~"), request.url().toString().split("/")[-1]), tr("All files (*)"))
