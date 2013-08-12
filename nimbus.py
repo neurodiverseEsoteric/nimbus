@@ -417,13 +417,13 @@ class WebView(QWebView):
 
         # Get file name for destination.
         fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(os.path.expanduser("~"), request.url().toString().split("/")[-1]), tr("All files (*)"))
+        if type(fname) is tuple:
+            fname = fname[0]
         if fname:
             reply = self.page().networkAccessManager().get(request)
             
             # Create a DownloadBar instance and append it to list of
             # downloads.
-            if type(fname) is tuple:
-                fname = fname[0]
             downloadDialog = DownloadBar(reply, fname, None)
             self.downloads.append(downloadDialog)
 
