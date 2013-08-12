@@ -465,9 +465,9 @@ class WebView(QWebView):
             content = content.replace("&lt;", "<").replace("&gt;", ">").replace("<body contenteditable=\"true\">", "<body>")
         else:
             fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(os.path.expanduser("~"), self.url().toString().split("/")[-1]), tr("All files (*)"))
+        if type(fname) is tuple:
+            fname = fname[0]
         if fname:
-            if type(fname) is tuple:
-                fname = fname[0]
             try: f = open(fname, "w")
             except: pass
             else:
