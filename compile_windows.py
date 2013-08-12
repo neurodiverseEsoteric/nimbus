@@ -17,7 +17,7 @@ print("3) cx_Freeze is installed.")
 os.system("""PAUSE""")
 os.system(os.path.join(python_dir, "Scripts", "cxfreeze.bat") + """ "nimbus.py" --target-dir="." --base-name="Win32GUI\"""")
 os.chdir(python_dir)
-print("copying " + os.path.join(os.path.dirname(os.path.dirname(get_python_lib())), "python33.dll") + " -> .\python33.dll")
+print("copying " + os.path.join(os.path.dirname(os.path.dirname(get_python_lib())), "python*.dll") + " -> .\python*.dll")
 x = os.listdir(".")
 for dll in x:
     if dll.startswith("python") and dll.endswith(".dll"):
