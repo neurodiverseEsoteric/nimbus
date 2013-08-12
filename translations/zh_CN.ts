@@ -19,7 +19,7 @@
     </message>
     <message>
         <source>A&amp;bout Nimbus</source>
-        <translation>关于Nimbus(&amp;A)</translation>
+        <translation>关于Nimbus(&amp;B)</translation>
     </message>
     <message>
         <source>All files (*)</source>
