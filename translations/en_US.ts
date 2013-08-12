@@ -46,8 +46,8 @@
         <translation>&amp;Clear Data...</translation>
     </message>
     <message>
-        <source>Clear History</source>
-        <translation>Clear History</translation>
+        <source>Clear Data</source>
+        <translation>Clear Data</translation>
     </message>
     <message>
         <source>Close</source>

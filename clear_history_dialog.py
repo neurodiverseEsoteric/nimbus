@@ -25,9 +25,8 @@ class ClearHistoryDialog(QMainWindow):
         super(ClearHistoryDialog, self).__init__(parent)
 
         self.setWindowFlags(Qt.Dialog)
-        self.setWindowModality(Qt.ApplicationModal)
 
-        self.setWindowTitle(tr("Clear History"))
+        self.setWindowTitle(tr("Clear Data"))
 
         closeWindowAction = QAction(self)
         closeWindowAction.setShortcuts(["Esc", "Ctrl+W", "Ctrl+Shift+Del"])

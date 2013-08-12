@@ -67,7 +67,9 @@ default_settings = {"proxy/Type": "None",
                     "general/Homepage": "https://github.com/foxhead128/nimbus",
                     "general/Search": "https://duckduckgo.com/?q=%s",
                     "general/CloseWindowWithLastTab": True,
-                    "general/OpenSettingsInTab": True,
+                    "data/RememberHistory": True,
+                    "data/MaximumCacheSize": 50,
+                    "general/OpenSettingsInTab": False,
                     "extensions/Whitelist": [],
                     "general/ReopenableTabCount": 10,
                     "general/ReopenableWindowCount": 10}
@@ -81,7 +83,8 @@ for setting, value in default_settings.items():
 settings.sync()
 
 def setting_to_bool(value=""):
-    return bool(eval(str(settings.value(value)).title()))
+    try: return bool(eval(str(settings.value(value)).title()))
+    except: return False
 
 def setting_to_int(value=""):
     try: return int(settings.value(value))
@@ -185,6 +188,8 @@ incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
 
 # Global disk cache.
 diskCache = QNetworkDiskCache(QCoreApplication.instance())
+diskCache.setCacheDirectory(network_cache_folder)
+diskCache.setMaximumCacheSize(setting_to_int("data/MaximumCacheSize"))
 
 # Subclass of QNetworkReply that loads a local folder.
 class NetworkReply(QNetworkReply):
@@ -219,7 +224,6 @@ class NetworkReply(QNetworkReply):
 # Custom NetworkAccessManager class with support for ad-blocking.
 class NetworkAccessManager(QNetworkAccessManager):
     diskCache = diskCache
-    diskCache.setCacheDirectory(network_cache_folder)
     def __init__(self, *args, nocache=False, **kwargs):
         super(NetworkAccessManager, self).__init__(*args, **kwargs)
         if not nocache:

@@ -12,6 +12,7 @@
 import json
 import common
 import custom_widgets
+import clear_history_dialog
 from translate import tr
 try:
     from PySide.QtCore import Qt, QUrl
@@ -161,6 +162,38 @@ class ContentSettingsPanel(SettingsPanel):
         common.settings.setValue("content/FrameFlatteningEnabled", self.frameFlattenToggle.isChecked())
         common.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())
         common.settings.sync()
+
+# Data settings panel
+class DataSettingsPanel(SettingsPanel):
+    def __init__(self, parent=None):
+        super(DataSettingsPanel, self).__init__(parent)
+
+        # Clear history dialog.
+        self.clearHistoryDialog = clear_history_dialog.ClearHistoryDialog(self)
+        self.clearHistoryDialog.hide()
+
+        self.showClearHistoryDialogButton = QPushButton(tr("Clear Data"), self)
+        self.showClearHistoryDialogButton.clicked.connect(self.clearHistoryDialog.show)
+        self.layout().addWidget(self.showClearHistoryDialogButton)
+
+        # Remember history checkbox.
+        self.rememberHistoryToggle = QCheckBox(tr("Remember &history"), self)
+        self.layout().addWidget(self.rememberHistoryToggle)
+
+        # Maximum cache size spinbox.
+        self.maximumCacheSizeRow = custom_widgets.SpinBoxRow(tr("Maximum cache size:"), self)
+        self.maximumCacheSizeRow.expander.setText(tr("MB"))
+        self.maximumCacheSize = self.maximumCacheSizeRow.spinBox
+        self.maximumCacheSize.setMaximum(20000)
+        self.layout().addWidget(self.maximumCacheSizeRow)
+
+        self.layout().addWidget(custom_widgets.Expander(self))
+    def loadSettings(self):
+        self.maximumCacheSize.setValue(common.setting_to_int("data/MaximumCacheSize"))
+        self.rememberHistoryToggle.setChecked(common.setting_to_bool("data/RememberHistory"))
+    def saveSettings(self):
+        common.settings.setValue("data/MaximumCacheSize", self.maximumCacheSize.value())
+        common.settings.setValue("data/RememberHistory", self.rememberHistoryToggle.isChecked())
 
 # Network configuration panel
 class NetworkSettingsPanel(SettingsPanel):
@@ -328,6 +361,7 @@ class SettingsDialog(QWidget):
 
         self.tabs.addTab(GeneralSettingsPanel(self), tr("&General"))
         self.tabs.addTab(ContentSettingsPanel(self), tr("&Content"))
+        self.tabs.addTab(DataSettingsPanel(self), tr("&Data"))
         self.tabs.addTab(NetworkSettingsPanel(self), tr("&Network"))
         self.tabs.addTab(ExtensionsSettingsPanel(self), tr("&Extensions"))
 

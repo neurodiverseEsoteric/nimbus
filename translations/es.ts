@@ -46,7 +46,7 @@
         <translation>&amp;Limpiar...</translation>
     </message>
     <message>
-        <source>Clear History</source>
+        <source>Clear Data</source>
         <translation>Limpiar historial</translation>
     </message>
     <message>

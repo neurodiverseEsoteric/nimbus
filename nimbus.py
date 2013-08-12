@@ -60,7 +60,7 @@ server_thread = extension_server.ExtensionServerThread()
 
 # Add an item to the browser history.
 def addHistoryItem(url):
-    if not url in common.history and len(url) < 84:
+    if not url in common.history and len(url) < 84 and common.setting_to_bool("data/RememberHistory"):
         common.history.append(url)
 
 # Progress bar used for downloads.
@@ -1002,7 +1002,7 @@ self.origY + ev.globalY() - self.mouseY)
 
         elif "url" in kwargs:
             url = kwargs["url"]
-            webview = WebView(self)
+            webview = WebView(incognito=not common.setting_to_bool("data/RememberHistory"), parent=self)
             webview.load(QUrl.fromUserInput(url))
 
         # If a WebView object is specified, use it.
@@ -1011,7 +1011,7 @@ self.origY + ev.globalY() - self.mouseY)
 
         # If nothing is specified, use a blank WebView.
         else:
-            webview = WebView(self)
+            webview = WebView(incognito=not common.setting_to_bool("data/RememberHistory"), parent=self)
 
         # Connect signals
         webview.loadProgress.connect(self.setProgress)
@@ -1242,7 +1242,13 @@ def main():
 
     # Set up settings dialog.
     common.settingsDialog = WebView(incognito=True, parent=None)
+    common.settingsDialog.setWindowIcon(common.app_icon)
+    common.settingsDialog.setWindowFlags(Qt.Dialog)
     common.settingsDialog.load(QUrl("nimbus://settings"))
+    closeSettingsDialogAction = QAction(common.settingsDialog)
+    closeSettingsDialogAction.setShortcuts(["Esc", "Ctrl+W"])
+    closeSettingsDialogAction.triggered.connect(common.settingsDialog.hide)
+    common.settingsDialog.addAction(closeSettingsDialogAction)
 
     # Create DBus server
     if has_dbus:
