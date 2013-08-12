@@ -13,14 +13,19 @@ import sys
 import os
 import abpy
 import json
+import locale
 try:
-    from PySide.QtCore import QTimer, SIGNAL, QByteArray, QCoreApplication, QSettings, QThread, QUrl
+    from PySide.QtCore import QTimer, SIGNAL, QLocale, QByteArray, QCoreApplication, QSettings, QThread, QUrl
     from PySide.QtGui import QIcon, QInputDialog, QLineEdit
     from PySide.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
 except:
-    from PyQt4.QtCore import QTimer, SIGNAL, QByteArray, QCoreApplication, QSettings, QThread, QUrl
+    from PyQt4.QtCore import QTimer, SIGNAL, QLocale, QByteArray, QCoreApplication, QSettings, QThread, QUrl
     from PyQt4.QtGui import QIcon, QInputDialog, QLineEdit
     from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
+
+# Python locale
+try: app_locale = locale.getlocale()[0]
+except: app_locale = QLocale.system().name()
 
 # WIDGET RELATED #
 
@@ -65,7 +70,7 @@ default_settings = {"proxy/Type": "None",
                     "content/TiledBackingStoreEnabled": False,
                     "content/SiteSpecificQuirksEnabled": True,
                     "general/Homepage": "https://github.com/foxhead128/nimbus",
-                    "general/Search": "https://duckduckgo.com/?q=%s",
+                    "general/Search": "https://duckduckgo.com/?q=%s" if not app_locale.startswith("zh") else "http://www.baidu.com/s?wd=%s",
                     "general/CloseWindowWithLastTab": True,
                     "data/RememberHistory": True,
                     "data/MaximumCacheSize": 50,

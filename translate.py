@@ -10,18 +10,15 @@
 
 import traceback
 import os.path
-import locale
-from common import app_folder
+from common import app_folder, app_locale
 
 try: from PySide.QtCore import QCoreApplication, QLocale, QTranslator, QObject
 except: from PyQt4.QtCore import QCoreApplication, QLocale, QTranslator, QObject
 
 # Translation.
 translations_folder = os.path.join(app_folder, "translations")
-try: locale = locale.getlocale()[0]
-except: locale = QLocale.system().name()
 translator = QTranslator(QCoreApplication.instance())
-translator.load(locale, translations_folder)
+translator.load(app_locale, translations_folder)
 
 _translator = QObject()
 
