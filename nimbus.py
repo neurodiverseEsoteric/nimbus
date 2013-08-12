@@ -18,6 +18,7 @@ import copy
 import traceback
 import hashlib
 import common
+import geolocation
 import browser
 import translate
 from translate import tr
@@ -141,6 +142,16 @@ class WebPage(QWebPage):
                ("qdatetimeedit", QDateTimeEdit),
                ("qdial", QDial),
                ("qspinbox", QSpinBox))
+    def __init__(self, *args, **kwargs):
+        super(WebPage, self).__init__(*args, **kwargs)
+        self.geolocation = geolocation.Geolocation()
+        self.featurePermissionRequested.connect(self.permissionRequested)
+        self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakNavigatorObject)
+    def tweakNavigatorObject(self):
+        self.mainFrame().addToJavaScriptWindowObject("geolocation", self.geolocation)
+        self.mainFrame().evaluateJavaScript("window.navigator['geolocation'] = geolocation")
+    def permissionRequested(self, frame, feature):
+        self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
     def createPlugin(self, classid, url, paramNames, paramValues):
         if classid.lower() == "settingsdialog":
             sdialog = settings_dialog.SettingsDialog(self.view())
