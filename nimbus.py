@@ -425,7 +425,7 @@ class WebView(QWebView):
             # If the file type can be converted to plain text, use savePage
             # method instead.
             for mimeType in ("text", "svg", "html", "xml", "xhtml",):
-                if mimeType in self._contentType:
+                if mimeType in str(self._contentType):
                     self.savePage()
                     return
 
