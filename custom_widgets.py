@@ -7,10 +7,16 @@
 # Description:
 # Custom widgets used by Nimbus.
 
+import os
+from common import app_folder
+from translate import tr
+
 try:
-    from PySide.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
+    from PySide.QtCore import Qt
+    from PySide.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
 except:
-    from PyQt4.QtGui import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
+    from PyQt4.QtCore import Qt
+    from PyQt4.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
 
 # Blank widget to take up space.
 class Expander(QLabel):
@@ -75,3 +81,52 @@ class MenuToolBar(QToolBar):
         self.initStyleOption(option)
         style = self.style()
         style.drawControl(QStyle.CE_MenuBarEmptyArea, option, painter, self)
+
+# License view class.
+class ReadOnlyTextEdit(QTextEdit):
+    def __init__(self, *args, **kwargs):
+        super(ReadOnlyTextEdit, self).__init__(*args, **kwargs)
+        self.setReadOnly(True)
+
+# Licensing dialog.
+class LicenseDialog(QTabWidget):
+    def __init__(self, parent=None):
+        super(LicenseDialog, self).__init__(parent)
+        self.resize(420, 320)
+        self.setWindowTitle(tr("Credits & Licensing"))
+        self.setWindowFlags(Qt.Dialog)
+        self.readme = ""
+        self.license = ""
+        self.authors = ""
+        for fname in os.listdir(app_folder):
+            if fname.startswith("LICENSE"):
+                try: f = open(os.path.join(app_folder, fname), "r")
+                except: pass
+                else:
+                    self.license = f.read()
+                    f.close()
+            elif fname.startswith("AUTHORS"):
+                try: f = open(os.path.join(app_folder, fname), "r")
+                except: pass
+                else:
+                    self.authors = f.read()
+                    f.close()
+            elif fname.startswith("README"):
+                try: f = open(os.path.join(app_folder, fname), "r")
+                except: pass
+                else:
+                    self.readme = f.read()
+                    f.close()
+        self.readmeView = ReadOnlyTextEdit(self)
+        self.readmeView.setText(self.readme)
+        self.addTab(self.readmeView, tr("&README"))
+        self.licenseView = ReadOnlyTextEdit(self)
+        self.licenseView.setText(self.license)
+        self.addTab(self.licenseView, tr("&License"))
+        self.authorsView = ReadOnlyTextEdit(self)
+        self.authorsView.setText(self.authors)
+        self.addTab(self.authorsView, tr("&Authors"))
+        closeAction = QAction(self)
+        closeAction.setShortcuts(["Esc", "Ctrl+W"])
+        closeAction.triggered.connect(self.hide)
+        self.addAction(closeAction)

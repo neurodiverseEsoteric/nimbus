@@ -18,6 +18,10 @@
         <translation>Acerca de &amp;Qt</translation>
     </message>
     <message>
+        <source>A;bout Nimbus</source>
+        <translation>Acerca de Nimbus</translation>
+    </message>
+    <message>
         <source>A&amp;bout Nimbus</source>
         <translation>&amp;Acerca de Nimbus</translation>
     </message>
@@ -28,6 +32,10 @@
     <message>
         <source>&amp;Apply</source>
         <translation>&amp;Aplicar</translation>
+    </message>
+    <message>
+        <source>&amp;Authors</source>
+        <translation>&amp;Autores</translation>
     </message>
     <message>
         <source>Automatically load &amp;images</source>
@@ -64,6 +72,14 @@
     <message>
         <source>Cookies</source>
         <translation>Cookies</translation>
+    </message>
+    <message>
+        <source>Credits &amp; Licensing</source>
+        <translation>Más Acerca de Nimbus</translation>
+    </message>
+    <message>
+        <source>Credits &amp;&amp; &amp;Licensing</source>
+        <translation>&amp;Más Acerca de Nimbus</translation>
     </message>
     <message>
         <source>&amp;Data</source>
@@ -166,6 +182,10 @@
         <translation>Nombre de host:</translation>
     </message>
     <message>
+        <source>&amp;License</source>
+        <translation>Términos de &amp;licencia</translation>
+    </message>
+    <message>
         <source>Maximum cache size:</source>
         <translation>Máximo tamaño de cache:</translation>
     </message>
@@ -236,6 +256,10 @@
     <message>
         <source>Quit</source>
         <translation>Salir</translation>
+    </message>
+    <message>
+        <source>&amp;README</source>
+        <translation type="unfinished">&amp;README</translation>
     </message>
     <message>
         <source>&amp;Reload</source>

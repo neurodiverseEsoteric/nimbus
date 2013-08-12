@@ -18,6 +18,10 @@
         <translation type="unfinished">关于Qt(&amp;Q)</translation>
     </message>
     <message>
+        <source>About Nimbus</source>
+        <translation>关于Nimbus</translation>
+    </message>
+    <message>
         <source>A&amp;bout Nimbus</source>
         <translation>关于Nimbus(&amp;B)</translation>
     </message>
@@ -28,6 +32,10 @@
     <message>
         <source>&amp;Apply</source>
         <translation>应用(&amp;A)</translation>
+    </message>
+    <message>
+        <source>&amp;Authors</source>
+        <translation type="unfinished">&amp;Authors</translation>
     </message>
     <message>
         <source>Automatically load &amp;images</source>
@@ -64,6 +72,14 @@
     <message>
         <source>Cookies</source>
         <translation type="unfinished">Cookies</translation>
+    </message>
+    <message>
+        <source>Credits &amp; Licensing</source>
+        <translation type="unfinished">Credits &amp; Licensing</translation>
+    </message>
+    <message>
+        <source>Credits &amp;&amp; &amp;Licensing</source>
+        <translation type="unfinished">Credits &amp;&amp; &amp;Licensing</translation>
     </message>
     <message>
         <source>&amp;Data</source>
@@ -166,6 +182,10 @@
         <translation>主机名</translation>
     </message>
     <message>
+        <source>&amp;License</source>
+        <translation type="unfinished">&amp;License</translation>
+    </message>
+    <message>
         <source>Maximum cache size:</source>
         <translation type="unfinished">Maximum cache size:</translation>
     </message>
@@ -236,6 +256,10 @@
     <message>
         <source>Quit</source>
         <translation>退出</translation>
+    </message>
+    <message>
+        <source>&amp;README</source>
+        <translation type="unfinished">&amp;README</translation>
     </message>
     <message>
         <source>&amp;Reload</source>
