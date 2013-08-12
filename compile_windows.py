@@ -1,8 +1,7 @@
 #! /usr/bin/env python3
 
 # Description:
-# This script is a big, ugly hack to copy over required files after compiling
-# Nimbus.
+# This script is a big, ugly hack that compiles Nimbus on Windows.
 
 import os, shutil
 from distutils.sysconfig import get_python_lib
