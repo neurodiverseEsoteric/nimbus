@@ -66,6 +66,10 @@
         <translation>Cookies</translation>
     </message>
     <message>
+        <source>&amp;Data</source>
+        <translation type="unfinished">&amp;Datos</translation>
+    </message>
+    <message>
         <source>Disabled extensions:</source>
         <translation>Complementos deshabilitadas:</translation>
     </message>

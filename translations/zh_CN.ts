@@ -66,6 +66,10 @@
         <translation type="unfinished">Cookies</translation>
     </message>
     <message>
+        <source>&amp;Data</source>
+        <translation type="unfinished">&amp;Data</translation>
+    </message>
+    <message>
         <source>Disabled extensions:</source>
         <translation>扩展已禁用</translation>
     </message>
