@@ -146,11 +146,15 @@ class WebPage(QWebPage):
     def __init__(self, *args, **kwargs):
         super(WebPage, self).__init__(*args, **kwargs)
         self.featurePermissionRequested.connect(self.permissionRequested)
+        self.geolocation = geolocation.Geolocation(self)
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakNavigatorObject)
     def tweakNavigatorObject(self):
         if common.setting_to_bool("network/GeolocationEnabled"):
-            script = "window.navigator.geolocation = {};\n" + \
-                 "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = " + json.dumps(geolocation.getCurrentPosition()) + "; success(getCurrentPosition); return getCurrentPosition; };"
+            self.mainFrame().addToJavaScriptWindowObject("nimbusGeolocation", self.geolocation)
+            script = "window.navigator.nimbusGeolocation = nimbusGeolocation;\n" + \
+                 "delete nimbusGeolocation;\n" + \
+                 "window.navigator.geolocation = {};\n" + \
+                 "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = eval('(' + window.navigator.nimbusGeolocation.getCurrentPosition() + ')'); success(getCurrentPosition); return getCurrentPosition; };"
             self.mainFrame().evaluateJavaScript(script)
     def permissionRequested(self, frame, feature):
         self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
