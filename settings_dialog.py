@@ -209,6 +209,10 @@ class NetworkSettingsPanel(SettingsPanel):
         self.xssAuditingToggle = QCheckBox(tr("Enable &XSS auditing"))
         self.layout().addWidget(self.xssAuditingToggle)
 
+        # Checkbox to toggle geolocation.
+        self.geolocationToggle = QCheckBox(tr("Enable geo&location"))
+        self.layout().addWidget(self.geolocationToggle)
+
         # Proxy label.
         proxyLabel = QLabel(tr("<b>Proxy configuration</b>"))
         self.layout().addWidget(proxyLabel)
@@ -265,6 +269,7 @@ class NetworkSettingsPanel(SettingsPanel):
         self.userEntry.setText(str(common.settings.value("proxy/User")))
         self.passwordEntry.setText(str(common.settings.value("proxy/Password")))
         self.xssAuditingToggle.setChecked(common.setting_to_bool("network/XSSAuditingEnabled"))
+        self.geolocationToggle.setChecked(common.setting_to_bool("network/GeolocationEnabled"))
         self.dnsPrefetchingToggle.setChecked(common.setting_to_bool("network/DnsPrefetchingEnabled"))
         port = common.setting_to_int("proxy/Port")
         if port == "None":
@@ -281,6 +286,7 @@ class NetworkSettingsPanel(SettingsPanel):
         if proxyType == "None":
             proxyType = "No"
         common.settings.setValue("network/XSSAuditingEnabled", self.xssAuditingToggle.isChecked())
+        common.settings.setValue("network/GeolocationEnabled", self.geolocationToggle.isChecked())
         common.settings.setValue("network/DnsPrefetchingEnabled", self.dnsPrefetchingToggle.isChecked())
         common.settings.setValue("proxy/Type", proxyType)
         common.settings.setValue("proxy/Port", self.portEntry.value())

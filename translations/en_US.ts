@@ -106,6 +106,10 @@
         <translation>Enable DNS &amp;prefetching</translation>
     </message>
     <message>
+        <source>Enable geo&amp;location</source>
+        <translation>Enable geo&amp;location</translation>
+    </message>
+    <message>
         <source>Enable &amp;Java</source>
         <translation>Enable &amp;Java</translation>
     </message>

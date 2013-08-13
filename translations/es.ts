@@ -106,6 +106,10 @@
         <translation>Activar &amp;precarga de DNS</translation>
     </message>
     <message>
+        <source>Enable geo&amp;location</source>
+        <translation>Activar geo&amp;localización</translation>
+    </message>
+    <message>
         <source>Enable &amp;Java</source>
         <translation>Activar &amp;Java</translation>
     </message>

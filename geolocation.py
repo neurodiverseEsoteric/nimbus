@@ -12,7 +12,6 @@ def geolocate():
 def getCurrentPosition():
     position = geolocate()
     position2 = {"coords": {"latitude": position["latitude"], "longitude": position["longitude"], "altitude": 0, "accuracy": 0, "altitudeAccuracy": 0, "heading": 0, "speed": 0}, "timestamp": time.time()}
-    print(position2)
     return position2
 
 def watchPosition():

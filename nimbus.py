@@ -148,9 +148,10 @@ class WebPage(QWebPage):
         self.featurePermissionRequested.connect(self.permissionRequested)
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakNavigatorObject)
     def tweakNavigatorObject(self):
-        script = "window.navigator.geolocation = {};\n" + \
+        if common.setting_to_bool("network/GeolocationEnabled"):
+            script = "window.navigator.geolocation = {};\n" + \
                  "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = " + json.dumps(geolocation.getCurrentPosition()) + "; success(getCurrentPosition); return getCurrentPosition; };"
-        self.mainFrame().evaluateJavaScript(script)
+            self.mainFrame().evaluateJavaScript(script)
     def permissionRequested(self, frame, feature):
         self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
     def createPlugin(self, classid, url, paramNames, paramValues):
