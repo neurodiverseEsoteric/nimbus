@@ -3,25 +3,23 @@
 import socket
 import urllib.request
 import time
-try: from PySide.QtCore import QObject
-except: from PyQt4.QtCore import QObject
 
 def geolocate():
     ip = urllib.request.urlopen('http://icanhazip.com/').read().decode('utf-8').replace("\n", "")
-    response = dict([item.split(": ") for item in urllib.request.urlopen('http://api.hostip.info/get_html.php?ip=' + ip + '&position=true').read().decode('utf-8').split("\n") if len(item.split(": ")) > 1])
-    print(response)
+    response = eval(urllib.request.urlopen('http://freegeoip.net/json/' + ip).read())
     return response
 
-class Geolocation(QObject):
-    def __init__(self, *args, **kwargs):
-        super(Geolocation, self).__init__(*args, **kwargs)
-    def getCurrentPosition(self, success, error, options):
-        position = geolocate()
-        return {"coords": {"latitude": position["Latitude"], "longitude": position["Longitude"], "altitude": 0, "accuracy": 0, "altitudeAccuracy": 0, "heading": 0, "speed": 0}, "timestamp": time.time()}
-    def watchPosition(self, success, error, options):
-        pass
-    def clearWatch(self, id):
-        pass
+def getCurrentPosition():
+    position = geolocate()
+    position2 = {"coords": {"latitude": position["latitude"], "longitude": position["longitude"], "altitude": 0, "accuracy": 0, "altitudeAccuracy": 0, "heading": 0, "speed": 0}, "timestamp": time.time()}
+    print(position2)
+    return position2
+
+def watchPosition():
+    pass
+
+def clearWatch():
+    pass
 
 if __name__ == "__main__":
     geolocate()
