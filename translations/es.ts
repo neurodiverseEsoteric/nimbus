@@ -34,8 +34,8 @@
         <translation>Todos archivos (*)</translation>
     </message>
     <message>
-        <source>Allow these sites to track my location</source>
-        <translation type="unfinished">Allow these sites to track my location</translation>
+        <source>Allow these sites to track my location:</source>
+        <translation type="unfinished">Allow these sites to track my location:</translation>
     </message>
     <message>
         <source>&amp;Apply</source>

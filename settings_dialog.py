@@ -192,7 +192,7 @@ class DataSettingsPanel(SettingsPanel):
         self.geolocationToggle = QCheckBox(tr("Enable geo&location"), self)
         self.layout().addWidget(self.geolocationToggle)
 
-        self.geolocationWhitelistLabel = QLabel(tr("Allow these sites to track my location"), self)
+        self.geolocationWhitelistLabel = QLabel(tr("Allow these sites to track my location:"), self)
         self.layout().addWidget(self.geolocationWhitelistLabel)
 
         self.geolocationWhitelist = QListWidget(self)
