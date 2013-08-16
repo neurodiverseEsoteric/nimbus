@@ -148,16 +148,36 @@ class WebPage(QWebPage):
         self.featurePermissionRequested.connect(self.permissionRequested)
         self.geolocation = geolocation.Geolocation(self)
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakNavigatorObject)
+        self.loadFinished.connect(self.checkForNavigatorGeolocation)
+    def checkForNavigatorGeolocation(self):
+        if "navigator.geolocation" in self.mainFrame().toHtml() and not self.mainFrame().url().authority() in common.geolocation_whitelist:
+            self.allowGeolocation(True)
     def tweakNavigatorObject(self):
-        if common.setting_to_bool("network/GeolocationEnabled"):
+        authority = self.mainFrame().url().authority()
+        if common.setting_to_bool("network/GeolocationEnabled") and authority in common.geolocation_whitelist:
             self.mainFrame().addToJavaScriptWindowObject("nimbusGeolocation", self.geolocation)
             script = "window.navigator.nimbusGeolocation = nimbusGeolocation;\n" + \
-                 "delete nimbusGeolocation;\n" + \
-                 "window.navigator.geolocation = {};\n" + \
-                 "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = eval('(' + window.navigator.nimbusGeolocation.getCurrentPosition() + ')'); success(getCurrentPosition); return getCurrentPosition; };"
+                     "delete nimbusGeolocation;\n" + \
+                     "window.navigator.geolocation = {};\n" + \
+                     "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = eval('(' + window.navigator.nimbusGeolocation.getCurrentPosition() + ')'); success(getCurrentPosition); return getCurrentPosition; };"
             self.mainFrame().evaluateJavaScript(script)
     def permissionRequested(self, frame, feature):
-        self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
+        if feature == self.Geolocation and frame == self.mainFrame():
+            confirm = True
+            authority = self.mainFrame().url().authority()
+            if not authority in common.geolocation_whitelist:
+                confirm = QMessageBox.question(None, tr("Nimbus"), tr("This website would like to track your location."), QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+            if confirm == QMessageBox.Yes:
+                if not authority in common.geolocation_whitelist:
+                    common.geolocation_whitelist.append(authority)
+                    common.saveData()
+                self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
+            return confirm == QMessageBox.Yes
+        return False
+    def allowGeolocation(self, reload=True):
+        reload = self.permissionRequested(self.mainFrame(), self.Geolocation)
+        if reload:
+            self.action(self.Reload).trigger()
     def createPlugin(self, classid, url, paramNames, paramValues):
         if classid.lower() == "settingsdialog":
             sdialog = settings_dialog.SettingsDialog(self.view())

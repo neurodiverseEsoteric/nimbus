@@ -26,8 +26,16 @@
         <translation>A&amp;bout Nimbus</translation>
     </message>
     <message>
+        <source>Add</source>
+        <translation>Add</translation>
+    </message>
+    <message>
         <source>All files (*)</source>
         <translation>All files (*)</translation>
+    </message>
+    <message>
+        <source>Allow these sites to track my location</source>
+        <translation>Allow these sites to track my location</translation>
     </message>
     <message>
         <source>&amp;Apply</source>
@@ -82,8 +90,8 @@
         <translation>Credits &amp;&amp; &amp;Licensing</translation>
     </message>
     <message>
-        <source>&amp;Data</source>
-        <translation>&amp;Data</translation>
+        <source>&amp;Data &amp;&amp; Privacy</source>
+        <translation>&amp;Data &amp;&amp; Privacy</translation>
     </message>
     <message>
         <source>Disabled extensions:</source>
@@ -274,6 +282,10 @@
         <translation>Remember &amp;history</translation>
     </message>
     <message>
+        <source>Remove</source>
+        <translation>Remove</translation>
+    </message>
+    <message>
         <source>&amp;Reopen Tab</source>
         <translation>&amp;Reopen Tab</translation>
     </message>
@@ -304,6 +316,10 @@
     <message>
         <source>&amp;Settings...</source>
         <translation>&amp;Settings...</translation>
+    </message>
+    <message>
+        <source>This website would like to track your location.</source>
+        <translation>This website would like to track your location.</translation>
     </message>
     <message>
         <source>Type:</source>

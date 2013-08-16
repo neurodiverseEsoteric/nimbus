@@ -54,7 +54,7 @@ class GeneralSettingsPanel(SettingsPanel):
         self.closeWindowToggle = QCheckBox(tr("Close &window with last tab"), self)
         self.layout().addWidget(self.closeWindowToggle)
 
-        self.settingsTabToggle = QCheckBox(tr("Open &settings in tab"))
+        self.settingsTabToggle = QCheckBox(tr("Open &settings in tab"), self)
         self.layout().addWidget(self.settingsTabToggle)
 
         self.reopenableTabCountRow = custom_widgets.SpinBoxRow(tr("Number of reopenable tabs:"), self)
@@ -188,13 +188,42 @@ class DataSettingsPanel(SettingsPanel):
         self.maximumCacheSize.setMaximum(20000)
         self.layout().addWidget(self.maximumCacheSizeRow)
 
+        # Checkbox to toggle geolocation.
+        self.geolocationToggle = QCheckBox(tr("Enable geo&location"), self)
+        self.layout().addWidget(self.geolocationToggle)
+
+        self.geolocationWhitelistLabel = QLabel(tr("Allow these sites to track my location"), self)
+        self.layout().addWidget(self.geolocationWhitelistLabel)
+
+        self.geolocationWhitelist = QListWidget(self)
+        self.layout().addWidget(self.geolocationWhitelist)
+
+        self.addRemoveRow = custom_widgets.Row(self)
+        self.layout().addWidget(self.addRemoveRow)
+
+        self.addButton = QPushButton(tr("Add"))
+        self.addRemoveRow.addWidget(self.addButton)
+
+        self.removeButton = QPushButton(tr("Remove"))
+        self.removeButton.clicked.connect(lambda: self.geolocationWhitelist.takeItem(self.geolocationWhitelist.row(self.geolocationWhitelist.currentItem())))
+        self.addRemoveRow.addWidget(self.removeButton)
+
         self.layout().addWidget(custom_widgets.Expander(self))
     def loadSettings(self):
         self.maximumCacheSize.setValue(common.setting_to_int("data/MaximumCacheSize"))
         self.rememberHistoryToggle.setChecked(common.setting_to_bool("data/RememberHistory"))
+        self.geolocationToggle.setChecked(common.setting_to_bool("network/GeolocationEnabled"))
+        self.geolocationWhitelist.clear()
+        for url in common.geolocation_whitelist:
+            self.geolocationWhitelist.addItem(url)
     def saveSettings(self):
         common.settings.setValue("data/MaximumCacheSize", self.maximumCacheSize.value())
         common.settings.setValue("data/RememberHistory", self.rememberHistoryToggle.isChecked())
+        common.settings.setValue("network/GeolocationEnabled", self.geolocationToggle.isChecked())
+        while len(common.geolocation_whitelist) > 0:
+            common.geolocation_whitelist.pop()
+        common.geolocation_whitelist = [self.geolocationWhitelist.item(authority).text() for authority in range(0, self.geolocationWhitelist.count())]
+        common.saveData()
 
 # Network configuration panel
 class NetworkSettingsPanel(SettingsPanel):
@@ -202,16 +231,12 @@ class NetworkSettingsPanel(SettingsPanel):
         super(NetworkSettingsPanel, self).__init__(parent)
 
         # Checkbox to toggle DNS prefetching.
-        self.dnsPrefetchingToggle = QCheckBox(tr("Enable DNS &prefetching"))
+        self.dnsPrefetchingToggle = QCheckBox(tr("Enable DNS &prefetching"), self)
         self.layout().addWidget(self.dnsPrefetchingToggle)
 
         # Checkbox to toggle XSS auditing.
-        self.xssAuditingToggle = QCheckBox(tr("Enable &XSS auditing"))
+        self.xssAuditingToggle = QCheckBox(tr("Enable &XSS auditing"), self)
         self.layout().addWidget(self.xssAuditingToggle)
-
-        # Checkbox to toggle geolocation.
-        self.geolocationToggle = QCheckBox(tr("Enable geo&location"))
-        self.layout().addWidget(self.geolocationToggle)
 
         # Proxy label.
         proxyLabel = QLabel(tr("<b>Proxy configuration</b>"))
@@ -269,7 +294,6 @@ class NetworkSettingsPanel(SettingsPanel):
         self.userEntry.setText(str(common.settings.value("proxy/User")))
         self.passwordEntry.setText(str(common.settings.value("proxy/Password")))
         self.xssAuditingToggle.setChecked(common.setting_to_bool("network/XSSAuditingEnabled"))
-        self.geolocationToggle.setChecked(common.setting_to_bool("network/GeolocationEnabled"))
         self.dnsPrefetchingToggle.setChecked(common.setting_to_bool("network/DnsPrefetchingEnabled"))
         port = common.setting_to_int("proxy/Port")
         if port == "None":
@@ -286,7 +310,6 @@ class NetworkSettingsPanel(SettingsPanel):
         if proxyType == "None":
             proxyType = "No"
         common.settings.setValue("network/XSSAuditingEnabled", self.xssAuditingToggle.isChecked())
-        common.settings.setValue("network/GeolocationEnabled", self.geolocationToggle.isChecked())
         common.settings.setValue("network/DnsPrefetchingEnabled", self.dnsPrefetchingToggle.isChecked())
         common.settings.setValue("proxy/Type", proxyType)
         common.settings.setValue("proxy/Port", self.portEntry.value())
@@ -366,7 +389,7 @@ class SettingsDialog(QWidget):
 
         self.tabs.addTab(GeneralSettingsPanel(self), tr("&General"))
         self.tabs.addTab(ContentSettingsPanel(self), tr("&Content"))
-        self.tabs.addTab(DataSettingsPanel(self), tr("&Data"))
+        self.tabs.addTab(DataSettingsPanel(self), tr("&Data && Privacy"))
         self.tabs.addTab(NetworkSettingsPanel(self), tr("&Network"))
         self.tabs.addTab(ExtensionsSettingsPanel(self), tr("&Extensions"))
 

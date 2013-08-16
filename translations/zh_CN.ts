@@ -26,8 +26,16 @@
         <translation>关于Nimbus(&amp;B)</translation>
     </message>
     <message>
+        <source>Add</source>
+        <translation type="unfinished">Add</translation>
+    </message>
+    <message>
         <source>All files (*)</source>
         <translation type="unfinished">All files (*)</translation>
+    </message>
+    <message>
+        <source>Allow these sites to track my location</source>
+        <translation type="unfinished">Allow these sites to track my location</translation>
     </message>
     <message>
         <source>&amp;Apply</source>
@@ -82,8 +90,8 @@
         <translation type="unfinished">Credits &amp;&amp; &amp;Licensing</translation>
     </message>
     <message>
-        <source>&amp;Data</source>
-        <translation type="unfinished">&amp;Data</translation>
+        <source>&amp;Data &amp;&amp; Privacy</source>
+        <translation type="unfinished">&amp;Data &amp;&amp; Privacy</translation>
     </message>
     <message>
         <source>Disabled extensions:</source>
@@ -274,6 +282,10 @@
         <translation type="unfinished">Remember &amp;history</translation>
     </message>
     <message>
+        <source>Remove</source>
+        <translation type="unfinished">Remove</translation>
+    </message>
+    <message>
         <source>&amp;Reopen Tab</source>
         <translation>撤销关闭页签(&amp;R)</translation>
     </message>
@@ -304,6 +316,10 @@
     <message>
         <source>&amp;Settings...</source>
         <translation>参数(&amp;S)</translation>
+    </message>
+    <message>
+        <source>This website would like to track your location.</source>
+        <translation type="unfinished">This website would like to track your location.</translation>
     </message>
     <message>
         <source>Type:</source>

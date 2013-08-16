@@ -104,6 +104,9 @@ settings_folder = os.path.dirname(settings.fileName())
 network_cache_folder = os.path.join(settings_folder, "Cache")
 offline_cache_folder = os.path.join(settings_folder, "OfflineCache")
 
+# This stores 
+geolocation_whitelist = []
+
 ###################
 # ADBLOCK-RELATED #
 ###################
@@ -264,21 +267,27 @@ incognitoNetworkAccessManager = NetworkAccessManager(nocache=True)
 def loadData():
     # Load history.
     global history
+    global geolocation_whitelist
     raw_history = data.value("data/History")
     if type(raw_history) is str:
         history = json.loads(raw_history)
 
     # Load cookies.
     try: raw_cookies = json.loads(str(data.value("data/Cookies")))
-    except: return
-    if type(raw_cookies) is list:
-        cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
-        cookieJar.setAllCookies(cookies)
+    except: pass
+    else:
+        if type(raw_cookies) is list:
+            cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
+            cookieJar.setAllCookies(cookies)
+
+    try: wl = json.loads(str(data.value("data/GeolocationWhitelist")))
+    except: pass
+    else:
+        if type(wl) is list:
+            geolocation_whitelist = wl
 
 def shortenURL(url):
-    url2 = (url.partition("://")[-1] if "://" in url else url)
-    url2 = url2.replace(("www." if url2.startswith("www.") else ""), "")
-    return url2
+    return QUrl(url).authority().replace("www.", "")
 
 # This function saves the browser's settings.
 def saveData():
@@ -293,6 +302,8 @@ def saveData():
     # Save cookies.
     cookies = json.dumps([cookie.toRawForm().data().decode("utf-8") for cookie in cookieJar.allCookies()])
     data.setValue("data/Cookies", cookies)
+
+    data.setValue("data/GeolocationWhitelist", json.dumps(geolocation_whitelist))
 
     # Sync any unsaved settings.
     data.sync()

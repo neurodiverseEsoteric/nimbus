@@ -26,8 +26,16 @@
         <translation>&amp;Acerca de Nimbus</translation>
     </message>
     <message>
+        <source>Add</source>
+        <translation type="unfinished">Add</translation>
+    </message>
+    <message>
         <source>All files (*)</source>
         <translation>Todos archivos (*)</translation>
+    </message>
+    <message>
+        <source>Allow these sites to track my location</source>
+        <translation type="unfinished">Allow these sites to track my location</translation>
     </message>
     <message>
         <source>&amp;Apply</source>
@@ -82,7 +90,7 @@
         <translation>&amp;Más Acerca de Nimbus</translation>
     </message>
     <message>
-        <source>&amp;Data</source>
+        <source>&amp;Data &amp;&amp; Privacy</source>
         <translation type="unfinished">&amp;Datos</translation>
     </message>
     <message>
@@ -274,6 +282,10 @@
         <translation type="unfinished">Remember &amp;history</translation>
     </message>
     <message>
+        <source>Remove</source>
+        <translation type="unfinished">Remove</translation>
+    </message>
+    <message>
         <source>&amp;Reopen Tab</source>
         <translation>Deshace&amp;r cerrado de pestaña</translation>
     </message>
@@ -304,6 +316,10 @@
     <message>
         <source>&amp;Settings...</source>
         <translation>Pre&amp;ferencias...</translation>
+    </message>
+    <message>
+        <source>This website would like to track your location.</source>
+        <translation type="unfinished">This website would like to track your location.</translation>
     </message>
     <message>
         <source>Type:</source>
