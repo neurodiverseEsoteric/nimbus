@@ -328,7 +328,8 @@ class WebView(QWebView):
 
         self.setWindowTitle("")
 
-        self.load(QUrl("about:blank"))
+        if os.path.exists(common.new_tab_page):
+            self.load(QUrl("about:blank"))
 
     def isUsingContentViewer(self):
         return self._isUsingContentViewer
@@ -1024,8 +1025,8 @@ self.origY + ev.globalY() - self.mouseY)
         history = self.tabs.currentWidget().history()
         backItems = history.backItems(10)
         for item in range(0, len(backItems)):
-            action = custom_widgets.WebHistoryAction(item, backItems[item].icon(), backItems[item].title(), self.backHistoryMenu)
-            action.triggered2.connect(self.loadBackHistoryItem)
+            action = QAction(backItems[item].icon(), backItems[item].title(), self.backHistoryMenu)
+            action.triggered.connect(lambda: self.loadBackHistoryItem(item))
             self.backHistoryMenu.addAction(action)
 
     def loadBackHistoryItem(self, index):
@@ -1040,8 +1041,8 @@ self.origY + ev.globalY() - self.mouseY)
         history = self.tabs.currentWidget().history()
         forwardItems = history.forwardItems(10)
         for item in range(0, len(forwardItems)):
-            action = custom_widgets.WebHistoryAction(item, forwardItems[item].icon(), forwardItems[item].title(), self.forwardHistoryMenu)
-            action.triggered2.connect(self.loadForwardHistoryItem)
+            action = QAction(forwardItems[item].icon(), forwardItems[item].title(), self.forwardHistoryMenu)
+            action.triggered.connect(lambda: self.loadForwardHistoryItem(item))
             self.forwardHistoryMenu.addAction(action)
 
     def loadForwardHistoryItem(self, index):
