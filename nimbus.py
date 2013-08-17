@@ -150,7 +150,7 @@ class WebPage(QWebPage):
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakNavigatorObject)
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
     def userAgentForUrl(self, url):
-        return QWebPage.userAgentForUrl(self, url).replace("Qt/", "Nimbus/" + common.app_version + " Qt/")
+        return QWebPage.userAgentForUrl(self, url).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version)
     def checkForNavigatorGeolocation(self):
         if "navigator.geolocation" in self.mainFrame().toHtml() and not self.mainFrame().url().authority() in common.geolocation_whitelist:
             self.allowGeolocation()

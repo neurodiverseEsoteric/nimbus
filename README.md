@@ -2,8 +2,8 @@ nimbus
 ======
 
 Nimbus is a simple, somewhat hacky web browser coded in Python 3, using the
-Qt4 libraries via either PySide or PyQt4. It is quite basic, but it should be
-suitable for basic browsing.
+Qt 4 and QtWebKit libraries via either PySide or PyQt4. It is quite basic, but
+it should be suitable for basic browsing.
 
 Features include:
 * Tabbed browsing
@@ -15,10 +15,10 @@ Features include:
 * Basic extensions
 * Support for HTTP and Socks5 proxies
 * Partial support for HTML5 geolocation
-* Using Netscape plugins to handle HTML5 audio and video (useful on Windows, where
-  QtWebKit doesn't support them)
-* Options to toggle features such as JavaScript, Netscape plugins, DNS prefetching,
-  and XSS auditing.
+* Using Netscape plugins to handle HTML5 audio and video (useful on Windows,
+  where QtWebKit doesn't support them)
+* Options to toggle features such as JavaScript, Netscape plugins, DNS
+  prefetching, and XSS auditing.
 
 Dependencies
 ======
