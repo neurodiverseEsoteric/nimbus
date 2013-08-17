@@ -723,6 +723,7 @@ class MainWindow(QMainWindow):
         self.backAction.setShortcut("Alt+Left")
         self.backAction.triggered.connect(self.back)
         self.toolBar.addAction(self.backAction)
+        self.toolBar.widgetForAction(self.backAction).setPopupMode(QToolButton.MenuButtonPopup)
 
         self.backHistoryMenu = QMenu(self)
         self.backHistoryMenu.aboutToShow.connect(self.aboutToShowBackHistoryMenu)
@@ -732,6 +733,7 @@ class MainWindow(QMainWindow):
         self.forwardAction.setShortcut("Alt+Right")
         self.forwardAction.triggered.connect(self.forward)
         self.toolBar.addAction(self.forwardAction)
+        self.toolBar.widgetForAction(self.forwardAction).setPopupMode(QToolButton.MenuButtonPopup)
 
         self.forwardHistoryMenu = QMenu(self)
         self.forwardHistoryMenu.aboutToShow.connect(self.aboutToShowForwardHistoryMenu)
