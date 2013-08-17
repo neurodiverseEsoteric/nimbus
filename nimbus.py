@@ -162,7 +162,7 @@ class WebPage(QWebPage):
                      "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = eval('(' + window.navigator.nimbusGeolocation.getCurrentPosition() + ')'); success(getCurrentPosition); return getCurrentPosition; };"
             self.mainFrame().evaluateJavaScript(script)
     def permissionRequested(self, frame, feature):
-        if feature == self.Geolocation and frame == self.mainFrame():
+        if feature == self.Geolocation and frame == self.mainFrame() and common.setting_to_bool("network/GeolocationEnabled"):
             confirm = True
             authority = self.mainFrame().url().authority()
             if not authority in common.geolocation_whitelist:
