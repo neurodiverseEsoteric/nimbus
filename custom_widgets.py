@@ -12,10 +12,11 @@ from common import app_folder
 from translate import tr
 
 try:
-    from PySide.QtCore import Qt
+    from PySide.QtCore import Qt, Signal
     from PySide.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
 except:
-    from PyQt4.QtCore import Qt
+    from PyQt4.QtCore import Qt, pyqtSignal
+    Signal = pyqtSignal
     from PyQt4.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
 
 # Blank widget to take up space.
@@ -81,6 +82,14 @@ class MenuToolBar(QToolBar):
         self.initStyleOption(option)
         style = self.style()
         style.drawControl(QStyle.CE_MenuBarEmptyArea, option, painter, self)
+
+# Web history action for dropdown menus.
+class WebHistoryAction(QAction):
+    triggered2 = Signal(int)
+    def __init__(self, index, *args, **kwargs):
+        super(WebHistoryAction, self).__init__(*args, **kwargs)
+        self.setData(index)
+        self.triggered.connect(lambda: self.triggered2.emit(self.data()))
 
 # License view class.
 class ReadOnlyTextEdit(QTextEdit):
