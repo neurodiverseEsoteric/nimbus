@@ -201,8 +201,8 @@ class DataSettingsPanel(SettingsPanel):
         self.addRemoveRow = custom_widgets.Row(self)
         self.layout().addWidget(self.addRemoveRow)
 
-        self.addButton = QPushButton(tr("Add"))
-        self.addRemoveRow.addWidget(self.addButton)
+        #self.addButton = QPushButton(tr("Add"))
+        #self.addRemoveRow.addWidget(self.addButton)
 
         self.removeButton = QPushButton(tr("Remove"))
         self.removeButton.clicked.connect(lambda: self.geolocationWhitelist.takeItem(self.geolocationWhitelist.row(self.geolocationWhitelist.currentItem())))

@@ -318,11 +318,25 @@ class WebView(QWebView):
         self.loadStarted.connect(self.resetContentType)
         self.loadFinished.connect(self.replaceAVTags)
         self.loadFinished.connect(self.savePageToCache)
+
+        # Check if content viewer.
+        self._isUsingContentViewer = False
+        self.loadStarted.connect(self.checkIfUsingContentViewer)
         self.page().networkAccessManager().finished.connect(self.ready)
 
         self.setWindowTitle("")
 
         self.load(QUrl("about:blank"))
+
+    def isUsingContentViewer(self):
+        return self._isUsingContentViewer
+
+    def checkIfUsingContentViewer(self):
+        for viewer in common.content_viewers:
+            if viewer[0].replace("%s", "") in self.url().toString():
+                self._isUsingContentViewer = True
+                return
+        self._isUsingContentViewer = False
 
     def resetContentType(self):
         self._contentType = None
@@ -444,7 +458,7 @@ class WebView(QWebView):
 
         # Make sure the file isn't local, that content viewers are
         # enabled, and private browsing isn't enabled.
-        if not url2.scheme() == "file" and common.setting_to_bool("content/UseOnlineContentViewers") and not self.incognito:
+        if not url2.scheme() == "file" and common.setting_to_bool("content/UseOnlineContentViewers") and not self.incognito and not self.isUsingContentViewer():
             for viewer in common.content_viewers:
                 try:
                     for extension in viewer[1]:
