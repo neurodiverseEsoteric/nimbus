@@ -83,6 +83,14 @@ class MenuToolBar(QToolBar):
         style = self.style()
         style.drawControl(QStyle.CE_MenuBarEmptyArea, option, painter, self)
 
+# Web history action for dropdown menus.
+class WebHistoryAction(QAction):
+    triggered2 = Signal(int)
+    def __init__(self, index, *args, **kwargs):
+        super(WebHistoryAction, self).__init__(*args, **kwargs)
+        self.setData(index)
+        self.triggered.connect(lambda: self.triggered2.emit(self.data()))
+
 # License view class.
 class ReadOnlyTextEdit(QTextEdit):
     def __init__(self, *args, **kwargs):

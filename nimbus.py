@@ -1027,8 +1027,8 @@ self.origY + ev.globalY() - self.mouseY)
         history = self.tabs.currentWidget().history()
         backItems = history.backItems(10)
         for item in range(0, len(backItems)):
-            action = QAction(backItems[item].icon(), backItems[item].title(), self.backHistoryMenu)
-            action.triggered.connect(lambda: self.loadBackHistoryItem(item))
+            action = custom_widgets.WebHistoryAction(item, backItems[item].icon(), backItems[item].title(), self.backHistoryMenu)
+            action.triggered2.connect(self.loadBackHistoryItem)
             self.backHistoryMenu.addAction(action)
 
     def loadBackHistoryItem(self, index):
@@ -1043,8 +1043,8 @@ self.origY + ev.globalY() - self.mouseY)
         history = self.tabs.currentWidget().history()
         forwardItems = history.forwardItems(10)
         for item in range(0, len(forwardItems)):
-            action = QAction(forwardItems[item].icon(), forwardItems[item].title(), self.forwardHistoryMenu)
-            action.triggered.connect(lambda: self.loadForwardHistoryItem(item))
+            action = custom_widgets.WebHistoryAction(item, forwardItems[item].icon(), forwardItems[item].title(), self.forwardHistoryMenu)
+            action.triggered2.connect(self.loadForwardHistoryItem)
             self.forwardHistoryMenu.addAction(action)
 
     def loadForwardHistoryItem(self, index):
