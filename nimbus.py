@@ -149,6 +149,8 @@ class WebPage(QWebPage):
         self.geolocation = geolocation.Geolocation(self)
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakNavigatorObject)
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
+    def userAgentForUrl(self, url):
+        return QWebPage.userAgentForUrl(self, url).replace("Qt/", "Nimbus/" + common.app_version + " Qt/")
     def checkForNavigatorGeolocation(self):
         if "navigator.geolocation" in self.mainFrame().toHtml() and not self.mainFrame().url().authority() in common.geolocation_whitelist:
             self.allowGeolocation()
@@ -864,7 +866,6 @@ min-width: 6em;
         settingsAction = QAction(common.complete_icon("preferences-system"), tr("&Settings..."), self)
         settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
         settingsAction.triggered.connect(self.openSettings)
-        settingsAction.triggered.connect(lambda: self.tabs.setCurrentIndex(self.tabs.count()-1))
         mainMenu.addAction(settingsAction)
 
         mainMenu.addSeparator()
@@ -934,6 +935,7 @@ self.origY + ev.globalY() - self.mouseY)
     def openSettings(self):
         if common.setting_to_bool("general/OpenSettingsInTab"):
             self.addTab(url="nimbus://settings")
+            self.tabs.setCurrentIndex(self.tabs.count()-1)
         else:
             common.settingsDialog.reload()
             common.settingsDialog.show()
