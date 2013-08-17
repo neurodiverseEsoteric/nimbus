@@ -1,3 +1,4 @@
+url = QUrl("http://m.baidu.com/")
 if not self.isCheckable():
     self.setCheckable(True)
     self.setChecked(True)
@@ -10,8 +11,10 @@ except:
     self.parentWindow().baiduDock.setFeatures(QDockWidget.DockWidgetClosable)
     self.parentWindow().baiduView = WebView(self.parentWindow().baiduDock)
     self.parentWindow().baiduView.windowCreated.connect(browser.activeWindow().addTab)
-    self.parentWindow().baiduView.load(QUrl("http://m.baidu.com/"))
+    self.parentWindow().baiduView.load(url)
     self.parentWindow().baiduDock.setWidget(self.parentWindow().baiduView)
     self.parentWindow().addDockWidget(Qt.LeftDockWidgetArea, self.parentWindow().baiduDock)
 else:
     self.parentWindow().baiduDock.setVisible(not self.parentWindow().baiduDock.isVisible())
+    if not "baidu" in self.parentWindow().baiduView.url().toString():
+        self.parentWindow().baiduView.load(url)

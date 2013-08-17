@@ -1,3 +1,4 @@
+url = QUrl("http://m.soundcloud.com/")
 if not self.isCheckable():
     self.setCheckable(True)
     self.setChecked(True)
@@ -10,8 +11,10 @@ except:
     self.parentWindow().soundCloudDock.setFeatures(QDockWidget.DockWidgetClosable)
     self.parentWindow().soundCloudView = WebView(self.parentWindow().soundCloudDock)
     self.parentWindow().soundCloudView.windowCreated.connect(browser.activeWindow().addTab)
-    self.parentWindow().soundCloudView.load(QUrl("http://m.soundcloud.com/"))
+    self.parentWindow().soundCloudView.load(url)
     self.parentWindow().soundCloudDock.setWidget(self.parentWindow().soundCloudView)
     self.parentWindow().addDockWidget(Qt.LeftDockWidgetArea, self.parentWindow().soundCloudDock)
 else:
     self.parentWindow().soundCloudDock.setVisible(not self.parentWindow().soundCloudDock.isVisible())
+    if not "soundcloud" in self.parentWindow().soundCloudView.url().toString():
+        self.parentWindow().soundCloudView.load(url)
