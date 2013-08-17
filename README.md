@@ -1,16 +1,30 @@
 nimbus
 ======
 
-Nimbus is a simple, somewhat hacky Web browser coded in Python 3 and based
-around the PyQt4 libraries. It has most of the basic features expected from a
-modern browser, including tabbed browsing, history, incognito (private
-browsing) tabs, ad blocking, and support for basic extensions.
+Nimbus is a simple, somewhat hacky web browser coded in Python 3, using the
+Qt4 libraries via either PySide or PyQt4. It is quite basic, but it should be
+suitable for basic browsing.
+
+Features include:
+* Tabbed browsing
+* Browser history, including a cache
+* Very limited support for loading pages offline
+* Incognito (private browsing) tabs
+* Printing pages
+* Ad blocking
+* Basic extensions
+* Support for HTTP and Socks5 proxies
+* Partial support for HTML5 geolocation
+* Using Netscape plugins to handle HTML5 audio and video (useful on Windows, where
+  QtWebKit doesn't support them)
+* Options to toggle features such as JavaScript, Netscape plugins, DNS prefetching,
+  and XSS auditing.
 
 Dependencies
 ======
 
-Nimbus depends on Python 3 and PyQt4, with python3-dbus as an optional
-dependency. It does not work in Python 2.x.
+Nimbus depends on Python 3 and either PySide or PyQt4, with python3-dbus as
+an optional dependency. It does not work in Python 2.x.
 
 You can install its dependencies on Ubuntu using the following command:
     sudo apt-get install python3 python3-pyqt4 python3-dbus python3-dbus.mainloop.qt
