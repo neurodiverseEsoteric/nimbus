@@ -151,7 +151,7 @@ class WebPage(QWebPage):
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
     def checkForNavigatorGeolocation(self):
         if "navigator.geolocation" in self.mainFrame().toHtml() and not self.mainFrame().url().authority() in common.geolocation_whitelist:
-            self.allowGeolocation(True)
+            self.allowGeolocation()
     def tweakNavigatorObject(self):
         authority = self.mainFrame().url().authority()
         if common.setting_to_bool("network/GeolocationEnabled") and authority in common.geolocation_whitelist:
@@ -166,17 +166,17 @@ class WebPage(QWebPage):
             confirm = True
             authority = self.mainFrame().url().authority()
             if not authority in common.geolocation_whitelist:
-                confirm = QMessageBox.question(None, tr("Nimbus"), tr("This website would like to track your location."), QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
-            if confirm == QMessageBox.Yes:
+                confirm = QMessageBox.question(None, tr("Nimbus"), tr("This website would like to track your location."), QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
+            if confirm == QMessageBox.Ok:
                 if not authority in common.geolocation_whitelist:
                     common.geolocation_whitelist.append(authority)
                     common.saveData()
                 self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
-            return confirm == QMessageBox.Yes
+            return confirm == QMessageBox.Ok
         return False
-    def allowGeolocation(self, reload=True):
-        reload = self.permissionRequested(self.mainFrame(), self.Geolocation)
-        if reload:
+    def allowGeolocation(self):
+        reload_ = self.permissionRequested(self.mainFrame(), self.Geolocation)
+        if reload_:
             self.action(self.Reload).trigger()
     def createPlugin(self, classid, url, paramNames, paramValues):
         if classid.lower() == "settingsdialog":
