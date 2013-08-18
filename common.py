@@ -15,7 +15,6 @@ import abpy
 import json
 import locale
 import browser
-import urllib.request
 try:
     from PySide.QtCore import qVersion, QTimer, SIGNAL, QLocale, QByteArray, QCoreApplication, QSettings, QThread, QUrl
     from PySide.QtGui import QIcon, QInputDialog, QLineEdit
