@@ -164,7 +164,6 @@ class WebPage(QWebPage):
         self._userAgent = ""
         self._fullScreen = False
         if not self.isOnlineTimer.isActive():
-            self.isOnlineTimer.timeout.connect(common.checkConnection)
             self.isOnlineTimer.timeout.connect(self.setNavigatorOnline)
             self.isOnlineTimer.start(1000)
         self.setUserAgent()

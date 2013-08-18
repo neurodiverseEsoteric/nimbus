@@ -280,23 +280,17 @@ class NetworkAccessManager(QNetworkAccessManager):
 networkAccessManager = NetworkAccessManager()
 incognitoNetworkAccessManager = NetworkAccessManager(nocache=True)
 
-_isConnectedToNetwork = False
-
-def checkConnection():
-    reply = incognitoNetworkAccessManager.createRequest(QNetworkAccessManager.HeadOperation, QNetworkRequest("http://74.125.224.72"))
-    reply.finished.connect(lambda: setConnectionStatus(reply.error()))
-
-def setConnectionStatus(error):
-    global _isConnectedToNetwork
-    if error == QNetworkReply.NoError:
-        _isConnectedToNetwork = True
-    else:
-        _isConnectedToNetwork = False
-
 # Ported from http://stackoverflow.com/questions/2475266/verfiying-the-network-connection-using-qt-4-4
 # and http://stackoverflow.com/questions/13533710/pyqt-convert-enum-value-to-key
 def isConnectedToNetwork():
-    return _isConnectedToNetwork
+    ifaces = QNetworkInterface.allInterfaces()
+    result = False
+    for iface in ifaces:
+        if int(iface.flags() & QNetworkInterface.IsUp) != 0 and int(iface.flags() & QNetworkInterface.IsLoopBack) == 0:
+            if len(iface.addressEntries()) > 0:
+                result = True
+                break
+    return result
 
 # This function loads the browser's settings.
 def loadData():
