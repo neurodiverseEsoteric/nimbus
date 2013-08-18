@@ -740,7 +740,7 @@ class MainWindow(QMainWindow):
 
         self.backHistoryMenu = QMenu(self)
         self.backHistoryMenu.aboutToShow.connect(self.aboutToShowBackHistoryMenu)
-        self.backAction.setMenu(self.backHistoryMenu)
+        #self.backAction.setMenu(self.backHistoryMenu)
 
         self.forwardAction = self.actionsPage.action(QWebPage.Forward)
         self.forwardAction.setShortcut("Alt+Right")
@@ -750,7 +750,7 @@ class MainWindow(QMainWindow):
 
         self.forwardHistoryMenu = QMenu(self)
         self.forwardHistoryMenu.aboutToShow.connect(self.aboutToShowForwardHistoryMenu)
-        self.forwardAction.setMenu(self.forwardHistoryMenu)
+        #self.forwardAction.setMenu(self.forwardHistoryMenu)
 
         self.stopAction = self.actionsPage.action(QWebPage.Stop)
         self.stopAction.setShortcut("Esc")
