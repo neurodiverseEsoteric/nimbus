@@ -12,8 +12,8 @@ import traceback
 import os.path
 from common import app_folder, app_locale
 
-try: from PySide.QtCore import QCoreApplication, QLocale, QTranslator, QObject
-except: from PyQt4.QtCore import QCoreApplication, QLocale, QTranslator, QObject
+try: from PyQt4.QtCore import QCoreApplication, QLocale, QTranslator, QObject
+except: from PySide.QtCore import QCoreApplication, QLocale, QTranslator, QObject
 
 # Translation.
 translations_folder = os.path.join(app_folder, "translations")

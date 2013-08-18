@@ -9,8 +9,8 @@
 import os
 from http.server import SimpleHTTPRequestHandler
 import http.server
-try: from PySide.QtCore import QThread
-except: from PyQt4.QtCore import QThread
+try: from PyQt4.QtCore import QThread
+except: from PySide.QtCore import QThread
 import common
 
 class ExtensionServerThread(QThread):

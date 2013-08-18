@@ -45,19 +45,17 @@ except:
 
 # Extremely specific imports from PySide/PyQt4.
 try:
-    from PySide.QtCore import Qt, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer
-    from PySide.QtGui import QApplication, QDockWidget, QKeySequence, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
-    from PySide.QtNetwork import QNetworkProxy, QNetworkRequest, QNetworkAccessManager
-    from PySide.QtWebKit import QWebView, QWebPage
-    pyside = True
-except:
     from PyQt4.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer
     from PyQt4.QtGui import QApplication, QDockWidget, QKeySequence, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest, QNetworkAccessManager
     from PyQt4.QtWebKit import QWebView, QWebPage
     Signal = pyqtSignal
     Slot = pyqtSlot
-    pyside = False
+except:
+    from PySide.QtCore import Qt, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer
+    from PySide.QtGui import QApplication, QDockWidget, QKeySequence, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
+    from PySide.QtNetwork import QNetworkProxy, QNetworkRequest, QNetworkAccessManager
+    from PySide.QtWebKit import QWebView, QWebPage
 
 # chdir to the app folder. This way, we won't have issues related to
 # relative paths.

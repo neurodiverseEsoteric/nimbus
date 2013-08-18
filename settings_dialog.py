@@ -16,11 +16,11 @@ import custom_widgets
 import clear_history_dialog
 from translate import tr
 try:
-    from PySide.QtCore import Qt, QUrl
-    from PySide.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
-except:
     from PyQt4.QtCore import Qt, QUrl
     from PyQt4.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+except:
+    from PySide.QtCore import Qt, QUrl
+    from PySide.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
 
 # Basic settings panel.
 class SettingsPanel(QWidget):

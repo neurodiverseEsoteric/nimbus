@@ -5,10 +5,10 @@ import urllib.request
 import time
 
 try:
-    from PySide.QtCore import QObject, Slot
-except:
     from PyQt4.QtCore import QObject, pyqtSlot
     Slot = pyqtSlot
+except:
+    from PySide.QtCore import QObject, Slot
 
 def geolocate():
     ip = urllib.request.urlopen('http://icanhazip.com/').read().decode('utf-8').replace("\n", "")

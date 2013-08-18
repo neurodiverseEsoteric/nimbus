@@ -12,12 +12,12 @@ from common import app_folder
 from translate import tr
 
 try:
-    from PySide.QtCore import Qt, Signal
-    from PySide.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
-except:
     from PyQt4.QtCore import Qt, pyqtSignal
     Signal = pyqtSignal
     from PyQt4.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
+except:
+    from PySide.QtCore import Qt, Signal
+    from PySide.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
 
 # Blank widget to take up space.
 class Expander(QLabel):
