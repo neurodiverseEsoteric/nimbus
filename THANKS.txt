@@ -1,0 +1,3 @@
+Special thanks to:
+The Qt developers
+Stack Overflow (stackoverflow.com)

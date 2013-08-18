@@ -1,7 +1,7 @@
 nimbus
 ======
 
-Nimbus is a simple, somewhat hacky web browser coded in Python 3, using the
+Nimbus is a simple, somewhat hacky Web browser coded in Python 3, using the
 Qt 4 and QtWebKit libraries via either PySide or PyQt4. It is quite basic, but
 it should be suitable for basic browsing.
 

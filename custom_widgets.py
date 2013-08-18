@@ -106,6 +106,7 @@ class LicenseDialog(QTabWidget):
         self.setWindowFlags(Qt.Dialog)
         self.readme = ""
         self.license = ""
+        self.thanks = ""
         self.authors = ""
         for fname in os.listdir(app_folder):
             if fname.startswith("LICENSE"):
@@ -113,6 +114,12 @@ class LicenseDialog(QTabWidget):
                 except: pass
                 else:
                     self.license = f.read()
+                    f.close()
+            elif fname.startswith("THANKS"):
+                try: f = open(os.path.join(app_folder, fname), "r")
+                except: pass
+                else:
+                    self.thanks = f.read()
                     f.close()
             elif fname.startswith("AUTHORS"):
                 try: f = open(os.path.join(app_folder, fname), "r")
@@ -132,6 +139,9 @@ class LicenseDialog(QTabWidget):
         self.authorsView = ReadOnlyTextEdit(self)
         self.authorsView.setText(self.authors)
         self.addTab(self.authorsView, tr("&Authors"))
+        self.thanksView = ReadOnlyTextEdit(self)
+        self.thanksView.setText(self.thanks)
+        self.addTab(self.readmeView, tr("&Thanks"))
         self.licenseView = ReadOnlyTextEdit(self)
         self.licenseView.setText(self.license)
         self.addTab(self.licenseView, tr("&License"))

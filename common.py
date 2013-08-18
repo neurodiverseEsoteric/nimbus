@@ -15,14 +15,15 @@ import abpy
 import json
 import locale
 import browser
+import urllib.request
 try:
     from PySide.QtCore import qVersion, QTimer, SIGNAL, QLocale, QByteArray, QCoreApplication, QSettings, QThread, QUrl
     from PySide.QtGui import QIcon, QInputDialog, QLineEdit
-    from PySide.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
+    from PySide.QtNetwork import QNetworkAccessManager, QNetworkInterface, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
 except:
     from PyQt4.QtCore import qVersion, QTimer, SIGNAL, QLocale, QByteArray, QCoreApplication, QSettings, QThread, QUrl
     from PyQt4.QtGui import QIcon, QInputDialog, QLineEdit
-    from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
+    from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkInterface, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
 
 # Folder that Nimbus is stored in.
 app_folder = os.path.dirname(os.path.realpath(__file__)) if sys.executable != os.path.dirname(__file__) else os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -278,6 +279,24 @@ class NetworkAccessManager(QNetworkAccessManager):
 # Create global instance of NetworkAccessManager.
 networkAccessManager = NetworkAccessManager()
 incognitoNetworkAccessManager = NetworkAccessManager(nocache=True)
+
+_isConnectedToNetwork = False
+
+def checkConnection():
+    reply = incognitoNetworkAccessManager.createRequest(QNetworkAccessManager.HeadOperation, QNetworkRequest("http://74.125.224.72"))
+    reply.finished.connect(lambda: setConnectionStatus(reply.error()))
+
+def setConnectionStatus(error):
+    global _isConnectedToNetwork
+    if error == QNetworkReply.NoError:
+        _isConnectedToNetwork = True
+    else:
+        _isConnectedToNetwork = False
+
+# Ported from http://stackoverflow.com/questions/2475266/verfiying-the-network-connection-using-qt-4-4
+# and http://stackoverflow.com/questions/13533710/pyqt-convert-enum-value-to-key
+def isConnectedToNetwork():
+    return _isConnectedToNetwork
 
 # This function loads the browser's settings.
 def loadData():

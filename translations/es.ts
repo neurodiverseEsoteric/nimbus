@@ -2,8 +2,8 @@
 <context>
     <name>General</name>
     <message>
-        <source>&lt;h3&gt;Nimbus&lt;/h3&gt;Python 3/Qt 4-based web browser.</source>
-        <translation>&lt;h3&gt;Nimbus&lt;/h3&gt;Navegador de web en Python 3/Qt 4.</translation>
+        <source>&lt;h3&gt;Nimbus&lt;/h3&gt;Python 3/Qt 4-based Web browser.</source>
+        <translation>&lt;h3&gt;Nimbus&lt;/h3&gt;Navegador del Web en Python 3/Qt 4.</translation>
     </message>
     <message>
         <source>&lt;b&gt;Proxy configuration&lt;/b&gt;</source>

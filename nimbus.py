@@ -143,6 +143,7 @@ class WebPage(QWebPage):
                ("qdatetimeedit", QDateTimeEdit),
                ("qdial", QDial),
                ("qspinbox", QSpinBox))
+    isOnlineTimer = QTimer()
     def __init__(self, *args, **kwargs):
         super(WebPage, self).__init__(*args, **kwargs)
         self.featurePermissionRequested.connect(self.permissionRequested)
@@ -150,6 +151,10 @@ class WebPage(QWebPage):
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakNavigatorObject)
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
         self._userAgent = ""
+        if not self.isOnlineTimer.isActive():
+            self.isOnlineTimer.timeout.connect(common.checkConnection)
+            self.isOnlineTimer.timeout.connect(self.setNavigatorOnline)
+            self.isOnlineTimer.start(1000)
         self.setUserAgent()
     def userAgentForUrl(self, url):
         return self._userAgent
@@ -161,6 +166,9 @@ class WebPage(QWebPage):
     def checkForNavigatorGeolocation(self):
         if "navigator.geolocation" in self.mainFrame().toHtml() and not self.mainFrame().url().authority() in common.geolocation_whitelist:
             self.allowGeolocation()
+    def setNavigatorOnline(self):
+        script = "window.navigator.onLine = " + str(common.isConnectedToNetwork()).lower() + ";"
+        self.mainFrame().evaluateJavaScript(script)
     def tweakNavigatorObject(self):
         authority = self.mainFrame().url().authority()
         if common.setting_to_bool("network/GeolocationEnabled") and authority in common.geolocation_whitelist:
@@ -276,7 +284,6 @@ class WebView(QWebView):
             self.nAM = common.incognitoNetworkAccessManager
             self.page().setNetworkAccessManager(self.nAM)
             self.nAM.setParent(QCoreApplication.instance())
-        self.nAM.finished.connect(self.requestFinished)
 
         # Enable Web Inspector
         self.settings().setAttribute(self.settings().DeveloperExtrasEnabled, True)
@@ -331,7 +338,7 @@ class WebView(QWebView):
         # Check if content viewer.
         self._isUsingContentViewer = False
         self.loadStarted.connect(self.checkIfUsingContentViewer)
-        self.page().networkAccessManager().finished.connect(self.ready)
+        self.loadFinished.connect(self.finishLoad)
 
         self.setWindowTitle("")
 
@@ -375,11 +382,20 @@ class WebView(QWebView):
         else:
             return QWebView.mousePressEvent(self, ev)
 
+    # Creates an error page.
+    def errorPage(self, title="Problem loading page", heading="Whoops...", error="Nimbus could not load the requested page.", suggestions=["Try reloading the page.", "Make sure you're connected to the Internet. Once you're connected, try loading this page again.", "Check for misspellings in the URL (e.g. <b>ww.google.com</b> instead of <b>www.google.com</b>).", "The server may be experiencing some downtime. Wait for a while before trying again.", "If your computer or network is protected by a firewall, make sure that Nimbus is permitted ."]):
+        self.setHtml("<!DOCTYPE html><html><title>%(title)s</title><body><h1>%(heading)s</h1><p>%(error)s</p><ul>%(suggestions)s</ul></body></html>" % {"title": tr(title), "heading": tr(heading), "error": tr(error), "suggestions": "".join(["<li>" + tr(suggestion) + "</li>" for suggestion in suggestions])})
+
     # This loads a page from the cache if certain network errors occur.
-    def requestFinished(self, reply):
-        if reply.error() in (3,4,104,) and not self._cacheLoaded:
+    def finishLoad(self, ok=False):
+        if not ok:
             self._cacheLoaded = True
-            self.loadPageFromCache(self._url)
+            success = self.loadPageFromCache(self._url)
+            if not success:
+                if not common.isConnectedToNetwork():
+                    self.errorPage("Problem loading page", "No Internet connection", "Your computer is not connected to the Internet. You may want to try the following:", ["<b>Windows 7 or Vista:</b> Click the <i>Start</i> button, then click <i>Control Panel</i>. Type <b>network</b> into the search box, click <i>Network and Sharing Center</i>, click <i>Set up a new connection or network</i>, and then double-click <i>Connect to the Internet</i>. From there, follow the instructions. If the network is password-protected, you will have to enter the password.", "<b>Windows 8:</b> Open the <i>Settings charm</i> and tap or click the Network icon (shaped like either five bars or a computer screen with a cable). Select the network you want to join, then tap or click <i>Connect</i>.", "<b>Mac OS X:</b> Click the AirPort icon (the icon shaped like a slice of pie near the top right of your screen). From there, select the network you want to join. If the network is password-protected, enter the password.", "<b>Ubuntu (Unity and Xfce):</b> Click the Network Indicator (the icon with two arrows near the upper right of your screen). From there, select the network you want to join. If the network is password-protected, enter the password.", "<b>Other Linux:</b> Oh, come on. I shouldn't have to be telling you this.", "Alternatively, if you have access to a wired Ethernet connection, you can simply plug the cable into your computer."])
+                else:
+                    self.errorPage()
 
     def load(self, url):
         if type(url) is QListWidgetItem:
@@ -520,6 +536,8 @@ class WebView(QWebView):
             try: self.setHtml(f.read())
             except: traceback.print_exc()
             f.close()
+            return True
+        return False
 
     def savePageToCache(self):
         if not self.incognito:
@@ -901,7 +919,7 @@ min-width: 6em;
 
         # About Nimbus action.
         aboutAction = QAction(common.complete_icon("help-about"), tr("A&bout Nimbus"), self)
-        aboutAction.triggered.connect(lambda: QMessageBox.about(self, tr("About Nimbus"), tr("<h3>Nimbus</h3>Python 3/Qt 4-based web browser.")))
+        aboutAction.triggered.connect(lambda: QMessageBox.about(self, tr("About Nimbus"), tr("<h3>Nimbus</h3>Python 3/Qt 4-based Web browser.")))
         mainMenu.addAction(aboutAction)
 
         # Licensing information.
