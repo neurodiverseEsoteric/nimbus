@@ -1,4 +1,5 @@
 nimbus.py
+settings_dialog.py
 ================
 
 The MIT License (MIT)
@@ -23,15 +24,17 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-common.py; extension_server.py
+common.py
+compile_translations.py
+compile_windows.py
+custom_widgets.py
+extension_server.py
+geolocation.py
+qt.conf
+status_bar.py
+translate.py
+All extensions without a specified license
 ================
-
-Public domain. You are free to do whatever you want with these.
-
-extensions
-================
-
-The following license applies to all extensions without a specified license:
 
 This is free and unencumbered software released into the public domain.
 
