@@ -206,12 +206,23 @@ class WebPage(QWebPage):
                      "window.navigator.geolocation = {};\n" + \
                      "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = eval('(' + window.nimbus.geolocation.getCurrentPosition() + ')'); success(getCurrentPosition); return getCurrentPosition; };"
             self.mainFrame().evaluateJavaScript(script)
-        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.requestFullScreen = function() { window.nimbus.fullScreenRequester.setFullScreen(true); this.setAttribute('oldstyle', this.getAttribute('style')); this.setAttribute('style', 'position: fixed; top: 0; left: 0; padding: 0; margin: 0; width: 100%; height: 100%;'); document.fullScreen = true; }")
-        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.webkitRequestFullScreen = HTMLElement.prototype.requestFullScreen")
-        self.mainFrame().evaluateJavaScript("document.cancelFullScreen = function() { window.nimbus.fullScreenRequester.setFullScreen(false); document.fullScreen = false; var allElements = document.getElementsByTagName('*'); for (var i=0;i<allElements.length;i++) { var element = allElements[i]; if (element.hasAttribute('oldstyle')) { element.setAttribute('style', element.getAttribute('oldstyle')); } } }")
-        self.mainFrame().evaluateJavaScript("document.webkitCancelFullScreen = document.cancelFullScreen")
+        # W3C Fullscreen API proposal.
+        self.mainFrame().evaluateJavaScript("document.fullscreenElement = null;")
+        self.mainFrame().evaluateJavaScript("document.fullscreenEnabled = true;")
+        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.requestFullscreen = function() { document.fullscreenElement = this;  window.nimbus.fullScreenRequester.setFullScreen(true); var style = ''; if (this.hasAttribute('style')) { style = this.getAttribute('style'); }; this.setAttribute('style', style + ' position: fixed; top: 0; left: 0; padding: 0; margin: 0; width: 100%; height: 100%;'); document.fullScreen = true; }")
+        self.mainFrame().evaluateJavaScript("document.exitFullscreen = function() { document.fullscreenElement = null; window.nimbus.fullScreenRequester.setFullScreen(false); document.fullScreen = false; var allElements = document.getElementsByTagName('*'); for (var i=0;i<allElements.length;i++) { var element = allElements[i]; if (element.hasAttribute('style')) { element.setAttribute('style', element.getAttribute('style').replace(' position: fixed; top: 0; left: 0; padding: 0; margin: 0; width: 100%; height: 100%;', '')); } } }")
+        # Mozilla FullScreen API proposal.
         self.mainFrame().evaluateJavaScript("document.fullScreen = false;")
-        self.mainFrame().evaluateJavaScript("document.exitFullScreen = document.cancelFullScreen")
+        self.mainFrame().evaluateJavaScript("document.fullScreenEnabled = document.fullscreenEnabled;")
+        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.requestFullScreen = HTMLElement.prototype.requestFullscreen")
+        self.mainFrame().evaluateJavaScript("document.cancelFullScreen = document.exitFullscreen")
+        self.mainFrame().evaluateJavaScript("document.mozFullScreen = document.fullScreen;")
+        self.mainFrame().evaluateJavaScript("document.mozFullScreenEnabled = document.fullscreenEnabled;")
+        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.mozRequestFullScreen = HTMLElement.prototype.requestFullscreen")
+        self.mainFrame().evaluateJavaScript("document.mozCancelFullScreen = document.exitFullscreen")
+        # WebKit FullScreen API.
+        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.webkitRequestFullScreen = HTMLElement.prototype.requestFullscreen")
+        self.mainFrame().evaluateJavaScript("document.webkitCancelFullScreen = document.exitFullscreen")
         self.mainFrame().evaluateJavaScript("window.nimbus.onLineEvent = document.createEvent('Event');\n" + \
                                             "window.nimbus.onLineEvent.initEvent('online',true,false);")
         self.mainFrame().evaluateJavaScript("window.nimbus.offLineEvent = document.createEvent('Event');\n" + \
@@ -985,6 +996,7 @@ min-width: 6em;
         self.toggleFullScreenAction.setShortcut("F11")
         self.toggleFullScreenAction.setCheckable(True)
         self.toggleFullScreenAction.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
+        self.toggleFullScreenAction.triggered.connect(lambda: self.tabs.currentWidget().page().mainFrame().evaluateJavaScript("document.exitFullscreen();"))
         self.toolBar.addAction(self.toggleFullScreenAction)
 
         # Add main menu action/button.
