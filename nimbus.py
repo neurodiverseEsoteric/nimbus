@@ -1023,13 +1023,19 @@ self.origY + ev.globalY() - self.mouseY)
         self.tabs.currentWidget().back()
 
     def aboutToShowBackHistoryMenu(self):
-        self.backHistoryMenu.clear()
-        history = self.tabs.currentWidget().history()
-        backItems = history.backItems(10)
-        for item in range(0, len(backItems)):
-            action = custom_widgets.WebHistoryAction(item, backItems[item].icon(), backItems[item].title(), self.backHistoryMenu)
-            action.triggered2.connect(self.loadBackHistoryItem)
-            self.backHistoryMenu.addAction(action)
+        try:
+            self.backHistoryMenu.clear()
+            history = self.tabs.currentWidget().history()
+            backItems = history.backItems(10)
+            for item in range(0, len(backItems)):
+                try:
+                    action = custom_widgets.WebHistoryAction(item, backItems[item].icon(), backItems[item].title(), self.backHistoryMenu)
+                    action.triggered2.connect(self.loadBackHistoryItem)
+                    self.backHistoryMenu.addAction(action)
+                except:
+                    pass
+        except:
+            pass
 
     def loadBackHistoryItem(self, index):
         history = self.tabs.currentWidget().history()
@@ -1039,13 +1045,19 @@ self.origY + ev.globalY() - self.mouseY)
         self.tabs.currentWidget().forward()
 
     def aboutToShowForwardHistoryMenu(self):
-        self.forwardHistoryMenu.clear()
-        history = self.tabs.currentWidget().history()
-        forwardItems = history.forwardItems(10)
-        for item in range(0, len(forwardItems)):
-            action = custom_widgets.WebHistoryAction(item, forwardItems[item].icon(), forwardItems[item].title(), self.forwardHistoryMenu)
-            action.triggered2.connect(self.loadForwardHistoryItem)
-            self.forwardHistoryMenu.addAction(action)
+        try:
+            self.forwardHistoryMenu.clear()
+            history = self.tabs.currentWidget().history()
+            forwardItems = history.forwardItems(10)
+            for item in range(0, len(forwardItems)):
+                try:
+                    action = custom_widgets.WebHistoryAction(item, forwardItems[item].icon(), forwardItems[item].title(), self.forwardHistoryMenu)
+                    action.triggered2.connect(self.loadForwardHistoryItem)
+                    self.forwardHistoryMenu.addAction(action)
+                except:
+                    pass
+        except:
+            pass
 
     def loadForwardHistoryItem(self, index):
         history = self.tabs.currentWidget().history()
