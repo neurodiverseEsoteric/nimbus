@@ -206,16 +206,21 @@ class WebPage(QWebPage):
         self.mainFrame().evaluateJavaScript("document.fullScreen = false;")
         self.mainFrame().evaluateJavaScript("document.exitFullScreen = document.cancelFullScreen")
     def permissionRequested(self, frame, feature):
-        if feature == self.Geolocation and frame == self.mainFrame() and common.setting_to_bool("network/GeolocationEnabled"):
+        authority = frame.url().authority()
+        if feature == self.Geolocation and frame == self.mainFrame() and common.setting_to_bool("network/GeolocationEnabled") and not authority in common.geolocation_blacklist:
             confirm = True
-            authority = self.mainFrame().url().authority()
             if not authority in common.geolocation_whitelist:
-                confirm = QMessageBox.question(None, tr("Nimbus"), tr("This website would like to track your location."), QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
+                confirm = QMessageBox.question(None, tr("Nimbus"), tr("This website would like to track your location."), QMessageBox.Ok | QMessageBox.No | QMessageBox.NoToAll, QMessageBox.Ok)
             if confirm == QMessageBox.Ok:
                 if not authority in common.geolocation_whitelist:
                     common.geolocation_whitelist.append(authority)
                     common.saveData()
                 self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
+            elif confirm == QMessageBox.NoToAll:
+                if not authority in common.geolocation_blacklist:
+                    common.geolocation_blacklist.append(authority)
+                    common.saveData()
+                self.setFeaturePermission(frame, feature, self.PermissionDeniedByUser)
             return confirm == QMessageBox.Ok
         return False
     def allowGeolocation(self):

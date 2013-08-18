@@ -17,10 +17,10 @@ import clear_history_dialog
 from translate import tr
 try:
     from PySide.QtCore import Qt, QUrl
-    from PySide.QtGui import QWidget, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+    from PySide.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
 except:
     from PyQt4.QtCore import Qt, QUrl
-    from PyQt4.QtGui import QWidget, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+    from PyQt4.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
 
 # Basic settings panel.
 class SettingsPanel(QWidget):
@@ -192,21 +192,39 @@ class DataSettingsPanel(SettingsPanel):
         self.geolocationToggle = QCheckBox(tr("Enable geo&location"), self)
         self.layout().addWidget(self.geolocationToggle)
 
+        self.geolocationPermissionsRow = custom_widgets.Row(self)
+        self.layout().addWidget(self.geolocationPermissionsRow)
+
+        self.geolocationWhitelistColumn = custom_widgets.Column(self)
+        self.geolocationPermissionsRow.addWidget(self.geolocationWhitelistColumn)
+
         self.geolocationWhitelistLabel = QLabel(tr("Allow these sites to track my location:"), self)
-        self.layout().addWidget(self.geolocationWhitelistLabel)
+        self.geolocationWhitelistColumn.addWidget(self.geolocationWhitelistLabel)
 
         self.geolocationWhitelist = QListWidget(self)
-        self.layout().addWidget(self.geolocationWhitelist)
+        self.geolocationWhitelistColumn.addWidget(self.geolocationWhitelist)
 
-        self.addRemoveRow = custom_widgets.Row(self)
-        self.layout().addWidget(self.addRemoveRow)
+        self.removeFromWhitelistButton = QPushButton(tr("Remove"))
+        self.removeFromWhitelistButton.clicked.connect(lambda: self.geolocationWhitelist.takeItem(self.geolocationWhitelist.row(self.geolocationWhitelist.currentItem())))
+        self.geolocationWhitelistColumn.addWidget(self.removeFromWhitelistButton)
 
-        #self.addButton = QPushButton(tr("Add"))
-        #self.addRemoveRow.addWidget(self.addButton)
+        self.geolocationBlacklistColumn = custom_widgets.Column(self)
+        self.geolocationPermissionsRow.addWidget(self.geolocationBlacklistColumn)
 
-        self.removeButton = QPushButton(tr("Remove"))
-        self.removeButton.clicked.connect(lambda: self.geolocationWhitelist.takeItem(self.geolocationWhitelist.row(self.geolocationWhitelist.currentItem())))
-        self.addRemoveRow.addWidget(self.removeButton)
+        self.geolocationBlacklistLabel = QLabel(tr("Prevent these sites from tracking my location:"), self)
+        self.geolocationBlacklistColumn.addWidget(self.geolocationBlacklistLabel)
+
+        self.geolocationBlacklist = QListWidget(self)
+        self.geolocationBlacklistColumn.addWidget(self.geolocationBlacklist)
+
+        self.removeFromBlacklistButton = QPushButton(tr("Remove"))
+        self.removeFromBlacklistButton.clicked.connect(lambda: self.geolocationBlacklist.takeItem(self.geolocationBlacklist.row(self.geolocationBlacklist.currentItem())))
+        self.geolocationBlacklistColumn.addWidget(self.removeFromBlacklistButton)
+
+        self.removeAction = QAction(self)
+        self.removeAction.setShortcut("Del")
+        self.removeAction.triggered.connect(lambda: self.geolocationWhitelist.takeItem(self.geolocationWhitelist.row(self.geolocationWhitelist.currentItem())) if self.geolocationWhitelist.hasFocus() else self.geolocationBlacklist.takeItem(self.geolocationBlacklist.row(self.geolocationBlacklist.currentItem())))
+        self.addAction(self.removeAction)
 
         self.layout().addWidget(custom_widgets.Expander(self))
     def loadSettings(self):
@@ -216,6 +234,9 @@ class DataSettingsPanel(SettingsPanel):
         self.geolocationWhitelist.clear()
         for url in common.geolocation_whitelist:
             self.geolocationWhitelist.addItem(url)
+        self.geolocationBlacklist.clear()
+        for url in common.geolocation_blacklist:
+            self.geolocationBlacklist.addItem(url)
     def saveSettings(self):
         common.settings.setValue("data/MaximumCacheSize", self.maximumCacheSize.value())
         common.settings.setValue("data/RememberHistory", self.rememberHistoryToggle.isChecked())
@@ -223,6 +244,9 @@ class DataSettingsPanel(SettingsPanel):
         while len(common.geolocation_whitelist) > 0:
             common.geolocation_whitelist.pop()
         common.geolocation_whitelist = [self.geolocationWhitelist.item(authority).text() for authority in range(0, self.geolocationWhitelist.count())]
+        while len(common.geolocation_blacklist) > 0:
+            common.geolocation_blacklist.pop()
+        common.geolocation_blacklist = [self.geolocationBlacklist.item(authority).text() for authority in range(0, self.geolocationBlacklist.count())]
         common.saveData()
 
 # Network configuration panel

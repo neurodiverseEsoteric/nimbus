@@ -121,8 +121,9 @@ settings_folder = os.path.dirname(settings.fileName())
 network_cache_folder = os.path.join(settings_folder, "Cache")
 offline_cache_folder = os.path.join(settings_folder, "OfflineCache")
 
-# This stores 
+# These store the geolocation whitelist and blacklist.
 geolocation_whitelist = []
+geolocation_blacklist = []
 
 ###################
 # ADBLOCK-RELATED #
@@ -303,6 +304,7 @@ def loadData():
     # Load history.
     global history
     global geolocation_whitelist
+    global geolocation_blacklist
     raw_history = data.value("data/History")
     if type(raw_history) is str:
         history = json.loads(raw_history)
@@ -320,6 +322,12 @@ def loadData():
     else:
         if type(wl) is list:
             geolocation_whitelist = wl
+
+    try: bl = json.loads(str(data.value("data/GeolocationBlacklist")))
+    except: pass
+    else:
+        if type(bl) is list:
+            geolocation_blacklist = bl
 
 def shortenURL(url):
     return QUrl(url).authority().replace("www.", "")
@@ -339,6 +347,7 @@ def saveData():
     data.setValue("data/Cookies", cookies)
 
     data.setValue("data/GeolocationWhitelist", json.dumps(geolocation_whitelist))
+    data.setValue("data/GeolocationBlacklist", json.dumps(geolocation_blacklist))
 
     # Sync any unsaved settings.
     data.sync()
