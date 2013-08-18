@@ -148,7 +148,7 @@ class WebPage(QWebPage):
         super(WebPage, self).__init__(*args, **kwargs)
         self.featurePermissionRequested.connect(self.permissionRequested)
         self.geolocation = geolocation.Geolocation(self)
-        self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakNavigatorObject)
+        self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakDOM)
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
         self._userAgent = ""
         if not self.isOnlineTimer.isActive():
@@ -169,7 +169,7 @@ class WebPage(QWebPage):
     def setNavigatorOnline(self):
         script = "window.navigator.onLine = " + str(common.isConnectedToNetwork()).lower() + ";"
         self.mainFrame().evaluateJavaScript(script)
-    def tweakNavigatorObject(self):
+    def tweakDOM(self):
         authority = self.mainFrame().url().authority()
         if common.setting_to_bool("network/GeolocationEnabled") and authority in common.geolocation_whitelist:
             self.mainFrame().addToJavaScriptWindowObject("nimbusGeolocation", self.geolocation)
@@ -178,6 +178,12 @@ class WebPage(QWebPage):
                      "window.navigator.geolocation = {};\n" + \
                      "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = eval('(' + window.navigator.nimbusGeolocation.getCurrentPosition() + ')'); success(getCurrentPosition); return getCurrentPosition; };"
             self.mainFrame().evaluateJavaScript(script)
+        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.requestFullScreen = function() { this.setAttribute('oldstyle', this.getAttribute('style')); this.setAttribute('style', 'position: fixed; top: 0; left: 0; padding: 0; margin: 0; width: 100%; height: 100%;'); document.fullScreen = true; }")
+        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.webkitRequestFullScreen = HTMLElement.prototype.requestFullScreen")
+        self.mainFrame().evaluateJavaScript("document.cancelFullScreen = function() { document.fullScreen = false; var allElements = document.getElementsByTagName('*'); for (var i=0;i<allElements.length;i++) { var element = allElements[i]; if (element.hasAttribute('oldstyle')) { element.setAttribute('style', element.getAttribute('oldstyle')); } } }")
+        self.mainFrame().evaluateJavaScript("document.webkitCancelFullScreen = document.cancelFullScreen")
+        self.mainFrame().evaluateJavaScript("document.fullScreen = false;")
+        self.mainFrame().evaluateJavaScript("document.exitFullScreen = function() { alert('This is not implemented yet.'); }")
     def permissionRequested(self, frame, feature):
         if feature == self.Geolocation and frame == self.mainFrame() and common.setting_to_bool("network/GeolocationEnabled"):
             confirm = True
@@ -388,7 +394,7 @@ class WebView(QWebView):
 
     # This loads a page from the cache if certain network errors occur.
     def finishLoad(self, ok=False):
-        if not ok:
+        if not ok and not common.isConnectedToNetwork():
             self._cacheLoaded = True
             success = self.loadPageFromCache(self._url)
             if not success:
