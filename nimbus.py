@@ -45,17 +45,18 @@ except:
 
 # Extremely specific imports from PySide/PyQt4.
 try:
-    from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QFile, QIODevice, QTimer
+    from PySide.QtCore import Qt, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer
     from PySide.QtGui import QApplication, QDockWidget, QKeySequence, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PySide.QtNetwork import QNetworkProxy, QNetworkRequest, QNetworkAccessManager
     from PySide.QtWebKit import QWebView, QWebPage
     pyside = True
 except:
-    from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QFile, QIODevice, QTimer
+    from PyQt4.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer
     from PyQt4.QtGui import QApplication, QDockWidget, QKeySequence, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest, QNetworkAccessManager
     from PyQt4.QtWebKit import QWebView, QWebPage
     Signal = pyqtSignal
+    Slot = pyqtSlot
     pyside = False
 
 # chdir to the app folder. This way, we won't have issues related to
@@ -132,6 +133,13 @@ class DownloadBar(QToolBar):
         abortAction.triggered.connect(self.deleteLater)
         self.addAction(abortAction)
 
+# Class for exposing fullscreen API to DOM.
+class FullScreenRequester(QObject):
+    fullScreenRequested = Signal(bool)
+    @Slot(bool)
+    def setFullScreen(self, fullscreen=False):
+        self.fullScreenRequested.emit(fullscreen)
+
 # Custom WebPage class with support for filesystem.
 class WebPage(QWebPage):
     plugins = (("qcalendarwidget", QCalendarWidget),
@@ -144,18 +152,29 @@ class WebPage(QWebPage):
                ("qdial", QDial),
                ("qspinbox", QSpinBox))
     isOnlineTimer = QTimer()
+    fullScreenRequested = Signal(bool)
     def __init__(self, *args, **kwargs):
         super(WebPage, self).__init__(*args, **kwargs)
         self.featurePermissionRequested.connect(self.permissionRequested)
         self.geolocation = geolocation.Geolocation(self)
+        self.fullScreenRequester = FullScreenRequester(self)
+        self.fullScreenRequester.fullScreenRequested.connect(self.toggleFullScreen)
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakDOM)
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
         self._userAgent = ""
+        self._fullScreen = False
         if not self.isOnlineTimer.isActive():
             self.isOnlineTimer.timeout.connect(common.checkConnection)
             self.isOnlineTimer.timeout.connect(self.setNavigatorOnline)
             self.isOnlineTimer.start(1000)
         self.setUserAgent()
+    def toggleFullScreen(self):
+        if self._fullScreen:
+            self.fullScreenRequested.emit(False)
+            self._fullScreen = False
+        else:
+            self.fullScreenRequested.emit(True)
+            self._fullScreen = True
     def userAgentForUrl(self, url):
         return self._userAgent
     def setUserAgent(self, ua=None):
@@ -171,6 +190,8 @@ class WebPage(QWebPage):
         self.mainFrame().evaluateJavaScript(script)
     def tweakDOM(self):
         authority = self.mainFrame().url().authority()
+        self.mainFrame().addToJavaScriptWindowObject("nimbusFullScreenRequester", self.fullScreenRequester)
+        self.mainFrame().evaluateJavaScript("window.nimbusFullScreenRequester = nimbusFullScreenRequester;")
         if common.setting_to_bool("network/GeolocationEnabled") and authority in common.geolocation_whitelist:
             self.mainFrame().addToJavaScriptWindowObject("nimbusGeolocation", self.geolocation)
             script = "window.navigator.nimbusGeolocation = nimbusGeolocation;\n" + \
@@ -178,12 +199,12 @@ class WebPage(QWebPage):
                      "window.navigator.geolocation = {};\n" + \
                      "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = eval('(' + window.navigator.nimbusGeolocation.getCurrentPosition() + ')'); success(getCurrentPosition); return getCurrentPosition; };"
             self.mainFrame().evaluateJavaScript(script)
-        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.requestFullScreen = function() { this.setAttribute('oldstyle', this.getAttribute('style')); this.setAttribute('style', 'position: fixed; top: 0; left: 0; padding: 0; margin: 0; width: 100%; height: 100%;'); document.fullScreen = true; }")
+        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.requestFullScreen = function() { window.nimbusFullScreenRequester.setFullScreen(true); this.setAttribute('oldstyle', this.getAttribute('style')); this.setAttribute('style', 'position: fixed; top: 0; left: 0; padding: 0; margin: 0; width: 100%; height: 100%;'); document.fullScreen = true; }")
         self.mainFrame().evaluateJavaScript("HTMLElement.prototype.webkitRequestFullScreen = HTMLElement.prototype.requestFullScreen")
-        self.mainFrame().evaluateJavaScript("document.cancelFullScreen = function() { document.fullScreen = false; var allElements = document.getElementsByTagName('*'); for (var i=0;i<allElements.length;i++) { var element = allElements[i]; if (element.hasAttribute('oldstyle')) { element.setAttribute('style', element.getAttribute('oldstyle')); } } }")
+        self.mainFrame().evaluateJavaScript("document.cancelFullScreen = function() { window.nimbusFullScreenRequester.setFullScreen(false); document.fullScreen = false; var allElements = document.getElementsByTagName('*'); for (var i=0;i<allElements.length;i++) { var element = allElements[i]; if (element.hasAttribute('oldstyle')) { element.setAttribute('style', element.getAttribute('oldstyle')); } } }")
         self.mainFrame().evaluateJavaScript("document.webkitCancelFullScreen = document.cancelFullScreen")
         self.mainFrame().evaluateJavaScript("document.fullScreen = false;")
-        self.mainFrame().evaluateJavaScript("document.exitFullScreen = function() { alert('This is not implemented yet.'); }")
+        self.mainFrame().evaluateJavaScript("document.exitFullScreen = document.cancelFullScreen")
     def permissionRequested(self, frame, feature):
         if feature == self.Geolocation and frame == self.mainFrame() and common.setting_to_bool("network/GeolocationEnabled"):
             confirm = True
@@ -941,6 +962,12 @@ min-width: 6em;
         quitAction.triggered.connect(QCoreApplication.quit)
         mainMenu.addAction(quitAction)
 
+        self.toggleFullScreenAction = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
+        self.toggleFullScreenAction.setShortcut("F11")
+        self.toggleFullScreenAction.setCheckable(True)
+        self.toggleFullScreenAction.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
+        self.toolBar.addAction(self.toggleFullScreenAction)
+
         # Add main menu action/button.
         self.mainMenuAction = QAction(common.complete_icon("document-properties"), tr("&Menu"), self)
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
@@ -1188,6 +1215,17 @@ self.origY + ev.globalY() - self.mouseY)
         try: self.statusBar.setValue(self.tabs.currentWidget()._loadProgress)
         except: self.statusBar.setValue(0)
 
+    # Fullscreen mode.
+    def setFullScreen(self, fullscreen=False):
+        if fullscreen:
+            try: self.toggleFullScreenAction.setChecked(True)
+            except: pass
+            self.showFullScreen()
+        else:
+            try: self.toggleFullScreenAction.setChecked(False)
+            except: pass
+            self.showNormal()
+
     # Tab-related methods.
     def currentWidget(self):
         return self.tabs.currentWidget()
@@ -1220,6 +1258,7 @@ self.origY + ev.globalY() - self.mouseY)
         webview.statusBarMessage.connect(self.setStatusBarMessage)
         webview.page().linkHovered.connect(self.setStatusBarMessage)
         webview.titleChanged.connect(self.updateTabTitles)
+        webview.page().fullScreenRequested.connect(self.setFullScreen)
         webview.urlChanged.connect(self.updateLocationText)
         webview.iconChanged.connect(self.updateTabIcons)
         webview.windowCreated.connect(lambda webView: self.addTab(webView=webView, index=self.tabs.currentIndex()+1, focus=False))

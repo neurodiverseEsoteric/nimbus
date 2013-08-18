@@ -322,6 +322,10 @@
         <translation type="unfinished">This website would like to track your location.</translation>
     </message>
     <message>
+        <source>Toggle Fullscreen</source>
+        <translation type="unfinished">Toggle Fullscreen</translation>
+    </message>
+    <message>
         <source>Type:</source>
         <translation>类型</translation>
     </message>

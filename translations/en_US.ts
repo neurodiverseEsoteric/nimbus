@@ -322,6 +322,10 @@
         <translation>This website would like to track your location.</translation>
     </message>
     <message>
+        <source>Toggle Fullscreen</source>
+        <translation>Toggle Fullscreen</translation>
+    </message>
+    <message>
         <source>Type:</source>
         <translation>Type:</translation>
     </message>
