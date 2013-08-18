@@ -3,7 +3,7 @@ nimbuskws = common.settings.value("extensions/KeywordSearch")
 if not nimbuskws:
     common.nimbuskws = {}
     common.nimbuskws['d '] = "https://duckduckgo.com/?q=%s"
-    common.nimbuskws['w '] = "https://en.wikipedia.org/w/index.php?search=%s&title=Special%3ASearch"
+    common.nimbuskws['w '] = "https://en.wikipedia.org/w/index.php?search=%s&title=Special:Search"
     common.nimbuskws['wk '] = "http://en.wiktionary.org/w/index.php?search=%s&title=Special:Search"
     common.nimbuskws['g '] = "http://www.google.com/search?q=%s"
     common.nimbuskws['i '] = "http://www.google.com/search?tbm=isch&q=%s"
