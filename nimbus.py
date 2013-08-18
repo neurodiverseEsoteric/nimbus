@@ -188,23 +188,34 @@ class WebPage(QWebPage):
     def setNavigatorOnline(self):
         script = "window.navigator.onLine = " + str(common.isConnectedToNetwork()).lower() + ";"
         self.mainFrame().evaluateJavaScript(script)
+        self.mainFrame().evaluateJavaScript("if (window.onLine) {\n" + \
+                                            "   document.dispatchEvent(window.nimbus.onLineEvent);\n" + \
+                                            "}")
+        self.mainFrame().evaluateJavaScript("if (!window.onLine) {\n" + \
+                                            "   document.dispatchEvent(window.nimbus.offLineEvent);\n" + \
+                                            "}")
     def tweakDOM(self):
         authority = self.mainFrame().url().authority()
         self.mainFrame().addToJavaScriptWindowObject("nimbusFullScreenRequester", self.fullScreenRequester)
-        self.mainFrame().evaluateJavaScript("window.nimbusFullScreenRequester = nimbusFullScreenRequester;")
+        self.mainFrame().evaluateJavaScript("window.nimbus = new Object();")
+        self.mainFrame().evaluateJavaScript("window.nimbus.fullScreenRequester = nimbusFullScreenRequester; delete nimbusFullScreenRequester;")
         if common.setting_to_bool("network/GeolocationEnabled") and authority in common.geolocation_whitelist:
             self.mainFrame().addToJavaScriptWindowObject("nimbusGeolocation", self.geolocation)
-            script = "window.navigator.nimbusGeolocation = nimbusGeolocation;\n" + \
+            script = "window.nimbus.geolocation = nimbusGeolocation;\n" + \
                      "delete nimbusGeolocation;\n" + \
                      "window.navigator.geolocation = {};\n" + \
-                     "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = eval('(' + window.navigator.nimbusGeolocation.getCurrentPosition() + ')'); success(getCurrentPosition); return getCurrentPosition; };"
+                     "window.navigator.geolocation.getCurrentPosition = function(success, error, options) { var getCurrentPosition = eval('(' + window.nimbus.geolocation.getCurrentPosition() + ')'); success(getCurrentPosition); return getCurrentPosition; };"
             self.mainFrame().evaluateJavaScript(script)
-        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.requestFullScreen = function() { window.nimbusFullScreenRequester.setFullScreen(true); this.setAttribute('oldstyle', this.getAttribute('style')); this.setAttribute('style', 'position: fixed; top: 0; left: 0; padding: 0; margin: 0; width: 100%; height: 100%;'); document.fullScreen = true; }")
+        self.mainFrame().evaluateJavaScript("HTMLElement.prototype.requestFullScreen = function() { window.nimbus.fullScreenRequester.setFullScreen(true); this.setAttribute('oldstyle', this.getAttribute('style')); this.setAttribute('style', 'position: fixed; top: 0; left: 0; padding: 0; margin: 0; width: 100%; height: 100%;'); document.fullScreen = true; }")
         self.mainFrame().evaluateJavaScript("HTMLElement.prototype.webkitRequestFullScreen = HTMLElement.prototype.requestFullScreen")
-        self.mainFrame().evaluateJavaScript("document.cancelFullScreen = function() { window.nimbusFullScreenRequester.setFullScreen(false); document.fullScreen = false; var allElements = document.getElementsByTagName('*'); for (var i=0;i<allElements.length;i++) { var element = allElements[i]; if (element.hasAttribute('oldstyle')) { element.setAttribute('style', element.getAttribute('oldstyle')); } } }")
+        self.mainFrame().evaluateJavaScript("document.cancelFullScreen = function() { window.nimbus.fullScreenRequester.setFullScreen(false); document.fullScreen = false; var allElements = document.getElementsByTagName('*'); for (var i=0;i<allElements.length;i++) { var element = allElements[i]; if (element.hasAttribute('oldstyle')) { element.setAttribute('style', element.getAttribute('oldstyle')); } } }")
         self.mainFrame().evaluateJavaScript("document.webkitCancelFullScreen = document.cancelFullScreen")
         self.mainFrame().evaluateJavaScript("document.fullScreen = false;")
         self.mainFrame().evaluateJavaScript("document.exitFullScreen = document.cancelFullScreen")
+        self.mainFrame().evaluateJavaScript("window.nimbus.onLineEvent = document.createEvent('Event');\n" + \
+                                            "window.nimbus.onLineEvent.initEvent('online',true,false);")
+        self.mainFrame().evaluateJavaScript("window.nimbus.offLineEvent = document.createEvent('Event');\n" + \
+                                            "window.nimbus.offLineEvent.initEvent('offline',true,false);")
     def permissionRequested(self, frame, feature):
         authority = frame.url().authority()
         if feature == self.Geolocation and frame == self.mainFrame() and common.setting_to_bool("network/GeolocationEnabled") and not authority in common.geolocation_blacklist:
