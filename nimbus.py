@@ -181,7 +181,7 @@ class WebPage(QWebPage):
         if type(ua) is str:
             self._userAgent = ua
         else:
-            self._userAgent = QWebPage.userAgentForUrl(self, QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version + " QupZilla/1.4.3 Chrome/7.0.544.0")
+            self._userAgent = common.defaultUserAgent
     def checkForNavigatorGeolocation(self):
         if "navigator.geolocation" in self.mainFrame().toHtml() and not self.mainFrame().url().authority() in common.geolocation_whitelist:
             self.allowGeolocation()
@@ -1479,6 +1479,11 @@ def main():
     common.app_icon.addFile(common.icon("nimbus-80.png"))
     common.app_icon.addFile(common.icon("nimbus-128.png"))
     common.app_icon.addFile(common.icon("nimbus-256.png"))
+
+    webPage = QWebPage()
+    common.defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version + " QupZilla/1.4.3 Chrome/7.0.544.0")
+    webPage.deleteLater()
+    del webPage
 
     # Create tray icon.
     common.trayIcon = SystemTrayIcon(QCoreApplication.instance())
