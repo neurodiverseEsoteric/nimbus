@@ -173,7 +173,9 @@ class WebPage(QWebPage):
             self.fullScreenRequested.emit(True)
             self._fullScreen = True
     def userAgentForUrl(self, url):
-        if not "github" in url.authority():
+        if "drive.google.com" in url.authority():
+            return self._userAgent.replace(" Android 4.0.10;", "")
+        elif not "github" in url.authority():
             return self._userAgent
         else:
             return QWebPage.userAgentForUrl(self, url)
@@ -1484,7 +1486,10 @@ def main():
     common.app_icon.addFile(common.icon("nimbus-256.png"))
 
     webPage = QWebPage()
-    common.defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version + " QupZilla/1.4.3 Chrome/19.0.1055.1")
+    if common.qt_version.startswith("4"):
+        common.defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version + " QupZilla/1.4.3 Chrome/19.0.1055.1")
+    else:
+        common.defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version + " QupZilla/1.4.3 Chrome/19.0.1055.1").replace("python", "Nimbus/" + common.app_version + " QupZilla/1.4.3 Chrome/19.0.1055.1")
     webPage.deleteLater()
     del webPage
 
