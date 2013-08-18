@@ -27,6 +27,9 @@ except:
 # Folder that Nimbus is stored in.
 app_folder = os.path.dirname(os.path.realpath(__file__)) if sys.executable != os.path.dirname(__file__) else os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
+# Start page.
+startpage = os.path.join(app_folder, "start.html")
+
 # Icons folder
 app_icons_folder = os.path.join(app_folder, "icons")
 
@@ -87,8 +90,8 @@ default_settings = {"proxy/Type": "None",
                     "content/UseOnlineContentViewers": True,
                     "content/TiledBackingStoreEnabled": False,
                     "content/SiteSpecificQuirksEnabled": True,
-                    "general/Homepage": "https://github.com/foxhead128/nimbus",
-                    "general/Search": "https://duckduckgo.com/?q=%s" if not app_locale.startswith("zh") else "http://www.baidu.com/s?wd=%s",
+                    "general/Homepage": QUrl.fromUserInput(startpage).toString(),
+                    "general/Search": "http://www.google.com/search?client=nimbus&q=%s" if not app_locale.startswith("zh") else "http://www.baidu.com/s?wd=%s",
                     "general/CloseWindowWithLastTab": True,
                     "data/RememberHistory": True,
                     "data/MaximumCacheSize": 50,

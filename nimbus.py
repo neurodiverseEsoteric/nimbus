@@ -173,9 +173,7 @@ class WebPage(QWebPage):
             self.fullScreenRequested.emit(True)
             self._fullScreen = True
     def userAgentForUrl(self, url):
-        if "drive.google.com" in url.authority():
-            return self._userAgent.replace(" Android 4.0.10;", "")
-        elif not "github" in url.authority():
+        if not "github" in url.authority():
             return self._userAgent
         else:
             return QWebPage.userAgentForUrl(self, url)
@@ -1363,7 +1361,7 @@ self.origY + ev.globalY() - self.mouseY)
 # Redundancy is redundant.
 def addWindow(url=None):
     win = MainWindow()
-    if url == None:
+    if not url or url == None:
         win.addTab(url=common.settings.value("general/Homepage"))
     else:
         win.addTab(url=url)
