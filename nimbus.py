@@ -420,14 +420,17 @@ class WebView(QWebView):
 
     # This loads a page from the cache if certain network errors occur.
     def finishLoad(self, ok=False):
-        if not ok and not common.isConnectedToNetwork():
-            self._cacheLoaded = True
-            success = self.loadPageFromCache(self._url)
+        if not ok:
+            success = False
+            if not common.isConnectedToNetwork():
+                success = self.loadPageFromCache(self._url)
             if not success:
                 if not common.isConnectedToNetwork():
                     self.errorPage("Problem loading page", "No Internet connection", "Your computer is not connected to the Internet. You may want to try the following:", ["<b>Windows 7 or Vista:</b> Click the <i>Start</i> button, then click <i>Control Panel</i>. Type <b>network</b> into the search box, click <i>Network and Sharing Center</i>, click <i>Set up a new connection or network</i>, and then double-click <i>Connect to the Internet</i>. From there, follow the instructions. If the network is password-protected, you will have to enter the password.", "<b>Windows 8:</b> Open the <i>Settings charm</i> and tap or click the Network icon (shaped like either five bars or a computer screen with a cable). Select the network you want to join, then tap or click <i>Connect</i>.", "<b>Mac OS X:</b> Click the AirPort icon (the icon shaped like a slice of pie near the top right of your screen). From there, select the network you want to join. If the network is password-protected, enter the password.", "<b>Ubuntu (Unity and Xfce):</b> Click the Network Indicator (the icon with two arrows near the upper right of your screen). From there, select the network you want to join. If the network is password-protected, enter the password.", "<b>Other Linux:</b> Oh, come on. I shouldn't have to be telling you this.", "Alternatively, if you have access to a wired Ethernet connection, you can simply plug the cable into your computer."])
                 else:
                     self.errorPage()
+            else:
+                self._cacheLoaded = True
 
     def load(self, url):
         if type(url) is QListWidgetItem:
