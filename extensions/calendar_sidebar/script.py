@@ -10,5 +10,6 @@ except:
     self.parentWindow().calendarView = QCalendarWidget(self.parentWindow().calendarDock)
     self.parentWindow().calendarDock.setWidget(self.parentWindow().calendarView)
     self.parentWindow().addDockWidget(Qt.LeftDockWidgetArea, self.parentWindow().calendarDock)
+    self.parentWindow().tabifyDockWidget(self.parentWindow().sideBar, self.parentWindow().calendarDock)
 else:
     self.parentWindow().calendarDock.setVisible(not self.parentWindow().calendarDock.isVisible())

@@ -1,20 +1,11 @@
-url = QUrl("http://m.soundcloud.com/")
+name = "SoundCloud"
+url = "http://m.soundcloud.com/"
+clip = "soundcloud"
+ua = None
 if not self.isCheckable():
     self.setCheckable(True)
     self.setChecked(True)
-try: self.parentWindow().soundCloudDock
-except:
-    self.parentWindow().soundCloudDock = QDockWidget(self.parentWindow())
-    self.parentWindow().soundCloudDock.setWindowTitle("SoundCloud")
-    self.parentWindow().soundCloudDock.setMaximumWidth(320)
-    self.parentWindow().soundCloudDock.setContextMenuPolicy(Qt.CustomContextMenu)
-    self.parentWindow().soundCloudDock.setFeatures(QDockWidget.DockWidgetClosable)
-    self.parentWindow().soundCloudView = WebView(self.parentWindow().soundCloudDock)
-    self.parentWindow().soundCloudView.windowCreated.connect(browser.activeWindow().addTab)
-    self.parentWindow().soundCloudView.load(url)
-    self.parentWindow().soundCloudDock.setWidget(self.parentWindow().soundCloudView)
-    self.parentWindow().addDockWidget(Qt.LeftDockWidgetArea, self.parentWindow().soundCloudDock)
+if not self.parentWindow().hasSideBar(name):
+    self.parentWindow().addSideBar(name, url, clip, ua)
 else:
-    self.parentWindow().soundCloudDock.setVisible(not self.parentWindow().soundCloudDock.isVisible())
-    if not "soundcloud" in self.parentWindow().soundCloudView.url().toString():
-        self.parentWindow().soundCloudView.load(url)
+    self.parentWindow().toggleSideBar(name)

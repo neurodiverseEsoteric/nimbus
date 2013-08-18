@@ -14,6 +14,7 @@ except:
     self.parentWindow().wikipediaView.load(url)
     self.parentWindow().wikipediaDock.setWidget(self.parentWindow().wikipediaView)
     self.parentWindow().addDockWidget(Qt.LeftDockWidgetArea, self.parentWindow().wikipediaDock)
+    self.parentWindow().tabifyDockWidget(self.parentWindow().sideBar, self.parentWindow().wikipediaDock)
 else:
     self.parentWindow().wikipediaDock.setVisible(not self.parentWindow().wikipediaDock.isVisible())
     if not "wikipedia" in self.parentWindow().wikipediaView.url().toString():

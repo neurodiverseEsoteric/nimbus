@@ -149,8 +149,15 @@ class WebPage(QWebPage):
         self.geolocation = geolocation.Geolocation(self)
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakNavigatorObject)
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
+        self._userAgent = ""
+        self.setUserAgent()
     def userAgentForUrl(self, url):
-        return QWebPage.userAgentForUrl(self, url).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version)
+        return self._userAgent
+    def setUserAgent(self, ua=None):
+        if type(ua) is str:
+            self._userAgent = ua
+        else:
+            self._userAgent = QWebPage.userAgentForUrl(self, QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version)
     def checkForNavigatorGeolocation(self):
         if "navigator.geolocation" in self.mainFrame().toHtml() and not self.mainFrame().url().authority() in common.geolocation_whitelist:
             self.allowGeolocation()
@@ -330,6 +337,9 @@ class WebView(QWebView):
 
         if os.path.exists(common.new_tab_page):
             self.load(QUrl("about:blank"))
+
+    def setUserAgent(self, ua):
+        self.page().setUserAgent(ua)
 
     def isUsingContentViewer(self):
         return self._isUsingContentViewer
@@ -640,6 +650,9 @@ class MainWindow(QMainWindow):
         # List of closed tabs.
         self.closedTabs = []
 
+        # List of sideBars.
+        self.sideBars = {}
+
         # Main toolbar.
         self.toolBar = custom_widgets.MenuToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
         self.addToolBar(self.toolBar)
@@ -912,9 +925,46 @@ min-width: 6em;
         self.toolBar.widgetForAction(self.mainMenuAction).setPopupMode(QToolButton.InstantPopup)
         self.mainMenuAction.triggered.connect(lambda: self.toolBar.widgetForAction(self.mainMenuAction).showMenu())
 
+        self.sideBar = QDockWidget(self)
+        self.sideBar.setWindowTitle(tr("Sidebar"))
+        self.sideBar.setMaximumWidth(320)
+        self.sideBar.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.sideBar.setFeatures(QDockWidget.DockWidgetClosable)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.sideBar)
+        self.sideBar.hide()
+
         # Load browser extensions.
         # Ripped off of Ricotta.
         self.reloadExtensions()
+
+    # Check if window has a sidebar.
+    def hasSideBar(self, name):
+        if name in self.sideBars.keys():
+            return True
+        return False
+
+    def toggleSideBar(self, name):
+        if self.hasSideBar(name):
+            self.sideBars[name]["sideBar"].setVisible(not self.sideBars[name]["sideBar"].isVisible())
+            if type(self.sideBars[name]["clip"]) is str:
+                clip = self.sideBars[name]["clip"]
+                if not clip in self.sideBars[name]["sideBar"].webView.url().toString():
+                    self.sideBars[name]["sideBar"].webView.load(self.sideBars[name]["url"])
+
+    # Add a sidebar.
+    def addSideBar(self, name="", url="about:blank", clip=None, ua=None):
+        self.sideBars[name] = {"sideBar": QDockWidget(self), "url": QUrl(url), "clip": clip}
+        self.sideBars[name]["sideBar"].setWindowTitle(name)
+        self.sideBars[name]["sideBar"].setMaximumWidth(320)
+        self.sideBars[name]["sideBar"].setContextMenuPolicy(Qt.CustomContextMenu)
+        self.sideBars[name]["sideBar"].setFeatures(QDockWidget.DockWidgetClosable)
+        self.sideBars[name]["sideBar"].webView = WebView()
+        self.sideBars[name]["sideBar"].webView.windowCreated.connect(self.addTab)
+        self.sideBars[name]["sideBar"].webView.setUserAgent(ua)
+        self.sideBars[name]["sideBar"].webView.load(QUrl(url))
+        self.sideBars[name]["sideBar"].setWidget(self.sideBars[name]["sideBar"].webView)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.sideBars[name]["sideBar"])
+        self.tabifyDockWidget(self.sideBar, self.sideBars[name]["sideBar"])
 
     # This is so you can grab the window by its toolbar and move it.
     # It's an ugly hack, but it works.
@@ -935,6 +985,8 @@ self.origY + ev.globalY() - self.mouseY)
     # Blank all tabs when window is closed.
     def closeEvent(self, ev):
         self.blankAll()
+        for sidebar in self.sideBars.values():
+            sidebar["sideBar"].webView.load(QUrl("about:blank"))
         if len(browser.windows) - 1 > common.setting_to_int("general/ReopenableWindowCount"):
             for window in browser.windows:
                 if not window.isVisible():
@@ -1250,6 +1302,8 @@ def reopenWindow():
         if not window.isVisible():
             browser.windows.append(browser.windows.pop(browser.windows.index(window)))
             window.deblankAll()
+            for sidebar in window.sideBars.values():
+                sidebar["sideBar"].webView.back()
             if window.tabs.count() == 0:
                 window.reopenTab()
             window.show()
