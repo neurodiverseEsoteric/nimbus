@@ -176,7 +176,10 @@ class WebPage(QWebPage):
             self.fullScreenRequested.emit(True)
             self._fullScreen = True
     def userAgentForUrl(self, url):
-        return self._userAgent
+        if not "github" in url.authority():
+            return self._userAgent
+        else:
+            return QWebPage.userAgentForUrl(self, url)
     def setUserAgent(self, ua=None):
         if type(ua) is str:
             self._userAgent = ua

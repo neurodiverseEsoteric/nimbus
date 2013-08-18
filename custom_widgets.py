@@ -141,7 +141,7 @@ class LicenseDialog(QTabWidget):
         self.addTab(self.authorsView, tr("&Authors"))
         self.thanksView = ReadOnlyTextEdit(self)
         self.thanksView.setText(self.thanks)
-        self.addTab(self.readmeView, tr("&Thanks"))
+        self.addTab(self.thanksView, tr("&Thanks"))
         self.licenseView = ReadOnlyTextEdit(self)
         self.licenseView.setText(self.license)
         self.addTab(self.licenseView, tr("&License"))
