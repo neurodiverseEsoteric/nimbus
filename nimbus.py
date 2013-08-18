@@ -1481,7 +1481,7 @@ def main():
     common.app_icon.addFile(common.icon("nimbus-256.png"))
 
     webPage = QWebPage()
-    common.defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version + " QupZilla/1.4.3 Chrome/7.0.544.0")
+    common.defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version + " QupZilla/1.4.3 Chrome/19.0.1055.1")
     webPage.deleteLater()
     del webPage
 
