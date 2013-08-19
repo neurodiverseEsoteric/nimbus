@@ -4,13 +4,13 @@ if not self.isCheckable():
 import json
 try: common.bookmarks
 except:
-    bookmarks = common.data.value("data/Bookmarks")
+    bookmarks = data.data.value("data/Bookmarks")
     if not bookmarks:
         bookmarks = common.settings.value("extensions/Bookmarks")
     if not bookmarks:
         common.bookmarks = []
-        common.data.setValue("data/Bookmarks", json.dumps(common.bookmarks))
-        common.data.sync()
+        data.data.setValue("data/Bookmarks", json.dumps(common.bookmarks))
+        data.data.sync()
     else:
         common.bookmarks = json.loads(bookmarks)
 try: browser.activeWindow().bookmarksDock
@@ -37,8 +37,8 @@ except:
             browser.activeWindow().bookmarksList.takeItem(browser.activeWindow().bookmarksList.row(currentItem))
             try: common.bookmarks.remove(url)
             except: pass
-            common.data.setValue("data/Bookmarks", json.dumps(common.bookmarks))
-            common.data.sync()
+            data.data.setValue("data/Bookmarks", json.dumps(common.bookmarks))
+            data.data.sync()
     deleteAction.triggered.connect(removeBookmark)
     def loadBookmark(item):
         import json
@@ -47,8 +47,8 @@ except:
             if url[1]:
                 browser.activeWindow().bookmarksList.addItem(url[0])
                 common.bookmarks.append(url[0])
-                common.data.setValue("data/Bookmarks", json.dumps(common.bookmarks))
-                common.data.sync()
+                data.data.setValue("data/Bookmarks", json.dumps(common.bookmarks))
+                data.data.sync()
         else:
             browser.activeWindow().tabs.currentWidget().load(QUrl.fromUserInput(item.text()))
     browser.activeWindow().bookmarksList.itemActivated.connect(loadBookmark)
