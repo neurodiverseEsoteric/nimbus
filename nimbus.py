@@ -488,7 +488,7 @@ class WebView(QWebView):
         except: pass
         QWebView.deleteLater(self)
 
-`   # If a request has finished and the request's URL is the current URL,
+    # If a request has finished and the request's URL is the current URL,
     # then set self._contentType.
     def ready(self, response):
         if self._contentType == None and response.url() == self.url():
