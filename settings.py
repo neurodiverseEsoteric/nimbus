@@ -4,9 +4,10 @@
 # This module contains data related to browser settings.
 
 import sys
-import os.path
+import os
 import json
 import common
+import hashlib
 try:
     from PyQt4.QtCore import QCoreApplication, QUrl, QSettings
     from PyQt4.QtNetwork import QNetworkCookie
@@ -81,6 +82,27 @@ def setting_to_int(value=""):
 # List of extensions.
 extensions_folder = os.path.join(common.app_folder, "extensions")
 extensions = []
+
+# PDF viewer is hacked to try and use pdf.js in Qt5.
+if not common.qt_version.startswith("4"):
+    pdf_viewer = (QUrl.fromUserInput(os.path.join(extensions_folder, "pdf.js", "web", "viewer.html")).toString() + "?file=%s", (".pdf",))
+    temp_folder = os.path.join(settings_folder, "Temp")
+    print(pdf_viewer)
+    common.content_viewers.append(pdf_viewer)
+else:
+    pdf_viewer = ("https://docs.google.com/viewer?url=%s", (".pdf",))
+    temp_folder = os.path.join(settings_folder, "Temp")
+    print(pdf_viewer)
+    common.content_viewers.append(pdf_viewer)
+
+# temporary file scheme.
+def tempFile(fname):
+    if not os.path.exists(temp_folder):
+        os.makedirs(temp_folder)
+    m = hashlib.md5()
+    m.update(fname.encode('utf-8'))
+    h = m.hexdigest()
+    return os.path.join(temp_folder, h)
 
 # Stores all extension buttons.
 extension_buttons = []

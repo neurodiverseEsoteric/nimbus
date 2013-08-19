@@ -67,9 +67,9 @@ settingsDialog = None
 ###################
 
 # Content viewers
-content_viewers = (("https://docs.google.com/viewer?url=%s", (".doc", ".pps", ".odt", ".sxw", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tif", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")),
+content_viewers = [("https://docs.google.com/viewer?url=%s", (".doc", ".pps", ".odt", ".sxw", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tif", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")),
                    ("http://viewdocsonline.com/view.php?url=", (".ods", ".odp", ".odg", ".sxc", ".sxi", ".sxd")),
-                   ("http://vuzit.com/view?url=", (".bmp", ".ppm", ".xpm")))
+                   ("http://vuzit.com/view?url=", (".bmp", ".ppm", ".xpm"))]
 
 # Get an application icon.
 def icon(name):
