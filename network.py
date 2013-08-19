@@ -2,8 +2,8 @@
 
 import os.path
 import settings
-from filtering import adblock_filter, host_rules
-from settings import network_cache_folder, setting_to_bool
+import filtering
+import settings
 from translate import tr
 try:
     from PyQt4.QtCore import QCoreApplication, QTimer, SIGNAL
@@ -21,7 +21,7 @@ incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
 
 # Global disk cache.
 diskCache = QNetworkDiskCache(QCoreApplication.instance())
-diskCache.setCacheDirectory(network_cache_folder)
+diskCache.setCacheDirectory(settings.network_cache_folder)
 diskCache.setMaximumCacheSize(settings.setting_to_int("data/MaximumCacheSize"))
 
 # Subclass of QNetworkReply that loads a local folder.
@@ -76,8 +76,8 @@ class NetworkAccessManager(QNetworkAccessManager):
                 auth.setPassword(password[0])
     def createRequest(self, op, request, device=None):
         url = request.url()
-        x = adblock_filter.match(url.toString())
-        y = url.authority() in host_rules if setting_to_bool("content/HostFilterEnabled") and url.authority() != "" else False
+        x = filtering.adblock_filter.match(url.toString())
+        y = url.authority() in filtering.host_rules if settings.setting_to_bool("content/HostFilterEnabled") and url.authority() != "" else False
         if url.scheme() == "file" and os.path.isdir(os.path.abspath(url.path())):
             return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" data=\"" + url.toString() + "\" classid=\"directoryView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
         elif url.scheme() == "file" and not os.path.isfile(os.path.abspath(url.path())):
