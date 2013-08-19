@@ -78,8 +78,6 @@ def addHistoryItem(url):
 # This was ripped off of Ryouko.
 class DownloadProgressBar(QProgressBar):
 
-    finished = Signal()
-
     # Initialize class.
     def __init__(self, reply=False, destination=os.path.expanduser("~"), parent=None):
         super(DownloadProgressBar, self).__init__(parent)
@@ -105,7 +103,6 @@ class DownloadProgressBar(QProgressBar):
                 subprocess.Popen(["notify-send", "--icon=emblem-downloads", tr("Download complete: %s") % (os.path.split(self.destination)[1],)])
             else:
                 common.trayIcon.showMessage(tr("Download complete"), os.path.split(self.destination)[1])
-            self.finished.emit()
 
     # Updates the progress bar.
     def updateProgress(self, received, total):
@@ -168,8 +165,6 @@ class WebPage(QWebPage):
         # Load userContent.css
         if os.path.exists(filtering.adblock_css):
             self.settings().setUserStyleSheetUrl(QUrl(filtering.adblock_css))
-
-        self.settings().setAttribute(self.settings().LocalContentCanAccessFileUrls,True)
 
         # Connect this so that permissions for geolocation and stuff work.
         self.featurePermissionRequested.connect(self.permissionRequested)
@@ -640,11 +635,6 @@ class WebView(QWebView):
 
         # Make sure the file isn't local, that content viewers are
         # enabled, and private browsing isn't enabled.
-        if url.lower().endswith(".pdf") and not common.qt_version.startswith("4"):
-            viewer = settings.pdf_viewer
-            self.downloadFile(reply.request(), settings.tempFile(url))
-            self.downloadStarted.connect(lambda x: x.progressBar.finished.connect(QWebView.load(self, QUrl(common.pathToUrl(viewer[0]) % (QUrl.fromUserInput(common.pathToUrl(settings.tempFile(url))).toString(),)))) if not x.progressBar.networkReply.isFinished() else "")
-            return
         if not url2.scheme() == "file" and settings.setting_to_bool("content/UseOnlineContentViewers") and not self.incognito and not self.isUsingContentViewer():
             for viewer in common.content_viewers:
                 try:
@@ -658,7 +648,7 @@ class WebView(QWebView):
         self.downloadFile(reply.request())
 
     # Downloads a file.
-    def downloadFile(self, request, fname=False):
+    def downloadFile(self, request):
 
         if request.url() == self.url():
 
@@ -670,8 +660,7 @@ class WebView(QWebView):
                     return
 
         # Get file name for destination.
-        if not fname:
-            fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(os.path.expanduser("~"), request.url().toString().split("/")[-1]), tr("All files (*)"))
+        fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(os.path.expanduser("~"), request.url().toString().split("/")[-1]), tr("All files (*)"))
         if type(fname) is tuple:
             fname = fname[0]
         if fname:

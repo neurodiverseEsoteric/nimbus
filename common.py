@@ -36,10 +36,6 @@ app_icons_folder = os.path.join(app_folder, "icons")
 # Version info file
 app_version_file = os.path.join(app_folder, "version.txt")
 
-# Local to URL (for Windows)
-def pathToUrl(path):
-    return "/" + "/".join([part for part in QUrl.fromUserInput(path).toString().split("/") if not ":" in part and not part == ""])
-
 # Nimbus version
 app_version = "0.0.0pre"
 if os.path.isfile(app_version_file):
@@ -71,9 +67,9 @@ settingsDialog = None
 ###################
 
 # Content viewers
-content_viewers = [("https://docs.google.com/viewer?url=%s", (".doc", ".pps", ".odt", ".sxw", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tif", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")),
+content_viewers = (("https://docs.google.com/viewer?url=%s", (".doc", ".pps", ".odt", ".sxw", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tif", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")),
                    ("http://viewdocsonline.com/view.php?url=", (".ods", ".odp", ".odg", ".sxc", ".sxi", ".sxd")),
-                   ("http://vuzit.com/view?url=", (".bmp", ".ppm", ".xpm"))]
+                   ("http://vuzit.com/view?url=", (".bmp", ".ppm", ".xpm")))
 
 # Get an application icon.
 def icon(name):
