@@ -330,7 +330,7 @@ class NetworkSettingsPanel(SettingsPanel):
         self.dnsPrefetchingToggle.setChecked(settings.setting_to_bool("network/DnsPrefetchingEnabled"))
         port = settings.setting_to_int("proxy/Port")
         if port == "None":
-            port = str(common.default_port)
+            port = str(settings.default_port)
         self.portEntry.setValue(port)
         for index in range(0, self.proxySelect.count()):
             if self.proxySelect.itemText(index) == settings.settings.value("proxy/Type"):

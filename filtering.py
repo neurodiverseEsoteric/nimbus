@@ -2,8 +2,8 @@
 
 import os.path
 import abpy
-from common import app_folder
-from settings import settings_folder, setting_to_bool
+import common
+import settings
 try: from PyQt4.QtCore import QThread
 except: from PySide.QtCore import QThread
 
@@ -16,8 +16,8 @@ class Filter(object):
         return None
 
 # Global stuff.
-adblock_folder = os.path.join(settings_folder, "adblock")
-easylist = os.path.join(app_folder, "easylist.txt")
+adblock_folder = os.path.join(settings.settings_folder, "adblock")
+easylist = os.path.join(common.app_folder, "easylist.txt")
 adblock_filter = Filter([])
 shelved_filter = None
 adblock_rules = []
@@ -55,7 +55,7 @@ class AdblockFilterLoader(QThread):
     def __init__(self, parent=None):
         super(AdblockFilterLoader, self).__init__(parent)
     def run(self):
-        if setting_to_bool("content/AdblockEnabled"):
+        if settings.setting_to_bool("content/AdblockEnabled"):
             load_adblock_rules()
         else:
             global adblock_filter
@@ -69,7 +69,7 @@ class AdblockFilterLoader(QThread):
 adblock_filter_loader = AdblockFilterLoader()
 
 # Host filter.
-hosts_file = os.path.join(app_folder, "hosts")
+hosts_file = os.path.join(common.app_folder, "hosts")
 host_rules = []
 
 def load_host_rules():

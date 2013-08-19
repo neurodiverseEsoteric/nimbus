@@ -4,7 +4,7 @@
 import sys
 import os.path
 import json
-from common import app_folder, app_locale
+import common
 try:
     from PyQt4.QtCore import QCoreApplication, QUrl, QSettings
     from PyQt4.QtNetwork import QNetworkCookie
@@ -26,7 +26,7 @@ network_cache_folder = os.path.join(settings_folder, "Cache")
 offline_cache_folder = os.path.join(settings_folder, "OfflineCache")
 
 # Start page.
-startpage = os.path.join(app_folder, "start.html")
+startpage = os.path.join(common.app_folder, "start.html")
 
 # Default settings.
 default_settings = {"proxy/Type": "None",
@@ -50,7 +50,7 @@ default_settings = {"proxy/Type": "None",
                     "content/TiledBackingStoreEnabled": False,
                     "content/SiteSpecificQuirksEnabled": True,
                     "general/Homepage": QUrl.fromUserInput(startpage).toString(),
-                    "general/Search": "http://www.google.com/search?client=nimbus&q=%s" if not app_locale.startswith("zh") else "http://www.baidu.com/s?wd=%s",
+                    "general/Search": "http://www.google.com/search?client=nimbus&q=%s" if not common.app_locale.startswith("zh") else "http://www.baidu.com/s?wd=%s",
                     "general/CloseWindowWithLastTab": True,
                     "data/RememberHistory": True,
                     "data/MaximumCacheSize": 50,
@@ -79,7 +79,7 @@ def setting_to_int(value=""):
     except: return 0
 
 # List of extensions.
-extensions_folder = os.path.join(app_folder, "extensions")
+extensions_folder = os.path.join(common.app_folder, "extensions")
 extensions = []
 
 # Stores all extension buttons.

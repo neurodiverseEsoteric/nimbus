@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from network import cookieJar, incognitoCookieJar
+import network
 import json
 try:
     from PyQt4.QtCore import QCoreApplication, QByteArray, QUrl, QSettings
@@ -33,7 +33,7 @@ def loadData():
     else:
         if type(raw_cookies) is list:
             cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
-            cookieJar.setAllCookies(cookies)
+            network.cookieJar.setAllCookies(cookies)
 
     try: wl = json.loads(str(data.value("data/GeolocationWhitelist")))
     except: pass
@@ -58,7 +58,7 @@ def saveData():
     data.setValue("data/History", json.dumps(history))
 
     # Save cookies.
-    cookies = json.dumps([cookie.toRawForm().data().decode("utf-8") for cookie in cookieJar.allCookies()])
+    cookies = json.dumps([cookie.toRawForm().data().decode("utf-8") for cookie in network.cookieJar.allCookies()])
     data.setValue("data/Cookies", cookies)
 
     data.setValue("data/GeolocationWhitelist", json.dumps(geolocation_whitelist))
@@ -75,6 +75,6 @@ def clearHistory():
 
 # Clear cookies.
 def clearCookies():
-    cookieJar.setAllCookies([])
-    incognitoCookieJar.setAllCookies([])
+    network.cookieJar.setAllCookies([])
+    network.incognitoCookieJar.setAllCookies([])
     saveData()

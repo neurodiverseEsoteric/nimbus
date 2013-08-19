@@ -432,7 +432,7 @@ class WebView(QWebView):
 
     # Creates an error page.
     def errorPage(self, title="Problem loading page", heading="Whoops...", error="Nimbus could not load the requested page.", suggestions=["Try reloading the page.", "Make sure you're connected to the Internet. Once you're connected, try loading this page again.", "Check for misspellings in the URL (e.g. <b>ww.google.com</b> instead of <b>www.google.com</b>).", "The server may be experiencing some downtime. Wait for a while before trying again.", "If your computer or network is protected by a firewall, make sure that Nimbus is permitted ."]):
-        self.setHtml(common.errorPage(title, heading, error, suggestions))
+        self.setHtml(network.errorPage(title, heading, error, suggestions))
 
     # This loads a page from the cache if certain network errors occur.
     def finishLoad(self, ok=False):

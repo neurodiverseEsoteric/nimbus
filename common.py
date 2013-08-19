@@ -11,17 +11,14 @@
 # Import everything we need.
 import sys
 import os
-import json
 import locale
 import browser
 try:
-    from PyQt4.QtCore import qVersion, QTimer, SIGNAL, QLocale, QByteArray, QCoreApplication, QSettings, QThread, QUrl
-    from PyQt4.QtGui import QIcon, QInputDialog, QLineEdit
-    from PyQt4.QtNetwork import QNetworkAccessManager, QNetworkInterface, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
+    from PyQt4.QtCore import qVersion, QLocale, QUrl
+    from PyQt4.QtGui import QIcon
 except:
-    from PySide.QtCore import qVersion, QTimer, SIGNAL, QLocale, QByteArray, QCoreApplication, QSettings, QThread, QUrl
-    from PySide.QtGui import QIcon, QInputDialog, QLineEdit
-    from PySide.QtNetwork import QNetworkAccessManager, QNetworkInterface, QNetworkRequest, QNetworkCookieJar, QNetworkDiskCache, QNetworkCookie, QNetworkReply
+    from PySide.QtCore import qVersion, QLocale, QUrl
+    from PySide.QtGui import QIcon
 
 # Folder that Nimbus is stored in.
 app_folder = os.path.dirname(os.path.realpath(__file__)) if sys.executable != os.path.dirname(__file__) else os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
