@@ -69,7 +69,7 @@ class AdblockFilterLoader(QThread):
 adblock_filter_loader = AdblockFilterLoader()
 
 # Host filter.
-hosts_file = os.path.join(common.app_folder, "hosts")
+hosts_file = os.path.join(common.app_folder, "nimbus-hosts")
 host_rules = []
 
 def load_host_rules():
@@ -78,7 +78,7 @@ def load_host_rules():
         try: f = open(hosts_file, "r")
         except: pass
         else:
-            try: host_rules = [line.split(" ")[1].replace("\n", "") for line in f.readlines() if len(line.split(" ")) > 1 and not line.startswith("#") and len(line) > 1]
+            try: host_rules = [line.replace("\n", "") for line in f.readlines()]
             except: pass
             f.close()
 

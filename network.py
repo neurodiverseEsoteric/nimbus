@@ -6,10 +6,10 @@ import filtering
 import settings
 from translate import tr
 try:
-    from PyQt4.QtCore import QCoreApplication, QTimer, SIGNAL
+    from PyQt4.QtCore import QCoreApplication, QUrl, QTimer, SIGNAL
     from PyQt4.QtNetwork import QNetworkInterface, QNetworkCookieJar, QNetworkAccessManager, QNetworkDiskCache, QNetworkRequest, QNetworkReply
 except:
-    from PySide.QtCore import QCoreApplication, QTimer, SIGNAL
+    from PySide.QtCore import QCoreApplication, QUrl, QTimer, SIGNAL
     from PySide.QtNetwork import QNetworkInterface, QNetworkCookieJar, QNetworkAccessManager, QNetworkDiskCache, QNetworkRequest, QNetworkReply
 
 # Global cookiejar to store cookies.
@@ -83,7 +83,7 @@ class NetworkAccessManager(QNetworkAccessManager):
         elif url.scheme() == "file" and not os.path.isfile(os.path.abspath(url.path())):
             return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>Settings</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
         if x != None or y:
-            return NetworkReply(self, url, self.GetOperation, errorPage("Problem loading page", "Content blocked by filter", "Nimbus has blocked this content, either because you have enabled ad blocking or host filtering.", ["Disable ad blocking or host filtering for this domain."]))
+            return QNetworkAccessManager.createRequest(self, self.GetOperation, QNetworkRequest(QUrl()))
         else:
             return QNetworkAccessManager.createRequest(self, op, request, device)
 
