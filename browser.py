@@ -12,4 +12,4 @@ def activeWindow():
     return window
 
 def currentTab():
-    return activeWindow().tabs.currentWidget()
+    return activeWindow().tabWidget().currentWidget()

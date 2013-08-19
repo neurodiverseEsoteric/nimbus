@@ -12,7 +12,6 @@
 import sys
 import os
 import json
-import base64
 import subprocess
 import copy
 import traceback
@@ -20,8 +19,8 @@ import hashlib
 import common
 import geolocation
 import browser
-import translate
 import filtering
+import translate
 from translate import tr
 import custom_widgets
 import clear_history_dialog
@@ -162,6 +161,10 @@ class WebPage(QWebPage):
     fullScreenRequested = Signal(bool)
     def __init__(self, *args, **kwargs):
         super(WebPage, self).__init__(*args, **kwargs)
+
+        # Load userContent.css
+        if os.path.exists(filtering.adblock_css):
+            self.settings().setUserStyleSheetUrl(QUrl(filtering.adblock_css))
 
         # Connect this so that permissions for geolocation and stuff work.
         self.featurePermissionRequested.connect(self.permissionRequested)
@@ -538,7 +541,7 @@ class WebView(QWebView):
         dirname = url.path()
         self._url = url.toString()
         if url.scheme() == "nimbus":
-            x = "data:text/html;charset=utf-8;base64," + base64.b64encode(("<!DOCTYPE html><html><head><title>" + tr("Settings") + "</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>".replace('\n', '')).encode('utf-8')).decode('utf-8')
+            x = common.htmlToBase64("<!DOCTYPE html><html><head><title>" + tr("Settings") + "</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
             QWebView.load(self, QUrl(x))
             return
         if url.toString() == "about:blank":
@@ -892,7 +895,7 @@ class MainWindow(QMainWindow):
         # This is the Ctrl+W (Close Tab) shortcut.
         removeTabAction = QAction(self)
         removeTabAction.setShortcut("Ctrl+W")
-        removeTabAction.triggered.connect(lambda: self.removeTab(self.tabs.currentIndex()))
+        removeTabAction.triggered.connect(lambda: self.removeTab(self.tabWidget().currentIndex()))
         self.addAction(removeTabAction)
 
         # Dummy webpage used to provide navigation actions that conform to
@@ -1022,7 +1025,7 @@ min-width: 6em;
         # Save page action.
         savePageAction = QAction(common.complete_icon("document-save-as"), tr("Save Page &As..."), self)
         savePageAction.setShortcut("Ctrl+S")
-        savePageAction.triggered.connect(lambda: self.tabs.currentWidget().downloadFile(QNetworkRequest(self.tabs.currentWidget().url())))
+        savePageAction.triggered.connect(lambda: self.tabWidget().currentWidget().downloadFile(QNetworkRequest(self.tabWidget().currentWidget().url())))
         mainMenu.addAction(savePageAction)
 
         mainMenu.addSeparator()
@@ -1128,6 +1131,10 @@ min-width: 6em;
         # Ripped off of Ricotta.
         self.reloadExtensions()
 
+    # Returns the tab widget.
+    def tabWidget(self):
+        return self.tabs
+
     # Check if window has a sidebar.
     # Part of the extensions API.
     def hasSideBar(self, name):
@@ -1194,20 +1201,20 @@ self.origY + ev.globalY() - self.mouseY)
     # This is a workaround to prevent audio and video from playing after
     # the window is closed.
     def blankAll(self):
-        for index in range(0, self.tabs.count()):
-            self.tabs.widget(index).load(QUrl("about:blank"))
+        for index in range(0, self.tabWidget().count()):
+            self.tabWidget().widget(index).load(QUrl("about:blank"))
 
     # Unblank all tabs.
     def deblankAll(self):
-        for index in range(0, self.tabs.count()):
-            if self.tabs.widget(index).url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
-                self.tabs.widget(index).back()
+        for index in range(0, self.tabWidget().count()):
+            if self.tabWidget().widget(index).url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
+                self.tabWidget().widget(index).back()
 
     # Open settings dialog.
     def openSettings(self):
         if settings.setting_to_bool("general/OpenSettingsInTab"):
             self.addTab(url="nimbus://settings")
-            self.tabs.setCurrentIndex(self.tabs.count()-1)
+            self.tabWidget().setCurrentIndex(self.tabWidget().count()-1)
         else:
             settings.settingsDialog.reload()
             settings.settingsDialog.show()
@@ -1255,8 +1262,8 @@ self.origY + ev.globalY() - self.mouseY)
     # Toggle all the navigation buttons.
     def toggleActions(self):
         try:
-            self.backAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Back).isEnabled())
-            self.forwardAction.setEnabled(self.tabs.currentWidget().pageAction(QWebPage.Forward).isEnabled())
+            self.backAction.setEnabled(self.tabWidget().currentWidget().pageAction(QWebPage.Back).isEnabled())
+            self.forwardAction.setEnabled(self.tabWidget().currentWidget().pageAction(QWebPage.Forward).isEnabled())
 
             # This is a workaround so that hitting Esc will reset the location
             # bar text.
@@ -1271,14 +1278,14 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Navigation methods.
     def back(self):
-        self.tabs.currentWidget().back()
+        self.tabWidget().currentWidget().back()
 
     # This is used to refresh the back history items menu,
     # but it is unstable.
     def aboutToShowBackHistoryMenu(self):
         try:
             self.backHistoryMenu.clear()
-            history = self.tabs.currentWidget().history()
+            history = self.tabWidget().currentWidget().history()
             backItems = history.backItems(10)
             for item in range(0, len(backItems)):
                 try:
@@ -1291,16 +1298,16 @@ self.origY + ev.globalY() - self.mouseY)
             pass
 
     def loadBackHistoryItem(self, index):
-        history = self.tabs.currentWidget().history()
+        history = self.tabWidget().currentWidget().history()
         history.goToItem(history.backItems(10)[index])
 
     def forward(self):
-        self.tabs.currentWidget().forward()
+        self.tabWidget().currentWidget().forward()
 
     def aboutToShowForwardHistoryMenu(self):
         try:
             self.forwardHistoryMenu.clear()
-            history = self.tabs.currentWidget().history()
+            history = self.tabWidget().currentWidget().history()
             forwardItems = history.forwardItems(10)
             for item in range(0, len(forwardItems)):
                 try:
@@ -1313,35 +1320,35 @@ self.origY + ev.globalY() - self.mouseY)
             pass
 
     def loadForwardHistoryItem(self, index):
-        history = self.tabs.currentWidget().history()
+        history = self.tabWidget().currentWidget().history()
         history.goToItem(history.forwardItems(10)[index])
 
     def reload(self):
-        self.tabs.currentWidget().reload()
+        self.tabWidget().currentWidget().reload()
 
     def stop(self):
-        self.tabs.currentWidget().stop()
-        self.locationBar.setEditText(self.tabs.currentWidget().url().toString())
+        self.tabWidget().currentWidget().stop()
+        self.locationBar.setEditText(self.tabWidget().currentWidget().url().toString())
 
     def goHome(self):
-        self.tabs.currentWidget().load(QUrl.fromUserInput(settings.settings.value("general/Homepage")))
+        self.tabWidget().currentWidget().load(QUrl.fromUserInput(settings.settings.value("general/Homepage")))
 
     # Find text/Text search methods.
     def find(self):
-        self.tabs.currentWidget().find()
+        self.tabWidget().currentWidget().find()
 
     def findNext(self):
-        self.tabs.currentWidget().findNext()
+        self.tabWidget().currentWidget().findNext()
 
     def findPrevious(self):
-        self.tabs.currentWidget().findPrevious()
+        self.tabWidget().currentWidget().findPrevious()
 
     # Page printing methods.
     def printPage(self):
-        self.tabs.currentWidget().printPage()
+        self.tabWidget().currentWidget().printPage()
 
     def printPreview(self):
-        self.tabs.currentWidget().printPreview()
+        self.tabWidget().currentWidget().printPreview()
 
     # Clears the history after a prompt.
     def clearHistory(self):
@@ -1352,17 +1359,17 @@ self.origY + ev.globalY() - self.mouseY)
         if not url:
             url = self.locationBar.currentText()
         if "." in url or ":" in url or os.path.exists(url):
-            self.tabs.currentWidget().load(QUrl.fromUserInput(url))
+            self.tabWidget().currentWidget().load(QUrl.fromUserInput(url))
         else:
-            self.tabs.currentWidget().load(QUrl(settings.settings.value("general/Search") % (url,)))
+            self.tabWidget().currentWidget().load(QUrl(settings.settings.value("general/Search") % (url,)))
 
     # Status bar related methods.
     def setStatusBarMessage(self, message):
-        try: self.statusBar.setStatusBarMessage(self.tabs.currentWidget()._statusBarMessage)
+        try: self.statusBar.setStatusBarMessage(self.tabWidget().currentWidget()._statusBarMessage)
         except: self.statusBar.setStatusBarMessage("")
 
     def setProgress(self, progress):
-        try: self.statusBar.setValue(self.tabs.currentWidget()._loadProgress)
+        try: self.statusBar.setValue(self.tabWidget().currentWidget()._loadProgress)
         except: self.statusBar.setValue(0)
 
     # Fullscreen mode.
@@ -1378,7 +1385,7 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Tab-related methods.
     def currentWidget(self):
-        return self.tabs.currentWidget()
+        return self.tabWidget().currentWidget()
 
     def addWindow(self, url=None):
         addWindow(url)
@@ -1411,18 +1418,18 @@ self.origY + ev.globalY() - self.mouseY)
         webview.page().fullScreenRequested.connect(self.setFullScreen)
         webview.urlChanged.connect(self.updateLocationText)
         webview.iconChanged.connect(self.updateTabIcons)
-        webview.windowCreated.connect(lambda webView: self.addTab(webView=webView, index=self.tabs.currentIndex()+1, focus=False))
+        webview.windowCreated.connect(lambda webView: self.addTab(webView=webView, index=self.tabWidget().currentIndex()+1, focus=False))
         webview.downloadStarted.connect(self.addDownloadToolBar)
 
         # Add tab
         if type(index) is not int:
-            self.tabs.addTab(webview, tr("New Tab"))
+            self.tabWidget().addTab(webview, tr("New Tab"))
         else:
-            self.tabs.insertTab(index, webview, tr("New Tab"))
+            self.tabWidget().insertTab(index, webview, tr("New Tab"))
 
         # Switch to new tab
         if focus:
-            self.tabs.setCurrentIndex(self.tabs.count()-1)
+            self.tabWidget().setCurrentIndex(self.tabWidget().count()-1)
 
         # Update icons so we see the globe icon on new tabs.
         self.updateTabIcons()
@@ -1430,38 +1437,38 @@ self.origY + ev.globalY() - self.mouseY)
     # Goes to the next tab.
     # Loops around if there is none.
     def nextTab(self):
-        if self.tabs.currentIndex() == self.tabs.count() - 1:
-            self.tabs.setCurrentIndex(0)
+        if self.tabWidget().currentIndex() == self.tabWidget().count() - 1:
+            self.tabWidget().setCurrentIndex(0)
         else:
-            self.tabs.setCurrentIndex(self.tabs.currentIndex() + 1)
+            self.tabWidget().setCurrentIndex(self.tabWidget().currentIndex() + 1)
 
     # Goes to the previous tab.
     # Loops around if there is none.
     def previousTab(self):
-        if self.tabs.currentIndex() == 0:
-            self.tabs.setCurrentIndex(self.tabs.count() - 1)
+        if self.tabWidget().currentIndex() == 0:
+            self.tabWidget().setCurrentIndex(self.tabWidget().count() - 1)
         else:
-            self.tabs.setCurrentIndex(self.tabs.currentIndex() - 1)
+            self.tabWidget().setCurrentIndex(self.tabWidget().currentIndex() - 1)
 
     # Update the titles on every single tab.
     def updateTabTitles(self):
-        for index in range(0, self.tabs.count()):
-            title = self.tabs.widget(index).windowTitle()
-            self.tabs.setTabText(index, title[:24] + '...' if len(title) > 24 else title)
-            if index == self.tabs.currentIndex():
+        for index in range(0, self.tabWidget().count()):
+            title = self.tabWidget().widget(index).windowTitle()
+            self.tabWidget().setTabText(index, title[:24] + '...' if len(title) > 24 else title)
+            if index == self.tabWidget().currentIndex():
                 self.setWindowTitle(title + " - " + tr("Nimbus"))
 
     # Update the icons on every single tab.
     def updateTabIcons(self):
-        for index in range(0, self.tabs.count()):
-            try: icon = self.tabs.widget(index).icon()
+        for index in range(0, self.tabWidget().count()):
+            try: icon = self.tabWidget().widget(index).icon()
             except: continue
-            self.tabs.setTabIcon(index, icon)
+            self.tabWidget().setTabIcon(index, icon)
 
     # Removes a tab at index.
     def removeTab(self, index):
         try:
-            webView = self.tabs.widget(index)
+            webView = self.tabWidget().widget(index)
             if webView.history().canGoBack() or webView.history().canGoForward() or webView.url().toString() not in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
                 self.closedTabs.append(webView)
                 while len(self.closedTabs) > settings.setting_to_int("general/ReopenableTabCount"):
@@ -1476,8 +1483,8 @@ self.origY + ev.globalY() - self.mouseY)
                 except: pass
         except:
             traceback.print_exc()
-        self.tabs.removeTab(index)
-        if self.tabs.count() == 0:
+        self.tabWidget().removeTab(index)
+        if self.tabWidget().count() == 0:
             if settings.setting_to_bool("general/CloseWindowWithLastTab"):
                 self.close()
             else:
@@ -1501,8 +1508,8 @@ self.origY + ev.globalY() - self.mouseY)
     def updateLocationText(self, url=None):
         try:
             if type(url) != QUrl:
-                url = self.tabs.currentWidget().url()
-            currentUrl = self.tabs.currentWidget().url()
+                url = self.tabWidget().currentWidget().url()
+            currentUrl = self.tabWidget().currentWidget().url()
             if url == currentUrl:
                 self.locationBar.setEditText(currentUrl.toString())
         except:
@@ -1525,7 +1532,7 @@ def reopenWindow():
             window.deblankAll()
             for sidebar in window.sideBars.values():
                 sidebar["sideBar"].webView.back()
-            if window.tabs.count() == 0:
+            if window.tabWidget().count() == 0:
                 window.reopenTab()
             window.show()
             return
@@ -1691,7 +1698,7 @@ def main():
                 if "." in arg or ":" in arg:
                     win.addTab(url=arg)
 
-        if win.tabs.count() < 1:
+        if win.tabWidget().count() < 1:
             win.addTab(url=settings.settings.value("general/Homepage"))
 
         # Show window.

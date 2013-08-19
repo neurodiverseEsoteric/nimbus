@@ -13,12 +13,19 @@ import sys
 import os
 import locale
 import browser
+import base64
 try:
     from PyQt4.QtCore import qVersion, QLocale, QUrl
     from PyQt4.QtGui import QIcon
 except:
     from PySide.QtCore import qVersion, QLocale, QUrl
     from PySide.QtGui import QIcon
+
+def htmlToBase64(html):
+    return "data:text/html;charset=utf-8;base64," + base64.b64encode((html.replace('\n', '')).encode('utf-8')).decode('utf-8')
+
+def cssToBase64(css):
+    return "data:text/css;charset=utf-8;base64," + base64.b64encode((css.replace('\n', '')).encode('utf-8')).decode('utf-8')
 
 # Folder that Nimbus is stored in.
 app_folder = os.path.dirname(os.path.realpath(__file__)) if sys.executable != os.path.dirname(__file__) else os.path.dirname(os.path.dirname(os.path.realpath(__file__)))

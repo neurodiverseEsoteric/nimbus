@@ -18,6 +18,7 @@ class Filter(object):
 # Global stuff.
 adblock_folder = os.path.join(settings.settings_folder, "adblock")
 easylist = os.path.join(common.app_folder, "easylist.txt")
+adblock_css = os.path.join(common.app_folder, "adblock.css")
 adblock_filter = Filter([])
 shelved_filter = None
 adblock_rules = []
