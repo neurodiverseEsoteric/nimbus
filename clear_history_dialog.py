@@ -12,6 +12,9 @@ import os
 import subprocess
 import common
 import traceback
+import settings
+import network
+import data
 from translate import tr
 try:
     from PyQt4.QtCore import Qt
@@ -68,12 +71,12 @@ class ClearHistoryDialog(QMainWindow):
     def clearHistory(self):
         clear_everything = (self.dataType.currentIndex() == 5)
         if self.dataType.currentIndex() == 0 or clear_everything:
-            common.clearHistory()
+            data.clearHistory()
         if self.dataType.currentIndex() == 1 or clear_everything:
-            common.clearCookies()
+            data.clearCookies()
         if self.dataType.currentIndex() == 2 or clear_everything:
-            common.clearCache()
-            path = common.offline_cache_folder
+            network.clearCache()
+            path = settings.offline_cache_folder
             if os.path.isdir(path):
                 if sys.platform.startswith("win"):
                     try: subprocess.Popen(["rd", path])
@@ -83,7 +86,7 @@ class ClearHistoryDialog(QMainWindow):
                     except: traceback.print_exc()
         if self.dataType.currentIndex() == 3 or clear_everything:
             for subpath in ("WebpageIcons.db", "LocalStorage", "Databases",):
-                path = os.path.abspath(os.path.join(common.settings_folder, subpath))
+                path = os.path.abspath(os.path.join(settings.settings_folder, subpath))
                 if os.path.isfile(path):
                     try: os.remove(path)
                     except: traceback.print_exc()

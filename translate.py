@@ -8,7 +8,6 @@
 # This module contains objects and functions pertaining to
 # internationalization
 
-import traceback
 import os.path
 from common import app_folder, app_locale
 

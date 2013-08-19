@@ -11,8 +11,11 @@
 
 import json
 import common
+import settings
 import browser
 import custom_widgets
+import filtering
+import data
 import clear_history_dialog
 from translate import tr
 try:
@@ -70,21 +73,21 @@ class GeneralSettingsPanel(SettingsPanel):
         self.layout().addWidget(custom_widgets.Expander(self))
 
     def loadSettings(self):
-        self.homepageEntry.setText(str(common.settings.value("general/Homepage")))
-        self.searchEntry.setText(str(common.settings.value("general/Search")))
-        self.closeWindowToggle.setChecked(common.setting_to_bool("general/CloseWindowWithLastTab"))
-        self.settingsTabToggle.setChecked(common.setting_to_bool("general/OpenSettingsInTab"))
-        self.reopenableTabCount.setValue(common.setting_to_int("general/ReopenableTabCount"))
-        self.reopenableWindowCount.setValue(common.setting_to_int("general/ReopenableWindowCount"))
+        self.homepageEntry.setText(str(settings.settings.value("general/Homepage")))
+        self.searchEntry.setText(str(settings.settings.value("general/Search")))
+        self.closeWindowToggle.setChecked(settings.setting_to_bool("general/CloseWindowWithLastTab"))
+        self.settingsTabToggle.setChecked(settings.setting_to_bool("general/OpenSettingsInTab"))
+        self.reopenableTabCount.setValue(settings.setting_to_int("general/ReopenableTabCount"))
+        self.reopenableWindowCount.setValue(settings.setting_to_int("general/ReopenableWindowCount"))
 
     def saveSettings(self):
-        common.settings.setValue("general/Homepage", self.homepageEntry.text())
-        common.settings.setValue("general/Search", self.searchEntry.text())
-        common.settings.setValue("general/CloseWindowWithLastTab", self.closeWindowToggle.isChecked())
-        common.settings.setValue("general/OpenSettingsInTab", self.settingsTabToggle.isChecked())
-        common.settings.setValue("general/ReopenableWindowCount", self.reopenableWindowCount.text())
-        common.settings.setValue("general/ReopenableTabCount", self.reopenableTabCount.text())
-        common.settings.sync()
+        settings.settings.setValue("general/Homepage", self.homepageEntry.text())
+        settings.settings.setValue("general/Search", self.searchEntry.text())
+        settings.settings.setValue("general/CloseWindowWithLastTab", self.closeWindowToggle.isChecked())
+        settings.settings.setValue("general/OpenSettingsInTab", self.settingsTabToggle.isChecked())
+        settings.settings.setValue("general/ReopenableWindowCount", self.reopenableWindowCount.text())
+        settings.settings.setValue("general/ReopenableTabCount", self.reopenableTabCount.text())
+        settings.settings.sync()
 
 # Content settings panel
 class ContentSettingsPanel(SettingsPanel):
@@ -119,6 +122,10 @@ class ContentSettingsPanel(SettingsPanel):
         self.adblockToggle = QCheckBox(tr("Enable ad &blocking"), self)
         self.layout().addWidget(self.adblockToggle)
 
+        # Checkbox to toggle hosts blocking.
+        self.hostFilterToggle = QCheckBox(tr("Enable host &filtering"), self)
+        self.layout().addWidget(self.hostFilterToggle)
+
         # Checkbox to toggle using online content viewers.
         self.contentViewersToggle = QCheckBox(tr("Use online content &viewers to load unsupported content"), self)
         self.layout().addWidget(self.contentViewersToggle)
@@ -137,32 +144,34 @@ class ContentSettingsPanel(SettingsPanel):
         self.layout().addWidget(custom_widgets.Expander(self))
 
     def loadSettings(self):
-        self.imagesToggle.setChecked(common.setting_to_bool("content/AutoLoadImages"))
-        self.javascriptToggle.setChecked(common.setting_to_bool("content/JavascriptEnabled"))
-        self.javaToggle.setChecked(common.setting_to_bool("content/JavaEnabled"))
-        self.elementBackgroundsToggle.setChecked(common.setting_to_bool("content/PrintElementBackgrounds"))
-        self.pluginsToggle.setChecked(common.setting_to_bool("content/PluginsEnabled"))
-        self.adblockToggle.setChecked(common.setting_to_bool("content/AdblockEnabled"))
-        self.mediaToggle.setChecked(common.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"))
-        self.contentViewersToggle.setChecked(common.setting_to_bool("content/UseOnlineContentViewers"))
-        self.tiledBackingStoreToggle.setChecked(common.setting_to_bool("content/TiledBackingStoreEnabled"))
-        self.frameFlattenToggle.setChecked(common.setting_to_bool("content/FrameFlatteningEnabled"))
-        self.siteSpecificQuirksToggle.setChecked(common.setting_to_bool("content/SiteSpecificQuirksEnabled"))
+        self.imagesToggle.setChecked(settings.setting_to_bool("content/AutoLoadImages"))
+        self.javascriptToggle.setChecked(settings.setting_to_bool("content/JavascriptEnabled"))
+        self.javaToggle.setChecked(settings.setting_to_bool("content/JavaEnabled"))
+        self.elementBackgroundsToggle.setChecked(settings.setting_to_bool("content/PrintElementBackgrounds"))
+        self.pluginsToggle.setChecked(settings.setting_to_bool("content/PluginsEnabled"))
+        self.adblockToggle.setChecked(settings.setting_to_bool("content/AdblockEnabled"))
+        self.hostFilterToggle.setChecked(settings.setting_to_bool("content/HostFilterEnabled"))
+        self.mediaToggle.setChecked(settings.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"))
+        self.contentViewersToggle.setChecked(settings.setting_to_bool("content/UseOnlineContentViewers"))
+        self.tiledBackingStoreToggle.setChecked(settings.setting_to_bool("content/TiledBackingStoreEnabled"))
+        self.frameFlattenToggle.setChecked(settings.setting_to_bool("content/FrameFlatteningEnabled"))
+        self.siteSpecificQuirksToggle.setChecked(settings.setting_to_bool("content/SiteSpecificQuirksEnabled"))
 
     def saveSettings(self):
-        common.settings.setValue("content/AutoLoadImages", self.imagesToggle.isChecked())
-        common.settings.setValue("content/JavascriptEnabled", self.javascriptToggle.isChecked())
-        common.settings.setValue("content/JavaEnabled", self.javaToggle.isChecked())
-        common.settings.setValue("content/PrintElementBackgrounds   ", self.elementBackgroundsToggle.isChecked())
-        common.settings.setValue("content/PluginsEnabled", self.pluginsToggle.isChecked())
-        common.settings.setValue("content/AdblockEnabled", self.adblockToggle.isChecked())
-        common.settings.setValue("content/ReplaceHTML5MediaTagsWithEmbedTags", self.mediaToggle.isChecked())
-        common.adblock_filter_loader.start()
-        common.settings.setValue("content/UseOnlineContentViewers", self.contentViewersToggle.isChecked())
-        common.settings.setValue("content/TiledBackingStoreEnabled", self.tiledBackingStoreToggle.isChecked())
-        common.settings.setValue("content/FrameFlatteningEnabled", self.frameFlattenToggle.isChecked())
-        common.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())
-        common.settings.sync()
+        settings.settings.setValue("content/AutoLoadImages", self.imagesToggle.isChecked())
+        settings.settings.setValue("content/JavascriptEnabled", self.javascriptToggle.isChecked())
+        settings.settings.setValue("content/JavaEnabled", self.javaToggle.isChecked())
+        settings.settings.setValue("content/PrintElementBackgrounds   ", self.elementBackgroundsToggle.isChecked())
+        settings.settings.setValue("content/PluginsEnabled", self.pluginsToggle.isChecked())
+        settings.settings.setValue("content/AdblockEnabled", self.adblockToggle.isChecked())
+        settings.settings.setValue("content/HostFilterEnabled", self.hostFilterToggle.isChecked())
+        settings.settings.setValue("content/ReplaceHTML5MediaTagsWithEmbedTags", self.mediaToggle.isChecked())
+        filtering.adblock_filter_loader.start()
+        settings.settings.setValue("content/UseOnlineContentViewers", self.contentViewersToggle.isChecked())
+        settings.settings.setValue("content/TiledBackingStoreEnabled", self.tiledBackingStoreToggle.isChecked())
+        settings.settings.setValue("content/FrameFlatteningEnabled", self.frameFlattenToggle.isChecked())
+        settings.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())
+        settings.settings.sync()
 
 # Data settings panel
 class DataSettingsPanel(SettingsPanel):
@@ -228,26 +237,26 @@ class DataSettingsPanel(SettingsPanel):
 
         self.layout().addWidget(custom_widgets.Expander(self))
     def loadSettings(self):
-        self.maximumCacheSize.setValue(common.setting_to_int("data/MaximumCacheSize"))
-        self.rememberHistoryToggle.setChecked(common.setting_to_bool("data/RememberHistory"))
-        self.geolocationToggle.setChecked(common.setting_to_bool("network/GeolocationEnabled"))
+        self.maximumCacheSize.setValue(settings.setting_to_int("data/MaximumCacheSize"))
+        self.rememberHistoryToggle.setChecked(settings.setting_to_bool("data/RememberHistory"))
+        self.geolocationToggle.setChecked(settings.setting_to_bool("network/GeolocationEnabled"))
         self.geolocationWhitelist.clear()
-        for url in common.geolocation_whitelist:
+        for url in data.geolocation_whitelist:
             self.geolocationWhitelist.addItem(url)
         self.geolocationBlacklist.clear()
-        for url in common.geolocation_blacklist:
+        for url in data.geolocation_blacklist:
             self.geolocationBlacklist.addItem(url)
     def saveSettings(self):
-        common.settings.setValue("data/MaximumCacheSize", self.maximumCacheSize.value())
-        common.settings.setValue("data/RememberHistory", self.rememberHistoryToggle.isChecked())
-        common.settings.setValue("network/GeolocationEnabled", self.geolocationToggle.isChecked())
-        while len(common.geolocation_whitelist) > 0:
-            common.geolocation_whitelist.pop()
-        common.geolocation_whitelist = [self.geolocationWhitelist.item(authority).text() for authority in range(0, self.geolocationWhitelist.count())]
-        while len(common.geolocation_blacklist) > 0:
-            common.geolocation_blacklist.pop()
-        common.geolocation_blacklist = [self.geolocationBlacklist.item(authority).text() for authority in range(0, self.geolocationBlacklist.count())]
-        common.saveData()
+        settings.settings.setValue("data/MaximumCacheSize", self.maximumCacheSize.value())
+        settings.settings.setValue("data/RememberHistory", self.rememberHistoryToggle.isChecked())
+        settings.settings.setValue("network/GeolocationEnabled", self.geolocationToggle.isChecked())
+        while len(data.geolocation_whitelist) > 0:
+            data.geolocation_whitelist.pop()
+        data.geolocation_whitelist = [self.geolocationWhitelist.item(authority).text() for authority in range(0, self.geolocationWhitelist.count())]
+        while len(data.geolocation_blacklist) > 0:
+            data.geolocation_blacklist.pop()
+        data.geolocation_blacklist = [self.geolocationBlacklist.item(authority).text() for authority in range(0, self.geolocationBlacklist.count())]
+        data.saveData()
 
 # Network configuration panel
 class NetworkSettingsPanel(SettingsPanel):
@@ -314,32 +323,32 @@ class NetworkSettingsPanel(SettingsPanel):
         self.layout().addWidget(expander)
 
     def loadSettings(self):
-        self.hostNameEntry.setText(str(common.settings.value("proxy/Hostname")))
-        self.userEntry.setText(str(common.settings.value("proxy/User")))
-        self.passwordEntry.setText(str(common.settings.value("proxy/Password")))
-        self.xssAuditingToggle.setChecked(common.setting_to_bool("network/XSSAuditingEnabled"))
-        self.dnsPrefetchingToggle.setChecked(common.setting_to_bool("network/DnsPrefetchingEnabled"))
-        port = common.setting_to_int("proxy/Port")
+        self.hostNameEntry.setText(str(settings.settings.value("proxy/Hostname")))
+        self.userEntry.setText(str(settings.settings.value("proxy/User")))
+        self.passwordEntry.setText(str(settings.settings.value("proxy/Password")))
+        self.xssAuditingToggle.setChecked(settings.setting_to_bool("network/XSSAuditingEnabled"))
+        self.dnsPrefetchingToggle.setChecked(settings.setting_to_bool("network/DnsPrefetchingEnabled"))
+        port = settings.setting_to_int("proxy/Port")
         if port == "None":
             port = str(common.default_port)
         self.portEntry.setValue(port)
         for index in range(0, self.proxySelect.count()):
-            if self.proxySelect.itemText(index) == common.settings.value("proxy/Type"):
+            if self.proxySelect.itemText(index) == settings.settings.value("proxy/Type"):
                 self.proxySelect.setCurrentIndex(index)
                 break
 
     def saveSettings(self):
-        common.settings.setValue("proxy/Hostname", self.hostNameEntry.text())
+        settings.settings.setValue("proxy/Hostname", self.hostNameEntry.text())
         proxyType = self.proxySelect.currentText()
         if proxyType == "None":
             proxyType = "No"
-        common.settings.setValue("network/XSSAuditingEnabled", self.xssAuditingToggle.isChecked())
-        common.settings.setValue("network/DnsPrefetchingEnabled", self.dnsPrefetchingToggle.isChecked())
-        common.settings.setValue("proxy/Type", proxyType)
-        common.settings.setValue("proxy/Port", self.portEntry.value())
-        common.settings.setValue("proxy/User", self.userEntry.text())
-        common.settings.setValue("proxy/Password", self.passwordEntry.text())
-        common.settings.sync()
+        settings.settings.setValue("network/XSSAuditingEnabled", self.xssAuditingToggle.isChecked())
+        settings.settings.setValue("network/DnsPrefetchingEnabled", self.dnsPrefetchingToggle.isChecked())
+        settings.settings.setValue("proxy/Type", proxyType)
+        settings.settings.setValue("proxy/Port", self.portEntry.value())
+        settings.settings.setValue("proxy/User", self.userEntry.text())
+        settings.settings.setValue("proxy/Password", self.passwordEntry.text())
+        settings.settings.sync()
 
 # Extension configuration panel
 class ExtensionsSettingsPanel(SettingsPanel):
@@ -381,18 +390,18 @@ class ExtensionsSettingsPanel(SettingsPanel):
         self.blacklist.sortItems(Qt.AscendingOrder)
 
     def loadSettings(self):
-        common.reload_extensions()
+        settings.reload_extensions()
         self.whitelist.clear()
-        for extension in common.extensions_whitelist:
+        for extension in settings.extensions_whitelist:
             self.whitelist.addItem(extension)
         self.blacklist.clear()
-        for extension in common.extensions_blacklist:
+        for extension in settings.extensions_blacklist:
             self.blacklist.addItem(extension)
 
     def saveSettings(self):
-        common.settings.setValue("extensions/Whitelist", json.dumps([self.whitelist.item(extension).text() for extension in range(0, self.whitelist.count())]))
-        common.reload_extensions()
-        common.settings.sync()
+        settings.settings.setValue("extensions/Whitelist", json.dumps([self.whitelist.item(extension).text() for extension in range(0, self.whitelist.count())]))
+        settings.reload_extensions()
+        settings.settings.sync()
 
 # Main settings dialog
 class SettingsDialog(QWidget):
@@ -452,7 +461,7 @@ class SettingsDialog(QWidget):
     def saveSettings(self):
         for index in range(0, self.tabs.count()):
             self.tabs.widget(index).saveSettings()
-        common.reset_extensions()
+        settings.reset_extensions()
         for window in browser.windows:
             window.reloadExtensions()
         for webview in common.webviews:

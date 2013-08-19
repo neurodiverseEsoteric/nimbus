@@ -12,10 +12,11 @@ import http.server
 try: from PyQt4.QtCore import QThread
 except: from PySide.QtCore import QThread
 import common
+from settings import extensions_folder
 
 class ExtensionServerThread(QThread):
     def run(self):
-        os.chdir(common.extensions_folder)
+        os.chdir(extensions_folder)
         HandlerClass = SimpleHTTPRequestHandler
         ServerClass  = http.server.HTTPServer
         Protocol     = "HTTP/1.0"

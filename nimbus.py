@@ -22,12 +22,16 @@ import common
 import geolocation
 import browser
 import translate
+import filtering
 from translate import tr
 import custom_widgets
 import clear_history_dialog
+import settings
 import status_bar
 import extension_server
 import settings_dialog
+import data
+import network
 
 # Python DBus
 has_dbus = True
@@ -66,8 +70,8 @@ server_thread = extension_server.ExtensionServerThread()
 
 # Add an item to the browser history.
 def addHistoryItem(url):
-    if not url in common.history and len(url) < 84 and common.setting_to_bool("data/RememberHistory"):
-        common.history.append(url)
+    if not url in data.history and len(url) < 84 and settings.setting_to_bool("data/RememberHistory"):
+        data.history.append(url)
 
 # Progress bar used for downloads.
 # This was ripped off of Ryouko.
@@ -183,10 +187,10 @@ class WebPage(QWebPage):
         else:
             self._userAgent = common.defaultUserAgent
     def checkForNavigatorGeolocation(self):
-        if "navigator.geolocation" in self.mainFrame().toHtml() and not self.mainFrame().url().authority() in common.geolocation_whitelist:
+        if "navigator.geolocation" in self.mainFrame().toHtml() and not self.mainFrame().url().authority() in data.geolocation_whitelist:
             self.allowGeolocation()
     def setNavigatorOnline(self):
-        script = "window.navigator.onLine = " + str(common.isConnectedToNetwork()).lower() + ";"
+        script = "window.navigator.onLine = " + str(network.isConnectedToNetwork()).lower() + ";"
         self.mainFrame().evaluateJavaScript(script)
         self.mainFrame().evaluateJavaScript("if (window.onLine) {\n" + \
                                             "   document.dispatchEvent(window.nimbus.onLineEvent);\n" + \
@@ -199,7 +203,7 @@ class WebPage(QWebPage):
         self.mainFrame().addToJavaScriptWindowObject("nimbusFullScreenRequester", self.fullScreenRequester)
         self.mainFrame().evaluateJavaScript("window.nimbus = new Object();")
         self.mainFrame().evaluateJavaScript("window.nimbus.fullScreenRequester = nimbusFullScreenRequester; delete nimbusFullScreenRequester;")
-        if common.setting_to_bool("network/GeolocationEnabled") and authority in common.geolocation_whitelist:
+        if settings.setting_to_bool("network/GeolocationEnabled") and authority in data.geolocation_whitelist:
             self.mainFrame().addToJavaScriptWindowObject("nimbusGeolocation", self.geolocation)
             script = "window.nimbus.geolocation = nimbusGeolocation;\n" + \
                      "delete nimbusGeolocation;\n" + \
@@ -219,19 +223,19 @@ class WebPage(QWebPage):
                                             "window.nimbus.offLineEvent.initEvent('offline',true,false);")
     def permissionRequested(self, frame, feature):
         authority = frame.url().authority()
-        if feature == self.Geolocation and frame == self.mainFrame() and common.setting_to_bool("network/GeolocationEnabled") and not authority in common.geolocation_blacklist:
+        if feature == self.Geolocation and frame == self.mainFrame() and settings.setting_to_bool("network/GeolocationEnabled") and not authority in data.geolocation_whitelist:
             confirm = True
-            if not authority in common.geolocation_whitelist:
+            if not authority in data.geolocation_whitelist:
                 confirm = QMessageBox.question(None, tr("Nimbus"), tr("This website would like to track your location."), QMessageBox.Ok | QMessageBox.No | QMessageBox.NoToAll, QMessageBox.Ok)
             if confirm == QMessageBox.Ok:
-                if not authority in common.geolocation_whitelist:
-                    common.geolocation_whitelist.append(authority)
-                    common.saveData()
+                if not authority in data.geolocation_whitelist:
+                    data.geolocation_whitelist.append(authority)
+                    data.saveData()
                 self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
             elif confirm == QMessageBox.NoToAll:
-                if not authority in common.geolocation_blacklist:
-                    common.geolocation_blacklist.append(authority)
-                    common.saveData()
+                if not authority in data.geolocation_whitelist:
+                    data.geolocation_whitelist.append(authority)
+                    data.saveData()
                 self.setFeaturePermission(frame, feature, self.PermissionDeniedByUser)
             return confirm == QMessageBox.Ok
         return False
@@ -321,11 +325,11 @@ class WebView(QWebView):
 
         # Create a NetworkAccessmanager that supports ad-blocking and set it.
         if not self.incognito:
-            self.nAM = common.networkAccessManager
+            self.nAM = network.networkAccessManager
             self.page().setNetworkAccessManager(self.nAM)
             self.nAM.setParent(QCoreApplication.instance())
         else:
-            self.nAM = common.incognitoNetworkAccessManager
+            self.nAM = network.incognitoNetworkAccessManager
             self.page().setNetworkAccessManager(self.nAM)
             self.nAM.setParent(QCoreApplication.instance())
 
@@ -339,13 +343,13 @@ class WebView(QWebView):
         # What to do if private browsing is not enabled.
         if not self.incognito:
             # Set persistent storage path to settings_folder.
-            self.settings().enablePersistentStorage(common.settings_folder)
+            self.settings().enablePersistentStorage(settings.settings_folder)
 
             # Set the CookieJar.
-            self.page().networkAccessManager().setCookieJar(common.cookieJar)
+            self.page().networkAccessManager().setCookieJar(network.cookieJar)
 
             # Do this so that cookieJar doesn't get deleted along with WebView.
-            common.cookieJar.setParent(QCoreApplication.instance())
+            network.cookieJar.setParent(QCoreApplication.instance())
 
             # Recording history should only be done in normal browsing mode.
             self.urlChanged.connect(self.addHistoryItem)
@@ -354,8 +358,8 @@ class WebView(QWebView):
         else:
             # Global incognito cookie jar, so that logins are preserved
             # between incognito tabs.
-            self.page().networkAccessManager().setCookieJar(common.incognitoCookieJar)
-            common.incognitoCookieJar.setParent(QCoreApplication.instance())
+            self.page().networkAccessManager().setCookieJar(network.incognitoCookieJar)
+            network.incognitoCookieJar.setParent(QCoreApplication.instance())
 
             # Enable private browsing for QWebSettings.
             self.settings().setAttribute(self.settings().PrivateBrowsingEnabled, True)
@@ -386,7 +390,7 @@ class WebView(QWebView):
 
         self.setWindowTitle("")
 
-        if os.path.exists(common.new_tab_page):
+        if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
 
     def setUserAgent(self, ua):
@@ -428,16 +432,16 @@ class WebView(QWebView):
 
     # Creates an error page.
     def errorPage(self, title="Problem loading page", heading="Whoops...", error="Nimbus could not load the requested page.", suggestions=["Try reloading the page.", "Make sure you're connected to the Internet. Once you're connected, try loading this page again.", "Check for misspellings in the URL (e.g. <b>ww.google.com</b> instead of <b>www.google.com</b>).", "The server may be experiencing some downtime. Wait for a while before trying again.", "If your computer or network is protected by a firewall, make sure that Nimbus is permitted ."]):
-        self.setHtml("<!DOCTYPE html><html><title>%(title)s</title><body><h1>%(heading)s</h1><p>%(error)s</p><ul>%(suggestions)s</ul></body></html>" % {"title": tr(title), "heading": tr(heading), "error": tr(error), "suggestions": "".join(["<li>" + tr(suggestion) + "</li>" for suggestion in suggestions])})
+        self.setHtml(common.errorPage(title, heading, error, suggestions))
 
     # This loads a page from the cache if certain network errors occur.
     def finishLoad(self, ok=False):
         if not ok:
             success = False
-            if not common.isConnectedToNetwork():
+            if not network.isConnectedToNetwork():
                 success = self.loadPageFromCache(self._url)
             if not success:
-                if not common.isConnectedToNetwork():
+                if not network.isConnectedToNetwork():
                     self.errorPage("Problem loading page", "No Internet connection", "Your computer is not connected to the Internet. You may want to try the following:", ["<b>Windows 7 or Vista:</b> Click the <i>Start</i> button, then click <i>Control Panel</i>. Type <b>network</b> into the search box, click <i>Network and Sharing Center</i>, click <i>Set up a new connection or network</i>, and then double-click <i>Connect to the Internet</i>. From there, follow the instructions. If the network is password-protected, you will have to enter the password.", "<b>Windows 8:</b> Open the <i>Settings charm</i> and tap or click the Network icon (shaped like either five bars or a computer screen with a cable). Select the network you want to join, then tap or click <i>Connect</i>.", "<b>Mac OS X:</b> Click the AirPort icon (the icon shaped like a slice of pie near the top right of your screen). From there, select the network you want to join. If the network is password-protected, enter the password.", "<b>Ubuntu (Unity and Xfce):</b> Click the Network Indicator (the icon with two arrows near the upper right of your screen). From there, select the network you want to join. If the network is password-protected, enter the password.", "<b>Other Linux:</b> Oh, come on. I shouldn't have to be telling you this.", "Alternatively, if you have access to a wired Ethernet connection, you can simply plug the cable into your computer."])
                 #else:
                     #self.errorPage()
@@ -455,8 +459,8 @@ class WebView(QWebView):
             QWebView.load(self, QUrl(x))
             return
         if url.toString() == "about:blank":
-            if os.path.exists(common.new_tab_page):
-                loadwin = QWebView.load(self, QUrl.fromUserInput(common.new_tab_page))
+            if os.path.exists(settings.new_tab_page):
+                loadwin = QWebView.load(self, QUrl.fromUserInput(settings.new_tab_page))
             else:
                 loadwin = QWebView.load(self, url)
         else:
@@ -464,7 +468,7 @@ class WebView(QWebView):
 
     # Method to replace all <audio> and <video> tags with <embed> tags.
     def replaceAVTags(self):
-        if not common.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"):
+        if not settings.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"):
             return
         audioVideo = self.page().mainFrame().findAllElements("audio, video")
         for element in audioVideo:
@@ -499,33 +503,33 @@ class WebView(QWebView):
 
     # Function to update proxy list.
     def updateProxy(self):
-        proxyType = str(common.settings.value("proxy/Type"))
+        proxyType = str(settings.settings.value("proxy/Type"))
         if proxyType == "None":
             proxyType = "No"
-        port = common.settings.value("proxy/Port")
+        port = settings.settings.value("proxy/Port")
         if port == None:
             port = common.default_port
-        user = str(common.settings.value("proxy/User"))
+        user = str(settings.settings.value("proxy/User"))
         if user == "":
             user = None
-        password = str(common.settings.value("proxy/Password"))
+        password = str(settings.settings.value("proxy/Password"))
         if password == "":
             password = None
-        self.page().networkAccessManager().setProxy(QNetworkProxy(eval("QNetworkProxy." + proxyType + "Proxy"), str(common.settings.value("proxy/Hostname")), int(port), user, password))
+        self.page().networkAccessManager().setProxy(QNetworkProxy(eval("QNetworkProxy." + proxyType + "Proxy"), str(settings.settings.value("proxy/Hostname")), int(port), user, password))
 
     def updateContentSettings(self):
-        self.settings().setAttribute(self.settings().AutoLoadImages, common.setting_to_bool("content/AutoLoadImages"))
-        self.settings().setAttribute(self.settings().JavascriptEnabled, common.setting_to_bool("content/JavascriptEnabled"))
-        self.settings().setAttribute(self.settings().JavaEnabled, common.setting_to_bool("content/JavaEnabled"))
-        self.settings().setAttribute(self.settings().PrintElementBackgrounds, common.setting_to_bool("content/PrintElementBackgrounds"))
-        self.settings().setAttribute(self.settings().FrameFlatteningEnabled, common.setting_to_bool("content/FrameFlatteningEnabled"))
-        self.settings().setAttribute(self.settings().PluginsEnabled, common.setting_to_bool("content/PluginsEnabled"))
-        self.settings().setAttribute(self.settings().TiledBackingStoreEnabled, common.setting_to_bool("content/TiledBackingStoreEnabled"))
-        self.settings().setAttribute(self.settings().SiteSpecificQuirksEnabled, common.setting_to_bool("content/SiteSpecificQuirksEnabled"))
+        self.settings().setAttribute(self.settings().AutoLoadImages, settings.setting_to_bool("content/AutoLoadImages"))
+        self.settings().setAttribute(self.settings().JavascriptEnabled, settings.setting_to_bool("content/JavascriptEnabled"))
+        self.settings().setAttribute(self.settings().JavaEnabled, settings.setting_to_bool("content/JavaEnabled"))
+        self.settings().setAttribute(self.settings().PrintElementBackgrounds, settings.setting_to_bool("content/PrintElementBackgrounds"))
+        self.settings().setAttribute(self.settings().FrameFlatteningEnabled, settings.setting_to_bool("content/FrameFlatteningEnabled"))
+        self.settings().setAttribute(self.settings().PluginsEnabled, settings.setting_to_bool("content/PluginsEnabled"))
+        self.settings().setAttribute(self.settings().TiledBackingStoreEnabled, settings.setting_to_bool("content/TiledBackingStoreEnabled"))
+        self.settings().setAttribute(self.settings().SiteSpecificQuirksEnabled, settings.setting_to_bool("content/SiteSpecificQuirksEnabled"))
 
     def updateNetworkSettings(self):
-        self.settings().setAttribute(self.settings().XSSAuditingEnabled, common.setting_to_bool("network/XSSAuditingEnabled"))
-        self.settings().setAttribute(self.settings().DnsPrefetchEnabled, common.setting_to_bool("network/DnsPrefetchEnabled"))
+        self.settings().setAttribute(self.settings().XSSAuditingEnabled, settings.setting_to_bool("network/XSSAuditingEnabled"))
+        self.settings().setAttribute(self.settings().DnsPrefetchEnabled, settings.setting_to_bool("network/DnsPrefetchEnabled"))
 
     # Handler for unsupported content.
     def handleUnsupportedContent(self, reply):
@@ -534,7 +538,7 @@ class WebView(QWebView):
 
         # Make sure the file isn't local, that content viewers are
         # enabled, and private browsing isn't enabled.
-        if not url2.scheme() == "file" and common.setting_to_bool("content/UseOnlineContentViewers") and not self.incognito and not self.isUsingContentViewer():
+        if not url2.scheme() == "file" and settings.setting_to_bool("content/UseOnlineContentViewers") and not self.incognito and not self.isUsingContentViewer():
             for viewer in common.content_viewers:
                 try:
                     for extension in viewer[1]:
@@ -577,7 +581,7 @@ class WebView(QWebView):
         m = hashlib.md5()
         m.update(common.shortenURL(url).encode('utf-8'))
         h = m.hexdigest()
-        try: f = open(os.path.join(common.offline_cache_folder, h), "r")
+        try: f = open(os.path.join(settings.offline_cache_folder, h), "r")
         except: traceback.print_exc()
         else:
             try: self.setHtml(f.read())
@@ -588,14 +592,14 @@ class WebView(QWebView):
 
     def savePageToCache(self):
         if not self.incognito:
-            if not os.path.exists(common.offline_cache_folder):
-                try: os.mkdir(common.offline_cache_folder)
+            if not os.path.exists(settings.offline_cache_folder):
+                try: os.mkdir(settings.offline_cache_folder)
                 except: return
             content = self.page().mainFrame().toHtml()
             m = hashlib.md5()
             m.update(common.shortenURL(self.url().toString()).encode('utf-8'))
             h = m.hexdigest()
-            try: f = open(os.path.join(common.offline_cache_folder, h), "w")
+            try: f = open(os.path.join(settings.offline_cache_folder, h), "w")
             except: traceback.print_exc()
             else:
                 try: f.write(content)
@@ -605,8 +609,8 @@ class WebView(QWebView):
     # Save current page.
     def savePage(self):
         content = self.page().mainFrame().toHtml()
-        if self.url().toString() in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),) and not self._cacheLoaded:
-            fname = common.new_tab_page
+        if self.url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),) and not self._cacheLoaded:
+            fname = settings.new_tab_page
             content = content.replace("&lt;", "<").replace("&gt;", ">").replace("<body contenteditable=\"true\">", "<body>")
         else:
             fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(os.path.expanduser("~"), self.url().toString().split("/")[-1]), tr("All files (*)"))
@@ -685,7 +689,7 @@ class ExtensionButton(QToolButton):
         super(ExtensionButton, self).__init__(parent)
         if shortcut:
             self.setShortcut(QKeySequence.fromString(shortcut))
-        common.extension_buttons.append(self)
+        settings.extension_buttons.append(self)
         self._parent = parent
         self.script = script
     def parentWindow(self):
@@ -839,7 +843,7 @@ class MainWindow(QMainWindow):
         self.locationBar = QComboBox(self)
 
         # Load stored browser history.
-        for url in common.history:
+        for url in data.history:
             self.locationBar.addItem(url)
 
         # Combo boxes are not normally editable by default.
@@ -1067,28 +1071,28 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Open settings dialog.
     def openSettings(self):
-        if common.setting_to_bool("general/OpenSettingsInTab"):
+        if settings.setting_to_bool("general/OpenSettingsInTab"):
             self.addTab(url="nimbus://settings")
             self.tabs.setCurrentIndex(self.tabs.count()-1)
         else:
-            common.settingsDialog.reload()
-            common.settingsDialog.show()
+            settings.settingsDialog.reload()
+            settings.settingsDialog.show()
 
     # Reload extensions.
     def reloadExtensions(self):
 
         # Hide extensions toolbar if there aren't any extensions.
-        if common.extensions_whitelist == None:
+        if settings.extensions_whitelist == None:
             self.extensionBar.hide()
             return
-        elif len(common.extensions_whitelist) == 0:
+        elif len(settings.extensions_whitelist) == 0:
             self.extensionBar.hide()
             return
 
-        for extension in common.extensions:
-            if extension not in common.extensions_whitelist:
+        for extension in settings.extensions:
+            if extension not in settings.extensions_whitelist:
                 continue
-            extension_path = os.path.join(common.extensions_folder, extension)
+            extension_path = os.path.join(settings.extensions_folder, extension)
             if os.path.isdir(extension_path):
                 script_path = os.path.join(extension_path, "script.py")
                 if not os.path.isfile(script_path):
@@ -1138,7 +1142,7 @@ self.origY + ev.globalY() - self.mouseY)
 
     def deblankAll(self):
         for index in range(0, self.tabs.count()):
-            if self.tabs.widget(index).url().toString() in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),):
+            if self.tabs.widget(index).url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
                 self.tabs.widget(index).back()
 
     # Navigation methods.
@@ -1194,7 +1198,7 @@ self.origY + ev.globalY() - self.mouseY)
         self.locationBar.setEditText(self.tabs.currentWidget().url().toString())
 
     def goHome(self):
-        self.tabs.currentWidget().load(QUrl.fromUserInput(common.settings.value("general/Homepage")))
+        self.tabs.currentWidget().load(QUrl.fromUserInput(settings.settings.value("general/Homepage")))
 
     # Find text/Text search methods.
     def find(self):
@@ -1224,7 +1228,7 @@ self.origY + ev.globalY() - self.mouseY)
         if "." in url or ":" in url or os.path.exists(url):
             self.tabs.currentWidget().load(QUrl.fromUserInput(url))
         else:
-            self.tabs.currentWidget().load(QUrl(common.settings.value("general/Search") % (url,)))
+            self.tabs.currentWidget().load(QUrl(settings.settings.value("general/Search") % (url,)))
 
     # Status bar related methods.
     def setStatusBarMessage(self, message):
@@ -1262,7 +1266,7 @@ self.origY + ev.globalY() - self.mouseY)
 
         elif "url" in kwargs:
             url = kwargs["url"]
-            webview = WebView(incognito=not common.setting_to_bool("data/RememberHistory"), parent=self)
+            webview = WebView(incognito=not settings.setting_to_bool("data/RememberHistory"), parent=self)
             webview.load(QUrl.fromUserInput(url))
 
         # If a WebView object is specified, use it.
@@ -1271,7 +1275,7 @@ self.origY + ev.globalY() - self.mouseY)
 
         # If nothing is specified, use a blank WebView.
         else:
-            webview = WebView(incognito=not common.setting_to_bool("data/RememberHistory"), parent=self)
+            webview = WebView(incognito=not settings.setting_to_bool("data/RememberHistory"), parent=self)
 
         # Connect signals
         webview.loadProgress.connect(self.setProgress)
@@ -1325,9 +1329,9 @@ self.origY + ev.globalY() - self.mouseY)
     def removeTab(self, index):
         try:
             webView = self.tabs.widget(index)
-            if webView.history().canGoBack() or webView.history().canGoForward() or webView.url().toString() not in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),):
+            if webView.history().canGoBack() or webView.history().canGoForward() or webView.url().toString() not in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
                 self.closedTabs.append(webView)
-                while len(self.closedTabs) > common.setting_to_int("general/ReopenableTabCount"):
+                while len(self.closedTabs) > settings.setting_to_int("general/ReopenableTabCount"):
                     self.closedTabs[0].deleteLater()
                     try: common.webviews.remove(webView)
                     except: pass
@@ -1341,7 +1345,7 @@ self.origY + ev.globalY() - self.mouseY)
             traceback.print_exc()
         self.tabs.removeTab(index)
         if self.tabs.count() == 0:
-            if common.setting_to_bool("general/CloseWindowWithLastTab"):
+            if settings.setting_to_bool("general/CloseWindowWithLastTab"):
                 self.close()
             else:
                 self.addTab(url="about:blank")
@@ -1351,7 +1355,7 @@ self.origY + ev.globalY() - self.mouseY)
             webview = self.closedTabs.pop()
             self.addTab(webview)
             try:
-                if webview.url().toString() in ("about:blank", "", QUrl.fromUserInput(common.new_tab_page).toString(),):
+                if webview.url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
                     webview.back()
             except: pass
 
@@ -1374,7 +1378,7 @@ self.origY + ev.globalY() - self.mouseY)
 def addWindow(url=None):
     win = MainWindow()
     if not url or url == None:
-        win.addTab(url=common.settings.value("general/Homepage"))
+        win.addTab(url=settings.settings.value("general/Homepage"))
     else:
         win.addTab(url=url)
     win.show()
@@ -1394,9 +1398,9 @@ def reopenWindow():
 
 # Preparations to quit.
 def prepareQuit():
-    common.saveData()
-    common.adblock_filter_loader.quit()
-    common.adblock_filter_loader.wait()
+    data.saveData()
+    filtering.adblock_filter_loader.quit()
+    filtering.adblock_filter_loader.wait()
     server_thread.httpd.shutdown()
     server_thread.quit()
     server_thread.wait()
@@ -1514,22 +1518,22 @@ def main():
     chistorydialog = clear_history_dialog.ClearHistoryDialog()
 
     # Set up settings dialog.
-    common.settingsDialog = WebView(incognito=True, parent=None)
-    common.settingsDialog.resize(560, 480)
-    common.settingsDialog.setWindowIcon(common.app_icon)
-    common.settingsDialog.setWindowFlags(Qt.Dialog)
-    common.settingsDialog.load(QUrl("nimbus://settings"))
-    closeSettingsDialogAction = QAction(common.settingsDialog)
+    settings.settingsDialog = WebView(incognito=True, parent=None)
+    settings.settingsDialog.resize(560, 480)
+    settings.settingsDialog.setWindowIcon(common.app_icon)
+    settings.settingsDialog.setWindowFlags(Qt.Dialog)
+    settings.settingsDialog.load(QUrl("nimbus://settings"))
+    closeSettingsDialogAction = QAction(settings.settingsDialog)
     closeSettingsDialogAction.setShortcuts(["Esc", "Ctrl+W"])
-    closeSettingsDialogAction.triggered.connect(common.settingsDialog.hide)
-    common.settingsDialog.addAction(closeSettingsDialogAction)
+    closeSettingsDialogAction.triggered.connect(settings.settingsDialog.hide)
+    settings.settingsDialog.addAction(closeSettingsDialogAction)
 
     # Create DBus server
     if has_dbus:
         server = DBusServer(bus)
 
     # Load adblock rules.
-    common.adblock_filter_loader.start()
+    filtering.adblock_filter_loader.start()
 
     # Start extension server.
     server_thread.start()
@@ -1538,7 +1542,7 @@ def main():
     app.aboutToQuit.connect(prepareQuit)
 
     # Load settings.
-    common.loadData()
+    data.loadData()
 
     if not "--daemon" in sys.argv:
         # Create instance of MainWindow.
@@ -1551,7 +1555,7 @@ def main():
                     win.addTab(url=arg)
 
         if win.tabs.count() < 1:
-            win.addTab(url=common.settings.value("general/Homepage"))
+            win.addTab(url=settings.settings.value("general/Homepage"))
 
         # Show window.
         win.show()
