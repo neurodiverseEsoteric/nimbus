@@ -1076,7 +1076,7 @@ self.origY + ev.globalY() - self.mouseY)
         self.blankAll()
         for sidebar in self.sideBars.values():
             sidebar["sideBar"].webView.load(QUrl("about:blank"))
-        if len(browser.windows) - 1 > common.setting_to_int("general/ReopenableWindowCount"):
+        if len(browser.windows) - 1 > settings.setting_to_int("general/ReopenableWindowCount"):
             for window in browser.windows:
                 if not window.isVisible():
                     window.deleteLater()
