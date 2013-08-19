@@ -36,6 +36,10 @@ app_icons_folder = os.path.join(app_folder, "icons")
 # Version info file
 app_version_file = os.path.join(app_folder, "version.txt")
 
+# Local to URL (for Windows)
+def pathToUrl(path):
+    return "/" + "/".join([part for part in QUrl.fromUserInput(path).toString().split("/") if not ":" in part and not part == ""])
+
 # Nimbus version
 app_version = "0.0.0pre"
 if os.path.isfile(app_version_file):

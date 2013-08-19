@@ -643,7 +643,7 @@ class WebView(QWebView):
         if url.lower().endswith(".pdf") and not common.qt_version.startswith("4"):
             viewer = settings.pdf_viewer
             self.downloadFile(reply.request(), settings.tempFile(url))
-            self.downloadStarted.connect(lambda x: x.progressBar.finished.connect(QWebView.load(self, QUrl(viewer[0].replace("Z:/", "") % (QUrl.fromUserInput(settings.tempFile(url)).toString().replace("Z:/", ""),)))) if not x.progressBar.networkReply.isFinished() else "")
+            self.downloadStarted.connect(lambda x: x.progressBar.finished.connect(QWebView.load(self, QUrl(common.pathToUrl(viewer[0]) % (QUrl.fromUserInput(common.pathToUrl(settings.tempFile(url))).toString(),)))) if not x.progressBar.networkReply.isFinished() else "")
             return
         if not url2.scheme() == "file" and settings.setting_to_bool("content/UseOnlineContentViewers") and not self.incognito and not self.isUsingContentViewer():
             for viewer in common.content_viewers:
