@@ -41,12 +41,15 @@ try:
 except:
     has_dbus = False
 
+# This was made for an attempt to compile Nimbus to CPython,
+# but it is now useless.
 try: exec
 except:
     def exec(code):
         pass
 
-# Extremely specific imports from PySide/PyQt4.
+# Extremely specific imports from PyQt4/PySide.
+# We give PyQt4 priority because it supports Qt5.
 try:
     from PyQt4.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer
     from PyQt4.QtGui import QApplication, QDockWidget, QKeySequence, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
@@ -69,7 +72,7 @@ server_thread = extension_server.ExtensionServerThread()
 
 # Add an item to the browser history.
 def addHistoryItem(url):
-    if not url in data.history and len(url) < 84 and settings.setting_to_bool("data/RememberHistory"):
+    if not url in data.history and settings.setting_to_bool("data/RememberHistory"):
         data.history.append(url)
 
 # Progress bar used for downloads.
@@ -152,22 +155,44 @@ class WebPage(QWebPage):
                ("qdatetimeedit", QDateTimeEdit),
                ("qdial", QDial),
                ("qspinbox", QSpinBox))
+    
+    # This is used to fire JavaScript events related to navigator.onLine.
     isOnlineTimer = QTimer()
+
     fullScreenRequested = Signal(bool)
     def __init__(self, *args, **kwargs):
         super(WebPage, self).__init__(*args, **kwargs)
+
+        # Connect this so that permissions for geolocation and stuff work.
         self.featurePermissionRequested.connect(self.permissionRequested)
+
+        # This object is exposed to the DOM to allow geolocation.
         self.geolocation = geolocation.Geolocation(self)
+
+        # This object is exposed to the DOM to allow full screen mode.
         self.fullScreenRequester = FullScreenRequester(self)
         self.fullScreenRequester.fullScreenRequested.connect(self.toggleFullScreen)
+
+        # Connect to self.tweakDOM, which carries out some hacks to
+        # improve HTML5 support.
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakDOM)
+
+        # Connect loadFinished to checkForNavigatorGeolocation.
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
+
+        # This stores the user agent.
         self._userAgent = ""
         self._fullScreen = False
+
+        # Start self.isOnlineTimer.
         if not self.isOnlineTimer.isActive():
             self.isOnlineTimer.timeout.connect(self.setNavigatorOnline)
             self.isOnlineTimer.start(1000)
+
+        # Set user agent to default value.
         self.setUserAgent()
+
+    # Sends a request to become fullscreen.
     def toggleFullScreen(self):
         if self._fullScreen:
             self.fullScreenRequested.emit(False)
@@ -175,19 +200,60 @@ class WebPage(QWebPage):
         else:
             self.fullScreenRequested.emit(True)
             self._fullScreen = True
+
+    # Returns user agent string.
     def userAgentForUrl(self, url):
+
         if not "github" in url.authority():
             return self._userAgent
+        # This is a workaround for GitHub not loading properly
+        # with the default Nimbus user agent.
         else:
             return QWebPage.userAgentForUrl(self, url)
+
+    # Convenience function.
     def setUserAgent(self, ua=None):
         if type(ua) is str:
             self._userAgent = ua
         else:
             self._userAgent = common.defaultUserAgent
+
+    # This is a hacky way of checking whether a website wants to use
+    # geolocation. It checks the page source for navigator.geolocation,
+    # and if it is present, it assumes that the website wants to use it.
     def checkForNavigatorGeolocation(self):
         if "navigator.geolocation" in self.mainFrame().toHtml() and not self.mainFrame().url().authority() in data.geolocation_whitelist:
             self.allowGeolocation()
+
+    # Prompts the user to enable or block geolocation, and reloads the page if the
+    # user said yes.
+    def allowGeolocation(self):
+        reload_ = self.permissionRequested(self.mainFrame(), self.Geolocation)
+        if reload_:
+            self.action(self.Reload).trigger()
+
+    # Sets permissions for features.
+    # Currently supports geolocation.
+    def permissionRequested(self, frame, feature):
+        authority = frame.url().authority()
+        if feature == self.Geolocation and frame == self.mainFrame() and settings.setting_to_bool("network/GeolocationEnabled") and not authority in data.geolocation_blacklist:
+            confirm = True
+            if not authority in data.geolocation_whitelist:
+                confirm = QMessageBox.question(None, tr("Nimbus"), tr("This website would like to track your location."), QMessageBox.Ok | QMessageBox.No | QMessageBox.NoToAll, QMessageBox.Ok)
+            if confirm == QMessageBox.Ok:
+                if not authority in data.geolocation_whitelist:
+                    data.geolocation_whitelist.append(authority)
+                    data.saveData()
+                self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
+            elif confirm == QMessageBox.NoToAll:
+                if not authority in data.geolocation_blacklist:
+                    data.geolocation_blacklist.append(authority)
+                    data.saveData()
+                self.setFeaturePermission(frame, feature, self.PermissionDeniedByUser)
+            return confirm == QMessageBox.Ok
+        return False
+
+    # Fires JavaScript events pertaining to online/offline mode.
     def setNavigatorOnline(self):
         script = "window.navigator.onLine = " + str(network.isConnectedToNetwork()).lower() + ";"
         self.mainFrame().evaluateJavaScript(script)
@@ -197,6 +263,8 @@ class WebPage(QWebPage):
         self.mainFrame().evaluateJavaScript("if (!window.onLine) {\n" + \
                                             "   document.dispatchEvent(window.nimbus.offLineEvent);\n" + \
                                             "}")
+
+    # This loads a bunch of hacks to improve HTML5 support.
     def tweakDOM(self):
         authority = self.mainFrame().url().authority()
         self.mainFrame().addToJavaScriptWindowObject("nimbusFullScreenRequester", self.fullScreenRequester)
@@ -220,28 +288,10 @@ class WebPage(QWebPage):
                                             "window.nimbus.onLineEvent.initEvent('online',true,false);")
         self.mainFrame().evaluateJavaScript("window.nimbus.offLineEvent = document.createEvent('Event');\n" + \
                                             "window.nimbus.offLineEvent.initEvent('offline',true,false);")
-    def permissionRequested(self, frame, feature):
-        authority = frame.url().authority()
-        if feature == self.Geolocation and frame == self.mainFrame() and settings.setting_to_bool("network/GeolocationEnabled") and not authority in data.geolocation_blacklist:
-            confirm = True
-            if not authority in data.geolocation_whitelist:
-                confirm = QMessageBox.question(None, tr("Nimbus"), tr("This website would like to track your location."), QMessageBox.Ok | QMessageBox.No | QMessageBox.NoToAll, QMessageBox.Ok)
-            if confirm == QMessageBox.Ok:
-                if not authority in data.geolocation_whitelist:
-                    data.geolocation_whitelist.append(authority)
-                    data.saveData()
-                self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
-            elif confirm == QMessageBox.NoToAll:
-                if not authority in data.geolocation_blacklist:
-                    data.geolocation_blacklist.append(authority)
-                    data.saveData()
-                self.setFeaturePermission(frame, feature, self.PermissionDeniedByUser)
-            return confirm == QMessageBox.Ok
-        return False
-    def allowGeolocation(self):
-        reload_ = self.permissionRequested(self.mainFrame(), self.Geolocation)
-        if reload_:
-            self.action(self.Reload).trigger()
+
+    # Creates Qt-based plugins.
+    # One plugin pertains to the settings dialog,
+    # while another pertains to local directory views.
     def createPlugin(self, classid, url, paramNames, paramValues):
         if classid.lower() == "settingsdialog":
             sdialog = settings_dialog.SettingsDialog(self.view())
@@ -392,9 +442,12 @@ class WebView(QWebView):
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
 
+    # Calls network.errorPage.
     def errorPage(self, title="Problem loading page", heading="Whoops...", error="Nimbus could not load the requested page.", suggestions=["Try reloading the page.", "Make sure you're connected to the Internet. Once you're connected, try loading this page again.", "Check for misspellings in the URL (e.g. <b>ww.google.com</b> instead of <b>www.google.com</b>).", "The server may be experiencing some downtime. Wait for a while before trying again.", "If your computer or network is protected by a firewall, make sure that Nimbus is permitted ."]):
         return network.errorPage(title, heading, error, suggestions)
 
+    # This is a half-assed implementation of error pages,
+    # which doesn't work yet.
     def supportsExtension(self, extension):
         if extension == QWebPage.ErrorPageExtension:
             return True
@@ -406,12 +459,17 @@ class WebView(QWebView):
         else:
             QWebPage.extension(self, extension, option, output)
 
+    # Convenience function.
     def setUserAgent(self, ua):
         self.page().setUserAgent(ua)
 
+    # Returns whether the browser has loaded a content viewer.
     def isUsingContentViewer(self):
         return self._isUsingContentViewer
 
+    # Checks whether the browser has loaded a content viewer.
+    # This is necessary so that downloading the original file from
+    # Google Docs Viewer doesn't loop back to Google Docs Viewer.
     def checkIfUsingContentViewer(self):
         for viewer in common.content_viewers:
             if viewer[0].replace("%s", "") in self.url().toString():
@@ -419,14 +477,19 @@ class WebView(QWebView):
                 return
         self._isUsingContentViewer = False
 
+    # Resets recorded content type.
     def resetContentType(self):
         self._contentType = None
 
+    # Custom implementation of deleteLater that also removes
+    # the WebView from common.webviews.
     def deleteLater(self):
         try: common.webviews.remove(self)
         except: pass
         QWebView.deleteLater(self)
 
+`   # If a request has finished and the request's URL is the current URL,
+    # then set self._contentType.
     def ready(self, response):
         if self._contentType == None and response.url() == self.url():
             try: contentType = response.header(QNetworkRequest.ContentTypeHeader)
@@ -434,6 +497,9 @@ class WebView(QWebView):
             if contentType != None:
                 self._contentType = contentType
 
+    # This is a custom implementation of mousePressEvent.
+    # It allows the user to Ctrl-click or middle-click links to open them in
+    # new tabs.
     def mousePressEvent(self, ev):
         if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
             url = self._statusBarMessage
@@ -448,6 +514,7 @@ class WebView(QWebView):
         self.setHtml(network.errorPage(*args, **kwargs))
 
     # This loads a page from the cache if certain network errors occur.
+    # If that can't be done either, it produces an error page.
     def finishLoad(self, ok=False):
         if not ok:
             success = False
@@ -461,6 +528,9 @@ class WebView(QWebView):
             else:
                 self._cacheLoaded = True
 
+    # Hacky custom implementation of QWebView.load(),
+    # which can load a saved new tab page as well as
+    # the settings dialog.
     def load(self, url):
         if type(url) is QListWidgetItem:
             url = QUrl.fromUserInput(url.text())
@@ -480,6 +550,8 @@ class WebView(QWebView):
             loadwin = QWebView.load(self, url)
 
     # Method to replace all <audio> and <video> tags with <embed> tags.
+    # This is mainly a hack for Windows, where <audio> and <video> tags are not
+    # properly supported under PyQt4.
     def replaceAVTags(self):
         if not settings.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"):
             return
@@ -498,17 +570,23 @@ class WebView(QWebView):
             embed = "<embed %s></embed>" % (" ".join(attributes),)
             element.replace(embed)
 
+    # Set status bar message.
     def setStatusBarMessage(self, link="", title="", content=""):
         self._statusBarMessage = link
 
+    # Set load progress.
     def setLoadProgress(self, progress):
         self._loadProgress = progress
 
+    # Set the window title. If the title is an empty string,
+    # set it to "New Tab".
     def setWindowTitle(self, title):
         if len(title) == 0:
             title = tr("New Tab")
         QWebView.setWindowTitle(self, title)
 
+    # Returns a devilish face if in incognito mode;
+    # else page icon.
     def icon(self):
         if self.incognito:
             return common.complete_icon("face-devilish")
@@ -530,6 +608,7 @@ class WebView(QWebView):
             password = None
         self.page().networkAccessManager().setProxy(QNetworkProxy(eval("QNetworkProxy." + proxyType + "Proxy"), str(settings.settings.value("proxy/Hostname")), int(port), user, password))
 
+    # Updates content settings based on settings.settings.
     def updateContentSettings(self):
         self.settings().setAttribute(self.settings().AutoLoadImages, settings.setting_to_bool("content/AutoLoadImages"))
         self.settings().setAttribute(self.settings().JavascriptEnabled, settings.setting_to_bool("content/JavascriptEnabled"))
@@ -540,11 +619,13 @@ class WebView(QWebView):
         self.settings().setAttribute(self.settings().TiledBackingStoreEnabled, settings.setting_to_bool("content/TiledBackingStoreEnabled"))
         self.settings().setAttribute(self.settings().SiteSpecificQuirksEnabled, settings.setting_to_bool("content/SiteSpecificQuirksEnabled"))
 
+    # Updates network settings based on settings.settings.
     def updateNetworkSettings(self):
         self.settings().setAttribute(self.settings().XSSAuditingEnabled, settings.setting_to_bool("network/XSSAuditingEnabled"))
         self.settings().setAttribute(self.settings().DnsPrefetchEnabled, settings.setting_to_bool("network/DnsPrefetchEnabled"))
 
     # Handler for unsupported content.
+    # This is where the content viewers are loaded.
     def handleUnsupportedContent(self, reply):
         url2 = reply.url()
         url = url2.toString()
@@ -563,7 +644,7 @@ class WebView(QWebView):
 
         self.downloadFile(reply.request())
 
-    # Download file.
+    # Downloads a file.
     def downloadFile(self, request):
 
         if request.url() == self.url():
@@ -590,6 +671,7 @@ class WebView(QWebView):
             # Emit signal.
             self.downloadStarted.emit(downloadDialog)
 
+    # Loads a page from the offline cache.
     def loadPageFromCache(self, url):
         m = hashlib.md5()
         m.update(common.shortenURL(url).encode('utf-8'))
@@ -603,6 +685,7 @@ class WebView(QWebView):
             return True
         return False
 
+    # Saves a page to the offline cache.
     def savePageToCache(self):
         if not self.incognito:
             if not os.path.exists(settings.offline_cache_folder):
@@ -619,7 +702,9 @@ class WebView(QWebView):
                 except: traceback.print_exc()
                 f.close()
 
-    # Save current page.
+    # Saves the current page.
+    # It partially supports saving edits to a page,
+    # but this is pretty hacky and doesn't work all the time.
     def savePage(self):
         content = self.page().mainFrame().toHtml()
         if self.url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),) and not self._cacheLoaded:
@@ -641,7 +726,7 @@ class WebView(QWebView):
                 else:
                     common.trayIcon.showMessage(tr("Download complete"), os.path.split(fname)[1])
 
-    # Add history item to the browser history.
+    # Adds a QUrl to the browser history.
     def addHistoryItem(self, url):
         addHistoryItem(url.toString())
 
@@ -653,6 +738,7 @@ class WebView(QWebView):
         self.windowCreated.emit(webview)
         return webview
 
+    # Convenience function.
     # Opens a very simple find text dialog.
     def find(self):
         if type(self._findText) is not str:
@@ -664,6 +750,7 @@ class WebView(QWebView):
             self._findText = ""
         self.findText(self._findText, QWebPage.FindWrapsAroundDocument)
 
+    # Convenience function.
     # Find next instance of text.
     def findNext(self):
         if not self._findText:
@@ -671,6 +758,7 @@ class WebView(QWebView):
         else:
             self.findText(self._findText, QWebPage.FindWrapsAroundDocument)
 
+    # Convenience function.
     # Find previous instance of text.
     def findPrevious(self):
         if not self._findText:
@@ -678,7 +766,7 @@ class WebView(QWebView):
         else:
             self.findText(self._findText, QWebPage.FindWrapsAroundDocument | QWebPage.FindBackward)
 
-    # Open print dialog to print page.
+    # Opens a print dialog to print page.
     def printPage(self):
         printer = QPrinter()
         self.page().mainFrame().render(printer.paintEngine().painter())
@@ -687,7 +775,7 @@ class WebView(QWebView):
         printDialog.accepted.connect(lambda: self.print(printer))
         printDialog.exec_()
 
-    # Open print preview dialog.
+    # Opens a print preview dialog.
     def printPreview(self):
         printer = QPrinter()
         self.page().mainFrame().render(printer.paintEngine().painter())
@@ -720,6 +808,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         # These are used to store where the mouse pressed down.
+        # This is used in a hack to drag the window by the toolbar.
         self.mouseX = False
         self.mouseY = False
 
@@ -732,7 +821,8 @@ class MainWindow(QMainWindow):
         # List of closed tabs.
         self.closedTabs = []
 
-        # List of sideBars.
+        # List of sidebars.
+        # Sidebars are part of the (incomplete) extensions API.
         self.sideBars = {}
 
         # Main toolbar.
@@ -809,7 +899,8 @@ class MainWindow(QMainWindow):
         # the system's icon theme.
         self.actionsPage = QWebPage(self)
 
-        # Regularly toggle navigation actions every few milliseconds.
+        # Regularly and forcibly enable and disable navigation actions
+        # every few milliseconds.
         self.toggleActionsTimer = QTimer(self)
         self.toggleActionsTimer.timeout.connect(self.toggleActions)
 
@@ -820,6 +911,8 @@ class MainWindow(QMainWindow):
         self.toolBar.addAction(self.backAction)
         #self.toolBar.widgetForAction(self.backAction).setPopupMode(QToolButton.MenuButtonPopup)
 
+        # This is a dropdown menu for the back history items, but due to
+        # instability, it is currently disabled.
         self.backHistoryMenu = QMenu(self)
         self.backHistoryMenu.aboutToShow.connect(self.aboutToShowBackHistoryMenu)
         #self.backAction.setMenu(self.backHistoryMenu)
@@ -830,6 +923,8 @@ class MainWindow(QMainWindow):
         self.toolBar.addAction(self.forwardAction)
         #self.toolBar.widgetForAction(self.forwardAction).setPopupMode(QToolButton.MenuButtonPopup)
 
+        # This is a dropdown menu for the forward history items, but due to
+        # instability, it is currently disabled.
         self.forwardHistoryMenu = QMenu(self)
         self.forwardHistoryMenu.aboutToShow.connect(self.aboutToShowForwardHistoryMenu)
         #self.forwardAction.setMenu(self.forwardHistoryMenu)
@@ -844,15 +939,18 @@ class MainWindow(QMainWindow):
         self.reloadAction.triggered.connect(self.reload)
         self.toolBar.addAction(self.reloadAction)
 
+        # Go home button.
         self.homeAction = QAction(common.complete_icon("go-home"), tr("Go Home"), self)
         self.homeAction.setShortcut("Alt+Home")
         self.homeAction.triggered.connect(self.goHome)
         self.toolBar.addAction(self.homeAction)
 
-        # Start timer.
+        # Start timer to forcibly enable and disable navigation actions.
         self.toggleActionsTimer.start(8)
 
         # Location bar. Note that this is a combo box.
+        # At some point, I should make a custom location bar
+        # implementation that looks nicer.
         self.locationBar = QComboBox(self)
 
         # Load stored browser history.
@@ -870,6 +968,8 @@ class MainWindow(QMainWindow):
         self.locationBar.lineEdit().returnPressed.connect(lambda: self.load(self.locationBar.lineEdit().text()))
         self.locationBar.view().activated.connect(lambda index: self.load(index.data()))
 
+        # This is so that the location bar can shrink to a width
+        # shorter than the length of its longest item.
         self.locationBar.setStyleSheet("""QComboBox {
 min-width: 6em;
 }""")
@@ -1013,6 +1113,9 @@ min-width: 6em;
         self.toolBar.widgetForAction(self.mainMenuAction).setPopupMode(QToolButton.InstantPopup)
         self.mainMenuAction.triggered.connect(lambda: self.toolBar.widgetForAction(self.mainMenuAction).showMenu())
 
+        # This is a dummy sidebar used to
+        # dock extension sidebars with.
+        # You will never actually see this sidebar.
         self.sideBar = QDockWidget(self)
         self.sideBar.setWindowTitle(tr("Sidebar"))
         self.sideBar.setMaximumWidth(320)
@@ -1026,11 +1129,14 @@ min-width: 6em;
         self.reloadExtensions()
 
     # Check if window has a sidebar.
+    # Part of the extensions API.
     def hasSideBar(self, name):
         if name in self.sideBars.keys():
             return True
         return False
 
+    # Toggles the sidebar with name name.
+    # Part of the extensions API.
     def toggleSideBar(self, name):
         if self.hasSideBar(name):
             self.sideBars[name]["sideBar"].setVisible(not self.sideBars[name]["sideBar"].isVisible())
@@ -1039,7 +1145,8 @@ min-width: 6em;
                 if not clip in self.sideBars[name]["sideBar"].webView.url().toString():
                     self.sideBars[name]["sideBar"].webView.load(self.sideBars[name]["url"])
 
-    # Add a sidebar.
+    # Adds a sidebar.
+    # Part of the extensions API.
     def addSideBar(self, name="", url="about:blank", clip=None, ua=None):
         self.sideBars[name] = {"sideBar": QDockWidget(self), "url": QUrl(url), "clip": clip}
         self.sideBars[name]["sideBar"].setWindowTitle(name)
@@ -1070,7 +1177,8 @@ min-width: 6em;
             self.move(self.origX + ev.globalX() - self.mouseX,
 self.origY + ev.globalY() - self.mouseY)
 
-    # Blank all tabs when window is closed.
+    # Deletes any closed windows above the reopenable window count,
+    # and blanks all the tabs and sidebars.
     def closeEvent(self, ev):
         self.blankAll()
         for sidebar in self.sideBars.values():
@@ -1081,6 +1189,19 @@ self.origY + ev.globalY() - self.mouseY)
                     window.deleteLater()
                     browser.windows.pop(browser.windows.index(window))
                     break
+
+    # Loads about:blank in all tabs when the window is closed.
+    # This is a workaround to prevent audio and video from playing after
+    # the window is closed.
+    def blankAll(self):
+        for index in range(0, self.tabs.count()):
+            self.tabs.widget(index).load(QUrl("about:blank"))
+
+    # Unblank all tabs.
+    def deblankAll(self):
+        for index in range(0, self.tabs.count()):
+            if self.tabs.widget(index).url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
+                self.tabs.widget(index).back()
 
     # Open settings dialog.
     def openSettings(self):
@@ -1148,20 +1269,12 @@ self.origY + ev.globalY() - self.mouseY)
             self.stopAction.setEnabled(False)
             self.reloadAction.setEnabled(False)
 
-    # Blank all tabs.
-    def blankAll(self):
-        for index in range(0, self.tabs.count()):
-            self.tabs.widget(index).load(QUrl("about:blank"))
-
-    def deblankAll(self):
-        for index in range(0, self.tabs.count()):
-            if self.tabs.widget(index).url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
-                self.tabs.widget(index).back()
-
     # Navigation methods.
     def back(self):
         self.tabs.currentWidget().back()
 
+    # This is used to refresh the back history items menu,
+    # but it is unstable.
     def aboutToShowBackHistoryMenu(self):
         try:
             self.backHistoryMenu.clear()
@@ -1314,18 +1427,23 @@ self.origY + ev.globalY() - self.mouseY)
         # Update icons so we see the globe icon on new tabs.
         self.updateTabIcons()
 
+    # Goes to the next tab.
+    # Loops around if there is none.
     def nextTab(self):
         if self.tabs.currentIndex() == self.tabs.count() - 1:
             self.tabs.setCurrentIndex(0)
         else:
             self.tabs.setCurrentIndex(self.tabs.currentIndex() + 1)
 
+    # Goes to the previous tab.
+    # Loops around if there is none.
     def previousTab(self):
         if self.tabs.currentIndex() == 0:
             self.tabs.setCurrentIndex(self.tabs.count() - 1)
         else:
             self.tabs.setCurrentIndex(self.tabs.currentIndex() - 1)
 
+    # Update the titles on every single tab.
     def updateTabTitles(self):
         for index in range(0, self.tabs.count()):
             title = self.tabs.widget(index).windowTitle()
@@ -1333,12 +1451,14 @@ self.origY + ev.globalY() - self.mouseY)
             if index == self.tabs.currentIndex():
                 self.setWindowTitle(title + " - " + tr("Nimbus"))
 
+    # Update the icons on every single tab.
     def updateTabIcons(self):
         for index in range(0, self.tabs.count()):
             try: icon = self.tabs.widget(index).icon()
             except: continue
             self.tabs.setTabIcon(index, icon)
 
+    # Removes a tab at index.
     def removeTab(self, index):
         try:
             webView = self.tabs.widget(index)
@@ -1363,6 +1483,7 @@ self.origY + ev.globalY() - self.mouseY)
             else:
                 self.addTab(url="about:blank")
 
+    # Reopens the last closed tab.
     def reopenTab(self):
         if len(self.closedTabs) > 0:
             webview = self.closedTabs.pop()
@@ -1512,6 +1633,8 @@ def main():
     common.app_icon.addFile(common.icon("nimbus-128.png"))
     common.app_icon.addFile(common.icon("nimbus-256.png"))
 
+    # Build the browser's default user agent.
+    # This should be improved as well.
     webPage = QWebPage()
     if common.qt_version.startswith("4"):
         common.defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, "Nimbus/" + common.app_version + " QupZilla/1.4.3 Chrome/19.0.1055.1")
@@ -1524,6 +1647,7 @@ def main():
     common.trayIcon = SystemTrayIcon(QCoreApplication.instance())
     common.trayIcon.show()
 
+    # Creates a licensing information dialog.
     common.licenseDialog = custom_widgets.LicenseDialog()
 
     # Create instance of clear history dialog.
