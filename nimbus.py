@@ -223,7 +223,7 @@ class WebPage(QWebPage):
                                             "window.nimbus.offLineEvent.initEvent('offline',true,false);")
     def permissionRequested(self, frame, feature):
         authority = frame.url().authority()
-        if feature == self.Geolocation and frame == self.mainFrame() and settings.setting_to_bool("network/GeolocationEnabled") and not authority in data.geolocation_whitelist:
+        if feature == self.Geolocation and frame == self.mainFrame() and settings.setting_to_bool("network/GeolocationEnabled") and not authority in data.geolocation_blacklist:
             confirm = True
             if not authority in data.geolocation_whitelist:
                 confirm = QMessageBox.question(None, tr("Nimbus"), tr("This website would like to track your location."), QMessageBox.Ok | QMessageBox.No | QMessageBox.NoToAll, QMessageBox.Ok)
@@ -233,8 +233,8 @@ class WebPage(QWebPage):
                     data.saveData()
                 self.setFeaturePermission(frame, feature, self.PermissionGrantedByUser)
             elif confirm == QMessageBox.NoToAll:
-                if not authority in data.geolocation_whitelist:
-                    data.geolocation_whitelist.append(authority)
+                if not authority in data.geolocation_blacklist:
+                    data.geolocation_blacklist.append(authority)
                     data.saveData()
                 self.setFeaturePermission(frame, feature, self.PermissionDeniedByUser)
             return confirm == QMessageBox.Ok

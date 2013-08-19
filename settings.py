@@ -117,6 +117,7 @@ reload_extensions()
 def reset_extensions():
     global extension_buttons
     for extension in extension_buttons:
-        extension.deleteLater()
+        try: extension.deleteLater()
+        except: pass
     while len(extension_buttons) > 0:
         extension_buttons.pop()

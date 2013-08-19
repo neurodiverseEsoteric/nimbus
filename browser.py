@@ -7,3 +7,6 @@ def activeWindow():
         if window.isActiveWindow():
             return window
     return window
+
+def currentTab():
+    return activeWindow().tabs.currentWidget()
