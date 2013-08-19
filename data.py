@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+
+## data.py ##
+
+# This module contains data related to browser history, cookies, etc.
+
 import network
 import json
 try:

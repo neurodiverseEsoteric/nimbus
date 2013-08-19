@@ -1,5 +1,10 @@
 #! /usr/bin/env python3
 
+## network.py ##
+# This module contains data related to networking,
+# such as a cookie jar, disk cache, and QNetworkAccessManager.
+# It also contains a function to detect whether the browser is online or not.
+
 import os.path
 import settings
 import filtering
@@ -91,10 +96,13 @@ class NetworkAccessManager(QNetworkAccessManager):
 networkAccessManager = NetworkAccessManager()
 incognitoNetworkAccessManager = NetworkAccessManager(nocache=True)
 
-# Clear cache:
+# Clear cache.
 def clearCache():
     networkAccessManager.cache().clear()
 
+# This function checks whether the system is connected to a network interface.
+# It is used by Nimbus to determine whether the system is connected to the
+# Internet, though this is technically a misuse of it.
 # Ported from http://stackoverflow.com/questions/2475266/verfiying-the-network-connection-using-qt-4-4
 # and http://stackoverflow.com/questions/13533710/pyqt-convert-enum-value-to-key
 def isConnectedToNetwork():

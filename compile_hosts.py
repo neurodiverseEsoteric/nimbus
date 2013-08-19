@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-# This script is a redundant way of compiling Nimbus' translation files.
+# This script compiles the hosts file into a grossly-simplified version
+# named nimbus-hosts, which is processed by Nimbus to block ads.
 
 f = open("hosts", "r")
 host_rules = [line.split(" ")[1].replace("\n", "") for line in f.readlines() if len(line.split(" ")) > 1 and not line.startswith("#") and len(line) > 1]

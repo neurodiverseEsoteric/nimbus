@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+## browser.py ##
+# Provides a simple API for extensions.
+
 windows = []
 
 def activeWindow():

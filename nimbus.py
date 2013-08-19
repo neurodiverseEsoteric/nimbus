@@ -14,7 +14,6 @@ import os
 import json
 import base64
 import subprocess
-import threading
 import copy
 import traceback
 import hashlib

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-####################
+
+## settings.py ##
+# This module contains data related to browser settings.
 
 import sys
 import os.path
@@ -12,8 +14,6 @@ except:
     from PySide.QtCore import QCoreApplication, QUrl, QSettings
     from PySide.QtNetwork import QNetworkCookie
 
-# SETTINGS-RELATED #
-####################
 
 # Common settings manager.
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
