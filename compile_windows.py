@@ -11,14 +11,18 @@ app_lib = os.path.join(app_dir, "lib")
 app_build = os.path.join(app_dir, "build")
 python_dir = os.path.dirname(os.path.dirname(get_python_lib()))
 
-if not os.path.exists(app_build):
-    shutil.copytree(app_lib, app_build)
-os.chdir(app_build)
 print("This script will compile Nimbus. Before you continue, make sure that:")
 print("1) Python 3 is installed.")
 print("2) Either PyQt4 or PySide is installed.")
 print("3) cx_Freeze is installed.")
 os.system("""PAUSE""")
+if not os.path.exists(app_build):
+    shutil.copytree(app_lib, app_build)
+files_to_copy = ("AUTHORS.txt", "LICENSE.md", "README.md", "THANKS.txt")
+for fname in files_to_copy:
+    try: shutil.copy2(fname, app_build)
+    except: pass
+os.chdir(app_build)
 os.system(os.path.join(python_dir, "Scripts", "cxfreeze.bat") + """ "nimbus.py" --target-dir="." --base-name="Win32GUI\"""")
 os.chdir(python_dir)
 print("copying " + os.path.join(os.path.dirname(os.path.dirname(get_python_lib())), "python*.dll") + " -> .\python*.dll")
