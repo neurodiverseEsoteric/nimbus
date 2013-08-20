@@ -6,7 +6,8 @@ from setuptools import setup
 
 files_to_copy = ("AUTHORS.txt", "LICENSE.md", "README.md", "THANKS.txt")
 for fname in files_to_copy:
-    shutil.copy2(fname, "lib")
+    try: shutil.copy2(fname, "lib")
+    except: pass
 setup(name='nimbus',
       version="0.2.0pre",
       description='Qt4 Web browser coded in Python 3, compatible with both',
@@ -18,4 +19,5 @@ setup(name='nimbus',
       include_package_data=True
      )
 for fname in files_to_copy:
-    os.remove(os.path.join("lib", fname))
+    try: os.remove(os.path.join("lib", fname))
+    except: pass
