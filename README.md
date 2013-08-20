@@ -33,6 +33,9 @@ If you want to install Nimbus system-wide, you will also need setuptools. On
 Ubuntu, you can install it with the following command:
     sudo apt-get install python3-setuptools
 
+Once that's done, run the following:
+    sudo python3 ./setup.py install
+
 Translations
 ======
 
