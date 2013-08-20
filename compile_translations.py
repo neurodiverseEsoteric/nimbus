@@ -5,7 +5,7 @@
 import os
 
 def main():
-    os.system("lrelease ./translations/*")
+    os.system("lrelease ./lib/translations/*")
 
 if __name__ == "__main__":
     main()
