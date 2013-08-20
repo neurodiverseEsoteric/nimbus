@@ -16,7 +16,12 @@ import subprocess
 import copy
 import traceback
 import hashlib
-import common
+
+# This is a hack for installing Nimbus.
+try: import common
+except: import nimbus.common as common
+sys.path.append(common.app_folder)
+
 import geolocation
 import browser
 import filtering

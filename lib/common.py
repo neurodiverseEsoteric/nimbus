@@ -12,7 +12,6 @@
 import sys
 import os
 import locale
-import browser
 import base64
 try:
     from PyQt4.QtCore import qVersion, QLocale, QUrl
@@ -88,6 +87,3 @@ blank_toolbar = "QToolBar { border: 0; background: transparent; }"
 
 # Stores WebView instances.
 webviews = []
-
-# Deprecated. Use browser.windows instead.
-windows = browser.windows
