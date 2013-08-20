@@ -1,9 +1,11 @@
 #! /usr/bin/env python3
 
+import os
 import shutil
 from setuptools import setup
 
-for fname in ("AUTHORS.txt", "LICENSE.md", "README.md", "THANKS.txt"):
+files_to_copy = ("AUTHORS.txt", "LICENSE.md", "README.md", "THANKS.txt")
+for fname in files_to_copy:
     shutil.copy2(fname, "lib")
 setup(name='nimbus',
       version="0.2.0pre",
@@ -15,3 +17,5 @@ setup(name='nimbus',
       scripts=['nimbus'],
       include_package_data=True
      )
+for fname in files_to_copy:
+    os.remove(os.path.join("lib", fname))
