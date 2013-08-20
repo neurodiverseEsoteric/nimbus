@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
-from nimbus import *
+try: from nimbus import *
+except: from lib import *
 
 if __name__ == "__main__":
     nimbus.main()
