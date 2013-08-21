@@ -4,10 +4,10 @@ if not self.isCheckable():
 import json
 try: data.history
 except:
-    history = data.data.value("data/Bookmarks")
+    history = data.data.value("data/History")
     if not history:
         data.history = []
-        data.data.setValue("data/Bookmarks", json.dumps(data.history))
+        data.data.setValue("data/History", json.dumps(data.history))
         data.data.sync()
     else:
         data.history = json.loads(history)
@@ -45,18 +45,18 @@ except:
             browser.activeWindow().historyList.takeItem(browser.activeWindow().historyList.row(currentItem))
             try: data.history.remove(url)
             except: pass
-            data.data.setValue("data/Bookmarks", json.dumps(data.history))
+            data.data.setValue("data/History", json.dumps(data.history))
             data.data.sync()
     deleteAction.triggered.connect(removeHistoryItem)
     deleteAction.triggered.connect(reloadHistory)
     def loadHistoryItem(item):
         import json
-        if item.text() == "Add bookmark":
-            url = QInputDialog.getText(None, "Add Bookmark", "Enter a URL here:", QLineEdit.Normal, browser.activeWindow().historyExtensionWidget.parentWindow().tabs.currentWidget().url().toString())
+        if item.text() == "Add history item":
+            url = QInputDialog.getText(None, "Add History Item", "Enter a URL here:", QLineEdit.Normal, browser.activeWindow().historyExtensionWidget.parentWindow().tabs.currentWidget().url().toString())
             if url[1]:
                 browser.activeWindow().historyList.addItem(url[0])
                 data.history.append(url[0])
-                data.data.setValue("data/Bookmarks", json.dumps(data.history))
+                data.data.setValue("data/History", json.dumps(data.history))
                 data.data.sync()
         else:
             browser.activeWindow().tabs.currentWidget().load(QUrl.fromUserInput(item.text()))
