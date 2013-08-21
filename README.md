@@ -31,7 +31,8 @@ tested yet.
 On Windows, you can download Python 3 from http://www.python.org/getit/ and
 PyQt4 from http://www.riverbankcomputing.com/software/pyqt/download.
 
-You can install its dependencies on Ubuntu using the following command:
+You can install all of Nimbus's dependencies on Ubuntu using the following
+command:
 
     sudo apt-get install python3 python3-pyqt4 python3-dbus python3-dbus.mainloop.qt
 
