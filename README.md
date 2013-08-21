@@ -23,14 +23,32 @@ Features include:
 Dependencies
 ======
 
-Nimbus depends on Python 3 and either PySide or PyQt4, with python3-dbus as
-an optional dependency. It does not work in Python 2.x.
+Nimbus depends on Python >=3.2 and either PySide or PyQt4, with python3-dbus
+as an optional dependency. It does not work in Python 2.x. It is possible that
+it will work in versions of Python 3 below 3.2 as well, but this has not been
+tested yet.
+
+On Windows, you can download the dependencies from the following locations:
+
+    Python 3: http://www.python.org/getit/
+    PyQt4: http://www.riverbankcomputing.com/software/pyqt/download
 
 You can install its dependencies on Ubuntu using the following command:
 
     sudo apt-get install python3 python3-pyqt4 python3-dbus python3-dbus.mainloop.qt
 
-If you want to install Nimbus system-wide, you will also need setuptools. On
+Installing/compiling Nimbus on Windows
+======
+
+There is no installer for Windows, but you can (or should be able to) compile
+Nimbus on Windows. In addition to its normal dependencies, you will need
+cx_Freeze. You can download it from http://cx-freeze.sourceforge.net/. Once
+that's done, run compile_windows.py in Python 3.
+
+Installing Nimbus on Linux
+======
+
+If you want to install Nimbus system-wide, you will need setuptools. On
 Ubuntu, you can install it with the following command:
 
     sudo apt-get install python3-setuptools
