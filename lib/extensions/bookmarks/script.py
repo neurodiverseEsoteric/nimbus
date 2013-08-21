@@ -56,3 +56,7 @@ except:
     mainWindow.tabifyDockWidget(mainWindow.sideBar, mainWindow.bookmarksDock)
 else:
     browser.activeWindow().bookmarksDock.setVisible(not browser.activeWindow().bookmarksDock.isVisible())
+    browser.activeWindow().bookmarksList.clear()
+    browser.activeWindow().bookmarksList.addItem("Add bookmark")
+    for bookmark in common.bookmarks:
+        browser.activeWindow().bookmarksList.addItem(bookmark)
