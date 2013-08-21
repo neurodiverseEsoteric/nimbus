@@ -60,7 +60,7 @@ The following license pertains to: abpy.py
 ------
 
 This file comes from https://github.com/atereshkin/abpy. It is released into
-the public domain.
+the public domain under the Unlicense (see above).
 
 The following license pertains to: easylist.txt
 ------
