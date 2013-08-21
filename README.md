@@ -28,10 +28,8 @@ as an optional dependency. It does not work in Python 2.x. It is possible that
 it will work in versions of Python 3 below 3.2 as well, but this has not been
 tested yet.
 
-On Windows, you can download the dependencies from the following locations:
-
-    Python 3: http://www.python.org/getit/
-    PyQt4: http://www.riverbankcomputing.com/software/pyqt/download
+On Windows, you can download Python 3 from http://www.python.org/getit/ and
+PyQt4 from http://www.riverbankcomputing.com/software/pyqt/download.
 
 You can install its dependencies on Ubuntu using the following command:
 
