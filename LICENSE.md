@@ -1,7 +1,7 @@
-*The following license applies to: nimbus.py settings_dialog.py*
+The following license applies to: nimbus.py settings_dialog.py
+------
 
 The MIT License (MIT)
-================
 
 Copyright (c) 2013 Daniel Sim and other contributors
 See AUTHORS.txt for a complete list
@@ -23,11 +23,11 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-*The following license pertains to all otherwise unlicensed components,
-including extensions.*
+The following license pertains to all otherwise unlicensed components,
+including extensions.
+------
 
 The Unlicense
-================
 
 This is free and unencumbered software released into the public domain.
 
@@ -54,12 +54,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
 
-*The following license pertains to abpy.py*
+**NOTE:** Extensions are released under a variety of licenses. Please refer to
+the individual extension subdirectories for more details.
+
+The following license pertains to: abpy.py
+------
 
 This file comes from https://github.com/atereshkin/abpy. It is released into
 the public domain.
 
-*The following license pertains to easylist.txt*
+The following license pertains to: easylist.txt
+------
 
 Copyright (c) The EasyList authors (https://easylist.adblockplus.org/)
 
