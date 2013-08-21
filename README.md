@@ -27,13 +27,16 @@ Nimbus depends on Python 3 and either PySide or PyQt4, with python3-dbus as
 an optional dependency. It does not work in Python 2.x.
 
 You can install its dependencies on Ubuntu using the following command:
+
     sudo apt-get install python3 python3-pyqt4 python3-dbus python3-dbus.mainloop.qt
 
 If you want to install Nimbus system-wide, you will also need setuptools. On
 Ubuntu, you can install it with the following command:
+
     sudo apt-get install python3-setuptools
 
 Once that's done, run the following:
+
     sudo python3 ./setup.py install
 
 Translations
