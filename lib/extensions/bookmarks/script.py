@@ -53,5 +53,6 @@ except:
             browser.activeWindow().tabs.currentWidget().load(QUrl.fromUserInput(item.text()))
     browser.activeWindow().bookmarksList.itemActivated.connect(loadBookmark)
     mainWindow.addDockWidget(Qt.LeftDockWidgetArea, mainWindow.bookmarksDock)
+    mainWindow.tabifyDockWidget(mainWindow.sideBar, mainWindow.bookmarksDock)
 else:
     browser.activeWindow().bookmarksDock.setVisible(not browser.activeWindow().bookmarksDock.isVisible())
