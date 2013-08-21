@@ -4,17 +4,17 @@ import os
 import shutil
 from setuptools import setup
 
-version = "0.2.0"
-files_to_copy = ("AUTHORS.txt", "LICENSE.md", "README.md", "THANKS.txt")
-for fname in files_to_copy:
-    try: shutil.copy2(fname, "lib")
-    except: pass
+version = "0.2.1pre"
 try: f = open(os.path.join("lib", "version.txt"), "w")
 except: pass
 else:
     try: f.write(version)
     except: pass
     f.close()
+files_to_copy = ("AUTHORS.txt", "LICENSE.md", "README.md", "THANKS.txt")
+for fname in files_to_copy:
+    try: shutil.copy2(fname, "lib")
+    except: pass
 setup(name='nimbus',
       version=version,
       description='Qt4 Web browser coded in Python 3, compatible with both',
