@@ -1690,13 +1690,15 @@ def main():
     # Build the browser's default user agent.
     # This should be improved as well.
     webPage = QWebPage()
-    nimbus_ua_sub = "Qt/" + common.qt_version + " Nimbus/" + common.app_version + " QupZilla/1.4.3"
-    if common.qt_version.startswith("4"):
-        common.defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, nimbus_ua_sub)
+    nimbus_ua_sub = "Qt/" + common.qt_version + " python Nimbus/" + common.app_version + " QupZilla/1.4.3"
+    ua = webPage.userAgentForUrl(QUrl.fromUserInput("google.com"))
+    if common.qt_version.startswith("4") or "python" in ua:
+        common.defaultUserAgent = ua.replace("Qt/" + common.qt_version, nimbus_ua_sub)
     else:
-        common.defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).replace("Qt/" + common.qt_version, nimbus_ua_sub).replace("python", nimbus_ua_sub)
+        common.defaultUserAgent = ua.replace("python", nimbus_ua_sub)
     webPage.deleteLater()
     del webPage
+    del ua
     del nimbus_ua_sub
 
     # Create tray icon.
