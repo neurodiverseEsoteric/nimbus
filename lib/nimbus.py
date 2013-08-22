@@ -1074,6 +1074,23 @@ min-width: 6em;
         # Add separator.
         mainMenu.addSeparator()
 
+        # Add fullscreen button.
+        self.toggleFullScreenButton = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
+        self.toggleFullScreenButton.setCheckable(True)
+        self.toggleFullScreenButton.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
+        self.toolBar.addAction(self.toggleFullScreenButton)
+        self.toggleFullScreenButton.setVisible(False)
+
+        # Add fullscreen action.
+        self.toggleFullScreenAction = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
+        self.toggleFullScreenAction.setShortcut("F11")
+        self.toggleFullScreenAction.setCheckable(True)
+        self.toggleFullScreenAction.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
+        self.addAction(self.toggleFullScreenAction)
+        mainMenu.addAction(self.toggleFullScreenAction)
+
+        mainMenu.addSeparator()
+
         # Add clear history action.
         clearHistoryAction = QAction(common.complete_icon("edit-clear"), tr("&Clear Data..."), self)
         clearHistoryAction.setShortcut("Ctrl+Shift+Del")
@@ -1110,12 +1127,6 @@ min-width: 6em;
         quitAction.setShortcut("Ctrl+Shift+Q")
         quitAction.triggered.connect(QCoreApplication.quit)
         mainMenu.addAction(quitAction)
-
-        self.toggleFullScreenAction = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
-        self.toggleFullScreenAction.setShortcut("F11")
-        self.toggleFullScreenAction.setCheckable(True)
-        self.toggleFullScreenAction.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
-        self.toolBar.addAction(self.toggleFullScreenAction)
 
         # Add main menu action/button.
         self.mainMenuAction = QAction(common.complete_icon("document-properties"), tr("&Menu"), self)
@@ -1384,12 +1395,18 @@ self.origY + ev.globalY() - self.mouseY)
     # Fullscreen mode.
     def setFullScreen(self, fullscreen=False):
         if fullscreen:
+            try: self.toggleFullScreenButton.setChecked(True)
+            except: pass
             try: self.toggleFullScreenAction.setChecked(True)
             except: pass
+            self.toggleFullScreenButton.setVisible(True)
             self.showFullScreen()
         else:
+            try: self.toggleFullScreenButton.setChecked(False)
+            except: pass
             try: self.toggleFullScreenAction.setChecked(False)
             except: pass
+            self.toggleFullScreenButton.setVisible(False)
             self.showNormal()
 
     # Tab-related methods.
