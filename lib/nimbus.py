@@ -1134,7 +1134,7 @@ min-width: 6em;
 
         # About Nimbus action.
         aboutAction = QAction(common.complete_icon("help-about"), tr("A&bout Nimbus"), self)
-        aboutAction.triggered.connect(lambda: QMessageBox.about(self, tr("About Nimbus"), tr("<h3>Nimbus</h3>Python 3/Qt 4-based Web browser.")))
+        aboutAction.triggered.connect(lambda: QMessageBox.about(self, tr("About Nimbus"), "<h3>" + tr("Nimbus") + " " + common.app_version + "</h3>" + tr("Python 3/Qt 4-based Web browser.")))
         mainMenu.addAction(aboutAction)
 
         # Licensing information.
