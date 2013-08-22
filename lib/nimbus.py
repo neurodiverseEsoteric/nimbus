@@ -20,7 +20,9 @@ import hashlib
 
 # This is a hack for installing Nimbus.
 try: import common
-except: import nimbus.common as common
+except:
+    try: import lib.common as common
+    except: import nimbus.common as common
 sys.path.append(common.app_folder)
 
 import geolocation
