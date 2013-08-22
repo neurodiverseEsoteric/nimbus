@@ -91,6 +91,36 @@ extensions_whitelist = []
 # List of extensions not to load.
 extensions_blacklist = []
 
+# Userscripts
+userscripts = []
+
+def reload_userscripts():
+    global userscripts
+    while len(userscripts) > 0:
+        userscripts.pop()
+    for extension in extensions:
+        if extension not in extensions_whitelist:
+            continue
+        extension_path = os.path.join(extensions_folder, extension)
+        if os.path.isfile(extension_path):
+            extension_data = {"match": [], "content": ""}
+            try: f = open(extension_path, "r")
+            except: pass
+            else:
+                try: content = f.read()
+                except: content = ""
+                extension_data["content"] = content
+                f.close()
+                lines = content.split("\n")
+                for line in lines:
+                    if "@match" in line:
+                        extension_data["match"].append(line.split("@match")[-1].strip("\n\t"))
+                    elif "@include" in line:
+                        extension_data["match"].append(line.split("@include")[-1].strip("\n\t"))
+                userscripts.append(extension_data)
+
+reload_userscripts()
+
 # Reloads extension blacklist.
 def reload_extensions2():
     global extensions_blacklist

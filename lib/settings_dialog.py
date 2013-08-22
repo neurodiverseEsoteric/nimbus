@@ -462,6 +462,7 @@ class SettingsDialog(QWidget):
         for index in range(0, self.tabs.count()):
             self.tabs.widget(index).saveSettings()
         settings.reset_extensions()
+        settings.reload_userscripts()
         for window in browser.windows:
             window.reloadExtensions()
         for webview in common.webviews:

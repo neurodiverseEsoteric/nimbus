@@ -184,12 +184,16 @@ class WebPage(QWebPage):
         self.fullScreenRequester = FullScreenRequester(self)
         self.fullScreenRequester.fullScreenRequested.connect(self.toggleFullScreen)
 
+        self._userScriptsLoaded = False
+        self.mainFrame().javaScriptWindowObjectCleared.connect(lambda: self.setUserScriptsLoaded(False))
+
         # Connect to self.tweakDOM, which carries out some hacks to
         # improve HTML5 support.
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakDOM)
 
-        # Connect loadFinished to checkForNavigatorGeolocation.
+        # Connect loadFinished to checkForNavigatorGeolocation and loadUserScripts.
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
+        self.loadFinished.connect(self.loadUserScripts)
 
         # This stores the user agent.
         self._userAgent = ""
@@ -211,6 +215,20 @@ class WebPage(QWebPage):
         else:
             self.fullScreenRequested.emit(True)
             self._fullScreen = True
+
+    def setUserScriptsLoaded(self, loaded=False):
+        self._userScriptsLoaded = loaded
+
+    # Load userscripts.
+    def loadUserScripts(self):
+        if not self._userScriptsLoaded:
+            self._userScriptsLoaded = True
+            for userscript in settings.userscripts:
+                for match in userscript["match"]:
+                    r = re.match(match, self.mainFrame().url().toString())
+                    if r:
+                        self.mainFrame().evaluateJavaScript(userscript["content"])
+                        break
 
     # Returns user agent string.
     def userAgentForUrl(self, url):
@@ -299,7 +317,6 @@ class WebPage(QWebPage):
                                             "window.nimbus.onLineEvent.initEvent('online',true,false);")
         self.mainFrame().evaluateJavaScript("window.nimbus.offLineEvent = document.createEvent('Event');\n" + \
                                             "window.nimbus.offLineEvent.initEvent('offline',true,false);")
-        
 
     # Creates Qt-based plugins.
     # One plugin pertains to the settings dialog,
@@ -1254,6 +1271,7 @@ self.origY + ev.globalY() - self.mouseY)
             if extension not in settings.extensions_whitelist:
                 continue
             extension_path = os.path.join(settings.extensions_folder, extension)
+
             if os.path.isdir(extension_path):
                 script_path = os.path.join(extension_path, "script.py")
                 if not os.path.isfile(script_path):
@@ -1711,6 +1729,7 @@ def main():
         shutil.copytree(common.extensions_folder, settings.extensions_folder)
 
     settings.reload_extensions()
+    settings.reload_userscripts()
 
     server_thread.setDirectory(settings.extensions_folder)
 
