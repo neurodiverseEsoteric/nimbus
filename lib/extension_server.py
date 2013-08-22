@@ -16,7 +16,7 @@ from settings import extensions_folder
 
 class ExtensionServerThread(QThread):
     def __init__(self, *args, directory=extensions_folder, **kwargs):
-        super(QThread, self).__init__(*args, **kwargs)
+        super(ExtensionServerThread, self).__init__(*args, **kwargs)
         self.directory = directory
     def setDirectory(self, directory):
         self.directory = directory
