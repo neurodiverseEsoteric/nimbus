@@ -15,8 +15,14 @@ import common
 from settings import extensions_folder
 
 class ExtensionServerThread(QThread):
+    def __init__(self, *args, directory=extensions_folder, **kwargs):
+        super(QThread, self).__init__(*args, **kwargs)
+        self.directory = directory
+    def setDirectory(self, directory):
+        self.directory = directory
+        os.chdir(self.directory)
     def run(self):
-        os.chdir(extensions_folder)
+        os.chdir(self.directory)
         HandlerClass = SimpleHTTPRequestHandler
         ServerClass  = http.server.HTTPServer
         Protocol     = "HTTP/1.0"

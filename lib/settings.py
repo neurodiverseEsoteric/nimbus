@@ -79,7 +79,7 @@ def setting_to_int(value=""):
     except: return 0
 
 # List of extensions.
-extensions_folder = os.path.join(common.app_folder, "extensions")
+extensions_folder = os.path.join(settings_folder, "Extensions")
 extensions = []
 
 # Stores all extension buttons.

@@ -12,6 +12,7 @@
 import sys
 import os
 import json
+import re
 import subprocess
 import copy
 import traceback
@@ -30,6 +31,8 @@ from translate import tr
 import custom_widgets
 import clear_history_dialog
 import settings
+if not os.path.exists(settings.extensions_folder):
+    import shutil
 import status_bar
 import extension_server
 import settings_dialog
@@ -296,6 +299,7 @@ class WebPage(QWebPage):
                                             "window.nimbus.onLineEvent.initEvent('online',true,false);")
         self.mainFrame().evaluateJavaScript("window.nimbus.offLineEvent = document.createEvent('Event');\n" + \
                                             "window.nimbus.offLineEvent.initEvent('offline',true,false);")
+        
 
     # Creates Qt-based plugins.
     # One plugin pertains to the settings dialog,
@@ -1685,6 +1689,13 @@ def main():
 
     # Load adblock rules.
     filtering.adblock_filter_loader.start()
+
+    if not os.path.exists(settings.extensions_folder):
+        shutil.copytree(common.extensions_folder, settings.extensions_folder)
+
+    settings.reload_extensions()
+
+    server_thread.setDirectory(settings.extensions_folder)
 
     # Start extension server.
     server_thread.start()
