@@ -9,6 +9,7 @@
 # Nimbus' components.
 
 # Import everything we need.
+import traceback
 import sys
 import os
 import locale
@@ -47,6 +48,20 @@ if os.path.isfile(app_version_file):
         try: app_version = f.read().replace("\n", "")
         except: pass
         f.close()
+
+# Valid top-level domains.
+tlds_file = os.path.join(app_folder, "tlds.txt")
+tlds = []
+if os.path.isfile(tlds_file):
+    try: f = open(tlds_file, "r")
+    except: pass
+    else:
+        try: tlds = ["." + dom for dom in f.read().split("\n") if dom != ""]
+        except: traceback.print_exc()
+        f.close()
+
+def topLevelDomains():
+    return tlds
 
 # Qt version.
 qt_version = qVersion()
