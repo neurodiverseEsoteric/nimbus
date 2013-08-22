@@ -9,6 +9,7 @@
 # Each panel in the settings dialog is a subclass of a custom widget that
 # can be used to make more panels.
 
+import os
 import json
 import common
 import settings
@@ -375,6 +376,10 @@ class ExtensionsSettingsPanel(SettingsPanel):
         self.blacklist.itemActivated.connect(self.enableExtension)
         blacklistColumn.addWidget(self.blacklist)
 
+        updateExtensionsButton = QPushButton(tr("&Update extensions"), self)
+        updateExtensionsButton.clicked.connect(self.updateExtensions)
+        self.layout().addWidget(updateExtensionsButton)
+
     def disableExtension(self, item):
         name = item.text()
         self.blacklist.addItem(name)
@@ -388,6 +393,21 @@ class ExtensionsSettingsPanel(SettingsPanel):
         self.whitelist.sortItems(Qt.AscendingOrder)
         self.blacklist.takeItem(self.blacklist.row(item))
         self.blacklist.sortItems(Qt.AscendingOrder)
+
+    def updateExtensions(self):
+        extensions = os.listdir(common.extensions_folder)
+        for extension in extensions:
+            newext = os.path.join(common.extensions_folder, extension)
+            oldext = os.path.join(settings.extensions_folder, extension)
+            if os.path.isfile(oldext):
+                common.rm(oldext)
+            elif os.path.isdir(oldext):
+                common.rmr(oldext)
+            if os.path.isfile(newext):
+                common.cp(newext, oldext)
+            else:
+                common.cpr(newext, oldext)
+        self.loadSettings()
 
     def loadSettings(self):
         settings.reload_extensions()

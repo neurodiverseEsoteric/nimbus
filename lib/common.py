@@ -12,6 +12,7 @@
 import traceback
 import sys
 import os
+import subprocess
 import locale
 import base64
 try:
@@ -20,6 +21,25 @@ try:
 except:
     from PySide.QtCore import qVersion, QLocale, QUrl
     from PySide.QtGui import QIcon
+
+def rm(fname):
+    subprocess.Popen(["rm", fname])
+
+if sys.platform.startswith("win"):
+    import shutil
+    def rmr(fname):
+        subprocess.Popen(["rd", fname])
+    def cp(fname, dest):
+        shutil.copy2(fname, dest)
+    def cpr(fname, dest):
+        shutil.copytree(fname, dest)
+else:
+    def rmr(fname):
+        os.system("rm -rf \"%s\"" % (fname,))
+    def cp(fname, dest):
+        subprocess.Popen(["cp", fname, dest])
+    def cpr(fname, dest):
+        subprocess.Popen(["cp", "-r", fname, dest])
 
 def htmlToBase64(html):
     return "data:text/html;charset=utf-8;base64," + base64.b64encode((html.replace('\n', '')).encode('utf-8')).decode('utf-8')
