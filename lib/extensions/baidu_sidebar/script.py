@@ -1,4 +1,4 @@
-name = "Bing"
+name = "Baidu"
 url = "http://m.baidu.com/"
 clip = "baidu"
 ua = None
