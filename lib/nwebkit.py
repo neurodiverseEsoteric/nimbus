@@ -739,7 +739,7 @@ class WebView(QWebView):
     # Convenience function.
     # Sets the zoom factor.
     def zoom(self):
-        zoom = QInputDialog.getDouble(self, tr("Zoom"), tr("Set zoom factor"), self.zoomFactor())
+        zoom = QInputDialog.getDouble(self, tr("Zoom"), tr("Set zoom factor:"), self.zoomFactor())
         if zoom[1]:
             self.setZoomFactor(zoom[0])
 
