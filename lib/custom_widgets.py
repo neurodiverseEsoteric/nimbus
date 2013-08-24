@@ -14,10 +14,10 @@ from translate import tr
 try:
     from PyQt4.QtCore import Qt, pyqtSignal
     Signal = pyqtSignal
-    from PyQt4.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
+    from PyQt4.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
 except:
     from PySide.QtCore import Qt, Signal
-    from PySide.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar
+    from PySide.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
 
 # Blank widget to take up space.
 class Expander(QLabel):
@@ -71,6 +71,11 @@ class Column(QWidget):
         self.layout().setContentsMargins(0,0,0,0)
     def addWidget(self, widget):
         self.layout().addWidget(widget)
+
+# Invisible menu.
+class InvisibleMenu(QMenu):
+    def setVisible(self, visible):
+        QMenu.setVisible(self, False)
 
 # Toolbar that looks like a menubar.
 class MenuToolBar(QToolBar):

@@ -18,8 +18,11 @@ import traceback
 # This is a hack for installing Nimbus.
 try: import common
 except:
+    traceback.print_exc()
     try: import lib.common as common
-    except: import nimbus.common as common
+    except:
+        traceback.print_exc()
+        import nimbus.common as common
 sys.path.append(common.app_folder)
 
 import geolocation
@@ -37,6 +40,7 @@ import extension_server
 import settings_dialog
 import data
 import network
+import search_manager
 from nwebkit import *
 
 # Python DBus
@@ -59,13 +63,13 @@ except:
 # We give PyQt4 priority because it supports Qt5.
 try:
     from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QIODevice, QTimer
-    from PyQt4.QtGui import QApplication, QDockWidget, QKeySequence, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon
+    from PyQt4.QtGui import QApplication, QDockWidget, QKeySequence, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon, QPushButton
     from PyQt4.QtNetwork import QNetworkRequest
     from PyQt4.QtWebKit import QWebPage
     Signal = pyqtSignal
 except:
     from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QIODevice, QTimer
-    from PySide.QtGui import QApplication, QDockWidget, QKeySequence, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon
+    from PySide.QtGui import QApplication, QDockWidget, QKeySequence, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon, QPushButton
     from PySide.QtNetwork import QNetworkRequest
     from PySide.QtWebKit import QWebPage
 
@@ -267,6 +271,11 @@ min-width: 6em;
 }""")
         self.toolBar.addWidget(self.locationBar)
 
+        self.searchEditButton = QAction(common.complete_icon("system-search"), tr("Change Search"), self)
+        self.searchEditButton.setShortcut("Ctrl+K")
+        self.searchEditButton.triggered.connect(common.searchManager.show)
+        self.toolBar.addAction(self.searchEditButton)
+
         # Ctrl+L/Alt+D focuses the location bar.
         locationAction = QAction(self)
         locationAction.setShortcuts(["Ctrl+L", "Alt+D"])
@@ -319,7 +328,7 @@ min-width: 6em;
 
         mainMenu.addSeparator()
 
-        zoomAction = QAction(QIcon(common.icon("system-search.png")), tr("Set &zoom factor..."), self)
+        zoomAction = QAction(QIcon(common.complete_icon("zoom-fit-best")), tr("Set &zoom factor..."), self)
         zoomAction.setShortcuts(["Ctrl+0", "Ctrl+Shift+=","Ctrl+=", "Ctrl+-"])
         zoomAction.triggered.connect(lambda: self.tabWidget().currentWidget().zoom())
         mainMenu.addAction(zoomAction)
@@ -954,6 +963,8 @@ def main():
     common.app_icon.addFile(common.icon("nimbus-80.png"))
     common.app_icon.addFile(common.icon("nimbus-128.png"))
     common.app_icon.addFile(common.icon("nimbus-256.png"))
+
+    common.searchManager = search_manager.SearchEditor()
 
     # Build the browser's default user agent.
     # This should be improved as well.
