@@ -737,11 +737,18 @@ class WebView(QWebView):
         return webview
 
     # Convenience function.
+    # Sets the zoom factor.
+    def zoom(self):
+        zoom = QInputDialog.getDouble(self, tr("Zoom"), tr("Set zoom factor"), self.zoomFactor())
+        if zoom[1]:
+            self.setZoomFactor(zoom[0])
+
+    # Convenience function.
     # Opens a very simple find text dialog.
     def find(self):
         if type(self._findText) is not str:
             self._findText = ""
-        find = QInputDialog.getText(None, tr("Find"), tr("Search for:"), QLineEdit.Normal, self._findText)
+        find = QInputDialog.getText(self, tr("Find"), tr("Search for:"), QLineEdit.Normal, self._findText)
         if find:
             self._findText = find[0]
         else:

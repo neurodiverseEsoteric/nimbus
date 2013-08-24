@@ -319,6 +319,13 @@ min-width: 6em;
 
         mainMenu.addSeparator()
 
+        zoomAction = QAction(QIcon(common.icon("system-search.png")), tr("Set &zoom factor..."), self)
+        zoomAction.setShortcuts(["Ctrl+0", "Ctrl+Shift+=","Ctrl+=", "Ctrl+-"])
+        zoomAction.triggered.connect(lambda: self.tabWidget().currentWidget().zoom())
+        mainMenu.addAction(zoomAction)
+
+        mainMenu.addSeparator()
+
         # Add find text action.
         findAction = QAction(common.complete_icon("edit-find"), tr("&Find..."), self)
         findAction.setShortcut("Ctrl+F")
