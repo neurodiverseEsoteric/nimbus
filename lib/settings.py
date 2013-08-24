@@ -113,10 +113,10 @@ def reload_userscripts():
                 f.close()
                 lines = content.split("\n")
                 for line in lines:
-                    if "@match" in line:
-                        extension_data["match"].append(line.split("@match")[-1].strip("\n\t"))
-                    elif "@include" in line:
-                        extension_data["match"].append(line.split("@include")[-1].strip("\n\t"))
+                    for r in ("@match", "@include"):
+                        if r in line:
+                            extension_data["match"].append(line.split(r)[-1].strip("\n\t").replace("?", ".").replace("#", ".").replace("+", ".").replace("|", "."))
+                            break
                 userscripts.append(extension_data)
 
 reload_userscripts()

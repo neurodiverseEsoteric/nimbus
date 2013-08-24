@@ -227,13 +227,16 @@ class WebPage(QWebPage):
             self._userScriptsLoaded = True
             for userscript in settings.userscripts:
                 for match in userscript["match"]:
-                    if match == "*":
-                        r = True
-                    else:
-                        r = re.match(match, self.mainFrame().url().toString())
-                    if r:
-                        self.mainFrame().evaluateJavaScript(userscript["content"])
-                        break
+                    try:
+                        if match == "*":
+                            r = True
+                        else:
+                            r = re.match(match, self.mainFrame().url().toString())
+                        if r:
+                            self.mainFrame().evaluateJavaScript(userscript["content"])
+                            break
+                    except:
+                        traceback.print_exc()
 
     # Returns user agent string.
     def userAgentForUrl(self, url):
