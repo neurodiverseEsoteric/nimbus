@@ -5,7 +5,7 @@ import os
 import shutil
 from setuptools import setup
 
-version = "0.2.3pre"
+version = "0.2.3"
 try: f = open(os.path.join("lib", "version.txt"), "w")
 except: pass
 else:
