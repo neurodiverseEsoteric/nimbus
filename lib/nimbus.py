@@ -271,7 +271,7 @@ min-width: 6em;
 }""")
         self.toolBar.addWidget(self.locationBar)
 
-        self.searchEditButton = QAction(common.complete_icon("system-search"), tr("Change Search"), self)
+        self.searchEditButton = QAction(common.complete_icon("system-search"), tr("Manage Search Engines"), self)
         self.searchEditButton.setShortcut("Ctrl+K")
         self.searchEditButton.triggered.connect(common.searchEditor.show)
         self.toolBar.addAction(self.searchEditButton)
