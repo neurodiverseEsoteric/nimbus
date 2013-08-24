@@ -115,7 +115,7 @@ def reload_userscripts():
                 for line in lines:
                     for r in ("@match", "@include"):
                         if r in line:
-                            extension_data["match"].append(line.split(r)[-1].strip("\n\t").replace("?", ".").replace("#", ".").replace("+", ".").replace("|", "."))
+                            extension_data["match"].append(line.split(r)[-1].strip("\n\t ").replace("?", "\?").replace("#", "\#").replace("+", "\+").replace("|", "\|"))
                             break
                 userscripts.append(extension_data)
 
