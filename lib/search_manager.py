@@ -7,11 +7,11 @@ import json
 from translate import tr
 try:
     from PyQt4.QtCore import Qt, pyqtSignal
-    from PyQt4.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog
+    from PyQt4.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor
     Signal = pyqtSignal
 except:
     from PySide.QtCore import Qt, Signal
-    from PySide.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog
+    from PySide.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor
 
 def unicode(*args, **kwargs):
     return str(*args, **kwargs)
@@ -64,7 +64,7 @@ class SearchEditor(QMainWindow):
     searchManager = SearchManager()
     def __init__(self, parent=None):
         super(SearchEditor, self).__init__(parent)
-        self.setWindowFlags(Qt.Dialog)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Popup)
         self.parent = parent
         self.setWindowTitle(tr('Search Editor'))
         self.styleSheet = "QMainWindow { border: 1px solid palette(shadow);} QToolBar { border: 0; }"
@@ -108,6 +108,10 @@ class SearchEditor(QMainWindow):
         self.addAction(self.hideAction)
 
         self.reload_()
+
+    def show(self):
+        self.setVisible(True)
+        self.move(QCursor.pos().x() - self.width(), QCursor.pos().y())
 
     def primeDisplay(self):
         self.reload_()

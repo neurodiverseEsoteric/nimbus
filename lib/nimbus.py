@@ -273,7 +273,7 @@ min-width: 6em;
 
         self.searchEditButton = QAction(common.complete_icon("system-search"), tr("Change Search"), self)
         self.searchEditButton.setShortcut("Ctrl+K")
-        self.searchEditButton.triggered.connect(common.searchManager.show)
+        self.searchEditButton.triggered.connect(common.searchEditor.show)
         self.toolBar.addAction(self.searchEditButton)
 
         # Ctrl+L/Alt+D focuses the location bar.
@@ -964,7 +964,7 @@ def main():
     common.app_icon.addFile(common.icon("nimbus-128.png"))
     common.app_icon.addFile(common.icon("nimbus-256.png"))
 
-    common.searchManager = search_manager.SearchEditor()
+    common.searchEditor = search_manager.SearchEditor()
 
     # Build the browser's default user agent.
     # This should be improved as well.
