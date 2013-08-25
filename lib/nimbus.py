@@ -954,6 +954,8 @@ def main():
         for arg in sys.argv[1:]:
             if "." in arg or ":" in arg:
                 proxy.addTab(arg)
+        if len(sys.argv) < 2:
+            proxy.addWindow()
         return
 
     # Hack together the browser's icon. This needs to be improved.
