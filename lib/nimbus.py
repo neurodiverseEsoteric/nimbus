@@ -676,7 +676,12 @@ self.origY + ev.globalY() - self.mouseY)
         if not url:
             url = self.locationBar.currentText()
         url2 = QUrl.fromUserInput(url)
-        if ":" in url or os.path.exists(url) or url2.topLevelDomain().upper() in common.topLevelDomains():
+        valid_url = (":" in url or os.path.exists(url) or url.count(".") > 2)
+        this_tld = url2.topLevelDomain().upper()
+        for tld in common.topLevelDomains():
+            if tld in this_tld:
+                valid_url = True
+        if valid_url:
             self.tabWidget().currentWidget().load(QUrl.fromUserInput(url))
         else:
             self.tabWidget().currentWidget().load(QUrl(settings.settings.value("general/Search") % (url,)))
