@@ -67,7 +67,8 @@ class SearchEditor(QMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Popup)
         self.parent = parent
         self.setWindowTitle(tr('Search Editor'))
-        self.styleSheet = "QMainWindow { border: 1px solid palette(shadow);} QToolBar { border: 0; }"
+        self.styleSheet = "QMainWindow { background: palette(window); border: 1px solid palette(shadow); }"
+        self.setStyleSheet(self.styleSheet)
         try: self.setWindowIcon(common.app_icon)
         except: pass
 
@@ -87,7 +88,7 @@ class SearchEditor(QMainWindow):
         self.expEntry = QLineEdit(self)
         self.expEntry.returnPressed.connect(self.addSearch)
         self.entryBar.addWidget(self.expEntry)
-        self.addSearchButton = QPushButton(tr("+"), self)
+        self.addSearchButton = QPushButton(common.complete_icon("list-add"), "", self)
         self.addSearchButton.clicked.connect(self.addSearch)
         self.entryBar.addWidget(self.addSearchButton)
 
