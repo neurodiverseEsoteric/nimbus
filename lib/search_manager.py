@@ -7,11 +7,11 @@ import json
 from translate import tr
 try:
     from PyQt4.QtCore import Qt, pyqtSignal
-    from PyQt4.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor
+    from PyQt4.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor, QDesktopWidget
     Signal = pyqtSignal
 except:
     from PySide.QtCore import Qt, Signal
-    from PySide.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor
+    from PySide.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor, QDesktopWidget
 
 def unicode(*args, **kwargs):
     return str(*args, **kwargs)
@@ -112,7 +112,9 @@ class SearchEditor(QMainWindow):
 
     def show(self):
         self.setVisible(True)
-        self.move(QCursor.pos().x() - self.width(), QCursor.pos().y())
+        y = QDesktopWidget()
+        self.move(max(0, QCursor.pos().x() - self.width()), min(QCursor.pos().y(), y.height() - self.height()))
+        y.deleteLater()
 
     def primeDisplay(self):
         self.reload_()
