@@ -67,7 +67,7 @@ class SearchEditor(QMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Popup)
         self.parent = parent
         self.setWindowTitle(tr('Search Editor'))
-        self.styleSheet = "QMainWindow { background: palette(window); border: 1px solid palette(shadow); }"
+        self.styleSheet = "QMainWindow { background: palette(window); border: 1px solid palette(dark); }"
         self.setStyleSheet(self.styleSheet)
         try: self.setWindowIcon(common.app_icon)
         except: pass
