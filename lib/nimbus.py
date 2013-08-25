@@ -205,25 +205,25 @@ class MainWindow(QMainWindow):
         self.backAction.setShortcut("Alt+Left")
         self.backAction.triggered.connect(self.back)
         self.toolBar.addAction(self.backAction)
-        #self.toolBar.widgetForAction(self.backAction).setPopupMode(QToolButton.MenuButtonPopup)
+        self.toolBar.widgetForAction(self.backAction).setPopupMode(QToolButton.MenuButtonPopup)
 
         # This is a dropdown menu for the back history items, but due to
         # instability, it is currently disabled.
         self.backHistoryMenu = QMenu(self)
         self.backHistoryMenu.aboutToShow.connect(self.aboutToShowBackHistoryMenu)
-        #self.backAction.setMenu(self.backHistoryMenu)
+        self.backAction.setMenu(self.backHistoryMenu)
 
         self.forwardAction = self.actionsPage.action(QWebPage.Forward)
         self.forwardAction.setShortcut("Alt+Right")
         self.forwardAction.triggered.connect(self.forward)
         self.toolBar.addAction(self.forwardAction)
-        #self.toolBar.widgetForAction(self.forwardAction).setPopupMode(QToolButton.MenuButtonPopup)
+        self.toolBar.widgetForAction(self.forwardAction).setPopupMode(QToolButton.MenuButtonPopup)
 
         # This is a dropdown menu for the forward history items, but due to
         # instability, it is currently disabled.
         self.forwardHistoryMenu = QMenu(self)
         self.forwardHistoryMenu.aboutToShow.connect(self.aboutToShowForwardHistoryMenu)
-        #self.forwardAction.setMenu(self.forwardHistoryMenu)
+        self.forwardAction.setMenu(self.forwardHistoryMenu)
 
         self.stopAction = self.actionsPage.action(QWebPage.Stop)
         self.stopAction.setShortcut("Esc")
@@ -606,13 +606,13 @@ self.origY + ev.globalY() - self.mouseY)
             backItems = history.backItems(10)
             for item in range(0, len(backItems)):
                 try:
-                    action = custom_widgets.WebHistoryAction(item, backItems[item].icon(), backItems[item].title(), self.backHistoryMenu)
+                    action = custom_widgets.WebHistoryAction(item, backItems[item].title(), self.backHistoryMenu)
                     action.triggered2.connect(self.loadBackHistoryItem)
                     self.backHistoryMenu.addAction(action)
                 except:
-                    pass
+                    traceback.print_exc()
         except:
-            pass
+            traceback.print_exc()
 
     def loadBackHistoryItem(self, index):
         history = self.tabWidget().currentWidget().history()
@@ -628,13 +628,13 @@ self.origY + ev.globalY() - self.mouseY)
             forwardItems = history.forwardItems(10)
             for item in range(0, len(forwardItems)):
                 try:
-                    action = custom_widgets.WebHistoryAction(item, forwardItems[item].icon(), forwardItems[item].title(), self.forwardHistoryMenu)
+                    action = custom_widgets.WebHistoryAction(item, forwardItems[item].title(), self.forwardHistoryMenu)
                     action.triggered2.connect(self.loadForwardHistoryItem)
                     self.forwardHistoryMenu.addAction(action)
                 except:
-                    pass
+                    traceback.print_exc()
         except:
-            pass
+            traceback.print_exc()
 
     def loadForwardHistoryItem(self, index):
         history = self.tabWidget().currentWidget().history()
