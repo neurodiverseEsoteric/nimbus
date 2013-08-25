@@ -2,10 +2,13 @@
 
 import sys
 import os
+import subprocess
 import shutil
 from setuptools import setup
 
 version = "0.3.0pre"
+applications_folder = os.path.join("/", "usr", "share", "applications")
+app_icon = os.path.join("lib", "icons", "nimbus.svg")
 try: f = open(os.path.join("lib", "version.txt"), "w")
 except: pass
 else:
@@ -27,6 +30,10 @@ if len(sys.argv) > 1:
           scripts=['nimbus'],
           include_package_data=True
          )
+    if "install" in sys.argv and sys.platform.startswith("linux"):
+        subprocess.Popen(["xdg-desktop-menu", "install", "fh-nimbus.desktop"])
+        for size in (16, 22, 24, 32, 48, 64, 72, 128, 256):
+            subprocess.Popen(["xdg-icon-resource", "install", "--size", str(size), app_icon.replace(".svg", "-%s.png" % (size,)), "fh-nimbus"])
 for fname in files_to_copy:
     try: os.remove(os.path.join("lib", fname))
     except: pass

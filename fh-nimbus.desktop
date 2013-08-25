@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Nimbus
+Icon=fh-nimbus
+GenericName=Web Browser
+Comment=PyQt4 Web browser
+Exec=/usr/local/bin/nimbus
+MimeType=text/html;application/xhtml_xml;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/file;
+Categories=Network;WebBrowser;
