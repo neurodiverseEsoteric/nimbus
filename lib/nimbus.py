@@ -18,10 +18,8 @@ import traceback
 # This is a hack for installing Nimbus.
 try: import common
 except:
-    traceback.print_exc()
     try: import lib.common as common
     except:
-        traceback.print_exc()
         import nimbus.common as common
 sys.path.append(common.app_folder)
 
