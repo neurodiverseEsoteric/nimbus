@@ -45,11 +45,14 @@ from nwebkit import *
 
 # Python DBus
 has_dbus = True
-try:
-    import dbus
-    import dbus.service
-    from dbus.mainloop.qt import DBusQtMainLoop
-except:
+if not "-no-remote" in sys.argv:
+    try:
+        import dbus
+        import dbus.service
+        from dbus.mainloop.qt import DBusQtMainLoop
+    except:
+        has_dbus = False
+else:
     has_dbus = False
 
 # This was made for an attempt to compile Nimbus to CPython,
@@ -140,6 +143,7 @@ class MainWindow(QMainWindow):
 
         # Hacky way of updating the location bar text when the tab is changed.
         self.tabs.currentChanged.connect(self.updateLocationText)
+        self.tabs.currentChanged.connect(self.updateLocationIcon)
 
         # Allow closing of tabs.
         self.tabs.setTabsClosable(True)
@@ -247,7 +251,7 @@ class MainWindow(QMainWindow):
         # Location bar. Note that this is a combo box.
         # At some point, I should make a custom location bar
         # implementation that looks nicer.
-        self.locationBar = QComboBox(self)
+        self.locationBar = custom_widgets.LocationBar(icon=None, parent=self)
 
         # Load stored browser history.
         for url in data.history:
@@ -266,9 +270,7 @@ class MainWindow(QMainWindow):
 
         # This is so that the location bar can shrink to a width
         # shorter than the length of its longest item.
-        self.locationBar.setStyleSheet("""QComboBox {
-min-width: 6em;
-}""")
+        self.locationBar.setStyleSheet("QComboBox { min-width: 6em; }")
         self.toolBar.addWidget(self.locationBar)
 
         self.searchEditButton = QAction(common.complete_icon("system-search"), tr("Manage Search Engines"), self)
@@ -747,6 +749,7 @@ self.origY + ev.globalY() - self.mouseY)
         webview.page().fullScreenRequested.connect(self.setFullScreen)
         webview.urlChanged.connect(self.updateLocationText)
         webview.iconChanged.connect(self.updateTabIcons)
+        webview.iconChanged.connect(self.updateLocationIcon)
         webview.windowCreated.connect(lambda webView: self.addTab(webView=webView, index=self.tabWidget().currentIndex()+1, focus=False))
         webview.downloadStarted.connect(self.addDownloadToolBar)
 
@@ -841,6 +844,16 @@ self.origY + ev.globalY() - self.mouseY)
             currentUrl = self.tabWidget().currentWidget().url()
             if url == currentUrl:
                 self.locationBar.setEditText(currentUrl.toString())
+        except:
+            pass
+
+    def updateLocationIcon(self, url=None):
+        try:
+            if type(url) != QUrl:
+                url = self.tabWidget().currentWidget().url()
+            currentUrl = self.tabWidget().currentWidget().url()
+            if url == currentUrl:
+                self.locationBar.setIcon(self.tabs.currentWidget().icon())
         except:
             pass
 

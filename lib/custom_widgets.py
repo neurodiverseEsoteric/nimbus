@@ -12,12 +12,12 @@ from common import app_folder
 from translate import tr
 
 try:
-    from PyQt4.QtCore import Qt, pyqtSignal
+    from PyQt4.QtCore import Qt, pyqtSignal, QPoint
     Signal = pyqtSignal
-    from PyQt4.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
+    from PyQt4.QtGui import QAction, QToolButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QStyle
 except:
-    from PySide.QtCore import Qt, Signal
-    from PySide.QtGui import QAction, QWidget, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
+    from PySide.QtCore import Qt, Signal, QPoint
+    from PySide.QtGui import QAction, QToolButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QStyle
 
 # Blank widget to take up space.
 class Expander(QLabel):
@@ -87,6 +87,45 @@ class MenuToolBar(QToolBar):
         self.initStyleOption(option)
         style = self.style()
         style.drawControl(QStyle.CE_MenuBarEmptyArea, option, painter, self)
+
+# Location bar.
+class LocationBar(QComboBox):
+    def __init__(self, *args, icon=None, **kwargs):
+        super(LocationBar, self).__init__(*args, **kwargs)
+        self.icon = QToolButton(self)
+        if type(icon) is QIcon:
+            self.icon.setIcon(icon)
+        self.icon.setFixedWidth(16)
+        self.icon.setFixedHeight(16)
+        self.icon.hide()
+        self.icon.setStyleSheet("QToolButton { border: 0; background: transparent; width: 16px; height: 16px; }")
+        sz = self.icon
+        fw = self.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
+        self.s = False
+        msz = self.minimumSizeHint()
+        self.setMinimumSize(max(msz.width(), self.icon.sizeHint().height() + fw * 2 + 2), max(msz.height(), self.icon.sizeHint().height() + fw * 2 + 2))
+
+    def paintEvent(self, ev):
+        sz = self.icon
+        fw = self.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
+        QComboBox.paintEvent(self, ev)
+        self.icon.render(self, QPoint(self.rect().left() + (self.height() + 1 - sz.width())/2, (self.height() + 1 - sz.height())/2))
+        if self.s == False:
+            self.lineEdit().setStyleSheet("QLineEdit { background: transparent; padding-left: %spx; }" % str(sz.width() + (self.height() + 1 - sz.width())/2))
+            self.s = True
+            self.redefPaintEvent()
+
+    def redefPaintEvent(self):
+        self.paintEvent = self.shortPaintEvent
+
+    def shortPaintEvent(self, ev):
+        sz = self.icon
+        fw = self.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
+        QComboBox.paintEvent(self, ev)
+        self.icon.render(self, QPoint(self.rect().left() + (self.height() + 1 - sz.width())/2, (self.height() + 1 - sz.height())/2))
+
+    def setIcon(self, icon):
+        self.icon.setIcon(icon)
 
 # Web history action for dropdown menus.
 class WebHistoryAction(QAction):
