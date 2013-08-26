@@ -34,6 +34,7 @@ import settings
 if not os.path.exists(settings.extensions_folder):
     import shutil
 import status_bar
+import zoom_bar
 import extension_server
 import settings_dialog
 import data
@@ -126,6 +127,11 @@ class MainWindow(QMainWindow):
         self.toolBar = custom_widgets.MenuToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
         self.addToolBar(self.toolBar)
 
+        self.addToolBarBreak(Qt.TopToolBarArea)
+
+        self.zoomBar = zoom_bar.ZoomBar(self)
+        self.zoomBar.zoomFactorChanged.connect(lambda zoomFactor: self.tabs.currentWidget().setZoomFactor(zoomFactor))
+
         # Tab widget for tabbed browsing.
         self.tabs = QTabWidget(self)
 
@@ -143,6 +149,9 @@ class MainWindow(QMainWindow):
         self.tabs.currentChanged.connect(self.updateLocationText)
         self.tabs.currentChanged.connect(self.updateLocationIcon)
 
+        # Update zoom toolbar's zoom factor.
+        self.tabs.currentChanged.connect(lambda: self.zoomBar.setZoomFactor(self.tabs.currentWidget().zoomFactor()))
+
         # Allow closing of tabs.
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.removeTab)
@@ -150,6 +159,9 @@ class MainWindow(QMainWindow):
         self.statusBar = status_bar.StatusBar(self)
         self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
         self.addToolBarBreak(Qt.BottomToolBarArea)
+
+        self.statusBar.addToolBar(self.zoomBar)
+        self.zoomBar.hide()
 
         # Set tabs as central widget.
         self.setCentralWidget(self.tabs)
@@ -328,10 +340,17 @@ class MainWindow(QMainWindow):
 
         mainMenu.addSeparator()
 
-        zoomAction = QAction(QIcon(common.complete_icon("zoom-fit-best")), tr("Set &zoom factor..."), self)
-        zoomAction.setShortcuts(["Ctrl+0", "Ctrl+Shift+=","Ctrl+=", "Ctrl+-"])
-        zoomAction.triggered.connect(lambda: self.tabWidget().currentWidget().zoom())
-        mainMenu.addAction(zoomAction)
+        zoomInAction = self.zoomBar.zoomInAction
+        zoomInAction.setShortcuts(["Ctrl+=", "Ctrl++"])
+        mainMenu.addAction(zoomInAction)
+
+        zoomOutAction = self.zoomBar.zoomOutAction
+        zoomOutAction.setShortcut("Ctrl+-")
+        mainMenu.addAction(zoomOutAction)
+
+        zoomOriginalAction = self.zoomBar.zoomOriginalAction
+        zoomOriginalAction.setShortcut("Ctrl+0")
+        mainMenu.addAction(zoomOriginalAction)
 
         mainMenu.addSeparator()
 

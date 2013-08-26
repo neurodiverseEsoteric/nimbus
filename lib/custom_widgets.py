@@ -14,10 +14,10 @@ from translate import tr
 try:
     from PyQt4.QtCore import Qt, pyqtSignal, QPoint
     Signal = pyqtSignal
-    from PyQt4.QtGui import QAction, QToolButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QStyle
+    from PyQt4.QtGui import QAction, QToolButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
 except:
     from PySide.QtCore import Qt, Signal, QPoint
-    from PySide.QtGui import QAction, QToolButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QStyle
+    from PySide.QtGui import QAction, QToolButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
 
 # Blank widget to take up space.
 class Expander(QLabel):

@@ -612,6 +612,9 @@ class WebView(QWebView):
     def updateContentSettings(self):
         self.settings().setAttribute(self.settings().AutoLoadImages, settings.setting_to_bool("content/AutoLoadImages"))
         self.settings().setAttribute(self.settings().JavascriptEnabled, settings.setting_to_bool("content/JavascriptEnabled"))
+        self.settings().setAttribute(self.settings().JavascriptCanOpenWindows, settings.setting_to_bool("content/JavascriptCanOpenWindows"))
+        self.settings().setAttribute(self.settings().JavascriptCanCloseWindows, settings.setting_to_bool("content/JavascriptCanCloseWindows"))
+        self.settings().setAttribute(self.settings().JavascriptCanAccessClipboard, settings.setting_to_bool("content/JavascriptCanAccessClipboard"))
         self.settings().setAttribute(self.settings().JavaEnabled, settings.setting_to_bool("content/JavaEnabled"))
         self.settings().setAttribute(self.settings().PrintElementBackgrounds, settings.setting_to_bool("content/PrintElementBackgrounds"))
         self.settings().setAttribute(self.settings().FrameFlatteningEnabled, settings.setting_to_bool("content/FrameFlatteningEnabled"))
