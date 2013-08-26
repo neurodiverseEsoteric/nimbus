@@ -198,6 +198,10 @@
         <translation>Términos de &amp;licencia</translation>
     </message>
     <message>
+        <source>Manage Search Engines</source>
+        <translation>Manejar los buscadores</translation>
+    </message>
+    <message>
         <source>Maximum cache size:</source>
         <translation>Máximo tamaño de cache:</translation>
     </message>
@@ -259,7 +263,7 @@
     </message>
     <message>
         <source>Print e&amp;lement backgrounds</source>
-        <translation type="unfinished">Print e&amp;lement backgrounds</translation>
+        <translation>Imprimir los fondos de e&amp;lementos</translation>
     </message>
     <message>
         <source>Print Previe&amp;w</source>
@@ -275,15 +279,15 @@
     </message>
     <message>
         <source>&amp;Reload</source>
-        <translation>Actuali&amp;zar</translation>
+        <translation>&amp;Recargar</translation>
     </message>
     <message>
         <source>Remember &amp;history</source>
-        <translation type="unfinished">Remember &amp;history</translation>
+        <translation>Recordar historial</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
+        <translation>Eliminar</translation>
     </message>
     <message>
         <source>&amp;Reopen Tab</source>
@@ -318,6 +322,14 @@
         <translation>Pre&amp;ferencias...</translation>
     </message>
     <message>
+        <source>Set &amp;zoom factor...</source>
+        <translation>Enf&amp;ocar...</translation>
+    </message>
+    <message>
+        <source>&amp;Thanks</source>
+        <translation>&amp;Gracias</translation>
+    </message>
+    <message>
         <source>This website would like to track your location.</source>
         <translation type="unfinished">This website would like to track your location.</translation>
     </message>
@@ -328,6 +340,10 @@
     <message>
         <source>Type:</source>
         <translation>Tipo:</translation>
+    </message>
+    <message>
+        <source>&amp;Update extensions</source>
+        <translation>Act&amp;ualizar los complementos</translation>
     </message>
     <message>
         <source>Use online content &amp;viewers to load unsupported content</source>

@@ -198,6 +198,10 @@
         <translation>&amp;License</translation>
     </message>
     <message>
+        <source>Manage Search Engines</source>
+        <translation>Manage Search Engines</translation>
+    </message>
+    <message>
         <source>Maximum cache size:</source>
         <translation>Maximum cache size:</translation>
     </message>
@@ -318,6 +322,14 @@
         <translation>&amp;Settings...</translation>
     </message>
     <message>
+        <source>Set &amp;zoom factor...</source>
+        <translation>Set &amp;zoom factor...</translation>
+    </message>
+    <message>
+        <source>&amp;Thanks</source>
+        <translation>&amp;Thanks</translation>
+    </message>
+    <message>
         <source>This website would like to track your location.</source>
         <translation>This website would like to track your location.</translation>
     </message>
@@ -328,6 +340,10 @@
     <message>
         <source>Type:</source>
         <translation>Type:</translation>
+    </message>
+    <message>
+        <source>&amp;Update extensions</source>
+        <translation>&amp;Update extensions</translation>
     </message>
     <message>
         <source>Use online content &amp;viewers to load unsupported content</source>
