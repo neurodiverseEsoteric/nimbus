@@ -65,13 +65,13 @@ except:
 # We give PyQt4 priority because it supports Qt5.
 try:
     from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QIODevice, QTimer
-    from PyQt4.QtGui import QApplication, QDockWidget, QKeySequence, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon, QPushButton
+    from PyQt4.QtGui import QApplication, QDockWidget, QKeySequence, QMessageBox, QInputDialog, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon, QPushButton
     from PyQt4.QtNetwork import QNetworkRequest
     from PyQt4.QtWebKit import QWebPage
     Signal = pyqtSignal
 except:
     from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QIODevice, QTimer
-    from PySide.QtGui import QApplication, QDockWidget, QKeySequence, QMessageBox, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon, QPushButton
+    from PySide.QtGui import QApplication, QDockWidget, QKeySequence, QMessageBox, QInputDialog, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon, QPushButton
     from PySide.QtNetwork import QNetworkRequest
     from PySide.QtWebKit import QWebPage
 
