@@ -267,7 +267,7 @@
     </message>
     <message>
         <source>Print Previe&amp;w</source>
-        <translation>Pre&amp;visualización de la impresión</translation>
+        <translation>&amp;Vista preliminar</translation>
     </message>
     <message>
         <source>Quit</source>
@@ -335,7 +335,7 @@
     </message>
     <message>
         <source>Toggle Fullscreen</source>
-        <translation type="unfinished">Toggle Fullscreen</translation>
+        <translation>Pantalla completa</translation>
     </message>
     <message>
         <source>Type:</source>
