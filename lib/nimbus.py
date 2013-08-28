@@ -1006,7 +1006,7 @@ def main():
     # Build the browser's default user agent.
     # This should be improved as well.
     webPage = QWebPage()
-    nimbus_ua_sub = "Qt/" + common.qt_version + " python Nimbus/" + common.app_version + " QupZilla/1.4.3"
+    nimbus_ua_sub = "Qt/" + common.qt_version + " Nimbus/" + common.app_version + " QupZilla/1.4.3"
     ua = webPage.userAgentForUrl(QUrl.fromUserInput("google.com"))
     if common.qt_version.startswith("4") or not "python" in ua:
         common.defaultUserAgent = ua.replace("Qt/" + common.qt_version, nimbus_ua_sub)
