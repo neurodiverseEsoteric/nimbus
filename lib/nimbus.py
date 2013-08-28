@@ -31,10 +31,10 @@ from translate import tr
 import custom_widgets
 import clear_history_dialog
 import settings
-if not os.path.exists(settings.extensions_folder):
+if not os.path.isdir(settings.extensions_folder) or not os.path.isfile(settings.startpage):
     import shutil
 import status_bar
-import zoom_bar
+#import zoom_bar
 import extension_server
 import settings_dialog
 import data
@@ -129,8 +129,8 @@ class MainWindow(QMainWindow):
 
         self.addToolBarBreak(Qt.TopToolBarArea)
 
-        self.zoomBar = zoom_bar.ZoomBar(self)
-        self.zoomBar.zoomFactorChanged.connect(lambda zoomFactor: self.tabs.currentWidget().setZoomFactor(zoomFactor))
+        #self.zoomBar = zoom_bar.ZoomBar(self)
+        #self.zoomBar.zoomFactorChanged.connect(lambda zoomFactor: self.tabs.currentWidget().setZoomFactor(zoomFactor))
 
         # Tab widget for tabbed browsing.
         self.tabs = QTabWidget(self)
@@ -150,7 +150,7 @@ class MainWindow(QMainWindow):
         self.tabs.currentChanged.connect(self.updateLocationIcon)
 
         # Update zoom toolbar's zoom factor.
-        self.tabs.currentChanged.connect(lambda: self.zoomBar.setZoomFactor(self.tabs.currentWidget().zoomFactor()))
+        #self.tabs.currentChanged.connect(lambda: self.zoomBar.setZoomFactor(self.tabs.currentWidget().zoomFactor()))
 
         # Allow closing of tabs.
         self.tabs.setTabsClosable(True)
@@ -160,8 +160,8 @@ class MainWindow(QMainWindow):
         self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
         self.addToolBarBreak(Qt.BottomToolBarArea)
 
-        self.statusBar.addToolBar(self.zoomBar)
-        self.zoomBar.hide()
+        #self.statusBar.addToolBar(self.zoomBar)
+        #self.zoomBar.hide()
 
         # Set tabs as central widget.
         self.setCentralWidget(self.tabs)
@@ -340,15 +340,18 @@ class MainWindow(QMainWindow):
 
         mainMenu.addSeparator()
 
-        zoomInAction = self.zoomBar.zoomInAction
+        zoomInAction = QAction(common.complete_icon("zoom-in"), tr("Zoom In"), self)
+        zoomInAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() + 0.1))
         zoomInAction.setShortcuts(["Ctrl+=", "Ctrl++"])
         mainMenu.addAction(zoomInAction)
 
-        zoomOutAction = self.zoomBar.zoomOutAction
+        zoomOutAction = QAction(common.complete_icon("zoom-out"), tr("Zoom Out"), self)
+        zoomOutAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() - 0.1))
         zoomOutAction.setShortcut("Ctrl+-")
         mainMenu.addAction(zoomOutAction)
 
-        zoomOriginalAction = self.zoomBar.zoomOriginalAction
+        zoomOriginalAction = QAction(common.complete_icon("zoom-original"), tr("Reset Zoom"), self)
+        zoomOriginalAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(1.0))
         zoomOriginalAction.setShortcut("Ctrl+0")
         mainMenu.addAction(zoomOriginalAction)
 
@@ -495,7 +498,7 @@ class MainWindow(QMainWindow):
         self.sideBars[name]["sideBar"].setMaximumWidth(320)
         self.sideBars[name]["sideBar"].setContextMenuPolicy(Qt.CustomContextMenu)
         self.sideBars[name]["sideBar"].setFeatures(QDockWidget.DockWidgetClosable)
-        self.sideBars[name]["sideBar"].webView = WebView()
+        self.sideBars[name]["sideBar"].webView = WebView(self.sideBars[name]["sideBar"])
         self.sideBars[name]["sideBar"].webView.windowCreated.connect(self.addTab)
         self.sideBars[name]["sideBar"].webView.setUserAgent(ua)
         self.sideBars[name]["sideBar"].webView.load(QUrl(url))
@@ -581,7 +584,7 @@ self.origY + ev.globalY() - self.mouseY)
                     script = copy.copy(f.read())
                     f.close()
                     shortcut = None
-                    if os.path.exists(shortcut_path):
+                    if os.path.isfile(shortcut_path):
                         f = open(shortcut_path, "r")
                         shortcut = copy.copy(f.read().replace("\n", ""))
                         f.close()
@@ -1046,8 +1049,10 @@ def main():
     # Load adblock rules.
     filtering.adblock_filter_loader.start()
 
-    if not os.path.exists(settings.extensions_folder):
+    if not os.path.isdir(settings.extensions_folder):
         shutil.copytree(common.extensions_folder, settings.extensions_folder)
+    if not os.path.isfile(settings.startpage):
+        shutil.copy2(common.startpage, settings.startpage)
 
     settings.reload_extensions()
     settings.reload_userscripts()

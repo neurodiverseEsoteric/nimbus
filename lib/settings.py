@@ -26,7 +26,7 @@ network_cache_folder = os.path.join(settings_folder, "Cache")
 offline_cache_folder = os.path.join(settings_folder, "OfflineCache")
 
 # Start page.
-startpage = os.path.join(common.app_folder, "start.html")
+startpage = os.path.join(settings_folder, "start.html")
 
 # Default settings.
 default_settings = {"proxy/Type": "None",

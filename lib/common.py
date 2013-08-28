@@ -50,6 +50,9 @@ def cssToBase64(css):
 # Folder that Nimbus is stored in.
 app_folder = os.path.dirname(os.path.realpath(__file__)) if sys.executable != os.path.dirname(__file__) else os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
+# Start page
+startpage = os.path.join(app_folder, "start.html")
+
 # Extensions folder
 extensions_folder = os.path.join(app_folder, "extensions")
 
