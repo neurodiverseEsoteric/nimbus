@@ -1033,7 +1033,7 @@ def main():
 
     # Set up settings dialog.
     settings.settingsDialog = WebView(incognito=True, parent=None)
-    settings.settingsDialog.resize(560, 480)
+    settings.settingsDialog.resize(600, 480)
     settings.settingsDialog.setWindowIcon(common.app_icon)
     settings.settingsDialog.setWindowFlags(Qt.Dialog)
     settings.settingsDialog.load(QUrl("nimbus://settings"))

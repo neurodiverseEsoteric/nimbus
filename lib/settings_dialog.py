@@ -21,10 +21,10 @@ import clear_history_dialog
 from translate import tr
 try:
     from PyQt4.QtCore import Qt, QUrl
-    from PyQt4.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+    from PyQt4.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QGroupBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
 except:
     from PySide.QtCore import Qt, QUrl
-    from PySide.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+    from PySide.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QGroupBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
 
 # Basic settings panel.
 class SettingsPanel(QWidget):
@@ -95,41 +95,80 @@ class ContentSettingsPanel(SettingsPanel):
     def __init__(self, parent=None):
         super(ContentSettingsPanel, self).__init__(parent)
 
+        backgroundsRow = custom_widgets.Row(self)
+        self.layout().addWidget(backgroundsRow)
+
         # Checkbox to toggle auto loading of images.
         self.imagesToggle = QCheckBox(tr("Automatically load &images"), self)
-        self.layout().addWidget(self.imagesToggle)
+        backgroundsRow.addWidget(self.imagesToggle)
 
         # Checkbox to toggle element backgrounds.
         self.elementBackgroundsToggle = QCheckBox(tr("Print e&lement backgrounds"), self)
-        self.layout().addWidget(self.elementBackgroundsToggle)
+        backgroundsRow.addWidget(self.elementBackgroundsToggle)
 
-        # Checkbox to toggle Javascript.
+        # JavaScript button group.
+        self.javascriptGroupBox = QGroupBox(tr("JavaScript Options"), self)
+        self.layout().addWidget(self.javascriptGroupBox)
+        self.javascriptGroupBox.setLayout(QVBoxLayout(self.javascriptGroupBox))
+
+        javaScriptRow1 = custom_widgets.Row(self.javascriptGroupBox)
+        self.javascriptGroupBox.layout().addWidget(javaScriptRow1)
+        javaScriptRow2 = custom_widgets.Row(self.javascriptGroupBox)
+        self.javascriptGroupBox.layout().addWidget(javaScriptRow2)
+
+        # Checkbox to toggle JavaScript.
         self.javascriptToggle = QCheckBox(tr("Enable Java&Script"), self)
-        self.layout().addWidget(self.javascriptToggle)
+        javaScriptRow1.addWidget(self.javascriptToggle)
+
+        # Checkbox to allow JavaScript to open windows.
+        self.javascriptCanOpenWindowsToggle = QCheckBox(tr("Allow JavaScript to open windows"), self)
+        javaScriptRow2.addWidget(self.javascriptCanOpenWindowsToggle)
+
+        # Checkbox to allow JavaScript to open windows.
+        self.javascriptCanCloseWindowsToggle = QCheckBox(tr("Allow JavaScript to close windows"), self)
+        javaScriptRow1.addWidget(self.javascriptCanCloseWindowsToggle)
+
+        # Checkbox to allow JavaScript to access clipboard.
+        self.javascriptCanAccessClipboardToggle = QCheckBox(tr("Allow JavaScript to access clipboard"), self)
+        javaScriptRow2.addWidget(self.javascriptCanAccessClipboardToggle)
+
+        self.pluginsGroupBox = QGroupBox(tr("Plugin Options"), self)
+        self.layout().addWidget(self.pluginsGroupBox)
+        self.pluginsGroupBox.setLayout(QVBoxLayout(self.pluginsGroupBox))
+
+        pluginsRow = custom_widgets.Row(self)
+        self.pluginsGroupBox.layout().addWidget(pluginsRow)
 
         # Checkbox to toggle Java.
         self.javaToggle = QCheckBox(tr("Enable &Java"), self)
-        self.layout().addWidget(self.javaToggle)
+        pluginsRow.addWidget(self.javaToggle)
 
         # Checkbox to toggle plugins.
         self.pluginsToggle = QCheckBox(tr("Enable &plugins"), self)
-        self.layout().addWidget(self.pluginsToggle)
+        pluginsRow.addWidget(self.pluginsToggle)
 
         # Checkbox to toggle handling of HTML5 audio and video using plugins.
         self.mediaToggle = QCheckBox(tr("Use plugins to handle &HTML5 audio and video"), self)
-        self.layout().addWidget(self.mediaToggle)
-
-        # Checkbox to toggle ad blocking.
-        self.adblockToggle = QCheckBox(tr("Enable ad &blocking"), self)
-        self.layout().addWidget(self.adblockToggle)
-
-        # Checkbox to toggle hosts blocking.
-        self.hostFilterToggle = QCheckBox(tr("Enable host &filtering"), self)
-        self.layout().addWidget(self.hostFilterToggle)
+        self.pluginsGroupBox.layout().addWidget(self.mediaToggle)
 
         # Checkbox to toggle using online content viewers.
         self.contentViewersToggle = QCheckBox(tr("Use online content &viewers to load unsupported content"), self)
-        self.layout().addWidget(self.contentViewersToggle)
+        self.pluginsGroupBox.layout().addWidget(self.contentViewersToggle)
+
+        self.contentFilteringGroupBox = QGroupBox(tr("Content Filtering Options"), self)
+        self.layout().addWidget(self.contentFilteringGroupBox)
+        self.contentFilteringGroupBox.setLayout(QVBoxLayout(self.contentFilteringGroupBox))
+
+        contentFilteringRow = custom_widgets.Row(self.contentFilteringGroupBox)
+        self.contentFilteringGroupBox.layout().addWidget(contentFilteringRow)
+
+        # Checkbox to toggle ad blocking.
+        self.adblockToggle = QCheckBox(tr("Enable ad &blocking"), self)
+        contentFilteringRow.layout().addWidget(self.adblockToggle)
+
+        # Checkbox to toggle hosts blocking.
+        self.hostFilterToggle = QCheckBox(tr("Enable host &filtering"), self)
+        contentFilteringRow.layout().addWidget(self.hostFilterToggle)
 
         # Checkbox to toggle tiled backing.
         self.tiledBackingStoreToggle = QCheckBox(tr("Enable tiled backing store"), self)
@@ -147,6 +186,9 @@ class ContentSettingsPanel(SettingsPanel):
     def loadSettings(self):
         self.imagesToggle.setChecked(settings.setting_to_bool("content/AutoLoadImages"))
         self.javascriptToggle.setChecked(settings.setting_to_bool("content/JavascriptEnabled"))
+        self.javascriptCanOpenWindowsToggle.setChecked(settings.setting_to_bool("content/JavascriptCanOpenWindows"))
+        self.javascriptCanCloseWindowsToggle.setChecked(settings.setting_to_bool("content/JavascriptCanCloseWindows"))
+        self.javascriptCanAccessClipboardToggle.setChecked(settings.setting_to_bool("content/JavascriptCanAccessClipboard"))
         self.javaToggle.setChecked(settings.setting_to_bool("content/JavaEnabled"))
         self.elementBackgroundsToggle.setChecked(settings.setting_to_bool("content/PrintElementBackgrounds"))
         self.pluginsToggle.setChecked(settings.setting_to_bool("content/PluginsEnabled"))
@@ -161,6 +203,9 @@ class ContentSettingsPanel(SettingsPanel):
     def saveSettings(self):
         settings.settings.setValue("content/AutoLoadImages", self.imagesToggle.isChecked())
         settings.settings.setValue("content/JavascriptEnabled", self.javascriptToggle.isChecked())
+        settings.settings.setValue("content/JavascriptCanOpenWindows", self.javascriptCanOpenWindowsToggle.isChecked())
+        settings.settings.setValue("content/JavascriptCanCloseWindows", self.javascriptCanCloseWindowsToggle.isChecked())
+        settings.settings.setValue("content/JavascriptCanAccessClipboard", self.javascriptCanAccessClipboardToggle.isChecked())
         settings.settings.setValue("content/JavaEnabled", self.javaToggle.isChecked())
         settings.settings.setValue("content/PrintElementBackgrounds   ", self.elementBackgroundsToggle.isChecked())
         settings.settings.setValue("content/PluginsEnabled", self.pluginsToggle.isChecked())
