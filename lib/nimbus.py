@@ -239,9 +239,9 @@ class MainWindow(QMainWindow):
         self.forwardHistoryMenu.aboutToShow.connect(self.aboutToShowForwardHistoryMenu)
         self.forwardAction.setMenu(self.forwardHistoryMenu)
 
-        self.upAction = QAction(common.complete_icon("go-up"))
+        self.upAction = QAction(common.complete_icon("go-up"), tr("Go Up"), self)
         self.upAction.setShortcut("Alt+Up")
-        #self.upAction.triggered.connect(self.up)
+        self.upAction.triggered.connect(self.up)
         self.toolBar.addAction(self.upAction)
         self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.MenuButtonPopup)
 
@@ -663,6 +663,10 @@ self.origY + ev.globalY() - self.mouseY)
                     traceback.print_exc()
         except:
             traceback.print_exc()
+
+    def up(self):
+        tab = self.tabWidget().currentWidget()
+        tab.load(QUrl.fromUserInput(os.path.split(tab.url().toString())[0]))
 
     def loadForwardHistoryItem(self, index):
         history = self.tabWidget().currentWidget().history()
