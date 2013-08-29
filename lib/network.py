@@ -6,6 +6,7 @@
 # It also contains a function to detect whether the browser is online or not.
 
 import os.path
+import subprocess
 import settings
 import filtering
 import settings
@@ -83,10 +84,11 @@ class NetworkAccessManager(QNetworkAccessManager):
                 auth.setPassword(password[0])
     def createRequest(self, op, request, device=None):
         url = request.url()
-        x = filtering.adblock_filter.match(url.toString())
+        urlString = url.toString()
+        x = filtering.adblock_filter.match(urlString)
         y = url.authority() in filtering.host_rules if settings.setting_to_bool("content/HostFilterEnabled") and url.authority() != "" else False
         if url.scheme() == "file" and os.path.isdir(os.path.abspath(url.path())):
-            return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" data=\"" + url.toString() + "\" classid=\"directoryView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
+            return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" data=\"" + urlString + "\" classid=\"directoryView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
         elif url.scheme() == "file" and not os.path.isfile(os.path.abspath(url.path())):
             return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>Settings</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
         if x != None or y:
