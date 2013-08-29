@@ -5,7 +5,8 @@
 # such as a cookie jar, disk cache, and QNetworkAccessManager.
 # It also contains a function to detect whether the browser is online or not.
 
-import os.path
+import sys
+import os
 import subprocess
 import settings
 import filtering
@@ -66,6 +67,19 @@ class NetworkReply(QNetworkReply):
 def errorPage(title="Problem loading page", heading="Whoops...", error="Nimbus could not load the requested page.", suggestions=["Try reloading the page.", "Make sure you're connected to the Internet. Once you're connected, try loading this page again.", "Check for misspellings in the URL (e.g. <b>ww.google.com</b> instead of <b>www.google.com</b>).", "The server may be experiencing some downtime. Wait for a while before trying again.", "If your computer or network is protected by a firewall, make sure that Nimbus is permitted ."]):
     return "<!DOCTYPE html><html><title>%(title)s</title><body><h1>%(heading)s</h1><p>%(error)s</p><ul>%(suggestions)s</ul></body></html>" % {"title": tr(title), "heading": tr(heading), "error": tr(error), "suggestions": "".join(["<li>" + tr(suggestion) + "</li>" for suggestion in suggestions])}
 
+directoryView = """<!DOCTYPE html>
+<html>
+    <head>
+        <title>%(title)s</title>
+    </head>
+    <body>
+        <h1 style="margin-bottom: 0;">%(heading)s</h1>
+        <hr/>
+        %(links)s
+    </body>
+</html>
+"""
+
 # Custom NetworkAccessManager class with support for ad-blocking.
 class NetworkAccessManager(QNetworkAccessManager):
     diskCache = diskCache
@@ -88,7 +102,8 @@ class NetworkAccessManager(QNetworkAccessManager):
         x = filtering.adblock_filter.match(urlString)
         y = url.authority() in filtering.host_rules if settings.setting_to_bool("content/HostFilterEnabled") and url.authority() != "" else False
         if url.scheme() == "file" and os.path.isdir(os.path.abspath(url.path())):
-            return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>" + url.path() + "</title></head><body><object type=\"application/x-qt-plugin\" data=\"" + urlString + "\" classid=\"directoryView\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
+            html = directoryView % {"title": urlString, "heading": url.path(), "links": "".join(["<a href=\"%s\">%s</a><br/>" % (QUrl.fromUserInput(os.path.join(urlString, path)).toString(), path,) for path in [".."] + sorted(os.listdir(os.path.abspath(url.path())))])}
+            return NetworkReply(self, url, self.GetOperation, html)
         elif url.scheme() == "file" and not os.path.isfile(os.path.abspath(url.path())):
             return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>Settings</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
         if x != None or y:

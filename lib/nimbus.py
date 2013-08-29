@@ -239,6 +239,12 @@ class MainWindow(QMainWindow):
         self.forwardHistoryMenu.aboutToShow.connect(self.aboutToShowForwardHistoryMenu)
         self.forwardAction.setMenu(self.forwardHistoryMenu)
 
+        self.upAction = QAction(common.complete_icon("go-up"))
+        self.upAction.setShortcut("Alt+Up")
+        #self.upAction.triggered.connect(self.up)
+        self.toolBar.addAction(self.upAction)
+        self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.MenuButtonPopup)
+
         self.stopAction = self.actionsPage.action(QWebPage.Stop)
         self.stopAction.setShortcut("Esc")
         self.stopAction.triggered.connect(self.stop)

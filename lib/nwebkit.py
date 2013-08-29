@@ -296,22 +296,6 @@ class WebPage(QWebPage):
         if classid.lower() == "settingsdialog":
             sdialog = settings_dialog.SettingsDialog(self.view())
             return sdialog
-        elif classid.lower() == "directoryview":
-            directoryview = QListWidget(self.view())
-            try:
-                if 1:
-                    u = url.path()
-                    u2 = QUrl(u).path()
-                    directoryview.addItem(os.path.dirname(u2))
-                    if os.path.isdir(u2):
-                        l = os.listdir(u2)
-                        l.sort()
-                        for fname in l:
-                            directoryview.addItem(os.path.join(u2, fname))
-                    directoryview.itemDoubleClicked.connect(lambda item: self.mainFrame().load(QUrl(item.text())))
-                    directoryview.itemActivated.connect(lambda item: self.mainFrame().load(QUrl(item.text())))
-            except: pass
-            else: return directoryview
         else:
             for name, widgetclass in self.plugins:
                 if classid.lower() == name:
