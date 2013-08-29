@@ -673,8 +673,7 @@ self.origY + ev.globalY() - self.mouseY)
         history.goToItem(history.forwardItems(10)[index])
 
     def up(self):
-        tab = self.tabWidget().currentWidget()
-        tab.load(QUrl.fromUserInput(os.path.split(tab.url().toString())[0]))
+        self.tabWidget().currentWidget().up()
 
     def aboutToShowUpMenu(self):
         self.upMenu.clear()
