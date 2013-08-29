@@ -92,7 +92,7 @@ class NetworkAccessManager(QNetworkAccessManager):
         elif url.scheme() == "file" and not os.path.isfile(os.path.abspath(url.path())):
             return NetworkReply(self, url, self.GetOperation, "<!DOCTYPE html><html><head><title>Settings</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
         if x != None or y:
-            return QNetworkAccessManager.createRequest(self, self.GetOperation, QNetworkRequest(QUrl("http://127.0.0.1:8133/adblock/blank.png")))
+            return QNetworkAccessManager.createRequest(self, self.GetOperation, QNetworkRequest(QUrl("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QgdBBMTEi/JQgAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAMSURBVAjXY/j//z8ABf4C/tzMWecAAAAASUVORK5CYII=")))
         else:
             return QNetworkAccessManager.createRequest(self, op, request, device)
 
