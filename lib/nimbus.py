@@ -245,6 +245,10 @@ class MainWindow(QMainWindow):
         self.toolBar.addAction(self.upAction)
         self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.MenuButtonPopup)
 
+        self.upMenu = QMenu(self)
+        self.upMenu.aboutToShow.connect(self.aboutToShowUpMenu)
+        self.upAction.setMenu(self.upMenu)
+
         self.stopAction = self.actionsPage.action(QWebPage.Stop)
         self.stopAction.setShortcut("Esc")
         self.stopAction.triggered.connect(self.stop)
@@ -664,13 +668,28 @@ self.origY + ev.globalY() - self.mouseY)
         except:
             traceback.print_exc()
 
+    def loadForwardHistoryItem(self, index):
+        history = self.tabWidget().currentWidget().history()
+        history.goToItem(history.forwardItems(10)[index])
+
     def up(self):
         tab = self.tabWidget().currentWidget()
         tab.load(QUrl.fromUserInput(os.path.split(tab.url().toString())[0]))
 
-    def loadForwardHistoryItem(self, index):
-        history = self.tabWidget().currentWidget().history()
-        history.goToItem(history.forwardItems(10)[index])
+    def aboutToShowUpMenu(self):
+        self.upMenu.clear()
+        tab = self.tabWidget().currentWidget()
+        components = tab.url().toString().split("/")
+        for component in range(0, len(components)):
+            if components[component] != "":
+                try:
+                    x = "/".join(components[:component])
+                    if x != "":
+                        action = custom_widgets.LinkAction(QUrl.fromUserInput(x), x, self)
+                        action.triggered2.connect(self.tabWidget().currentWidget().load)
+                        self.upMenu.addAction(action)
+                except:
+                    traceback.print_exc()
 
     def reload(self):
         self.tabWidget().currentWidget().reload()

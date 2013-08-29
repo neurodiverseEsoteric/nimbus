@@ -12,11 +12,11 @@ from common import app_folder
 from translate import tr
 
 try:
-    from PyQt4.QtCore import Qt, pyqtSignal, QPoint
+    from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl
     Signal = pyqtSignal
     from PyQt4.QtGui import QAction, QToolButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
 except:
-    from PySide.QtCore import Qt, Signal, QPoint
+    from PySide.QtCore import Qt, Signal, QPoint, QUrl
     from PySide.QtGui import QAction, QToolButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
 
 # Blank widget to take up space.
@@ -126,6 +126,14 @@ class LocationBar(QComboBox):
 
     def setIcon(self, icon):
         self.icon.setIcon(icon)
+
+# Link action for dropdown menus.
+class LinkAction(QAction):
+    triggered2 = Signal(QUrl)
+    def __init__(self, url, *args, **kwargs):
+        super(LinkAction, self).__init__(*args, **kwargs)
+        self.url = url
+        self.triggered.connect(lambda: self.triggered2.emit(self.url))
 
 # Web history action for dropdown menus.
 class WebHistoryAction(QAction):
