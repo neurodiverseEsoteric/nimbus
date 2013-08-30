@@ -240,10 +240,14 @@ class MainWindow(QMainWindow):
         self.forwardAction.setMenu(self.forwardHistoryMenu)
 
         self.upAction = QAction(common.complete_icon("go-up"), tr("Go Up"), self)
-        self.upAction.setShortcut("Alt+Up")
         self.upAction.triggered.connect(self.up)
         self.toolBar.addAction(self.upAction)
         self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.MenuButtonPopup)
+
+        self.upAction2 = QAction(self)
+        self.upAction2.setShortcut("Alt+Up")
+        self.upAction2.triggered.connect(self.up)
+        self.addAction(self.upAction2)
 
         self.upMenu = QMenu(self)
         self.upMenu.aboutToShow.connect(self.aboutToShowUpMenu)
@@ -254,23 +258,35 @@ class MainWindow(QMainWindow):
         self.toolBar.addAction(self.nextAction)
 
         self.stopAction = self.actionsPage.action(QWebPage.Stop)
-        self.stopAction.setShortcut("Esc")
         self.stopAction.triggered.connect(self.stop)
         self.toolBar.addAction(self.stopAction)
 
+        self.stopAction2 = QAction(self)
+        self.stopAction2.setShortcut("Esc")
+        self.stopAction2.triggered.connect(self.stop)
+        self.addAction(self.stopAction2)
+
         self.reloadAction = self.actionsPage.action(QWebPage.Reload)
-        self.reloadAction.setShortcuts(["F5", "Ctrl+R"])
         self.reloadAction.triggered.connect(self.reload)
         self.toolBar.addAction(self.reloadAction)
 
+        self.reloadAction2 = QAction(self)
+        self.reloadAction2.setShortcuts(["F5", "Ctrl+R"])
+        self.reloadAction2.triggered.connect(self.reload)
+        self.addAction(self.reloadAction2)
+
         # Go home button.
         self.homeAction = QAction(common.complete_icon("go-home"), tr("Go Home"), self)
-        self.homeAction.setShortcut("Alt+Home")
         self.homeAction.triggered.connect(self.goHome)
         self.toolBar.addAction(self.homeAction)
 
+        self.homeAction2 = QAction(self)
+        self.homeAction2.setShortcut("Alt+Home")
+        self.homeAction2.triggered.connect(self.goHome)
+        self.addAction(self.homeAction2)
+
         # Start timer to forcibly enable and disable navigation actions.
-        self.toggleActionsTimer.start(8)
+        self.toggleActionsTimer.start(4)
 
         # Location bar. Note that this is a combo box.
         # At some point, I should make a custom location bar
@@ -629,9 +645,14 @@ self.origY + ev.globalY() - self.mouseY)
 
             # This is a workaround so that hitting Esc will reset the location
             # bar text.
+            self.stopAction.setVisible(self.tabWidget().currentWidget().pageAction(QWebPage.Stop).isEnabled())
             self.stopAction.setEnabled(True)
 
+            self.reloadAction.setVisible(self.tabWidget().currentWidget().pageAction(QWebPage.Reload).isEnabled())
             self.reloadAction.setEnabled(True)
+
+            self.homeAction.setVisible(settings.setting_to_bool("general/HomeButtonVisible"))
+            self.upAction.setVisible(settings.setting_to_bool("general/UpButtonVisible"))
         except:
             self.backAction.setEnabled(False)
             self.forwardAction.setEnabled(False)

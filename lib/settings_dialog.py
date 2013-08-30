@@ -71,6 +71,12 @@ class GeneralSettingsPanel(SettingsPanel):
         self.reopenableWindowCount.setMaximum(9999)
         self.layout().addWidget(self.reopenableWindowCountRow)
 
+        self.homeButtonVisibleToggle = QCheckBox(tr("Show &home button"), self)
+        self.layout().addWidget(self.homeButtonVisibleToggle)
+
+        self.upButtonVisibleToggle = QCheckBox(tr("Show &up button"), self)
+        self.layout().addWidget(self.upButtonVisibleToggle)
+
         self.layout().addWidget(custom_widgets.Expander(self))
 
     def loadSettings(self):
@@ -80,6 +86,8 @@ class GeneralSettingsPanel(SettingsPanel):
         self.settingsTabToggle.setChecked(settings.setting_to_bool("general/OpenSettingsInTab"))
         self.reopenableTabCount.setValue(settings.setting_to_int("general/ReopenableTabCount"))
         self.reopenableWindowCount.setValue(settings.setting_to_int("general/ReopenableWindowCount"))
+        self.homeButtonVisibleToggle.setChecked(settings.setting_to_bool("general/HomeButtonVisible"))
+        self.upButtonVisibleToggle.setChecked(settings.setting_to_bool("general/UpButtonVisible"))
 
     def saveSettings(self):
         settings.settings.setValue("general/Homepage", self.homepageEntry.text())
@@ -88,6 +96,8 @@ class GeneralSettingsPanel(SettingsPanel):
         settings.settings.setValue("general/OpenSettingsInTab", self.settingsTabToggle.isChecked())
         settings.settings.setValue("general/ReopenableWindowCount", self.reopenableWindowCount.text())
         settings.settings.setValue("general/ReopenableTabCount", self.reopenableTabCount.text())
+        settings.settings.setValue("general/HomeButtonVisible", self.homeButtonVisibleToggle.isChecked())
+        settings.settings.setValue("general/UpButtonVisible", self.upButtonVisibleToggle.isChecked())
         settings.settings.sync()
 
 # Content settings panel

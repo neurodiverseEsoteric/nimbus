@@ -58,6 +58,8 @@ default_settings = {"proxy/Type": "None",
                     "data/RememberHistory": True,
                     "data/MaximumCacheSize": 50,
                     "general/OpenSettingsInTab": False,
+                    "general/UpButtonVisible": False,
+                    "general/HomeButtonVisible": False,
                     "extensions/Whitelist": [],
                     "general/ReopenableTabCount": 10,
                     "general/ReopenableWindowCount": 10}
