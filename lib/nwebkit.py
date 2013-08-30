@@ -468,7 +468,7 @@ class WebView(QWebView):
                                 pass
                     except:
                         pass
-        for rstring in ("start=", "offset=", "="):
+        for rstring in ("start=", "offset=", "page=", "="):
             for anchor in anchors:
                 for attribute in anchor.attributeNames():
                     if re.search("%s[\d*]" % (rstring,), anchor.attribute(attribute).lower()):
