@@ -617,7 +617,15 @@ self.origY + ev.globalY() - self.mouseY)
     def toggleActions(self):
         try:
             self.backAction.setEnabled(self.tabWidget().currentWidget().pageAction(QWebPage.Back).isEnabled())
-            self.forwardAction.setEnabled(self.tabWidget().currentWidget().pageAction(QWebPage.Forward).isEnabled())
+            forwardEnabled = self.tabWidget().currentWidget().pageAction(QWebPage.Forward).isEnabled()
+            self.forwardAction.setEnabled(forwardEnabled)
+
+            if not forwardEnabled:
+                self.forwardAction.setShortcut("")
+                self.nextAction.setShortcut("Alt+Right")
+            else:
+                self.forwardAction.setShortcut("Alt+Right")
+                self.nextAction.setShortcut("")
 
             # This is a workaround so that hitting Esc will reset the location
             # bar text.
