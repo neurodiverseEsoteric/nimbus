@@ -352,6 +352,9 @@ class WebView(QWebView):
         # This is used to store the current page loading progress.
         self._loadProgress = 0
 
+        # Stores next page.
+        self._canGoNext = False
+
         # This stores the link last hovered over.
         self._hoveredLink = ""
 
@@ -415,6 +418,7 @@ class WebView(QWebView):
         # This is a little hack to work around it.
         self.loadStarted.connect(self.resetContentType)
         self.loadFinished.connect(self.replaceAVTags)
+        self.loadFinished.connect(self.setCanGoNext)
         self.loadFinished.connect(self.savePageToCache)
 
         # Check if content viewer.
@@ -431,14 +435,14 @@ class WebView(QWebView):
         components = self.url().toString().split("/")
         self.load(QUrl.fromUserInput("/".join(components[:(-1 if components[-1] != "" else -2)])))
 
-    def next(self):
+    def setCanGoNext(self):
         anchors = self.page().mainFrame().findAllElements("a")
         for anchor in anchors:
             for attribute in anchor.attributeNames():
                 try:
                     if attribute == "rel" and anchor.attribute(attribute).lower() == "next":
                         try:
-                            self.page().mainFrame().evaluateJavaScript("window.location.href = \"%s\";" % (anchor.attribute("href"),))
+                            self._canGoNext = anchor.attribute("href")
                             return
                         except:
                             pass
@@ -464,7 +468,7 @@ class WebView(QWebView):
                             else: break
                         if thatPageNumber > thisPageNumber:
                             try:
-                                self.page().mainFrame().evaluateJavaScript("window.location.href = \"%s\";" % (anchor.attribute("href"),))
+                                self._canGoNext = anchor.attribute("href")
                                 return
                             except:
                                 pass
@@ -475,10 +479,19 @@ class WebView(QWebView):
                 for attribute in anchor.attributeNames():
                     if re.search("%s[\d*]" % (rstring,), anchor.attribute(attribute).lower()):
                         try:
-                            self.page().mainFrame().evaluateJavaScript("window.location.href = \"%s\";" % (anchor.attribute("href"),))
+                            self._canGoNext = anchor.attribute("href")
                             return
                         except:
                             pass
+        self._canGoNext = False
+
+    def canGoNext(self):
+        return self._canGoNext
+
+    def next(self):
+        href = self.canGoNext()
+        if href:
+            self.page().mainFrame().evaluateJavaScript("window.location.href = \"%s\";" % (href,))
 
     # Calls network.errorPage.
     def errorPage(self, title="Problem loading page", heading="Whoops...", error="Nimbus could not load the requested page.", suggestions=["Try reloading the page.", "Make sure you're connected to the Internet. Once you're connected, try loading this page again.", "Check for misspellings in the URL (e.g. <b>ww.google.com</b> instead of <b>www.google.com</b>).", "The server may be experiencing some downtime. Wait for a while before trying again.", "If your computer or network is protected by a firewall, make sure that Nimbus is permitted ."]):

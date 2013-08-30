@@ -653,6 +653,11 @@ self.origY + ev.globalY() - self.mouseY)
             self.forwardAction.setEnabled(False)
             self.stopAction.setEnabled(False)
             self.reloadAction.setEnabled(False)
+        self.toggleActions2()
+
+    def toggleActions2(self):
+        try: self.nextAction.setEnabled(bool(self.tabWidget().currentWidget().canGoNext()))
+        except: self.nextAction.setEnabled(False)
 
     # Navigation methods.
     def back(self):
