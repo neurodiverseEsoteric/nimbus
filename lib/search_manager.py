@@ -35,6 +35,7 @@ class SearchManager(object):
             common.search_engines['Thesaurus.com'] = ["t", "http://thesaurus.com/browse/%s"]
             common.search_engines['Bing'] = ["b", "http://www.bing.com/search?q=%s"]
             common.search_engines['Yahoo'] = ["y", "http://search.yahoo.com/search?p=%s"]
+            common.search_engines['YouTube'] = ["yt", "http://www.youtube.com/results?search_query=%s"]
             common.search_engines['deviantART'] = ["da", "http://www.deviantart.com/?q=%s"]
             common.search_engines['A-Z Lyrics'] = ["azl", "http://search.azlyrics.com/search.php?q=%s"]
             common.search_engines['MetroLyrics'] = ["mtl", "http://www.metrolyrics.com/search?search=%s"]

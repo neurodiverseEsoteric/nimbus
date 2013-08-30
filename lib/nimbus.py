@@ -757,6 +757,16 @@ self.origY + ev.globalY() - self.mouseY)
     def load(self, url=False):
         if not url:
             url = self.locationBar.currentText()
+        for keyword in common.search_engines.values()   :
+            if type(url) is str:
+                url3 = url
+            else:
+                try: url3 = url.toString()
+                except: url3 = ""
+            fkey = keyword[0] + " "
+            if url3.startswith(fkey):
+                self.tabWidget().currentWidget().load(QUrl(keyword[1] % (url3.replace(fkey, ""),)))
+                return
         url2 = QUrl.fromUserInput(url)
         valid_url = (":" in url or os.path.exists(url) or url.count(".") > 2)
         this_tld = url2.topLevelDomain().upper()
