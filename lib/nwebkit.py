@@ -442,19 +442,25 @@ class WebView(QWebView):
                             pass
                 except:
                     pass
+        success = False
+        for rstring in ("start=", "offset=", "="):
+            for times in reversed(range(2, 11)):
+                try: thisPageNumber = int(re.search("%s%s" % (rstring, "[\d]" * times), self.url().toString().lower()).group().replace(rstring, ""))
+                except: pass
+                else:
+                    success = True
+                    break
+        if not success:
+            thisPageNumber = 0
         for rstring in ("start=", "offset=", "="):
             for anchor in anchors:
                 for attribute in anchor.attributeNames():
                     try:
                         for times in reversed(range(2, 11)):
-                            try: x = int(re.search("%s%s" % (rstring, "[\d]" * times), anchor.attribute(attribute).lower()).group().replace(rstring, ""))
+                            try: thatPageNumber = int(re.search("%s%s" % (rstring, "[\d]" * times), anchor.attribute(attribute).lower()).group().replace(rstring, ""))
                             except: pass
                             else: break
-                        for times in reversed(range(2, 11)):
-                            try: y = int(re.search("%s%s" % (rstring, "[\d]" * times), self.url().toString().lower()).group().replace(rstring, ""))
-                            except: pass
-                            else: break
-                        if x > y:
+                        if thatPageNumber > thisPageNumber:
                             try:
                                 self.page().mainFrame().evaluateJavaScript("window.location.href = \"%s\";" % (anchor.attribute("href"),))
                                 return
