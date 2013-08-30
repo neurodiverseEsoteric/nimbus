@@ -342,28 +342,26 @@ class MainWindow(QMainWindow):
 
         mainMenu.addSeparator()
 
+        # Add print preview action.
+        printPreviewAction = QAction(common.complete_icon("document-print-preview"), tr("Print Previe&w"), self)
+        printPreviewAction.setShortcut("Ctrl+Shift+P")
+        printPreviewAction.triggered.connect(self.printPreview)
+        mainMenu.addAction(printPreviewAction)
+
+        # Add print page action.
+        printAction = QAction(common.complete_icon("document-print"), tr("&Print..."), self)
+        printAction.setShortcut("Ctrl+P")
+        printAction.triggered.connect(self.printPage)
+        mainMenu.addAction(printAction)
+
+        # Add separator.
+        mainMenu.addSeparator()
+
         # Save page action.
         savePageAction = QAction(common.complete_icon("document-save-as"), tr("Save Page &As..."), self)
         savePageAction.setShortcut("Ctrl+S")
         savePageAction.triggered.connect(lambda: self.tabWidget().currentWidget().downloadFile(QNetworkRequest(self.tabWidget().currentWidget().url())))
         mainMenu.addAction(savePageAction)
-
-        mainMenu.addSeparator()
-
-        zoomInAction = QAction(common.complete_icon("zoom-in"), tr("Zoom In"), self)
-        zoomInAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() + 0.1))
-        zoomInAction.setShortcuts(["Ctrl+=", "Ctrl++"])
-        mainMenu.addAction(zoomInAction)
-
-        zoomOutAction = QAction(common.complete_icon("zoom-out"), tr("Zoom Out"), self)
-        zoomOutAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() - 0.1))
-        zoomOutAction.setShortcut("Ctrl+-")
-        mainMenu.addAction(zoomOutAction)
-
-        zoomOriginalAction = QAction(common.complete_icon("zoom-original"), tr("Reset Zoom"), self)
-        zoomOriginalAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(1.0))
-        zoomOriginalAction.setShortcut("Ctrl+0")
-        mainMenu.addAction(zoomOriginalAction)
 
         mainMenu.addSeparator()
 
@@ -387,19 +385,22 @@ class MainWindow(QMainWindow):
 
         mainMenu.addSeparator()
 
-        # Add print preview action.
-        printPreviewAction = QAction(common.complete_icon("document-print-preview"), tr("Print Previe&w"), self)
-        printPreviewAction.setShortcut("Ctrl+Shift+P")
-        printPreviewAction.triggered.connect(self.printPreview)
-        mainMenu.addAction(printPreviewAction)
+        # Zoom actions.
+        zoomInAction = QAction(common.complete_icon("zoom-in"), tr("Zoom In"), self)
+        zoomInAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() + 0.1))
+        zoomInAction.setShortcuts(["Ctrl+=", "Ctrl++"])
+        mainMenu.addAction(zoomInAction)
 
-        # Add print page action.
-        printAction = QAction(common.complete_icon("document-print"), tr("&Print..."), self)
-        printAction.setShortcut("Ctrl+P")
-        printAction.triggered.connect(self.printPage)
-        mainMenu.addAction(printAction)
+        zoomOutAction = QAction(common.complete_icon("zoom-out"), tr("Zoom Out"), self)
+        zoomOutAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() - 0.1))
+        zoomOutAction.setShortcut("Ctrl+-")
+        mainMenu.addAction(zoomOutAction)
 
-        # Add separator.
+        zoomOriginalAction = QAction(common.complete_icon("zoom-original"), tr("Reset Zoom"), self)
+        zoomOriginalAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(1.0))
+        zoomOriginalAction.setShortcut("Ctrl+0")
+        mainMenu.addAction(zoomOriginalAction)
+
         mainMenu.addSeparator()
 
         # Add fullscreen button.
