@@ -432,7 +432,7 @@ class MainWindow(QMainWindow):
 
         # Add fullscreen action.
         self.toggleFullScreenAction = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
-        self.toggleFullScreenAction.setShortcut("F11")
+        self.toggleFullScreenAction.setShortcuts(["F11", "Ctrl+Shift+F"])
         self.toggleFullScreenAction.setCheckable(True)
         self.toggleFullScreenAction.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
         self.addAction(self.toggleFullScreenAction)
