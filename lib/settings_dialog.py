@@ -472,6 +472,8 @@ class ExtensionsSettingsPanel(SettingsPanel):
         self.blacklist.clear()
         for extension in settings.extensions_blacklist:
             self.blacklist.addItem(extension)
+        self.whitelist.sortItems(Qt.AscendingOrder)
+        self.blacklist.sortItems(Qt.AscendingOrder)
 
     def saveSettings(self):
         settings.settings.setValue("extensions/Whitelist", json.dumps([self.whitelist.item(extension).text() for extension in range(0, self.whitelist.count())]))

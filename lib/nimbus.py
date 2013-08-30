@@ -627,8 +627,8 @@ self.origY + ev.globalY() - self.mouseY)
     # Toggle all the navigation buttons.
     def toggleActions(self):
         try:
-            self.backAction.setEnabled(self.tabWidget().currentWidget().pageAction(QWebPage.Back).isEnabled())
-            forwardEnabled = self.tabWidget().currentWidget().pageAction(QWebPage.Forward).isEnabled()
+            self.backAction.setEnabled(self.tabWidget().currentWidget().page().history().canGoBack())
+            forwardEnabled = self.tabWidget().currentWidget().page().history().canGoForward()
             self.forwardAction.setEnabled(forwardEnabled)
 
             if not forwardEnabled:
