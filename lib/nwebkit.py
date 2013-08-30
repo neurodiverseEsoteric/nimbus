@@ -334,6 +334,8 @@ class WebView(QWebView):
         common.webviews.append(self)
         self._url = ""
 
+        self._changeCanGoNext = False
+
         self._cacheLoaded = False
 
         # Private browsing.
@@ -390,6 +392,7 @@ class WebView(QWebView):
 
             # Recording history should only be done in normal browsing mode.
             self.urlChanged.connect(self.addHistoryItem)
+            self.urlChanged.connect(lambda: self.setChangeCanGoNext(True))
 
         # What to do if private browsing is enabled.
         else:
@@ -431,11 +434,18 @@ class WebView(QWebView):
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
 
+    def setChangeCanGoNext(self, true=False):
+        self._changeCanGoNext = true
+
     def up(self):
         components = self.url().toString().split("/")
         self.load(QUrl.fromUserInput("/".join(components[:(-1 if components[-1] != "" else -2)])))
 
     def setCanGoNext(self):
+        if not self._changeCanGoNext:
+            return
+        else:
+            self._changeCanGoNext = False
         anchors = self.page().mainFrame().findAllElements("a")
         for anchor in anchors:
             for attribute in anchor.attributeNames():
