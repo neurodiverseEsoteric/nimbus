@@ -1,0 +1,47 @@
+Browser
+============
+Back: Alt+Left
+Forward: Alt+Right
+Up: Alt+Up
+Next: Alt+Right (if Forward is disabled)
+Stop: Esc
+Reset location bar text: Esc
+Reload: F5 or Ctrl+R
+Home: Alt+Home
+Focus location bar: Ctrl+L or Alt+D
+Open search manager: Ctrl+K
+Main menu: Alt+F or Alt+M
+New tab: Ctrl+T
+New incognito tab: Ctrl+Shift+I
+New window: Ctrl+N
+Reopen tab: Ctrl+Shift+T
+Reopen window: Ctrl+Shift+N
+Print preview: Ctrl+Shift+P
+Print: Ctrl+P
+Save page as: Ctrl+S
+Find: Ctrl+F
+Find next: Ctrl+G
+Find previous: Ctrl+Shift+G
+Zoom in: Ctrl+= or Ctrl+Shift+=
+Zoom out: Ctrl+-
+Reset zoom: Ctrl+0
+Toggle fullscreen: F11
+Clear data: Ctrl+Shift+Del
+Settings: Ctrl+, or Ctrl+Alt+P
+Quit: Ctrl+Shift+Q
+
+Extensions
+============
+20-sided die: Ctrl+Alt+2
+Bookmarks sidebar: Ctrl+Shift+B
+Calendar: Ctrl+Shift+D
+Charcount: Alt+C
+Edit page: Ctrl+Alt+E
+Feed reader: Ctrl+Alt+R
+Graphr: Alt+G
+History manager: Ctrl+H
+Readability: Alt+R
+Split tab: Alt+P
+Translate: Alt+T
+Wayback: Alt+W
+Xkcd random: Alt+X
