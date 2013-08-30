@@ -13,7 +13,6 @@ import sys
 import os
 import re
 import subprocess
-import traceback
 import hashlib
 import common
 import geolocation
@@ -430,6 +429,42 @@ class WebView(QWebView):
         components = self.url().toString().split("/")
         self.load(QUrl.fromUserInput("/".join(components[:(-1 if components[-1] != "" else -2)])))
 
+    def next(self):
+        anchors = self.page().mainFrame().findAllElements("a")
+        for anchor in anchors:
+            for attribute in anchor.attributeNames():
+                try:
+                    if attribute == "rel" and anchor.attribute(attribute).lower() == "next":
+                        try:
+                            self.page().mainFrame().evaluateJavaScript("window.location.href = \"%s\";" % (anchor.attribute("href"),))
+                            return
+                        except:
+                            pass
+                except:
+                    pass
+        for rstring in ("start=", "offset=", "="):
+            for anchor in anchors:
+                for attribute in anchor.attributeNames():
+                    try:
+                        x = int(re.search("%s[\d][\d]" % (rstring,), anchor.attribute(attribute).lower()).group().replace(rstring, ""))
+                        y = int(re.search("%s[\d][\d]" % (rstring,), self.url().toString().lower()).group().replace(rstring, ""))
+                        if x > y:
+                            try:
+                                self.page().mainFrame().evaluateJavaScript("window.location.href = \"%s\";" % (anchor.attribute("href"),))
+                                return
+                            except:
+                                pass
+                    except:
+                        pass
+        for anchor in anchors:
+            for attribute in anchor.attributeNames():
+                if re.search("=[\d][\d]", anchor.attribute(attribute).lower()):
+                    try:
+                        self.page().mainFrame().evaluateJavaScript("window.location.href = \"%s\";" % (anchor.attribute("href"),))
+                        return
+                    except:
+                        pass
+
     # Calls network.errorPage.
     def errorPage(self, title="Problem loading page", heading="Whoops...", error="Nimbus could not load the requested page.", suggestions=["Try reloading the page.", "Make sure you're connected to the Internet. Once you're connected, try loading this page again.", "Check for misspellings in the URL (e.g. <b>ww.google.com</b> instead of <b>www.google.com</b>).", "The server may be experiencing some downtime. Wait for a while before trying again.", "If your computer or network is protected by a firewall, make sure that Nimbus is permitted ."]):
         return network.errorPage(title, heading, error, suggestions)
@@ -668,10 +703,10 @@ class WebView(QWebView):
         m.update(common.shortenURL(url).encode('utf-8'))
         h = m.hexdigest()
         try: f = open(os.path.join(settings.offline_cache_folder, h), "r")
-        except: traceback.print_exc()
+        except: pass
         else:
             try: self.setHtml(f.read())
-            except: traceback.print_exc()
+            except: pass
             f.close()
             return True
         return False
@@ -687,10 +722,10 @@ class WebView(QWebView):
             m.update(common.shortenURL(self.url().toString()).encode('utf-8'))
             h = m.hexdigest()
             try: f = open(os.path.join(settings.offline_cache_folder, h), "w")
-            except: traceback.print_exc()
+            except: pass
             else:
                 try: f.write(content)
-                except: traceback.print_exc()
+                except: pass
                 f.close()
 
     # Saves the current page.

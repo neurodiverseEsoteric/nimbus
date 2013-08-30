@@ -249,6 +249,10 @@ class MainWindow(QMainWindow):
         self.upMenu.aboutToShow.connect(self.aboutToShowUpMenu)
         self.upAction.setMenu(self.upMenu)
 
+        self.nextAction = QAction(common.complete_icon("media-skip-forward"), tr("Go Next"), self)
+        self.nextAction.triggered.connect(self.next)
+        self.toolBar.addAction(self.nextAction)
+
         self.stopAction = self.actionsPage.action(QWebPage.Stop)
         self.stopAction.setShortcut("Esc")
         self.stopAction.triggered.connect(self.stop)
@@ -675,6 +679,9 @@ self.origY + ev.globalY() - self.mouseY)
 
     def up(self):
         self.tabWidget().currentWidget().up()
+
+    def next(self):
+        self.tabWidget().currentWidget().next()
 
     def aboutToShowUpMenu(self):
         self.upMenu.clear()
