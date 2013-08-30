@@ -324,6 +324,8 @@ class WebView(QWebView):
     # This is a signal used to tell everyone a download has started.
     downloadStarted = Signal(QToolBar)
 
+    nextExpressions = ("start=", "offset=", "page=", "first=", "pn=", "=",)
+
     # Initialize class.
     def __init__(self, *args, incognito=False, **kwargs):
         super(WebView, self).__init__(*args, **kwargs)
@@ -443,7 +445,7 @@ class WebView(QWebView):
                 except:
                     pass
         success = False
-        for rstring in ("start=", "offset=", "page=", "="):
+        for rstring in self.nextExpressions[:-1]:
             for times in reversed(range(1, 11)):
                 try: thisPageNumber = int(re.search("%s%s" % (rstring, "[\d]" * times), self.url().toString().lower()).group().replace(rstring, ""))
                 except: pass
@@ -452,7 +454,7 @@ class WebView(QWebView):
                     break
         if not success:
             thisPageNumber = 0
-        for rstring in ("start=", "offset=", "page=", "="):
+        for rstring in self.nextExpressions:
             for anchor in anchors:
                 for attribute in anchor.attributeNames():
                     try:
