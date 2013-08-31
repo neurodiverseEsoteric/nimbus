@@ -276,7 +276,7 @@ class MainWindow(QMainWindow):
 
         # We want the location bar to stretch to fit the toolbar,
         # so we set its size policy to expand.
-        self.locationBar.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred))
+        self.locationBar.setSizePolicy(QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed))
 
         # Load a page when Enter is pressed.
         self.locationBar.lineEdit().returnPressed.connect(lambda: self.load(self.locationBar.lineEdit().text()))
@@ -320,20 +320,6 @@ class MainWindow(QMainWindow):
         newWindowAction.triggered.connect(self.addWindow)
         mainMenu.addAction(newWindowAction)
 
-        # Add reopen tab action.
-        reopenTabAction = QAction(common.complete_icon("edit-undo"), tr("&Reopen Tab"), self)
-        reopenTabAction.setShortcut("Ctrl+Shift+T")
-        reopenTabAction.triggered.connect(self.reopenTab)
-        self.addAction(reopenTabAction)
-        mainMenu.addAction(reopenTabAction)
-
-        # Add reopen window action.
-        reopenWindowAction = QAction(common.complete_icon("reopen-window"), tr("R&eopen Window"), self)
-        reopenWindowAction.setShortcut("Ctrl+Shift+N")
-        reopenWindowAction.triggered.connect(self.reopenWindow)
-        self.addAction(reopenWindowAction)
-        mainMenu.addAction(reopenWindowAction)
-
         mainMenu.addSeparator()
 
         # Add print preview action.
@@ -359,6 +345,44 @@ class MainWindow(QMainWindow):
 
         mainMenu.addSeparator()
 
+        viewMenu = QMenu(tr("Vi&ew"), self)
+        mainMenu.addMenu(viewMenu)
+
+        # Zoom actions.
+        zoomInAction = QAction(common.complete_icon("zoom-in"), tr("Zoom In"), self)
+        zoomInAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() + 0.1))
+        zoomInAction.setShortcuts(["Ctrl+=", "Ctrl++"])
+        viewMenu.addAction(zoomInAction)
+
+        zoomOutAction = QAction(common.complete_icon("zoom-out"), tr("Zoom Out"), self)
+        zoomOutAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() - 0.1))
+        zoomOutAction.setShortcut("Ctrl+-")
+        viewMenu.addAction(zoomOutAction)
+
+        zoomOriginalAction = QAction(common.complete_icon("zoom-original"), tr("Reset Zoom"), self)
+        zoomOriginalAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(1.0))
+        zoomOriginalAction.setShortcut("Ctrl+0")
+        viewMenu.addAction(zoomOriginalAction)
+
+        viewMenu.addSeparator()
+
+        # Add fullscreen button.
+        self.toggleFullScreenButton = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
+        self.toggleFullScreenButton.setCheckable(True)
+        self.toggleFullScreenButton.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
+        self.toolBar.addAction(self.toggleFullScreenButton)
+        self.toggleFullScreenButton.setVisible(False)
+
+        # Add fullscreen action.
+        self.toggleFullScreenAction = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
+        self.toggleFullScreenAction.setShortcuts(["F11", "Ctrl+Shift+F"])
+        self.toggleFullScreenAction.setCheckable(True)
+        self.toggleFullScreenAction.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
+        self.addAction(self.toggleFullScreenAction)
+        viewMenu.addAction(self.toggleFullScreenAction)
+
+        mainMenu.addSeparator()
+
         # Add find text action.
         findAction = QAction(common.complete_icon("edit-find"), tr("&Find..."), self)
         findAction.setShortcut("Ctrl+F")
@@ -379,46 +403,31 @@ class MainWindow(QMainWindow):
 
         mainMenu.addSeparator()
 
-        # Zoom actions.
-        zoomInAction = QAction(common.complete_icon("zoom-in"), tr("Zoom In"), self)
-        zoomInAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() + 0.1))
-        zoomInAction.setShortcuts(["Ctrl+=", "Ctrl++"])
-        mainMenu.addAction(zoomInAction)
+        historyMenu = QMenu(tr("&History"), self)
+        historyMenu.setIcon(common.complete_icon("office-calendar"))
+        mainMenu.addMenu(historyMenu)
 
-        zoomOutAction = QAction(common.complete_icon("zoom-out"), tr("Zoom Out"), self)
-        zoomOutAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() - 0.1))
-        zoomOutAction.setShortcut("Ctrl+-")
-        mainMenu.addAction(zoomOutAction)
+        # Add reopen tab action.
+        reopenTabAction = QAction(common.complete_icon("edit-undo"), tr("&Reopen Tab"), self)
+        reopenTabAction.setShortcut("Ctrl+Shift+T")
+        reopenTabAction.triggered.connect(self.reopenTab)
+        self.addAction(reopenTabAction)
+        historyMenu.addAction(reopenTabAction)
 
-        zoomOriginalAction = QAction(common.complete_icon("zoom-original"), tr("Reset Zoom"), self)
-        zoomOriginalAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(1.0))
-        zoomOriginalAction.setShortcut("Ctrl+0")
-        mainMenu.addAction(zoomOriginalAction)
+        # Add reopen window action.
+        reopenWindowAction = QAction(common.complete_icon("reopen-window"), tr("R&eopen Window"), self)
+        reopenWindowAction.setShortcut("Ctrl+Shift+N")
+        reopenWindowAction.triggered.connect(self.reopenWindow)
+        self.addAction(reopenWindowAction)
+        historyMenu.addAction(reopenWindowAction)
 
-        mainMenu.addSeparator()
-
-        # Add fullscreen button.
-        self.toggleFullScreenButton = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
-        self.toggleFullScreenButton.setCheckable(True)
-        self.toggleFullScreenButton.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
-        self.toolBar.addAction(self.toggleFullScreenButton)
-        self.toggleFullScreenButton.setVisible(False)
-
-        # Add fullscreen action.
-        self.toggleFullScreenAction = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
-        self.toggleFullScreenAction.setShortcuts(["F11", "Ctrl+Shift+F"])
-        self.toggleFullScreenAction.setCheckable(True)
-        self.toggleFullScreenAction.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
-        self.addAction(self.toggleFullScreenAction)
-        mainMenu.addAction(self.toggleFullScreenAction)
-
-        mainMenu.addSeparator()
+        historyMenu.addSeparator()
 
         # Add clear history action.
         clearHistoryAction = QAction(common.complete_icon("edit-clear"), tr("&Clear Data..."), self)
         clearHistoryAction.setShortcut("Ctrl+Shift+Del")
         clearHistoryAction.triggered.connect(self.clearHistory)
-        mainMenu.addAction(clearHistoryAction)
+        historyMenu.addAction(clearHistoryAction)
 
         # Add settings dialog action.
         settingsAction = QAction(common.complete_icon("preferences-system"), tr("&Settings..."), self)
