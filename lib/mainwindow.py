@@ -1,12 +1,11 @@
 #! /usr/bin/env python3
 
-###############
-## nimbus.py ##
-###############
+###################
+## mainwindow.py ##
+###################
 
 # Description:
-# This is the core module that contains all the very specific components
-# related to loading Nimbus.
+# Contains the main browser window interface.
 
 # Import everything we need.
 import os
