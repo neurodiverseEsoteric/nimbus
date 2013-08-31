@@ -23,7 +23,7 @@ for fname in files_to_copy:
     try: shutil.copy2(fname, app_build)
     except: pass
 os.chdir(app_build)
-os.system(os.path.join(python_dir, "Scripts", "cxfreeze.bat") + """ "nimbus" --target-dir="." --base-name="Win32GUI\"""")
+os.system(os.path.join(python_dir, "Scripts", "cxfreeze.bat") + """ nimbus.py --target-dir=".\"""")
 os.chdir(python_dir)
 print("copying " + os.path.join(os.path.dirname(os.path.dirname(get_python_lib())), "python*.dll") + " -> .\python*.dll")
 x = os.listdir(".")
