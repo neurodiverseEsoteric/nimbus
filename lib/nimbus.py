@@ -202,7 +202,7 @@ class MainWindow(QMainWindow):
         # We don't want this widget to have any decorations.
         #newTabToolBar.setStyleSheet(common.blank_toolbar)
 
-        self.tabsToolBar.addAction(newIncognitoTabAction)
+        #self.tabsToolBar.addAction(newIncognitoTabAction)
         self.tabsToolBar.addAction(newTabAction)
         #self.tabsToolBar.addWidget(newTabToolBar)
         #self.tabs.setCornerWidget(newTabToolBar, Qt.TopRightCorner)
