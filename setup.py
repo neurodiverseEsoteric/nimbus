@@ -6,7 +6,7 @@ import subprocess
 import shutil
 from setuptools import setup
 
-version = "0.3.3pre"
+version = "0.4.0pre"
 applications_folder = os.path.join("/", "usr", "share", "applications")
 app_icon = os.path.join("lib", "icons", "nimbus.svg")
 try: f = open(os.path.join("lib", "version.txt"), "w")
