@@ -127,7 +127,6 @@ class MainWindow(QMainWindow):
         tabsLayout = QHBoxLayout(self.tabsWidget)
         self.tabsWidget.setLayout(tabsLayout)
         self.tabsToolBar.addWidget(self.tabsWidget)
-        self.tabs.setStyleSheet("QTabWidget::pane { top: -%s; } " % (self.tabs.tabBar().height(),))
         self.tabsWidget.layout().setSpacing(0)
         self.tabsWidget.layout().setContentsMargins(0,0,0,0)
         self.tabsWidget.layout().addWidget(self.tabs.tabBar())
@@ -481,6 +480,11 @@ class MainWindow(QMainWindow):
         # Load browser extensions.
         # Ripped off of Ricotta.
         self.reloadExtensions()
+
+    # Redefine show function.
+    def show(self):
+        self.setVisible(True)
+        self.tabs.setStyleSheet("QTabWidget::pane { top: -%s; } " % (self.tabs.tabBar().height(),))
 
     # Returns the tab widget.
     def tabWidget(self):
