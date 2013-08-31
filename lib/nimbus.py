@@ -131,6 +131,7 @@ class MainWindow(QMainWindow):
 
         # Main toolbar.
         self.toolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
+        self.toolBar.setStyleSheet(common.blank_toolbar + " QToolBar { border-bottom: 1px solid palette(dark) } ")
         self.addToolBar(self.toolBar)
 
         #self.zoomBar = zoom_bar.ZoomBar(self)
@@ -182,7 +183,7 @@ class MainWindow(QMainWindow):
         self.tabsToolBar.layout().setSpacing(0)
         self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
         self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
-        self.tabs.tabBar().setStyleSheet("QTabBar { margin: 0; padding: 0; border-bottom: 0; } QTabBar::tab { min-width: 8em; border: 1px solid palette(dark); border-left: 0; margin: 0; padding: 4px; background: palette(window); } QTabBar::tab:first, QTabBar::tab:only-one { border-left: 1px solid palette(dark); } QTabBar::tab:selected { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 palette(light), stop: 1 palette(window)); }")
+        self.tabs.tabBar().setStyleSheet("QTabBar { margin: 0; padding: 0; border-bottom: 0; } QTabBar::tab { min-width: 8em; border: 1px solid palette(dark); border-left: 0; margin: 0; padding: 4px; background: palette(window); } QTabBar::tab:first, QTabBar::tab:only-one { border-left: 1px solid palette(dark); } QTabBar::tab:selected { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 palette(light), stop: 1 palette(window)); border-bottom: 1px solid transparent; }")
 
         # New tab action.
         newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)
