@@ -64,14 +64,14 @@ except:
 # Extremely specific imports from PyQt4/PySide.
 # We give PyQt4 priority because it supports Qt5.
 try:
-    from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QIODevice, QTimer
-    from PyQt4.QtGui import QApplication, QDockWidget, QKeySequence, QMessageBox, QInputDialog, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon, QPushButton
+    from PyQt4.QtCore import Qt, QCoreApplication, pyqtSignal, QUrl, QIODevice, QTimer, QSize
+    from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout, QKeySequence, QSizePolicy, QMessageBox, QInputDialog, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon, QPushButton
     from PyQt4.QtNetwork import QNetworkRequest
     from PyQt4.QtWebKit import QWebPage
     Signal = pyqtSignal
 except:
-    from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QIODevice, QTimer
-    from PySide.QtGui import QApplication, QDockWidget, QKeySequence, QMessageBox, QInputDialog, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon, QPushButton
+    from PySide.QtCore import Qt, QCoreApplication, Signal, QUrl, QIODevice, QTimer, QSize
+    from PySide.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout, QKeySequence, QSizePolicy, QMessageBox, QInputDialog, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QLineEdit, QTabWidget, QSystemTrayIcon, QPushButton
     from PySide.QtNetwork import QNetworkRequest
     from PySide.QtWebKit import QWebPage
 
@@ -123,11 +123,15 @@ class MainWindow(QMainWindow):
         # Sidebars are part of the (incomplete) extensions API.
         self.sideBars = {}
 
-        # Main toolbar.
-        self.toolBar = custom_widgets.MenuToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
-        self.addToolBar(self.toolBar)
+        # Tabs toolbar.
+        self.tabsToolBar = custom_widgets.MenuToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
+        self.addToolBar(self.tabsToolBar)
 
         self.addToolBarBreak(Qt.TopToolBarArea)
+
+        # Main toolbar.
+        self.toolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
+        self.addToolBar(self.toolBar)
 
         #self.zoomBar = zoom_bar.ZoomBar(self)
         #self.zoomBar.zoomFactorChanged.connect(lambda zoomFactor: self.tabs.currentWidget().setZoomFactor(zoomFactor))
@@ -166,6 +170,20 @@ class MainWindow(QMainWindow):
         # Set tabs as central widget.
         self.setCentralWidget(self.tabs)
 
+        self.tabsWidget = QWidget(self)
+        tabsLayout = QHBoxLayout(self.tabsWidget)
+        self.tabsWidget.setLayout(tabsLayout)
+        self.tabsToolBar.addWidget(self.tabsWidget)
+        self.tabs.setStyleSheet("QTabWidget::pane { top: -%s; } " % (self.tabs.tabBar().height(),))
+        self.tabsWidget.layout().setSpacing(0)
+        self.tabsWidget.layout().setContentsMargins(0,0,0,0)
+        self.tabsWidget.layout().addWidget(self.tabs.tabBar())
+        self.tabs.tabBar().setExpanding(False)
+        self.tabsToolBar.layout().setSpacing(0)
+        self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
+        self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
+        self.tabs.tabBar().setStyleSheet("QTabBar { margin: 0; padding: 0; border-bottom: 0; } QTabBar::tab { min-width: 8em; border: 1px solid palette(dark); border-left: 0; margin: 0; padding: 4px; background: palette(window); } QTabBar::tab:first, QTabBar::tab:only-one { border-left: 1px solid palette(dark); } QTabBar::tab:selected { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 palette(light), stop: 1 palette(window)); }")
+
         # New tab action.
         newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)
         newTabAction.setShortcut("Ctrl+T")
@@ -178,14 +196,16 @@ class MainWindow(QMainWindow):
 
         # This is used so that the new tab button looks halfway decent,
         # and can actually be inserted into the corner of the tab widget.
-        newTabToolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
+        #newTabToolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
+        self.tabsToolBar.setIconSize(QSize(16, 16))
 
         # We don't want this widget to have any decorations.
-        newTabToolBar.setStyleSheet(common.blank_toolbar)
+        #newTabToolBar.setStyleSheet(common.blank_toolbar)
 
-        newTabToolBar.addAction(newIncognitoTabAction)
-        newTabToolBar.addAction(newTabAction)
-        self.tabs.setCornerWidget(newTabToolBar, Qt.TopRightCorner)
+        self.tabsToolBar.addAction(newIncognitoTabAction)
+        self.tabsToolBar.addAction(newTabAction)
+        #self.tabsToolBar.addWidget(newTabToolBar)
+        #self.tabs.setCornerWidget(newTabToolBar, Qt.TopRightCorner)
 
         # These are hidden actions used for the Ctrl[+Shift]+Tab feature
         # you see in most browsers.
@@ -286,7 +306,7 @@ class MainWindow(QMainWindow):
         self.addAction(self.homeAction2)
 
         # Start timer to forcibly enable and disable navigation actions.
-        self.toggleActionsTimer.start(4)
+        self.toggleActionsTimer.start(256)
 
         # Location bar. Note that this is a combo box.
         # At some point, I should make a custom location bar
