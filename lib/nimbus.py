@@ -131,7 +131,6 @@ class MainWindow(QMainWindow):
 
         # Main toolbar.
         self.toolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
-        self.toolBar.setStyleSheet(common.blank_toolbar + " QToolBar { border-bottom: 1px solid palette(dark) } ")
         self.addToolBar(self.toolBar)
 
         #self.zoomBar = zoom_bar.ZoomBar(self)
