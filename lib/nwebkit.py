@@ -340,6 +340,8 @@ class WebView(QWebView):
         common.webviews.append(self)
         self._url = ""
 
+        self._html = ""
+
         self._changeCanGoNext = False
 
         self._cacheLoaded = False
@@ -439,6 +441,12 @@ class WebView(QWebView):
 
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
+
+    def saveHtml(self):
+        self._html = self.page().mainFrame().toHtml()
+
+    def restoreHtml(self):
+        self.setHtml(self._html)
 
     def deleteLater(self):
         try: common.webviews.remove(self)

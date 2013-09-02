@@ -556,14 +556,14 @@ self.origY + ev.globalY() - self.mouseY)
     # This is a workaround to prevent audio and video from playing after
     # the window is closed.
     def blankAll(self):
-        for index in range(0, self.tabWidget().count()):
-            self.tabWidget().widget(index).load(QUrl("about:blank"))
+        for index in range(self.tabWidget().count()):
+            self.tabWidget().widget(index).saveHtml()
+            self.tabWidget().widget(index).setHtml("")
 
     # Unblank all tabs.
     def deblankAll(self):
-        for index in range(0, self.tabWidget().count()):
-            if self.tabWidget().widget(index).url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
-                self.tabWidget().widget(index).back()
+        for index in range(self.tabWidget().count()):
+            self.tabWidget().widget(index).restoreHtml()
 
     # Open settings dialog.
     def openSettings(self):
