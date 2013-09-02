@@ -567,12 +567,7 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Open settings dialog.
     def openSettings(self):
-        if settings.setting_to_bool("general/OpenSettingsInTab"):
-            self.addTab(url="nimbus://settings")
-            self.tabWidget().setCurrentIndex(self.tabWidget().count()-1)
-        else:
-            settings.settingsDialog.reload()
-            settings.settingsDialog.show()
+        settings.settingsDialog.show()
 
     # Reload extensions.
     def reloadExtensions(self):

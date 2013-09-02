@@ -20,7 +20,6 @@ import filtering
 import translate
 from translate import tr
 import settings
-import settings_dialog
 import data
 import network
 
@@ -292,19 +291,15 @@ class WebPage(QWebPage):
     # One plugin pertains to the settings dialog,
     # while another pertains to local directory views.
     def createPlugin(self, classid, url, paramNames, paramValues):
-        if classid.lower() == "settingsdialog":
-            sdialog = settings_dialog.SettingsDialog(self.view())
-            return sdialog
-        else:
-            for name, widgetclass in self.plugins:
-                if classid.lower() == name:
-                    widget = widgetclass(self.view())
-                    widgetid = classid
-                    pnames = [name.lower() for name in paramNames]
-                    if "id" in pnames:
-                        widgetid = paramValues[pnames.index("id")]
-                    self.mainFrame().addToJavaScriptWindowObject(widgetid, widget)
-                    return widget
+        for name, widgetclass in self.plugins:
+            if classid.lower() == name:
+                widget = widgetclass(self.view())
+                widgetid = classid
+                pnames = [name.lower() for name in paramNames]
+                if "id" in pnames:
+                    widgetid = paramValues[pnames.index("id")]
+                self.mainFrame().addToJavaScriptWindowObject(widgetid, widget)
+                return widget
         return
 
 # Custom WebView class with support for ad-blocking, new tabs, downloads,

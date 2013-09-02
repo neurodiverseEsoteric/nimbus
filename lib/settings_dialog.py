@@ -58,9 +58,6 @@ class GeneralSettingsPanel(SettingsPanel):
         self.closeWindowToggle = QCheckBox(tr("Close &window with last tab"), self)
         self.layout().addWidget(self.closeWindowToggle)
 
-        self.settingsTabToggle = QCheckBox(tr("Open &settings in tab"), self)
-        self.layout().addWidget(self.settingsTabToggle)
-
         self.reopenableTabCountRow = custom_widgets.SpinBoxRow(tr("Number of reopenable tabs:"), self)
         self.reopenableTabCount = self.reopenableTabCountRow.spinBox
         self.reopenableTabCount.setMaximum(9999)
@@ -83,7 +80,6 @@ class GeneralSettingsPanel(SettingsPanel):
         self.homepageEntry.setText(str(settings.settings.value("general/Homepage")))
         self.searchEntry.setText(str(settings.settings.value("general/Search")))
         self.closeWindowToggle.setChecked(settings.setting_to_bool("general/CloseWindowWithLastTab"))
-        self.settingsTabToggle.setChecked(settings.setting_to_bool("general/OpenSettingsInTab"))
         self.reopenableTabCount.setValue(settings.setting_to_int("general/ReopenableTabCount"))
         self.reopenableWindowCount.setValue(settings.setting_to_int("general/ReopenableWindowCount"))
         self.homeButtonVisibleToggle.setChecked(settings.setting_to_bool("general/HomeButtonVisible"))
@@ -93,7 +89,6 @@ class GeneralSettingsPanel(SettingsPanel):
         settings.settings.setValue("general/Homepage", self.homepageEntry.text())
         settings.settings.setValue("general/Search", self.searchEntry.text())
         settings.settings.setValue("general/CloseWindowWithLastTab", self.closeWindowToggle.isChecked())
-        settings.settings.setValue("general/OpenSettingsInTab", self.settingsTabToggle.isChecked())
         settings.settings.setValue("general/ReopenableWindowCount", self.reopenableWindowCount.text())
         settings.settings.setValue("general/ReopenableTabCount", self.reopenableTabCount.text())
         settings.settings.setValue("general/HomeButtonVisible", self.homeButtonVisibleToggle.isChecked())

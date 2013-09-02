@@ -23,6 +23,7 @@ except:
         import nimbus.common as common
 sys.path.append(common.app_folder)
 
+import settings_dialog
 import browser
 import filtering
 import translate
@@ -206,11 +207,8 @@ def main():
     chistorydialog = clear_history_dialog.ClearHistoryDialog()
 
     # Set up settings dialog.
-    settings.settingsDialog = WebView(incognito=True, parent=None)
-    settings.settingsDialog.resize(600, 480)
-    settings.settingsDialog.setWindowIcon(common.app_icon)
+    settings.settingsDialog = settings_dialog.SettingsDialog()
     settings.settingsDialog.setWindowFlags(Qt.Dialog)
-    settings.settingsDialog.load(QUrl("nimbus://settings"))
     closeSettingsDialogAction = QAction(settings.settingsDialog)
     closeSettingsDialogAction.setShortcuts(["Esc", "Ctrl+W"])
     closeSettingsDialogAction.triggered.connect(settings.settingsDialog.hide)
