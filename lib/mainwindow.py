@@ -895,17 +895,11 @@ self.origY + ev.globalY() - self.mouseY)
         try:
             webView = self.tabWidget().widget(index)
             if webView.history().canGoBack() or webView.history().canGoForward() or webView.url().toString() not in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
-                self.closedTabs.append(webView)
+                self.closedTabs.append((webView.saveHistory(), index))
                 while len(self.closedTabs) > settings.setting_to_int("general/ReopenableTabCount"):
                     self.closedTabs[0].deleteLater()
-                    try: common.webviews.remove(webView)
-                    except: pass
                     self.closedTabs.pop(0)
-                webView.load(QUrl("about:blank"))
-            else:
-                webView.deleteLater()
-                try: common.webviews.remove(webView)
-                except: pass
+            webView.deleteLater()
         except:
             traceback.print_exc()
         self.tabWidget().removeTab(index)
@@ -917,13 +911,10 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Reopens the last closed tab.
     def reopenTab(self):
-        if len(self.closedTabs) > 0:
-            webview = self.closedTabs.pop()
-            self.addTab(webview)
-            try:
-                if webview.url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
-                    webview.back()
-            except: pass
+        index = self.closedTabs[-1][1]
+        self.addTab(index=index)
+        self.tabWidget().widget(index).loadHistory(self.closedTabs[-1][0])
+        del self.closedTabs[-1]
 
     # This method is used to add a DownloadBar to the window.
     def addDownloadToolBar(self, toolbar):

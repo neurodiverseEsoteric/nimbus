@@ -26,14 +26,14 @@ import network
 # Extremely specific imports from PyQt4/PySide.
 # We give PyQt4 priority because it supports Qt5.
 try:
-    from PyQt4.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer
+    from PyQt4.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
     from PyQt4.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
     from PyQt4.QtWebKit import QWebView, QWebPage
     Signal = pyqtSignal
     Slot = pyqtSlot
 except:
-    from PySide.QtCore import Qt, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer
+    from PySide.QtCore import Qt, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
     from PySide.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
     from PySide.QtWebKit import QWebView, QWebPage
@@ -167,6 +167,17 @@ class WebPage(QWebPage):
 
         # Set user agent to default value.
         self.setUserAgent()
+
+    # Loads history.
+    def loadHistory(self, history):
+        out = QDataStream(history, QIODevice.ReadOnly)
+        out.__rshift__(self.history())
+
+    def saveHistory(self):
+        byteArray = QByteArray()
+        out = QDataStream(byteArray, QIODevice.WriteOnly)
+        out.__lshift__(self.history())
+        return byteArray
 
     # Sends a request to become fullscreen.
     def toggleFullScreen(self):
@@ -428,6 +439,17 @@ class WebView(QWebView):
 
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
+
+    def deleteLater(self):
+        try: common.webviews.remove(self)
+        except: pass
+        QWebView.deleteLater(self)
+
+    def loadHistory(self, *args, **kwargs):
+        self.page().loadHistory(*args, **kwargs)
+
+    def saveHistory(self, *args, **kwargs):
+        return self.page().saveHistory(*args, **kwargs)
 
     def setChangeCanGoNext(self, true=False):
         self._changeCanGoNext = true
