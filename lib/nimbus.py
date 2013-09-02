@@ -107,6 +107,8 @@ def loadSession():
         session = pickle.load(f)
         f.close()
         for window in session:
+            if len(window) == 0:
+                continue
             win = MainWindow()
             for tab in range(len(window)):
                 win.addTab(index=tab)
@@ -269,12 +271,12 @@ def main():
 
     if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
         loadSession()
-    elif not "--daemon" in sys.argv:
+    if (not "--daemon" in sys.argv and len(browser.windows) == 0) or len(sys.argv[1:]) > 0:
         # Create instance of MainWindow.
         win = MainWindow()
 
         # Open URLs from command line.
-        if len(sys.argv) > 1:
+        if len(sys.argv[1:]) > 0:
             for arg in sys.argv[1:]:
                 if "." in arg or ":" in arg:
                     win.addTab(url=arg)
