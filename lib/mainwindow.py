@@ -911,10 +911,12 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Reopens the last closed tab.
     def reopenTab(self):
-        index = self.closedTabs[-1][1]
-        self.addTab(index=index)
-        self.tabWidget().widget(index).loadHistory(self.closedTabs[-1][0])
-        del self.closedTabs[-1]
+        if len(self.closedTabs) > 0:
+            index = self.closedTabs[-1][1]
+            self.addTab(index=index)
+            self.tabWidget().setCurrentIndex(index)
+            self.tabWidget().widget(index).loadHistory(self.closedTabs[-1][0])
+            del self.closedTabs[-1]
 
     # This method is used to add a DownloadBar to the window.
     def addDownloadToolBar(self, toolbar):
