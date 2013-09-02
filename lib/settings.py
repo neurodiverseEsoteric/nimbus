@@ -14,7 +14,6 @@ except:
     from PySide.QtCore import QCoreApplication, QUrl, QSettings
     from PySide.QtNetwork import QNetworkCookie
 
-
 # Common settings manager.
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
 
@@ -27,6 +26,9 @@ offline_cache_folder = os.path.join(settings_folder, "OfflineCache")
 
 # Start page.
 startpage = os.path.join(settings_folder, "start.html")
+
+# Session file.
+session_file = os.path.join(settings_folder, "session.pkl")
 
 # Default settings.
 default_settings = {"proxy/Type": "None",

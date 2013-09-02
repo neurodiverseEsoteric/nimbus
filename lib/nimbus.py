@@ -14,6 +14,7 @@ import os
 import json
 import copy
 import traceback
+import pickle
 
 # This is a hack for installing Nimbus.
 try: import common
@@ -99,8 +100,34 @@ def reopenWindow():
             window.show()
             return
 
+# Load session.
+def loadSession():
+    if os.path.exists(settings.session_file):
+        f = open(settings.session_file, "rb")
+        session = pickle.load(f)
+        f.close()
+        for window in session:
+            win = MainWindow()
+            for tab in range(len(window)):
+                win.addTab(index=tab)
+                win.tabWidget().widget(tab).loadHistory(window[tab])
+            win.show()
+
+# Restore session.
+def saveSession():
+    session = []
+    for window in browser.windows:
+        session.append([])
+        for tab in range(window.tabWidget().count()):
+            session[-1].append(window.tabWidget().widget(tab).saveHistory())
+    try: f = open(settings.session_file, "wb")
+    except: return
+    pickle.dump(session, f)
+    f.close()
+
 # Preparations to quit.
 def prepareQuit():
+    saveSession()
     data.saveData()
     filtering.adblock_filter_loader.quit()
     filtering.adblock_filter_loader.wait()
@@ -240,7 +267,9 @@ def main():
     # Load settings.
     data.loadData()
 
-    if not "--daemon" in sys.argv:
+    if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
+        loadSession()
+    elif not "--daemon" in sys.argv:
         # Create instance of MainWindow.
         win = MainWindow()
 
