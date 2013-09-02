@@ -897,7 +897,6 @@ self.origY + ev.globalY() - self.mouseY)
             if webView.history().canGoBack() or webView.history().canGoForward() or webView.url().toString() not in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
                 self.closedTabs.append((webView.saveHistory(), index))
                 while len(self.closedTabs) > settings.setting_to_int("general/ReopenableTabCount"):
-                    self.closedTabs[0].deleteLater()
                     self.closedTabs.pop(0)
             webView.deleteLater()
         except:
