@@ -63,11 +63,11 @@ except:
 # Extremely specific imports from PyQt4/PySide.
 # We give PyQt4 priority because it supports Qt5.
 try:
-    from PyQt4.QtCore import Qt, QCoreApplication, QUrl
+    from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer
     from PyQt4.QtGui import QApplication, QAction
     from PyQt4.QtWebKit import QWebPage
 except:
-    from PySide.QtCore import Qt, QCoreApplication, QUrl
+    from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer
     from PySide.QtGui import QApplication, QAction
     from PySide.QtWebKit import QWebPage
 
@@ -115,17 +115,27 @@ def loadSession():
                 win.tabWidget().widget(tab).loadHistory(window[tab])
             win.show()
 
+# Stores whether the session is being written to or not.
+sessionLock = False
+
 # Restore session.
 def saveSession():
-    session = []
-    for window in browser.windows:
-        session.append([])
-        for tab in range(window.tabWidget().count()):
-            session[-1].append(window.tabWidget().widget(tab).saveHistory())
-    try: f = open(settings.session_file, "wb")
-    except: return
-    pickle.dump(session, f)
-    f.close()
+    global sessionLock
+    if not sessionLock:
+        sessionLock = True
+        session = []
+        for window in browser.windows:
+            session.append([])
+            for tab in range(window.tabWidget().count()):
+                session[-1].append(window.tabWidget().widget(tab).saveHistory())
+        try:
+            f = open(settings.session_file, "wb")
+        except:
+            sessionLock = False
+            return
+        pickle.dump(session, f)
+        f.close()
+        sessionLock = False
 
 # Preparations to quit.
 def prepareQuit():
@@ -268,6 +278,11 @@ def main():
 
     # Load settings.
     data.loadData()
+
+    sessionSaver = QTimer(QCoreApplication.instance())
+    sessionSaver.timeout.connect(saveSession)
+    sessionSaver.timeout.connect(data.saveData)
+    sessionSaver.start(30000)
 
     if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
         loadSession()
