@@ -470,7 +470,7 @@ class MainWindow(QMainWindow):
         self.sideBar.setWindowTitle(tr("Sidebar"))
         self.sideBar.setMaximumWidth(320)
         self.sideBar.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.sideBar.setFeatures(QDockWidget.DockWidgetClosable)
+        self.sideBar.setFeatures(QDockWidget.NoDockWidgetFeatures)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.sideBar)
         self.sideBar.hide()
 
@@ -511,7 +511,7 @@ class MainWindow(QMainWindow):
         self.sideBars[name]["sideBar"].setWindowTitle(name)
         self.sideBars[name]["sideBar"].setMaximumWidth(320)
         self.sideBars[name]["sideBar"].setContextMenuPolicy(Qt.CustomContextMenu)
-        self.sideBars[name]["sideBar"].setFeatures(QDockWidget.DockWidgetClosable)
+        self.sideBars[name]["sideBar"].setFeatures(QDockWidget.NoDockWidgetFeatures)
         self.sideBars[name]["sideBar"].webView = WebView(self.sideBars[name]["sideBar"])
         self.sideBars[name]["sideBar"].webView.windowCreated.connect(self.addTab)
         self.sideBars[name]["sideBar"].webView.setUserAgent(ua)
