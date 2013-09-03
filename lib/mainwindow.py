@@ -542,28 +542,18 @@ self.origY + ev.globalY() - self.mouseY)
     # Deletes any closed windows above the reopenable window count,
     # and blanks all the tabs and sidebars.
     def closeEvent(self, ev):
-        self.blankAll()
-        for sidebar in self.sideBars.values():
-            sidebar["sideBar"].webView.load(QUrl("about:blank"))
-        if len(browser.windows) - 1 > settings.setting_to_int("general/ReopenableWindowCount"):
-            for window in browser.windows:
-                if not window.isVisible():
-                    window.deleteLater()
-                    browser.windows.pop(browser.windows.index(window))
-                    break
+        window_session = []
+        for tab in range(self.tabWidget().count()):
+            window_session.append(self.tabWidget().widget(tab).saveHistory())
+        browser.closedWindows.append(window_session)
+        while len(browser.closedWindows) > settings.setting_to_int("general/ReopenableWindowCount"):
+            browser.closedWindows.pop(0)
+        self.deleteLater()
 
-    # Loads about:blank in all tabs when the window is closed.
-    # This is a workaround to prevent audio and video from playing after
-    # the window is closed.
-    def blankAll(self):
-        for index in range(self.tabWidget().count()):
-            self.tabWidget().widget(index).saveHtml()
-            self.tabWidget().widget(index).setHtml("")
-
-    # Unblank all tabs.
-    def deblankAll(self):
-        for index in range(self.tabWidget().count()):
-            self.tabWidget().widget(index).restoreHtml()
+    def deleteLater(self):
+        try: browser.windows.remove(self)
+        except: pass
+        QMainWindow.deleteLater(self)
 
     # Open settings dialog.
     def openSettings(self):
@@ -802,17 +792,17 @@ self.origY + ev.globalY() - self.mouseY)
             win.addTab(url=url)
         win.show()
 
+    def loadSession(self, session):
+        for tab in range(len(session)):
+            self.addTab(index=tab)
+            self.tabWidget().widget(tab).loadHistory(session[tab])
+
     def reopenWindow(self):
-        for window in browser.windows[::-1]:
-            if not window.isVisible():
-                browser.windows.append(browser.windows.pop(browser.windows.index(window)))
-                window.deblankAll()
-                for sidebar in window.sideBars.values():
-                    sidebar["sideBar"].webView.back()
-                if window.tabWidget().count() == 0:
-                    window.reopenTab()
-                window.show()
-                return
+        if len(browser.closedWindows) > 0:
+            session = browser.closedWindows.pop()
+            win = MainWindow()
+            win.loadSession(session)
+            win.show()
 
     def addTab(self, webView=None, index=None, focus=True, **kwargs):
         # If a URL is specified, load it.

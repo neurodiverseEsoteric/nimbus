@@ -4,6 +4,7 @@
 # Provides a simple API for extensions.
 
 windows = []
+closedWindows = []
 
 def activeWindow():
     for window in windows[::-1]:

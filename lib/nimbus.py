@@ -89,16 +89,11 @@ def addWindow(url=None):
 
 # Reopen window method.
 def reopenWindow():
-    for window in browser.windows[::-1]:
-        if not window.isVisible():
-            browser.windows.append(browser.windows.pop(browser.windows.index(window)))
-            window.deblankAll()
-            for sidebar in window.sideBars.values():
-                sidebar["sideBar"].webView.back()
-            if window.tabWidget().count() == 0:
-                window.reopenTab()
-            window.show()
-            return
+    if len(browser.closedWindows) > 0:
+        session = browser.closedWindows.pop()
+        win = MainWindow()
+        win.loadSession(session)
+        win.show()
 
 # Load session.
 def loadSession():
