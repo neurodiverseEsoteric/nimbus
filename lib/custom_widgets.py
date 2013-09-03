@@ -133,7 +133,10 @@ class LinkAction(QAction):
     def __init__(self, url, *args, **kwargs):
         super(LinkAction, self).__init__(*args, **kwargs)
         self.url = url
-        self.triggered.connect(lambda: self.triggered2.emit(self.url))
+        if type(self.url) is QUrl:
+            self.triggered.connect(lambda: self.triggered2[QUrl].emit(self.url))
+        else:
+            self.triggered.connect(lambda: self.triggered2.emit(self.url))
 
 # Web history action for dropdown menus.
 class WebHistoryAction(QAction):
