@@ -690,7 +690,7 @@ self.origY + ev.globalY() - self.mouseY)
                 try:
                     x = "/".join(components[:component])
                     if x != "":
-                        action = custom_widgets.LinkAction(QUrl.fromUserInput(x), x, self)
+                        action = custom_widgets.LinkAction(QUrl.fromUserInput(x), x, self.upMenu)
                         action.triggered2[QUrl].connect(self.tabWidget().currentWidget().load)
                         self.upMenu.addAction(action)
                 except:
@@ -713,8 +713,8 @@ self.origY + ev.globalY() - self.mouseY)
         if len(feeds) == 0:
             self.feedMenu.addAction("N/A")
         else:
-            for feed in feeds:
-                action = custom_widgets.LinkAction(feed, feed, self)
+            for title, feed in feeds:
+                action = custom_widgets.LinkAction(feed, title, self.feedMenu)
                 action.triggered2[str].connect(self.tabWidget().currentWidget().load2)
                 self.feedMenu.addAction(action)
 
