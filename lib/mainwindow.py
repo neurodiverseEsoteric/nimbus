@@ -205,6 +205,7 @@ class MainWindow(QMainWindow):
         self.upAction = QAction(self, triggered=self.up, icon=common.complete_icon("go-up"), text=tr("Go Up"))
         self.toolBar.addAction(self.upAction)
         self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.MenuButtonPopup)
+        self.upAction.setVisible(False)
 
         self.upAction2 = QAction(self, triggered=self.up, shortcut="Alt+Up")
         self.addAction(self.upAction2)
@@ -237,6 +238,7 @@ class MainWindow(QMainWindow):
         # Go home button.
         self.homeAction = QAction(self, triggered=self.goHome, icon=common.complete_icon("go-home"), text=tr("Go Home"))
         self.toolBar.addAction(self.homeAction)
+        self.homeAction.setVisible(False)
 
         self.homeAction2 = QAction(self, triggered=self.goHome, shortcut="Alt+Home")
         self.addAction(self.homeAction2)
@@ -274,6 +276,7 @@ class MainWindow(QMainWindow):
         self.toolBar.addAction(self.feedMenuButton)
         self.toolBar.widgetForAction(self.feedMenuButton).setPopupMode(QToolButton.InstantPopup)
         self.feedMenuButton.triggered.connect(lambda: self.toolBar.widgetForAction(self.feedMenuButton).showMenu())
+        self.feedMenuButton.setVisible(False)
 
         self.feedMenu = QMenu(self)
         self.feedMenu.aboutToShow.connect(self.aboutToShowFeedMenu)
