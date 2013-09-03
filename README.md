@@ -20,8 +20,8 @@ Features include:
   dialog under the Extensions tab)
 * Support for HTTP and Socks5 proxies
 * Partial support for the HTML5 geolocation, fullscreen and offline mode APIs
-* Really hacky support for RSS feeds, if feedparser is installed. You can
-  enable the RSS feed button in the Settings dialog under the General tab.
+* Really hacky support for RSS and Atom feeds, if feedparser is installed. You
+  can enable the feed button in the Settings dialog under the General tab.
 * Using Netscape plugins to handle some HTML5 audio and video (useful on
   Windows, where QtWebKit doesn't support audio and video tags)
 * Options to toggle features such as JavaScript, Netscape plugins, DNS
