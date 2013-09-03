@@ -271,7 +271,7 @@ class MainWindow(QMainWindow):
         self.locationBar.setStyleSheet("QComboBox { min-width: 6em; }")
         self.toolBar.addWidget(self.locationBar)
 
-        self.feedMenuButton = QAction(common.complete_icon("rss"), tr("Feeds"), self)
+        self.feedMenuButton = QAction(common.complete_icon("application-rss+xml"), tr("Feeds"), self)
         self.feedMenuButton.setShortcut("Ctrl+Alt+R")
         self.toolBar.addAction(self.feedMenuButton)
         self.toolBar.widgetForAction(self.feedMenuButton).setPopupMode(QToolButton.InstantPopup)
