@@ -598,7 +598,7 @@ class WebView(QWebView):
                 self._contentType = contentType
             html = self.page().mainFrame().toHtml()
             if "xml" in self._contentType and ("rss" in html or "feed" in html):
-                try: self.setHtml(rss_parser.feedToHtml(html))
+                try: self.setHtml(rss_parser.feedToHtml(html), self.url())
                 except: traceback.print_exc()
             else:
                 self.settings().setUserStyleSheetUrl(QUrl())
