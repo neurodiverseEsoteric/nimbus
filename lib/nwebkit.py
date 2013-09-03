@@ -474,10 +474,10 @@ class WebView(QWebView):
         feed_urls = []
         links = self.page().mainFrame().findAllElements("[type=\"application/rss+xml\"], [type=\"application/atom+xml\"]")
         for element in links:
-            try: feed_urls.append((element.attribute("title"), element.attribute("href")))
-            except:
-                try: feed_urls.append((element.attribute("href"), element.attribute("href")))
-                except: pass
+            if element.hasAttribute("title") and element.hasAttribute("href"):
+                feed_urls.append((element.attribute("title"), element.attribute("href")))
+            elif element.hasAttribute("href"):
+                feed_urls.append((element.attribute("href"), element.attribute("href")))
         return feed_urls
 
     def setCanGoNext(self):
