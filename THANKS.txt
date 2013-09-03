@@ -1,3 +1,7 @@
 Special thanks to:
     The Qt developers
     Stack Overflow (stackoverflow.com)
+    Richard Ye (www.yerich.net)
+    Amy Hoy & Thomas Fuchs (http://mir.aculo.us/dom-monster)
+    The SVG-edit developers (http://code.google.com/p/svg-edit/)
+    rantav (http://charcount.appspot.com/)

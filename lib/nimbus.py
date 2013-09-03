@@ -256,9 +256,11 @@ def main():
     filtering.adblock_filter_loader.start()
 
     if not os.path.isdir(settings.extensions_folder):
-        shutil.copytree(common.extensions_folder, settings.extensions_folder)
+        try: shutil.copytree(common.extensions_folder, settings.extensions_folder)
+        except: pass
     if not os.path.isfile(settings.startpage):
-        shutil.copy2(common.startpage, settings.startpage)
+        try: shutil.copy2(common.startpage, settings.startpage)
+        except: pass
 
     settings.reload_extensions()
     settings.reload_userscripts()
