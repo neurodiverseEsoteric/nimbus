@@ -19,7 +19,6 @@ basic_html = """<!DOCTYPE html>
     </head>
     <body>
         <h1>%(title)s</h1>
-        <img src="%(icon)s"/><br/>
         %(content)s
     </body>
 </html>"""
