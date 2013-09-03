@@ -129,7 +129,7 @@ class LocationBar(QComboBox):
 
 # Link action for dropdown menus.
 class LinkAction(QAction):
-    triggered2 = Signal(QUrl)
+    triggered2 = Signal([str], [QUrl])
     def __init__(self, url, *args, **kwargs):
         super(LinkAction, self).__init__(*args, **kwargs)
         self.url = url

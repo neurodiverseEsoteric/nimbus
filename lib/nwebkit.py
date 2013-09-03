@@ -434,7 +434,7 @@ class WebView(QWebView):
         self.loadFinished.connect(self.replaceAVTags)
         self.loadFinished.connect(self.setCanGoNext)
         self.loadFinished.connect(self.savePageToCache)
-        self.loadFinished.connect(lambda: print("\n".join(self.rssFeeds()) + "\n"))
+        #self.loadFinished.connect(lambda: print("\n".join(self.rssFeeds()) + "\n"))
 
         # Check if content viewer.
         self._isUsingContentViewer = False
@@ -594,7 +594,7 @@ class WebView(QWebView):
             except: contentType = None
             if contentType != None:
                 self._contentType = contentType
-            print(self._contentType)
+            #print(self._contentType)
             if "xml" in self._contentType:
                 try: self.setHtml(rss_parser.feedToHtml(self.page().mainFrame().toHtml()))
                 except: traceback.print_exc()
@@ -652,6 +652,9 @@ class WebView(QWebView):
                 loadwin = QWebView.load(self, url)
         else:
             loadwin = QWebView.load(self, url)
+
+    def load2(self, url):
+        self.page().mainFrame().evaluateJavaScript("window.location.href = \"%s\"" % (url,))
 
     # Method to replace all <audio> and <video> tags with <embed> tags.
     # This is mainly a hack for Windows, where <audio> and <video> tags are not

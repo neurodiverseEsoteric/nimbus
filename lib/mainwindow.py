@@ -269,6 +269,16 @@ class MainWindow(QMainWindow):
         self.locationBar.setStyleSheet("QComboBox { min-width: 6em; }")
         self.toolBar.addWidget(self.locationBar)
 
+        self.feedMenuButton = QAction(common.complete_icon("rss"), tr("Feeds"), self)
+        self.feedMenuButton.setShortcut("Ctrl+Alt+R")
+        self.toolBar.addAction(self.feedMenuButton)
+        self.toolBar.widgetForAction(self.feedMenuButton).setPopupMode(QToolButton.InstantPopup)
+        self.feedMenuButton.triggered.connect(lambda: self.toolBar.widgetForAction(self.feedMenuButton).showMenu())
+
+        self.feedMenu = QMenu(self)
+        self.feedMenu.aboutToShow.connect(self.aboutToShowFeedMenu)
+        self.feedMenuButton.setMenu(self.feedMenu)
+
         self.searchEditButton = QAction(common.complete_icon("system-search"), tr("Manage Search Engines"), self)
         self.searchEditButton.setShortcut("Ctrl+K")
         self.searchEditButton.triggered.connect(common.searchEditor.show)
@@ -677,7 +687,7 @@ self.origY + ev.globalY() - self.mouseY)
                     x = "/".join(components[:component])
                     if x != "":
                         action = custom_widgets.LinkAction(QUrl.fromUserInput(x), x, self)
-                        action.triggered2.connect(self.tabWidget().currentWidget().load)
+                        action.triggered2[QUrl].connect(self.tabWidget().currentWidget().load)
                         self.upMenu.addAction(action)
                 except:
                     traceback.print_exc()
@@ -691,6 +701,18 @@ self.origY + ev.globalY() - self.mouseY)
 
     def goHome(self):
         self.tabWidget().currentWidget().load(QUrl.fromUserInput(settings.settings.value("general/Homepage")))
+
+    # About to show feed menu.
+    def aboutToShowFeedMenu(self):
+        self.feedMenu.clear()
+        feeds = self.tabWidget().currentWidget().rssFeeds()
+        if len(feeds) == 0:
+            self.feedMenu.addAction("N/A")
+        else:
+            for feed in feeds:
+                action = custom_widgets.LinkAction(feed, feed, self)
+                action.triggered2[str].connect(self.tabWidget().currentWidget().load2)
+                self.feedMenu.addAction(action)
 
     # Find text/Text search methods.
     def find(self):
