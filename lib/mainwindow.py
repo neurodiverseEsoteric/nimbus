@@ -613,6 +613,7 @@ self.origY + ev.globalY() - self.mouseY)
 
             self.homeAction.setVisible(settings.setting_to_bool("general/HomeButtonVisible"))
             self.upAction.setVisible(settings.setting_to_bool("general/UpButtonVisible"))
+            self.feedMenuButton.setVisible(settings.setting_to_bool("general/FeedButtonVisible"))
         except:
             self.backAction.setEnabled(False)
             self.forwardAction.setEnabled(False)

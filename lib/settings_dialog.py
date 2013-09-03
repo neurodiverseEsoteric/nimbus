@@ -74,6 +74,9 @@ class GeneralSettingsPanel(SettingsPanel):
         self.upButtonVisibleToggle = QCheckBox(tr("Show &up button"), self)
         self.layout().addWidget(self.upButtonVisibleToggle)
 
+        self.feedButtonVisibleToggle = QCheckBox(tr("Show &feed button"), self)
+        self.layout().addWidget(self.feedButtonVisibleToggle)
+
         self.layout().addWidget(custom_widgets.Expander(self))
 
     def loadSettings(self):
@@ -84,6 +87,7 @@ class GeneralSettingsPanel(SettingsPanel):
         self.reopenableWindowCount.setValue(settings.setting_to_int("general/ReopenableWindowCount"))
         self.homeButtonVisibleToggle.setChecked(settings.setting_to_bool("general/HomeButtonVisible"))
         self.upButtonVisibleToggle.setChecked(settings.setting_to_bool("general/UpButtonVisible"))
+        self.feedButtonVisibleToggle.setChecked(settings.setting_to_bool("general/FeedButtonVisible"))
 
     def saveSettings(self):
         settings.settings.setValue("general/Homepage", self.homepageEntry.text())
@@ -93,6 +97,7 @@ class GeneralSettingsPanel(SettingsPanel):
         settings.settings.setValue("general/ReopenableTabCount", self.reopenableTabCount.text())
         settings.settings.setValue("general/HomeButtonVisible", self.homeButtonVisibleToggle.isChecked())
         settings.settings.setValue("general/UpButtonVisible", self.upButtonVisibleToggle.isChecked())
+        settings.settings.setValue("general/FeedButtonVisible", self.feedButtonVisibleToggle.isChecked())
         settings.settings.sync()
 
 # Content settings panel

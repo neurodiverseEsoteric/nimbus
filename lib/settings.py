@@ -62,6 +62,7 @@ default_settings = {"proxy/Type": "None",
                     "general/OpenSettingsInTab": False,
                     "general/UpButtonVisible": False,
                     "general/HomeButtonVisible": False,
+                    "general/FeedButtonVisible": False,
                     "extensions/Whitelist": [],
                     "general/ReopenableTabCount": 10,
                     "general/ReopenableWindowCount": 10}
