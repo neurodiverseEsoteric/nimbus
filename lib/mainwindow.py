@@ -882,6 +882,9 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Removes a tab at index.
     def removeTab(self, index):
+        if self.tabWidget().count() == 1 and settings.setting_to_bool("general/CloseWindowWithLastTab"):
+            self.close()
+            return
         try:
             webView = self.tabWidget().widget(index)
             if webView.history().canGoBack() or webView.history().canGoForward() or webView.url().toString() not in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
@@ -892,11 +895,8 @@ self.origY + ev.globalY() - self.mouseY)
         except:
             traceback.print_exc()
         self.tabWidget().removeTab(index)
-        if self.tabWidget().count() == 0:
-            if settings.setting_to_bool("general/CloseWindowWithLastTab"):
-                self.close()
-            else:
-                self.addTab(url="about:blank")
+        if self.tabWidget().count() == 0 and not settings.setting_to_bool("general/CloseWindowWithLastTab"):
+            self.addTab(url="about:blank")
 
     # Reopens the last closed tab.
     def reopenTab(self):
