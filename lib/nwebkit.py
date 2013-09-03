@@ -13,6 +13,7 @@ import sys
 import os
 import re
 import subprocess
+import traceback
 import hashlib
 import common
 import geolocation
@@ -22,6 +23,7 @@ from translate import tr
 import settings
 import data
 import network
+import rss_parser
 
 # Extremely specific imports from PyQt4/PySide.
 # We give PyQt4 priority because it supports Qt5.
@@ -428,9 +430,11 @@ class WebView(QWebView):
         # PyQt4 doesn't support <audio> and <video> tags on Windows.
         # This is a little hack to work around it.
         self.loadStarted.connect(self.resetContentType)
+        self.page().networkAccessManager().finished.connect(self.ready)
         self.loadFinished.connect(self.replaceAVTags)
         self.loadFinished.connect(self.setCanGoNext)
         self.loadFinished.connect(self.savePageToCache)
+        self.loadFinished.connect(lambda: print("\n".join(self.rssFeeds()) + "\n"))
 
         # Check if content viewer.
         self._isUsingContentViewer = False
@@ -465,6 +469,14 @@ class WebView(QWebView):
     def up(self):
         components = self.url().toString().split("/")
         self.load(QUrl.fromUserInput("/".join(components[:(-1 if components[-1] != "" else -2)])))
+
+    def rssFeeds(self):
+        feed_urls = []
+        links = self.page().mainFrame().findAllElements("[type=\"application/rss+xml\"]")
+        for element in links:
+            try: feed_urls.append(element.attribute("href"))
+            except: pass
+        return feed_urls
 
     def setCanGoNext(self):
         if not self._changeCanGoNext:
@@ -582,6 +594,12 @@ class WebView(QWebView):
             except: contentType = None
             if contentType != None:
                 self._contentType = contentType
+            print(self._contentType)
+            if "xml" in self._contentType:
+                try: self.setHtml(rss_parser.feedToHtml(self.page().mainFrame().toHtml()))
+                except: traceback.print_exc()
+            else:
+                self.settings().setUserStyleSheetUrl(QUrl())
 
     # This is a custom implementation of mousePressEvent.
     # It allows the user to Ctrl-click or middle-click links to open them in
