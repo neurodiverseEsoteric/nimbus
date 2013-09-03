@@ -472,7 +472,7 @@ class WebView(QWebView):
 
     def rssFeeds(self):
         feed_urls = []
-        links = self.page().mainFrame().findAllElements("[type=\"application/rss+xml\"]", "[type=\"application/atom+xml\"]")
+        links = self.page().mainFrame().findAllElements("[type=\"application/rss+xml\"], [type=\"application/atom+xml\"]")
         for element in links:
             try: feed_urls.append(element.attribute("href"))
             except: pass
