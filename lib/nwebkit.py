@@ -472,7 +472,7 @@ class WebView(QWebView):
 
     def rssFeeds(self):
         feed_urls = []
-        links = self.page().mainFrame().findAllElements("[type=\"application/rss+xml\"]")
+        links = self.page().mainFrame().findAllElements("[type=\"application/rss+xml\"]", "[type=\"application/atom+xml\"]")
         for element in links:
             try: feed_urls.append(element.attribute("href"))
             except: pass
@@ -595,7 +595,7 @@ class WebView(QWebView):
             if contentType != None:
                 self._contentType = contentType
             html = self.page().mainFrame().toHtml()
-            if "xml" in self._contentType and "rss" in html:
+            if "xml" in self._contentType and ("rss" in html or "atom" in html):
                 try: self.setHtml(rss_parser.feedToHtml(html))
                 except: traceback.print_exc()
             else:
