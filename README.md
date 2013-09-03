@@ -26,7 +26,7 @@ Features include:
   Windows, where QtWebKit doesn't support audio and video tags)
 * Options to toggle features such as JavaScript, Netscape plugins, DNS
   prefetching, and XSS auditing, among others
-* A graphing calculator
+* A graphing calculator, though its accuracy cannot be assured
 * A tank you can enable and use to "wreck up" sites you don't like (no,
   seriously. It's in the Settings dialog, under the Extensions tab)
 
