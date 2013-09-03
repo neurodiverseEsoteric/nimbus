@@ -161,20 +161,14 @@ class MainWindow(QMainWindow):
 
         # These are hidden actions used for the Ctrl[+Shift]+Tab feature
         # you see in most browsers.
-        nextTabAction = QAction(self)
-        nextTabAction.setShortcut("Ctrl+Tab")
-        nextTabAction.triggered.connect(self.nextTab)
+        nextTabAction = QAction(self, triggered=self.nextTab, shortcut="Ctrl+Tab")
         self.addAction(nextTabAction)
 
-        previousTabAction = QAction(self)
-        previousTabAction.setShortcut("Ctrl+Shift+Tab")
-        previousTabAction.triggered.connect(self.previousTab)
+        previousTabAction = QAction(self, triggered=self.previousTab, shortcut="Ctrl+Shift+Tab")
         self.addAction(previousTabAction)
 
         # This is the Ctrl+W (Close Tab) shortcut.
-        removeTabAction = QAction(self)
-        removeTabAction.setShortcut("Ctrl+W")
-        removeTabAction.triggered.connect(lambda: self.removeTab(self.tabWidget().currentIndex()))
+        removeTabAction = QAction(self, triggered=lambda: self.removeTab(self.tabWidget().currentIndex()), shortcut="Ctrl+W")
         self.addAction(removeTabAction)
 
         # Dummy webpage used to provide navigation actions that conform to
@@ -183,8 +177,7 @@ class MainWindow(QMainWindow):
 
         # Regularly and forcibly enable and disable navigation actions
         # every few milliseconds.
-        self.toggleActionsTimer = QTimer(self)
-        self.toggleActionsTimer.timeout.connect(self.toggleActions)
+        self.toggleActionsTimer = QTimer(timeout=self.toggleActions, parent=self)
 
         # Set up navigation actions.
         self.backAction = self.actionsPage.action(QWebPage.Back)
@@ -195,8 +188,7 @@ class MainWindow(QMainWindow):
 
         # This is a dropdown menu for the back history items, but due to
         # instability, it is currently disabled.
-        self.backHistoryMenu = QMenu(self)
-        self.backHistoryMenu.aboutToShow.connect(self.aboutToShowBackHistoryMenu)
+        self.backHistoryMenu = QMenu(aboutToShow=self.aboutToShowBackHistoryMenu, parent=self)
         self.backAction.setMenu(self.backHistoryMenu)
 
         self.forwardAction = self.actionsPage.action(QWebPage.Forward)
@@ -207,54 +199,46 @@ class MainWindow(QMainWindow):
 
         # This is a dropdown menu for the forward history items, but due to
         # instability, it is currently disabled.
-        self.forwardHistoryMenu = QMenu(self)
-        self.forwardHistoryMenu.aboutToShow.connect(self.aboutToShowForwardHistoryMenu)
+        self.forwardHistoryMenu = QMenu(aboutToShow=self.aboutToShowForwardHistoryMenu, parent=self)
         self.forwardAction.setMenu(self.forwardHistoryMenu)
 
-        self.upAction = QAction(common.complete_icon("go-up"), tr("Go Up"), self)
-        self.upAction.triggered.connect(self.up)
+        self.upAction = QAction(self, triggered=self.up, icon=common.complete_icon("go-up"), text=tr("Go Up"))
         self.toolBar.addAction(self.upAction)
         self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.MenuButtonPopup)
 
-        self.upAction2 = QAction(self)
-        self.upAction2.setShortcut("Alt+Up")
-        self.upAction2.triggered.connect(self.up)
+        self.upAction2 = QAction(self, triggered=self.up, shortcut="Alt+Up")
         self.addAction(self.upAction2)
 
-        self.upMenu = QMenu(self)
-        self.upMenu.aboutToShow.connect(self.aboutToShowUpMenu)
+        self.upMenu = QMenu(aboutToShow=self.aboutToShowUpMenu, parent=self)
         self.upAction.setMenu(self.upMenu)
 
-        self.nextAction = QAction(common.complete_icon("media-skip-forward"), tr("Go Next"), self)
-        self.nextAction.triggered.connect(self.next)
+        self.nextAction = QAction(self, triggered=self.next, icon=common.complete_icon("media-skip-forward"), text=tr("Go Next"))
         self.toolBar.addAction(self.nextAction)
 
         self.stopAction = self.actionsPage.action(QWebPage.Stop)
         self.stopAction.triggered.connect(self.stop)
+        self.stopAction.triggered.connect(lambda: self.stopAction.setEnabled(True))
+        self.stopAction.triggered.connect(lambda: self.reloadAction.setEnabled(True))
         self.toolBar.addAction(self.stopAction)
 
-        self.stopAction2 = QAction(self)
-        self.stopAction2.setShortcut("Esc")
-        self.stopAction2.triggered.connect(self.stop)
+        self.stopAction2 = QAction(self, triggered=self.stop, shortcut="Esc")
         self.addAction(self.stopAction2)
 
         self.reloadAction = self.actionsPage.action(QWebPage.Reload)
         self.reloadAction.triggered.connect(self.reload)
+        self.reloadAction.triggered.connect(lambda: self.stopAction.setEnabled(True))
+        self.reloadAction.triggered.connect(lambda: self.reloadAction.setEnabled(True))
         self.toolBar.addAction(self.reloadAction)
 
-        self.reloadAction2 = QAction(self)
+        self.reloadAction2 = QAction(self, triggered=self.reload)
         self.reloadAction2.setShortcuts(["F5", "Ctrl+R"])
-        self.reloadAction2.triggered.connect(self.reload)
         self.addAction(self.reloadAction2)
 
         # Go home button.
-        self.homeAction = QAction(common.complete_icon("go-home"), tr("Go Home"), self)
-        self.homeAction.triggered.connect(self.goHome)
+        self.homeAction = QAction(self, triggered=self.goHome, icon=common.complete_icon("go-home"), text=tr("Go Home"))
         self.toolBar.addAction(self.homeAction)
 
-        self.homeAction2 = QAction(self)
-        self.homeAction2.setShortcut("Alt+Home")
-        self.homeAction2.triggered.connect(self.goHome)
+        self.homeAction2 = QAction(self, triggered=self.goHome, shortcut="Alt+Home")
         self.addAction(self.homeAction2)
 
         # Start timer to forcibly enable and disable navigation actions.
