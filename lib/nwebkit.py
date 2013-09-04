@@ -466,6 +466,12 @@ class WebView(QWebView):
     def setChangeCanGoNext(self, true=False):
         self._changeCanGoNext = true
 
+    def canGoUp(self):
+        components = self.url().toString().split("/")
+        if len(components) < 2:
+            return False
+        return True
+
     def up(self):
         components = self.url().toString().split("/")
         self.load(QUrl.fromUserInput("/".join(components[:(-1 if components[-1] != "" else -2)])))

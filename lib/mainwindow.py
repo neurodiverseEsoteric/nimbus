@@ -606,6 +606,8 @@ self.origY + ev.globalY() - self.mouseY)
                 self.forwardAction.setShortcut("Alt+Right")
                 self.nextAction.setShortcut("")
 
+            self.upAction.setEnabled(self.tabWidget().currentWidget().canGoUp())
+
             # This is a workaround so that hitting Esc will reset the location
             # bar text.
             self.stopAction.setVisible(self.tabWidget().currentWidget().pageAction(QWebPage.Stop).isEnabled())
