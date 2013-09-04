@@ -468,12 +468,17 @@ class WebView(QWebView):
 
     def canGoUp(self):
         components = self.url().toString().split("/")
-        if len(components) < 2:
+        urlString = self.url().toString()
+        if len(components) < 2 or (urlString.count("/") < 4 and not "///" in urlString):
             return False
         return True
 
     def up(self):
         components = self.url().toString().split("/")
+        urlString = self.url().toString()
+        if urlString.count("/") < 4 and "///" in urlString:
+            self.load(QUrl("file:///"))
+            return
         self.load(QUrl.fromUserInput("/".join(components[:(-1 if components[-1] != "" else -2)])))
 
     def rssFeeds(self):
