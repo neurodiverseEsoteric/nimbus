@@ -523,6 +523,10 @@ class SettingsDialog(QWidget):
         # Load settings
         self.loadSettings()
 
+    def show(self):
+        super(SettingsDialog, self).show()
+        self.loadSettings()
+
     def url(self):
         return QUrl("")
 
