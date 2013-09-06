@@ -515,7 +515,7 @@ class WebView(QWebView):
         for anchor in anchors:
             for attribute in anchor.attributeNames():
                 try:
-                    if attribute == "rel" and anchor.attribute(attribute).lower() == "next":
+                    if attribute.lower() == "rel" and anchor.attribute(attribute).lower() == "next":
                         try:
                             self._canGoNext = anchor.attribute("href")
                             return
@@ -558,6 +558,17 @@ class WebView(QWebView):
                             return
                         except:
                             pass
+        for anchor in anchors:
+            for attribute in anchor.attributeNames():
+                try:
+                    if attribute.lower() in ("class", "rel", "id") and "next" in anchor.attribute(attribute).lower():
+                        try:
+                            self._canGoNext = anchor.attribute("href")
+                            return
+                        except:
+                            pass
+                except:
+                    pass
         self._canGoNext = False
 
     def canGoNext(self):
