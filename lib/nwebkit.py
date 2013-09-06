@@ -320,6 +320,9 @@ class WebPage(QWebPage):
 # recording history, and more.
 class WebView(QWebView):
 
+    # This stores the directory you last saved a file in.
+    saveDirectory = os.path.expanduser("~")
+
     # This is used to store references to webViews so that they don't
     # automatically get cleaned up.
     webViews = []
@@ -792,10 +795,11 @@ class WebView(QWebView):
                     return
 
         # Get file name for destination.
-        fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(os.path.expanduser("~"), request.url().toString().split("/")[-1]), tr("All files (*)"))
+        fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, request.url().toString().split("?")[0].split("/")[-1]), tr("All files (*)"))
         if type(fname) is tuple:
             fname = fname[0]
         if fname:
+            self.saveDirectory = os.path.split(fname)[0]
             reply = self.page().networkAccessManager().get(request)
             
             # Create a DownloadBar instance and append it to list of
@@ -846,10 +850,11 @@ class WebView(QWebView):
             fname = settings.new_tab_page
             content = content.replace("&lt;", "<").replace("&gt;", ">").replace("<body contenteditable=\"true\">", "<body>")
         else:
-            fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(os.path.expanduser("~"), self.url().toString().split("/")[-1]), tr("All files (*)"))
+            fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, self.url().toString().split("?")[0].split("/")[-1]), tr("All files (*)"))
         if type(fname) is tuple:
             fname = fname[0]
         if fname:
+            self.saveDirectory = os.path.split(fname)[0]
             try: f = open(fname, "w")
             except: pass
             else:

@@ -285,7 +285,7 @@ def main():
 
     if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
         loadSession()
-    if (not "--daemon" in sys.argv and len(browser.windows) == 0) or len(sys.argv[1:]) > 0:
+    if (not "--daemon" in sys.argv and len(browser.windows) == 0) or (not "--daemon" in sys.argv and len(sys.argv[1:]) > 0):
         # Create instance of MainWindow.
         win = MainWindow()
 
