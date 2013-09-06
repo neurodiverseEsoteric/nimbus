@@ -24,6 +24,7 @@ import settings
 import data
 import network
 import rss_parser
+import view_source_dialog
 
 # Extremely specific imports from PyQt4/PySide.
 # We give PyQt4 priority because it supports Qt5.
@@ -326,6 +327,8 @@ class WebView(QWebView):
     # Downloads
     downloads = []
 
+    sourceDialogs = []
+
     # This is a signal used to inform everyone a new window was created.
     windowCreated = Signal(QWebView)
 
@@ -445,6 +448,15 @@ class WebView(QWebView):
 
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
+
+    def viewSource(self):
+        sourceDialog = view_source_dialog.ViewSourceDialog(None)
+        for sd in self.sourceDialogs:
+            try: sd.doNothing()
+            except: self.sourceDialogs.remove(sd)
+        self.sourceDialogs.append(sourceDialog)
+        sourceDialog.setPlainText(self.page().mainFrame().toHtml())
+        sourceDialog.show()
 
     def saveHtml(self):
         self._html = self.page().mainFrame().toHtml()
@@ -608,7 +620,7 @@ class WebView(QWebView):
             if contentType != None:
                 self._contentType = contentType
             html = self.page().mainFrame().toHtml()
-            if "xml" in self._contentType and ("<rss" in html or ("<feed" in html and "atom" in html)):
+            if "xml" in str(self._contentType) and ("<rss" in html or ("<feed" in html and "atom" in html)):
                 try: self.setHtml(rss_parser.feedToHtml(html), self.url())
                 except: traceback.print_exc()
             else:

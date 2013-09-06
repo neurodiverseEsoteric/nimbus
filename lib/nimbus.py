@@ -211,6 +211,8 @@ def main():
     common.app_icon.addFile(common.icon("nimbus-128.png"))
     common.app_icon.addFile(common.icon("nimbus-256.png"))
 
+    app.setWindowIcon(common.app_icon)
+
     common.searchEditor = search_manager.SearchEditor()
 
     # Build the browser's default user agent.

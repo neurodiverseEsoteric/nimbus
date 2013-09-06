@@ -424,6 +424,12 @@ class MainWindow(QMainWindow):
         clearHistoryAction.triggered.connect(self.clearHistory)
         historyMenu.addAction(clearHistoryAction)
 
+        # Add view source dialog action.
+        viewSourceAction = QAction(tr("Page S&ource"), self)
+        viewSourceAction.setShortcut("Ctrl+Alt+U")
+        viewSourceAction.triggered.connect(lambda: self.tabWidget().currentWidget().viewSource())
+        mainMenu.addAction(viewSourceAction)
+
         # Add settings dialog action.
         settingsAction = QAction(common.complete_icon("preferences-system"), tr("&Settings..."), self)
         settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
