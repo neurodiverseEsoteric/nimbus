@@ -806,7 +806,9 @@ class WebView(QWebView):
                     return
 
         # Get file name for destination.
-        fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, request.url().toString().split("?")[0].split("/")[-1]), tr("All files (*)"))
+        fileName = request.url().toString().split("?")[0].split("/")
+        fileName = fileName[-1 if fileName[-1] != "" else -2]
+        fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, fileName + (".html" if not "." in fileName else "")), tr("All files (*)"))
         if type(fname) is tuple:
             fname = fname[0]
         if fname:
@@ -861,7 +863,9 @@ class WebView(QWebView):
             fname = settings.new_tab_page
             content = content.replace("&lt;", "<").replace("&gt;", ">").replace("<body contenteditable=\"true\">", "<body>")
         else:
-            fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, self.url().toString().split("?")[0].split("/")[-1]), tr("All files (*)"))
+            fileName = self.url().toString().split("?")[0].split("/")
+            fileName = fileName[-1 if fileName[-1] != "" else -2]
+            fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, fileName + (".html" if not "." in fileName else "")), tr("All files (*)"))
         if type(fname) is tuple:
             fname = fname[0]
         if fname:
