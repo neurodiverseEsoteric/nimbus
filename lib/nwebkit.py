@@ -808,6 +808,10 @@ class WebView(QWebView):
         # Get file name for destination.
         fileName = request.url().toString().split("?")[0].split("/")
         fileName = fileName[-1 if fileName[-1] != "" else -2]
+        upperFileName = fileName.upper()
+        for extension in common.tlds:
+            if upperFileName.endswith(extension):
+                fileName = fileName + ".html"
         fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, fileName + (".html" if not "." in fileName else "")), tr("All files (*)"))
         if type(fname) is tuple:
             fname = fname[0]
@@ -865,6 +869,10 @@ class WebView(QWebView):
         else:
             fileName = self.url().toString().split("?")[0].split("/")
             fileName = fileName[-1 if fileName[-1] != "" else -2]
+            upperFileName = fileName.upper()
+            for extension in common.tlds:
+                if upperFileName.endswith(extension):
+                    fileName = fileName + ".html"
             fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, fileName + (".html" if not "." in fileName else "")), tr("All files (*)"))
         if type(fname) is tuple:
             fname = fname[0]
