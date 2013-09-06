@@ -1,11 +1,11 @@
 #! /usr/bin/env python3
 
-#######################
-## custom_widgets.py ##
-#######################
-
-# Description:
-# Custom widgets used by Nimbus.
+# -----------------
+# custom_widgets.py
+# -----------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: Custom widgets used by Nimbus.
 
 import os
 from common import app_folder

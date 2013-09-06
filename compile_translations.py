@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
-# This script is a redundant way of compiling Nimbus' translation files.
+# -----------------------
+# compile_translations.py
+# -----------------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See <http://unlicense.org/> for more details.
+# Description: This script compiles all of Nimbus' translations on Unix.
 
 import os
 

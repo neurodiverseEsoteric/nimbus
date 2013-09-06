@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 
+# --------------
+# geolocation.py
+# --------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: Contains a QObject providing geolocation capabilities, to be
+#              used by nwebkit.py.
+
 import urllib.request
 import time
 

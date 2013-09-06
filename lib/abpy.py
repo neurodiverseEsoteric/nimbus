@@ -1,5 +1,7 @@
 #! /usr/bin/env python3
 
+# License: See <http://unlicense.org/> for more details.
+
 """
 This is a modified version of https://github.com/atereshkin/abpy that works
 in Python 3 and can be used in an actual browser. It's not useful as a

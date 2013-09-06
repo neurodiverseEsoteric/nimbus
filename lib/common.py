@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 
-###############
-## common.py ##
-###############
-
-# Description:
-# This module contains global variables and objects used by the rest of
-# Nimbus' components.
+# ---------
+# common.py
+# ---------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains global variables and objects used by the
+#              rest of Nimbus' components.
 
 # Import everything we need.
 import traceback

@@ -1,11 +1,11 @@
 #! /usr/bin/env python3
 
-###################
-## status_bar.py ##
-###################
-
-# Description
-# This is a browser status bar class.
+# -------------
+# status_bar.py
+# -------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This is a browser status bar class.
 
 from common import blank_toolbar
 import custom_widgets

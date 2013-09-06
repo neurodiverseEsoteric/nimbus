@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 
-###############
-## nimbus.py ##
-###############
-
-# Description:
-# This is the core module that contains all the very specific components
-# related to loading Nimbus.
+# ---------
+# nimbus.py
+# ---------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This is the core module that contains all the very specific
+#              components related to loading Nimbus.
 
 # Import everything we need.
 import sys

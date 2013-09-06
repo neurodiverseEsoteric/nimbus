@@ -1,5 +1,14 @@
 #! /usr/bin/env python3
 
+# -----------------
+# search_manager.py
+# -----------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains a dialog that allows easy management of
+#              search engines. It was ported over from Ryouko
+#              (http://github.com/foxhead128/ryouko).
+
 import common
 import settings
 import os

@@ -1,13 +1,13 @@
 #! /usr/bin/env python3
 
-########################
-## settings_dialog.py ##
-########################
-
-# Description:
-# This module contains classes related to Nimbus' settings dialog.
-# Each panel in the settings dialog is a subclass of a custom widget that
-# can be used to make more panels.
+# ------------------
+# settings_dialog.py
+# ------------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains classes related to Nimbus' settings dialog.
+# Each panel in the settings dialog is a subclass of a custom widget that can
+# be used to make more panels.
 
 import os
 import json

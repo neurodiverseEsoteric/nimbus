@@ -1,5 +1,13 @@
 #! /usr/bin/env python3
 
+# -----------
+# zoom_bar.py
+# -----------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains a toolbar for zooming in and out.
+#              It is not currently used in Nimbus, though it was at one point.
+
 import common
 from translate import tr
 

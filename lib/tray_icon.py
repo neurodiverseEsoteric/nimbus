@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 
-###############
-## nimbus.py ##
-###############
-
-# Description:
-# This is the core module that contains all the very specific components
-# related to loading Nimbus.
+# ------------
+# tray_icon.py
+# ------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains a system tray icon class, used by Nimbus
+#              as it runs in the background.
 
 # Import everything we need.
 import common

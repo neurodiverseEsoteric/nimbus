@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
-## data.py ##
-
-# This module contains data related to browser history, cookies, etc.
+# -------
+# data.py
+# -------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains data related to browser history, cookies,
+#              etc.
 
 import network
 import json

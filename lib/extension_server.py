@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
+# -------------------
 # extension_server.py
-# This simple script launches a webserver, which hosts the browser's extension
-# files so they can be loaded into the DOM without suffering from issues
-# regarding origin policies.
+# -------------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This simple script launches a webserver, which hosts the
+#              browser's extension files so they can be loaded into the DOM
+#              without suffering from issues regarding origin policies.
 
 # Import whatever we need to run.
 import os

@@ -1,7 +1,11 @@
 #! /usr/bin/env python3
 
-# Description:
-# This script is a big, ugly hack that compiles Nimbus on Windows.
+# ------------------
+# compile_windows.py
+# ------------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See <http://unlicense.org/> for more details.
+# Description: This script is a big, ugly hack that compiles Nimbus on Windows.
 
 import os, shutil
 from distutils.sysconfig import get_python_lib

@@ -1,11 +1,11 @@
 #! /usr/bin/env python3
 
-###################
-## mainwindow.py ##
-###################
-
-# Description:
-# Contains the main browser window interface.
+# -------------
+# mainwindow.py
+# -------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: Contains the main browser window interface.
 
 # Import everything we need.
 import os

@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 
-## settings.py ##
-# This module contains data related to browser settings.
+# -----------------
+# settings.py
+# -----------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains a global QSettings object that stores
+#              the browser's settings. It also contains some convenience
+#              functions.
 
 import sys
 import os.path

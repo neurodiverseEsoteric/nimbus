@@ -1,5 +1,13 @@
 #! /usr/bin/env python3
 
+# --------
+# setup.py
+# --------
+# Author:      Daniel Sim (foxhead128)
+# License:     See <http://unlicense.org/> for more details.
+# Description: This script installs Nimbus system-wide. It is mainly intended
+#              for use on Linux.
+
 import sys
 import os
 import subprocess

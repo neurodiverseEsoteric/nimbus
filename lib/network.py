@@ -1,9 +1,14 @@
 #! /usr/bin/env python3
 
-## network.py ##
-# This module contains data related to networking,
-# such as a cookie jar, disk cache, and QNetworkAccessManager.
-# It also contains a function to detect whether the browser is online or not.
+# ----------
+# network.py
+# ----------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains data related to networking, such as a
+#              cookie jar, disk cache, and QNetworkAccessManager. It also
+#              contains a function to detect whether the browser is online
+#              or not.
 
 import sys
 import os

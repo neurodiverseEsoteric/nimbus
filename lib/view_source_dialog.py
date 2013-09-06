@@ -1,5 +1,14 @@
 #! /usr/bin/env python3
 
+# ---------------------
+# view_source_dialog.py
+# ---------------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains a simple text dialog for viewing a page's
+#              source code. It was ported over from Ryouko
+#              (http://github.com/foxhead128/ryouko).
+
 from __future__ import print_function
 
 import os.path, sys
@@ -8,7 +17,8 @@ try:
     Signal = pyqtSignal
     from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QTextEdit, QTextDocument, QFileDialog, QInputDialog, QLineEdit
 except:
-    pass
+    from PySide.QtCore import Signal, QObject
+    from PySide.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QTextEdit, QTextDocument, QFileDialog, QInputDialog, QLineEdit
 try:
     __file__
 except:

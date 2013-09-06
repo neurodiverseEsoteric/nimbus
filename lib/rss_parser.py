@@ -1,5 +1,13 @@
 #! /usr/bin/env python3
 
+# -------------
+# rss_parser.py
+# -------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See <http://unlicense.org/> for more details.
+# Description: This module contains a function that converts an RSS feed to
+#              HTML.
+
 try:
     import feedparser
     has_feedparser = True

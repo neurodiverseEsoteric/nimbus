@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-##################
-## translate.py ##
-##################
-
-# Description:
-# This module contains objects and functions pertaining to
-# internationalization
+# ------------
+# translate.py
+# ------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains objects and functions pertaining to
+#              internationalization.
 
 import os.path
 from common import app_folder, app_locale

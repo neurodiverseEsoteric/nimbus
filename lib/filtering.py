@@ -1,5 +1,12 @@
 #! /usr/bin/env python3
 
+# ------------
+# filtering.py
+# ------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: Loads URL filtering rules to be used by network.py.
+
 import os.path
 import abpy
 import common
@@ -70,7 +77,7 @@ class AdblockFilterLoader(QThread):
 adblock_filter_loader = AdblockFilterLoader()
 
 # Host filter.
-hosts_file = os.path.join(common.app_folder, "nimbus-hosts")
+hosts_file = os.path.join(common.app_folder, "hosts")
 host_rules = []
 
 def load_host_rules():
@@ -79,8 +86,11 @@ def load_host_rules():
         try: f = open(hosts_file, "r")
         except: pass
         else:
-            try: host_rules = [line.replace("\n", "") for line in f.readlines()]
-            except: pass
+            # This is a big hacky way of parsing the rules.
+            try:
+                host_rules = [line for line in [line.split(" ")[1].replace("\n", "") for line in f.readlines() if len(line.split(" ")) > 1 and not line.startswith("#") and len(line) > 1] if line != ""]
+            except:
+                pass
             f.close()
 
 load_host_rules()

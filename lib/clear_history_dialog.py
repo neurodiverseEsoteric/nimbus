@@ -1,11 +1,12 @@
 #! /usr/bin/env python3
 
-#############################
-## clear_history_dialog.py ##
-#############################
-
-# Description:
-# This module contains a dialog used for clearing out Nimbus' history.
+# -----------------------
+# clear_history_dialog.py
+# -----------------------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module contains a dialog used for clearing out Nimbus'
+#              history.
 
 import sys
 import os

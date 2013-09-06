@@ -1,12 +1,11 @@
 #! /usr/bin/env python3
 
-###############
-## webkit.py ##
-###############
-
-# Description:
-# This is the core module that contains all the very specific components
-# related to loading Nimbus.
+# ----------
+# nwebkit.py
+# ----------
+# Author:      Daniel Sim (foxhead128)
+# License:     See LICENSE.md for more details.
+# Description: This module mainly contains stuff related to QtWebKit.
 
 # Import everything we need.
 import sys
