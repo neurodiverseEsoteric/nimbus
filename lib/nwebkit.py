@@ -484,7 +484,7 @@ class WebView(QWebView):
     def canGoUp(self):
         components = self.url().toString().split("/")
         urlString = self.url().toString()
-        if len(components) < 2 or (urlString.count("/") < 4 and not "///" in urlString):
+        if len(components) < 2 or (urlString.count("/") < 4 and not "///" in urlString and urlString.startswith("file://")) or (len(components) < 5 and not urlString.startswith("file://") and components[-1] == ""):
             return False
         return True
 
