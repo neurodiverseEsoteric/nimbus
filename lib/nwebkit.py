@@ -834,7 +834,7 @@ class WebView(QWebView):
         try: f = open(os.path.join(settings.offline_cache_folder, h), "r")
         except: pass
         else:
-            try: self.setHtml(f.read())
+            try: self.setHtml(f.read(), QUrl(url))
             except: pass
             f.close()
             return True
