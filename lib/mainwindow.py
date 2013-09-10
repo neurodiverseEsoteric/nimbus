@@ -483,7 +483,7 @@ class MainWindow(QMainWindow):
         mainMenu.addAction(quitAction)
 
         # Add main menu action/button.
-        self.mainMenuAction =
+        self.mainMenuAction =\
              QAction(common.complete_icon("document-properties"),\
                      tr("&Menu"), self)
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
@@ -559,7 +559,7 @@ class MainWindow(QMainWindow):
              webView.setUserAgent(ua)
         self.sideBars[name]["sideBar"].\
              webView.load(QUrl(url))
-        self.sideBars[name]["sideBar"].\setWidget(self.sideBars[name]\
+        self.sideBars[name]["sideBar"].setWidget(self.sideBars[name]\
                                                  ["sideBar"].webView)
         self.addDockWidget(Qt.LeftDockWidgetArea,\
                            self.sideBars[name]["sideBar"])
