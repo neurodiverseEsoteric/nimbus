@@ -76,7 +76,7 @@ class ClearHistoryDialog(QMainWindow):
         if self.dataType.currentIndex() == 1 or clear_everything:
             data.clearCookies()
         if self.dataType.currentIndex() == 2 or clear_everything:
-            network.clearCache()
+            network.clear_cache()
             path = settings.offline_cache_folder
             if os.path.isdir(path):
                 if sys.platform.startswith("win"):

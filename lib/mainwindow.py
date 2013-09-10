@@ -26,14 +26,33 @@ from nwebkit import *
 # We give PyQt4 priority because it supports Qt5.
 try:
     from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize
-    from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout, QKeySequence, QMessageBox, QSizePolicy, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QTabWidget
+    from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout,\
+                            QKeySequence, QMessageBox, QSizePolicy, QIcon,\
+                            QMenu, QAction, QMainWindow, QToolBar,\
+                            QToolButton, QComboBox, QTabWidget
     from PyQt4.QtNetwork import QNetworkRequest
     from PyQt4.QtWebKit import QWebPage
 except:
     from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize
-    from PySide.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout, QKeySequence, QMessageBox, QSizePolicy, QIcon, QMenu, QAction, QMainWindow, QToolBar, QToolButton, QComboBox, QTabWidget
+    from PySide.QtGui import QApplication, QDockWidget, QWidget,\
+                             QHBoxLayout, QKeySequence, QMessageBox,\
+                             QSizePolicy, QIcon, QMenu, QAction,\
+                             QMainWindow, QToolBar, QToolButton, QComboBox,\
+                             QTabWidget
     from PySide.QtNetwork import QNetworkRequest
     from PySide.QtWebKit import QWebPage
+
+tabbar_stylesheet = \
+"""QTabBar { margin: 0; padding: 0; border-bottom: 0; }
+   QTabBar::tab { min-width: 8em; border: 1px solid palette(dark);
+                  border-left: 0; margin: 0; padding: 4px;
+                  background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                              stop: 0 palette(window),
+                                              stop: 1 palette(dark)); }
+   QTabBar::tab:selected { background: qlineargradient(x1: 0, y1: 0,
+                                                       x2: 0, y2: 1,
+                                       stop: 0 palette(light),
+                                       stop: 1 palette(window)); }"""
 
 # Extension button class.
 class ExtensionButton(QToolButton):
@@ -50,7 +69,8 @@ class ExtensionButton(QToolButton):
         try: exec(self.script)
         except:
             traceback.print_exc()
-            self._parent.currentWidget().page().mainFrame().evaluateJavaScript(self.script)
+            self._parent.currentWidget().page().mainFrame().\
+            evaluateJavaScript(self.script)
 
 # Custom MainWindow class.
 # This contains basic navigation controls, a location bar, and a menu.
@@ -77,17 +97,18 @@ class MainWindow(QMainWindow):
         self.sideBars = {}
 
         # Tabs toolbar.
-        self.tabsToolBar = custom_widgets.MenuToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
+        self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
+                           contextMenuPolicy=Qt.CustomContextMenu,\
+                           parent=self)
         self.addToolBar(self.tabsToolBar)
 
         self.addToolBarBreak(Qt.TopToolBarArea)
 
         # Main toolbar.
-        self.toolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
+        self.toolBar = QToolBar(movable=False,\
+                                contextMenuPolicy=Qt.CustomContextMenu,\
+                                parent=self)
         self.addToolBar(self.toolBar)
-
-        #self.zoomBar = zoom_bar.ZoomBar(self)
-        #self.zoomBar.zoomFactorChanged.connect(lambda zoomFactor: self.tabs.currentWidget().setZoomFactor(zoomFactor))
 
         # Tab widget for tabbed browsing.
         self.tabs = QTabWidget(self)
@@ -106,9 +127,6 @@ class MainWindow(QMainWindow):
         self.tabs.currentChanged.connect(self.updateLocationText)
         self.tabs.currentChanged.connect(self.updateLocationIcon)
 
-        # Update zoom toolbar's zoom factor.
-        #self.tabs.currentChanged.connect(lambda: self.zoomBar.setZoomFactor(self.tabs.currentWidget().zoomFactor()))
-
         # Allow closing of tabs.
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.removeTab)
@@ -116,9 +134,6 @@ class MainWindow(QMainWindow):
         self.statusBar = status_bar.StatusBar(self)
         self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
         self.addToolBarBreak(Qt.BottomToolBarArea)
-
-        #self.statusBar.addToolBar(self.zoomBar)
-        #self.zoomBar.hide()
 
         # Set tabs as central widget.
         self.setCentralWidget(self.tabs)
@@ -134,7 +149,7 @@ class MainWindow(QMainWindow):
         self.tabsToolBar.layout().setSpacing(0)
         self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
         self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
-        self.tabs.tabBar().setStyleSheet("QTabBar { margin: 0; padding: 0; border-bottom: 0; } QTabBar::tab { min-width: 8em; border: 1px solid palette(dark); border-left: 0; margin: 0; padding: 4px; background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 palette(window), stop: 1 palette(dark)); } QTabBar::tab:selected { background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 palette(light), stop: 1 palette(window)); } /** QTabBar::tab:last, QTabBar::tab:only-one { border-top-right-radius: 8px; } **/ ")
+        self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # New tab action.
         newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)
@@ -445,7 +460,12 @@ class MainWindow(QMainWindow):
 
         # About Nimbus action.
         aboutAction = QAction(common.complete_icon("help-about"), tr("A&bout Nimbus"), self)
-        aboutAction.triggered.connect(lambda: QMessageBox.about(self, tr("About Nimbus"), "<h3>" + tr("Nimbus") + " " + common.app_version + "</h3>" + tr("Python 3/Qt 4-based Web browser.")))
+        aboutAction.triggered.connect(lambda: QMessageBox.about(self,\
+                                               tr("About Nimbus"),\
+                                               "<h3>" + tr("Nimbus") + " " +\
+                                               common.app_version +\
+                                               "</h3>" +\
+                                               tr("Python 3/Qt 4-based Web browser.")))
         mainMenu.addAction(aboutAction)
 
         # Licensing information.
@@ -456,18 +476,24 @@ class MainWindow(QMainWindow):
         mainMenu.addSeparator()
 
         # Quit action.
-        quitAction = QAction(common.complete_icon("application-exit"), tr("Quit"), self)
+        quitAction = QAction(common.complete_icon("application-exit"),\
+                             tr("Quit"), self)
         quitAction.setShortcut("Ctrl+Shift+Q")
         quitAction.triggered.connect(QCoreApplication.quit)
         mainMenu.addAction(quitAction)
 
         # Add main menu action/button.
-        self.mainMenuAction = QAction(common.complete_icon("document-properties"), tr("&Menu"), self)
+        self.mainMenuAction =
+             QAction(common.complete_icon("document-properties"),\
+                     tr("&Menu"), self)
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
         self.mainMenuAction.setMenu(mainMenu)
         self.toolBar.addAction(self.mainMenuAction)
-        self.toolBar.widgetForAction(self.mainMenuAction).setPopupMode(QToolButton.InstantPopup)
-        self.mainMenuAction.triggered.connect(lambda: self.toolBar.widgetForAction(self.mainMenuAction).showMenu())
+        self.toolBar.widgetForAction(self.mainMenuAction).\
+             setPopupMode(QToolButton.InstantPopup)
+        self.mainMenuAction.triggered.\
+             connect(lambda: self.toolBar.\
+             widgetForAction(self.mainMenuAction).showMenu())
 
         # This is a dummy sidebar used to
         # dock extension sidebars with.
@@ -487,7 +513,8 @@ class MainWindow(QMainWindow):
     # Redefine show function.
     def show(self):
         self.setVisible(True)
-        self.tabs.setStyleSheet("QTabWidget::pane { top: -%s; } " % (self.tabs.tabBar().height(),))
+        self.tabs.setStyleSheet("QTabWidget::pane { top: -%s; } " %\
+             (self.tabs.tabBar().height(),))
 
     # Returns the tab widget.
     def tabWidget(self):
@@ -504,26 +531,38 @@ class MainWindow(QMainWindow):
     # Part of the extensions API.
     def toggleSideBar(self, name):
         if self.hasSideBar(name):
-            self.sideBars[name]["sideBar"].setVisible(not self.sideBars[name]["sideBar"].isVisible())
+            self.sideBars[name]["sideBar"].\
+                 setVisible(not self.sideBars[name]["sideBar"].isVisible())
             if type(self.sideBars[name]["clip"]) is str:
                 clip = self.sideBars[name]["clip"]
-                if not clip in self.sideBars[name]["sideBar"].webView.url().toString():
-                    self.sideBars[name]["sideBar"].webView.load(self.sideBars[name]["url"])
+                if not clip in self.sideBars[name]["sideBar"].\
+                                     webView.url().toString():
+                    self.sideBars[name]["sideBar"].\
+                         webView.load(self.sideBars[name]["url"])
 
     # Adds a sidebar.
     # Part of the extensions API.
     def addSideBar(self, name="", url="about:blank", clip=None, ua=None):
-        self.sideBars[name] = {"sideBar": QDockWidget(self), "url": QUrl(url), "clip": clip}
+        self.sideBars[name] = {"sideBar": QDockWidget(self),\
+                               "url": QUrl(url), "clip": clip}
         self.sideBars[name]["sideBar"].setWindowTitle(name)
         self.sideBars[name]["sideBar"].setMaximumWidth(320)
-        self.sideBars[name]["sideBar"].setContextMenuPolicy(Qt.CustomContextMenu)
-        self.sideBars[name]["sideBar"].setFeatures(QDockWidget.NoDockWidgetFeatures)
-        self.sideBars[name]["sideBar"].webView = WebView(self.sideBars[name]["sideBar"])
-        self.sideBars[name]["sideBar"].webView.windowCreated.connect(self.addTab)
-        self.sideBars[name]["sideBar"].webView.setUserAgent(ua)
-        self.sideBars[name]["sideBar"].webView.load(QUrl(url))
-        self.sideBars[name]["sideBar"].setWidget(self.sideBars[name]["sideBar"].webView)
-        self.addDockWidget(Qt.LeftDockWidgetArea, self.sideBars[name]["sideBar"])
+        self.sideBars[name]["sideBar"].\
+             setContextMenuPolicy(Qt.CustomContextMenu)
+        self.sideBars[name]["sideBar"].\
+             setFeatures(QDockWidget.NoDockWidgetFeatures)
+        self.sideBars[name]["sideBar"].\
+             webView = WebView(self.sideBars[name]["sideBar"])
+        self.sideBars[name]["sideBar"].\
+             webView.windowCreated.connect(self.addTab)
+        self.sideBars[name]["sideBar"].\
+             webView.setUserAgent(ua)
+        self.sideBars[name]["sideBar"].\
+             webView.load(QUrl(url))
+        self.sideBars[name]["sideBar"].\setWidget(self.sideBars[name]\
+                                                 ["sideBar"].webView)
+        self.addDockWidget(Qt.LeftDockWidgetArea,\
+                           self.sideBars[name]["sideBar"])
         self.tabifyDockWidget(self.sideBar, self.sideBars[name]["sideBar"])
 
     # This is so you can grab the window by its toolbar and move it.
@@ -549,7 +588,8 @@ self.origY + ev.globalY() - self.mouseY)
         for tab in range(self.tabWidget().count()):
             window_session.append(self.tabWidget().widget(tab).saveHistory())
         browser.closedWindows.append(window_session)
-        while len(browser.closedWindows) > settings.setting_to_int("general/ReopenableWindowCount"):
+        while len(browser.closedWindows) >\
+               settings.setting_to_int("general/ReopenableWindowCount"):
             browser.closedWindows.pop(0)
         self.deleteLater()
 
@@ -571,7 +611,8 @@ self.origY + ev.globalY() - self.mouseY)
         for extension in settings.extensions:
             if extension not in settings.extensions_whitelist:
                 continue
-            extension_path = os.path.join(settings.extensions_folder, extension)
+            extension_path = os.path.join(settings.extensions_folder,\
+                                          extension)
 
             if os.path.isdir(extension_path):
                 script_path = os.path.join(extension_path, "script.py")
@@ -589,7 +630,10 @@ self.origY + ev.globalY() - self.mouseY)
                         shortcut = copy.copy(f.read().replace("\n", ""))
                         f.close()
                     newExtension = ExtensionButton(script, shortcut, self)
-                    newExtension.setToolTip(extension.replace("_", " ").title() + ("" if not shortcut else "\n" + shortcut))
+                    newExtension.setToolTip(extension.replace("_", " ").\
+                                            title() +\
+                                            ("" if not shortcut\
+                                                else "\n" + shortcut))
                     newExtension.clicked.connect(newExtension.loadScript)
                     self.extensionBar.show()
                     self.extensionBar.addWidget(newExtension)
@@ -601,8 +645,10 @@ self.origY + ev.globalY() - self.mouseY)
     # Toggle all the navigation buttons.
     def toggleActions(self):
         try:
-            self.backAction.setEnabled(self.tabWidget().currentWidget().page().history().canGoBack())
-            forwardEnabled = self.tabWidget().currentWidget().page().history().canGoForward()
+            self.backAction.setEnabled(self.tabWidget().currentWidget().\
+                                       page().history().canGoBack())
+            forwardEnabled = self.tabWidget().currentWidget().\
+                             page().history().canGoForward()
             self.forwardAction.setEnabled(forwardEnabled)
 
             if not forwardEnabled:
@@ -616,15 +662,24 @@ self.origY + ev.globalY() - self.mouseY)
 
             # This is a workaround so that hitting Esc will reset the location
             # bar text.
-            self.stopAction.setVisible(self.tabWidget().currentWidget().pageAction(QWebPage.Stop).isEnabled())
+            self.stopAction.setVisible(self.tabWidget().currentWidget().\
+                                       pageAction(QWebPage.Stop).isEnabled())
             self.stopAction.setEnabled(True)
 
-            self.reloadAction.setVisible(self.tabWidget().currentWidget().pageAction(QWebPage.Reload).isEnabled())
+            self.reloadAction.setVisible(self.tabWidget().currentWidget().\
+                                         pageAction(QWebPage.Reload).\
+                                         isEnabled())
             self.reloadAction.setEnabled(True)
 
-            self.homeAction.setVisible(settings.setting_to_bool("general/HomeButtonVisible"))
-            self.upAction.setVisible(settings.setting_to_bool("general/UpButtonVisible"))
-            self.feedMenuButton.setVisible(settings.setting_to_bool("general/FeedButtonVisible"))
+            self.homeAction.setVisible(settings.\
+                                       setting_to_bool\
+                                       ("general/HomeButtonVisible"))
+            self.upAction.setVisible(settings.\
+                                     setting_to_bool\
+                                     ("general/UpButtonVisible"))
+            self.feedMenuButton.setVisible(settings.\
+                                           setting_to_bool\
+                                           ("general/FeedButtonVisible"))
         except:
             self.backAction.setEnabled(False)
             self.forwardAction.setEnabled(False)
@@ -633,7 +688,8 @@ self.origY + ev.globalY() - self.mouseY)
         self.toggleActions2()
 
     def toggleActions2(self):
-        try: self.nextAction.setEnabled(bool(self.tabWidget().currentWidget().canGoNext()))
+        try: self.nextAction.setEnabled(bool(self.tabWidget().\
+                                             currentWidget().canGoNext()))
         except: self.nextAction.setEnabled(False)
 
     # Navigation methods.
@@ -649,7 +705,10 @@ self.origY + ev.globalY() - self.mouseY)
             backItems = history.backItems(10)
             for item in range(0, len(backItems)):
                 try:
-                    action = custom_widgets.WebHistoryAction(item, backItems[item].title(), self.backHistoryMenu)
+                    action = custom_widgets.\
+                             WebHistoryAction(item,\
+                                              backItems[item].title(),\
+                                              self.backHistoryMenu)
                     action.triggered2.connect(self.loadBackHistoryItem)
                     self.backHistoryMenu.addAction(action)
                 except:
@@ -671,7 +730,10 @@ self.origY + ev.globalY() - self.mouseY)
             forwardItems = history.forwardItems(10)
             for item in range(0, len(forwardItems)):
                 try:
-                    action = custom_widgets.WebHistoryAction(item, forwardItems[item].title(), self.forwardHistoryMenu)
+                    action = custom_widgets.\
+                             WebHistoryAction(item,
+                                              forwardItems[item].title(),\
+                                              self.forwardHistoryMenu)
                     action.triggered2.connect(self.loadForwardHistoryItem)
                     self.forwardHistoryMenu.addAction(action)
                 except:
@@ -698,8 +760,11 @@ self.origY + ev.globalY() - self.mouseY)
                 try:
                     x = "/".join(components[:component])
                     if x != "":
-                        action = custom_widgets.LinkAction(QUrl.fromUserInput(x), x, self.upMenu)
-                        action.triggered2[QUrl].connect(self.tabWidget().currentWidget().load)
+                        action = custom_widgets.LinkAction(QUrl.fromUserInput(x),\
+                                                           x,\
+                                                           self.upMenu)
+                        action.triggered2[QUrl].\
+                        connect(self.tabWidget().currentWidget().load)
                         self.upMenu.addAction(action)
                 except:
                     traceback.print_exc()
@@ -709,10 +774,14 @@ self.origY + ev.globalY() - self.mouseY)
 
     def stop(self):
         self.tabWidget().currentWidget().stop()
-        self.locationBar.setEditText(self.tabWidget().currentWidget().url().toString())
+        self.locationBar.setEditText(self.tabWidget().\
+                                     currentWidget().url().toString())
 
     def goHome(self):
-        self.tabWidget().currentWidget().load(QUrl.fromUserInput(settings.settings.value("general/Homepage")))
+        self.tabWidget().currentWidget().load(QUrl.\
+                                              fromUserInput(settings.\
+                                              settings.\
+                                              value("general/Homepage")))
 
     # About to show feed menu.
     def aboutToShowFeedMenu(self):
@@ -723,7 +792,8 @@ self.origY + ev.globalY() - self.mouseY)
         else:
             for title, feed in feeds:
                 action = custom_widgets.LinkAction(feed, title, self.feedMenu)
-                action.triggered2[str].connect(self.tabWidget().currentWidget().load2)
+                action.triggered2[str].connect(self.tabWidget().\
+                                               currentWidget().load2)
                 self.feedMenu.addAction(action)
 
     # Find text/Text search methods.
@@ -745,7 +815,7 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Clears the history after a prompt.
     def clearHistory(self):
-        chistorydialog.display()
+        common.chistorydialog.display()
 
     # Method to load a URL.
     def load(self, url=False):
@@ -759,7 +829,10 @@ self.origY + ev.globalY() - self.mouseY)
                 except: url3 = ""
             fkey = keyword[0] + " "
             if url3.startswith(fkey):
-                self.tabWidget().currentWidget().load(QUrl(keyword[1] % (url3.replace(fkey, ""),)))
+                self.tabWidget().currentWidget().load(QUrl(keyword[1]\
+                                                           % (url3.\
+                                                           replace(fkey,\
+                                                           ""),)))
                 return
         url2 = QUrl.fromUserInput(url)
         valid_url = (":" in url or os.path.exists(url) or url.count(".") > 2)
@@ -770,15 +843,21 @@ self.origY + ev.globalY() - self.mouseY)
         if valid_url:
             self.tabWidget().currentWidget().load(QUrl.fromUserInput(url))
         else:
-            self.tabWidget().currentWidget().load(QUrl(settings.settings.value("general/Search") % (url,)))
+            self.tabWidget().currentWidget().load(QUrl(settings.\
+                                                  settings.\
+                                                  value("general/Search")\
+                                                  % (url,)))
 
     # Status bar related methods.
     def setStatusBarMessage(self, message):
-        try: self.statusBar.setStatusBarMessage(self.tabWidget().currentWidget()._statusBarMessage)
+        try: self.statusBar.setStatusBarMessage(self.tabWidget().\
+                                                currentWidget().\
+                                                _statusBarMessage)
         except: self.statusBar.setStatusBarMessage("")
 
     def setProgress(self, progress):
-        try: self.statusBar.setValue(self.tabWidget().currentWidget()._loadProgress)
+        try: self.statusBar.setValue(self.tabWidget().\
+                                     currentWidget()._loadProgress)
         except: self.statusBar.setValue(0)
 
     # Fullscreen mode.
@@ -831,7 +910,9 @@ self.origY + ev.globalY() - self.mouseY)
 
         elif "url" in kwargs:
             url = kwargs["url"]
-            webview = WebView(incognito=not settings.setting_to_bool("data/RememberHistory"), parent=self)
+            webview = WebView(incognito=not settings.\
+                              setting_to_bool("data/RememberHistory"),\
+                              parent=self)
             webview.load(QUrl.fromUserInput(url))
 
         # If a WebView object is specified, use it.
@@ -851,7 +932,11 @@ self.origY + ev.globalY() - self.mouseY)
         webview.urlChanged.connect(self.updateLocationText)
         webview.iconChanged.connect(self.updateTabIcons)
         webview.iconChanged.connect(self.updateLocationIcon)
-        webview.windowCreated.connect(lambda webView: self.addTab(webView=webView, index=self.tabWidget().currentIndex()+1, focus=False))
+        webview.windowCreated.connect(lambda webView:\
+                                      self.addTab(webView=webView,\
+                                      index=self.tabWidget().\
+                                            currentIndex()+1,\
+                                      focus=False))
         webview.downloadStarted.connect(self.addDownloadToolBar)
 
         # Add tab
@@ -881,13 +966,15 @@ self.origY + ev.globalY() - self.mouseY)
         if self.tabWidget().currentIndex() == 0:
             self.tabWidget().setCurrentIndex(self.tabWidget().count() - 1)
         else:
-            self.tabWidget().setCurrentIndex(self.tabWidget().currentIndex() - 1)
+            self.tabWidget().setCurrentIndex(self.tabWidget().\
+                                             currentIndex() - 1)
 
     # Update the titles on every single tab.
     def updateTabTitles(self):
         for index in range(0, self.tabWidget().count()):
             title = self.tabWidget().widget(index).windowTitle()
-            self.tabWidget().setTabText(index, title[:24] + '...' if len(title) > 24 else title)
+            self.tabWidget().setTabText(index, title[:24] + '...' if\
+                                        len(title) > 24 else title)
             if index == self.tabWidget().currentIndex():
                 self.setWindowTitle(title + " - " + tr("Nimbus"))
 
@@ -905,15 +992,21 @@ self.origY + ev.globalY() - self.mouseY)
             return
         try:
             webView = self.tabWidget().widget(index)
-            if webView.history().canGoBack() or webView.history().canGoForward() or webView.url().toString() not in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
+            if webView.history().canGoBack() or\
+            webView.history().canGoForward() or\
+            webView.url().toString() not in\
+            ("about:blank", "",\
+             QUrl.fromUserInput(settings.new_tab_page).toString(),):
                 self.closedTabs.append((webView.saveHistory(), index))
-                while len(self.closedTabs) > settings.setting_to_int("general/ReopenableTabCount"):
+                while len(self.closedTabs) >\
+                settings.setting_to_int("general/ReopenableTabCount"):
                     self.closedTabs.pop(0)
             webView.deleteLater()
         except:
             traceback.print_exc()
         self.tabWidget().removeTab(index)
-        if self.tabWidget().count() == 0 and not settings.setting_to_bool("general/CloseWindowWithLastTab"):
+        if self.tabWidget().count() == 0 and\
+        not settings.setting_to_bool("general/CloseWindowWithLastTab"):
             self.addTab(url="about:blank")
 
     # Reopens the last closed tab.

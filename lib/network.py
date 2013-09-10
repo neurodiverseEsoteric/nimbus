@@ -28,10 +28,10 @@ except:
 
 # Global cookiejar to store cookies.
 # All nimbus.WebView instances use this.
-cookieJar = QNetworkCookieJar(QCoreApplication.instance())
+cookie_jar = QNetworkCookieJar(QCoreApplication.instance())
 
 # All incognito nimbus.WebView instances use this one instead.
-incognitoCookieJar = QNetworkCookieJar(QCoreApplication.instance())
+incognito_cookie_jar = QNetworkCookieJar(QCoreApplication.instance())
 
 # Global disk cache.
 diskCache = QNetworkDiskCache(QCoreApplication.instance())
@@ -117,12 +117,14 @@ class NetworkAccessManager(QNetworkAccessManager):
             return QNetworkAccessManager.createRequest(self, op, request, device)
 
 # Create global instance of NetworkAccessManager.
-networkAccessManager = NetworkAccessManager()
-incognitoNetworkAccessManager = NetworkAccessManager(nocache=True)
+network_access_manager = NetworkAccessManager()
+network_access_manager.setCookieJar(cookie_jar)
+incognito_network_access_manager = NetworkAccessManager(nocache=True)
+incognito_network_access_manager.setCookieJar(incognito_cookie_jar)
 
 # Clear cache.
-def clearCache():
-    networkAccessManager.cache().clear()
+def clear_cache():
+    network_access_manager.cache().clear()
 
 # This function checks whether the system is connected to a network interface.
 # It is used by Nimbus to determine whether the system is connected to the

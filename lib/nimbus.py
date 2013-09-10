@@ -5,8 +5,8 @@
 # ---------
 # Author:      Daniel Sim (foxhead128)
 # License:     See LICENSE.md for more details.
-# Description: This is the core module that contains all the very specific
-#              components related to loading Nimbus.
+# Description: This is the core module that contains all the very
+#              specific components related to loading Nimbus.
 
 # Import everything we need.
 import sys
@@ -122,7 +122,8 @@ def saveSession():
         for window in browser.windows:
             session.append([])
             for tab in range(window.tabWidget().count()):
-                session[-1].append(window.tabWidget().widget(tab).saveHistory())
+                session[-1].append(window.tabWidget().widget(tab).\
+                                   saveHistory())
         try:
             f = open(settings.session_file, "wb")
         except:
@@ -149,12 +150,14 @@ if has_dbus:
             busName = dbus.service.BusName("org.nimbus.Nimbus", bus=bus)
             dbus.service.Object.__init__(self, busName, "/Nimbus")
 
-        @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
+        @dbus.service.method("org.nimbus.Nimbus", in_signature="s",\
+                             out_signature="s")
         def addWindow(self, url=None):
             addWindow(url)
             return url
 
-        @dbus.service.method("org.nimbus.Nimbus", in_signature="s", out_signature="s")
+        @dbus.service.method("org.nimbus.Nimbus", in_signature="s",\
+                             out_signature="s")
         def addTab(self, url="about:blank"):
             for window in browser.windows[::-1]:
                 if window.isVisible():
@@ -188,8 +191,9 @@ def main():
     except: dbus_present = False
     else: dbus_present = True
 
-    # If Nimbus detects the existence of another Nimbus process, it will
-    # send all the requested URLs to the existing process and exit.
+    # If Nimbus detects the existence of another Nimbus process, it
+    # will send all the requested URLs to the existing process and
+    # exit.
     if dbus_present:
         for arg in sys.argv[1:]:
             if "." in arg or ":" in arg:
@@ -218,10 +222,12 @@ def main():
     # Build the browser's default user agent.
     # This should be improved as well.
     webPage = QWebPage()
-    nimbus_ua_sub = "Qt/" + common.qt_version + " Nimbus/" + common.app_version + " QupZilla/1.4.3"
+    nimbus_ua_sub = "Qt/" + common.qt_version + " Nimbus/" + \
+                    common.app_version + " QupZilla/1.4.3"
     ua = webPage.userAgentForUrl(QUrl.fromUserInput("google.com"))
     if common.qt_version.startswith("4") or not "python" in ua:
-        common.defaultUserAgent = ua.replace("Qt/" + common.qt_version, nimbus_ua_sub)
+        common.defaultUserAgent = ua.replace("Qt/" + common.qt_version,\
+                                             nimbus_ua_sub)
     else:
         common.defaultUserAgent = ua.replace("python", nimbus_ua_sub)
     webPage.deleteLater()
@@ -239,8 +245,7 @@ def main():
     common.licenseDialog = custom_widgets.LicenseDialog()
 
     # Create instance of clear history dialog.
-    global chistorydialog
-    chistorydialog = clear_history_dialog.ClearHistoryDialog()
+    common.chistorydialog = clear_history_dialog.ClearHistoryDialog()
 
     # Set up settings dialog.
     settings.settingsDialog = settings_dialog.SettingsDialog()
@@ -258,7 +263,8 @@ def main():
     filtering.adblock_filter_loader.start()
 
     if not os.path.isdir(settings.extensions_folder):
-        try: shutil.copytree(common.extensions_folder, settings.extensions_folder)
+        try: shutil.copytree(common.extensions_folder,\
+                             settings.extensions_folder)
         except: pass
     if not os.path.isfile(settings.startpage):
         try: shutil.copy2(common.startpage, settings.startpage)
@@ -285,7 +291,8 @@ def main():
 
     if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
         loadSession()
-    if (not "--daemon" in sys.argv and len(browser.windows) == 0) or (not "--daemon" in sys.argv and len(sys.argv[1:]) > 0):
+    if (not "--daemon" in sys.argv and len(browser.windows) == 0) or\
+       (not "--daemon" in sys.argv and len(sys.argv[1:]) > 0):
         # Create instance of MainWindow.
         win = MainWindow()
 

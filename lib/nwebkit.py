@@ -379,13 +379,11 @@ class WebView(QWebView):
 
         # Create a NetworkAccessmanager that supports ad-blocking and set it.
         if not self.incognito:
-            self.nAM = network.networkAccessManager
-            self.page().setNetworkAccessManager(self.nAM)
-            self.nAM.setParent(QCoreApplication.instance())
+            self.nAM = network.network_access_manager
         else:
-            self.nAM = network.incognitoNetworkAccessManager
-            self.page().setNetworkAccessManager(self.nAM)
-            self.nAM.setParent(QCoreApplication.instance())
+            self.nAM = network.incognito_network_access_manager
+        self.page().setNetworkAccessManager(self.nAM)
+        self.nAM.setParent(QCoreApplication.instance())
 
         # Enable Web Inspector
         self.settings().setAttribute(self.settings().DeveloperExtrasEnabled, True)
@@ -399,11 +397,8 @@ class WebView(QWebView):
             # Set persistent storage path to settings_folder.
             self.settings().enablePersistentStorage(settings.settings_folder)
 
-            # Set the CookieJar.
-            self.page().networkAccessManager().setCookieJar(network.cookieJar)
-
-            # Do this so that cookieJar doesn't get deleted along with WebView.
-            network.cookieJar.setParent(QCoreApplication.instance())
+            # Do this so that cookie_jar doesn't get deleted along with WebView.
+            network.cookie_jar.setParent(QCoreApplication.instance())
 
             # Recording history should only be done in normal browsing mode.
             self.urlChanged.connect(self.addHistoryItem)
@@ -413,8 +408,7 @@ class WebView(QWebView):
         else:
             # Global incognito cookie jar, so that logins are preserved
             # between incognito tabs.
-            self.page().networkAccessManager().setCookieJar(network.incognitoCookieJar)
-            network.incognitoCookieJar.setParent(QCoreApplication.instance())
+            network.incognito_cookie_jar.setParent(QCoreApplication.instance())
 
             # Enable private browsing for QWebSettings.
             self.settings().setAttribute(self.settings().PrivateBrowsingEnabled, True)

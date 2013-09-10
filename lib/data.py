@@ -42,7 +42,7 @@ def loadData():
     else:
         if type(raw_cookies) is list:
             cookies = [QNetworkCookie().parseCookies(QByteArray(cookie))[0] for cookie in raw_cookies]
-            network.cookieJar.setAllCookies(cookies)
+            network.cookie_jar.setAllCookies(cookies)
 
     try: wl = json.loads(str(data.value("data/GeolocationWhitelist")))
     except: pass
@@ -67,7 +67,7 @@ def saveData():
     data.setValue("data/History", json.dumps(history))
 
     # Save cookies.
-    cookies = json.dumps([cookie.toRawForm().data().decode("utf-8") for cookie in network.cookieJar.allCookies()])
+    cookies = json.dumps([cookie.toRawForm().data().decode("utf-8") for cookie in network.cookie_jar.allCookies()])
     data.setValue("data/Cookies", cookies)
 
     data.setValue("data/GeolocationWhitelist", json.dumps(geolocation_whitelist))
@@ -84,6 +84,6 @@ def clearHistory():
 
 # Clear cookies.
 def clearCookies():
-    network.cookieJar.setAllCookies([])
-    network.incognitoCookieJar.setAllCookies([])
+    network.cookie_jar.setAllCookies([])
+    network.incognito_cookie_jar.setAllCookies([])
     saveData()
