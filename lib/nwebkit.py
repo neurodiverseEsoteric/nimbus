@@ -13,6 +13,7 @@ import os
 import re
 import subprocess
 import traceback
+import urllib.parse
 import hashlib
 import common
 import geolocation
@@ -155,6 +156,7 @@ class WebPage(QWebPage):
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakDOM)
 
         # Connect loadFinished to checkForNavigatorGeolocation and loadUserScripts.
+        self.loadFinished.connect(self.doGoogleHack)
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
         self.loadFinished.connect(self.loadUserScripts)
 
@@ -169,6 +171,19 @@ class WebPage(QWebPage):
 
         # Set user agent to default value.
         self.setUserAgent()
+
+    # Performs a hack on Google pages to change their URLs.
+    def doGoogleHack(self):
+        links = self.mainFrame().findAllElements("a")
+        for link in links:
+            try: href = link.attribute("href")
+            except: pass
+            else:
+                gurl = "/url?q="
+                if href.startswith(gurl):
+                    url = href.replace(gurl, "").split("&")[0]
+                    url = urllib.parse.unquote(url)
+                    link.setAttribute("href", url)
 
     # Loads history.
     def loadHistory(self, history):
