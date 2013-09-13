@@ -8,16 +8,16 @@
 # Description: Custom widgets used by Nimbus.
 
 import os
-from common import app_folder
+from common import app_folder, blank_toolbar
 from translate import tr
 
 try:
     from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl
     Signal = pyqtSignal
-    from PyQt4.QtGui import QAction, QToolButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
+    from PyQt4.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
 except:
     from PySide.QtCore import Qt, Signal, QPoint, QUrl
-    from PySide.QtGui import QAction, QToolButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
+    from PySide.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
 
 # Blank widget to take up space.
 class Expander(QLabel):
@@ -151,9 +151,10 @@ class ReadOnlyTextEdit(QTextEdit):
     def __init__(self, *args, **kwargs):
         super(ReadOnlyTextEdit, self).__init__(*args, **kwargs)
         self.setReadOnly(True)
+        self.setFontFamily("monospace")
 
 # Licensing dialog.
-class LicenseDialog(QTabWidget):
+class LicenseDialog(QMainWindow):
     def __init__(self, parent=None):
         super(LicenseDialog, self).__init__(parent)
         self.resize(420, 320)
@@ -163,6 +164,8 @@ class LicenseDialog(QTabWidget):
         self.license = ""
         self.thanks = ""
         self.authors = ""
+        self.tabWidget = QTabWidget(self)
+        self.setCentralWidget(self.tabWidget)
         for fname in os.listdir(app_folder):
             if fname.startswith("LICENSE"):
                 try: f = open(os.path.join(app_folder, fname), "r")
@@ -190,17 +193,26 @@ class LicenseDialog(QTabWidget):
                     f.close()
         self.readmeView = ReadOnlyTextEdit(self)
         self.readmeView.setText(self.readme)
-        self.addTab(self.readmeView, tr("&README"))
+        self.tabWidget.addTab(self.readmeView, tr("&README"))
         self.authorsView = ReadOnlyTextEdit(self)
         self.authorsView.setText(self.authors)
-        self.addTab(self.authorsView, tr("&Authors"))
+        self.tabWidget.addTab(self.authorsView, tr("&Authors"))
         self.thanksView = ReadOnlyTextEdit(self)
         self.thanksView.setText(self.thanks)
-        self.addTab(self.thanksView, tr("&Thanks"))
+        self.tabWidget.addTab(self.thanksView, tr("&Thanks"))
         self.licenseView = ReadOnlyTextEdit(self)
         self.licenseView.setText(self.license)
-        self.addTab(self.licenseView, tr("&License"))
+        self.tabWidget.addTab(self.licenseView, tr("&License"))
         closeAction = QAction(self)
         closeAction.setShortcuts(["Esc", "Ctrl+W"])
         closeAction.triggered.connect(self.hide)
         self.addAction(closeAction)
+        self.toolBar = QToolBar(self)
+        self.toolBar.setStyleSheet(blank_toolbar)
+        self.toolBar.setMovable(False)
+        self.toolBar.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.addToolBar(Qt.BottomToolBarArea, self.toolBar)
+        self.toolBar.addWidget(HorizontalExpander(self))
+        self.closeButton = QPushButton(tr("Close"), self)
+        self.closeButton.clicked.connect(self.close)
+        self.toolBar.addWidget(self.closeButton)
