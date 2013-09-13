@@ -174,6 +174,8 @@ class WebPage(QWebPage):
 
     # Performs a hack on Google pages to change their URLs.
     def doGoogleHack(self):
+        if not "google" in self.mainFrame().url().toString():
+            return
         links = self.mainFrame().findAllElements("a")
         for link in links:
             try: href = link.attribute("href")
