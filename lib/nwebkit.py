@@ -687,6 +687,16 @@ class WebView(QWebView):
     def load(self, url):
         if type(url) is QListWidgetItem:
             url = QUrl.fromUserInput(url.text())
+        if sys.platform.startswith("win"):
+            components = []
+            print(url.toString().split("/"))
+            for component in url.toString().split("/"):
+                if len(component) == 2 and component.endswith(":"):
+                    pass
+                else:
+                    components.append(component)
+            print(components)
+            url = QUrl("/".join(components))
         self._cacheLoaded = False
         dirname = url.path()
         self._url = url.toString()
