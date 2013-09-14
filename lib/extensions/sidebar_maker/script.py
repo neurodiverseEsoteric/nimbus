@@ -4,7 +4,7 @@ if name[1]:
     url = QInputDialog.getText(self, "URL", "Enter the URL of your sidebar here:")
     if url[1]:
         url = url[0]
-        common.sidebar_maker_path = os.path.join(settings.extensions_folder, name.lower() + "_sidebar")
+        common.sidebar_maker_path = os.path.join(settings.extensions_folder, name.lower().replace(" ", "_") + "_sidebar")
         if not os.path.exists(common.sidebar_maker_path):
             os.mkdir(common.sidebar_maker_path)
         common.sidebar_maker_icon_loader = WebView(None)
