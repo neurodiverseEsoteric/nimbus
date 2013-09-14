@@ -1,6 +1,3 @@
-if not self.isCheckable():
-    self.setCheckable(True)
-    self.setChecked(True)
 import json
 try: data.history
 except:

@@ -29,7 +29,7 @@ try:
     from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout,\
                             QKeySequence, QMessageBox, QSizePolicy, QIcon,\
                             QMenu, QAction, QMainWindow, QToolBar,\
-                            QToolButton, QComboBox, QTabWidget
+                            QToolButton, QComboBox, QTabWidget, QButtonGroup
     from PyQt4.QtNetwork import QNetworkRequest
     from PyQt4.QtWebKit import QWebPage
 except:
@@ -38,7 +38,7 @@ except:
                              QHBoxLayout, QKeySequence, QMessageBox,\
                              QSizePolicy, QIcon, QMenu, QAction,\
                              QMainWindow, QToolBar, QToolButton, QComboBox,\
-                             QTabWidget
+                             QTabWidget, QButtonGroup
     from PySide.QtNetwork import QNetworkRequest
     from PySide.QtWebKit import QWebPage
 
@@ -91,6 +91,8 @@ class MainWindow(QMainWindow):
 
         # List of closed tabs.
         self.closedTabs = []
+
+        self._extensions = []
 
         # List of sidebars.
         # Sidebars are part of the (incomplete) extensions API.
@@ -308,6 +310,9 @@ class MainWindow(QMainWindow):
         locationAction.triggered.connect(self.locationBar.setFocus)
         locationAction.triggered.connect(self.locationBar.lineEdit().selectAll)
         self.addAction(locationAction)
+
+        self.extensionButtonGroup = QButtonGroup(self)
+        self.extensionButtonGroup.setExclusive(True)
 
         # Extensions toolbar.
         self.extensionBar = QToolBar(self)
@@ -530,9 +535,19 @@ class MainWindow(QMainWindow):
     # Toggles the sidebar with name name.
     # Part of the extensions API.
     def toggleSideBar(self, name):
+        for sidebar in self.sideBars:
+            if sidebar != name:
+                self.sideBars[sidebar]["sideBar"].setVisible(False)
         if self.hasSideBar(name):
+            isVisible = not self.sideBars[name]["sideBar"].isVisible()
             self.sideBars[name]["sideBar"].\
-                 setVisible(not self.sideBars[name]["sideBar"].isVisible())
+                 setVisible(isVisible)
+            if not isVisible:
+                self.extensionButtonGroup.setExclusive(False)
+                for extension in self._extensions:
+                    if extension.isCheckable():
+                        extension.setChecked(False)
+                self.extensionButtonGroup.setExclusive(True)
             if type(self.sideBars[name]["clip"]) is str:
                 clip = self.sideBars[name]["clip"]
                 if not clip in self.sideBars[name]["sideBar"].\
@@ -561,9 +576,12 @@ class MainWindow(QMainWindow):
              webView.load(QUrl(url))
         self.sideBars[name]["sideBar"].setWidget(self.sideBars[name]\
                                                  ["sideBar"].webView)
+        for sidebar in self.sideBars.values():
+            sidebar["sideBar"].setVisible(False)
         self.addDockWidget(Qt.LeftDockWidgetArea,\
                            self.sideBars[name]["sideBar"])
         self.tabifyDockWidget(self.sideBar, self.sideBars[name]["sideBar"])
+        self.sideBars[name]["sideBar"].setVisible(True)
 
     # This is so you can grab the window by its toolbar and move it.
     # It's an ugly hack, but it works.
@@ -605,6 +623,9 @@ self.origY + ev.globalY() - self.mouseY)
     # Reload extensions.
     def reloadExtensions(self):
 
+        while len(self._extensions) > 0:
+            self._extensions.pop()
+
         # Hide extensions toolbar if there aren't any extensions.
         self.extensionBar.hide()
 
@@ -630,6 +651,7 @@ self.origY + ev.globalY() - self.mouseY)
                         shortcut = copy.copy(f.read().replace("\n", ""))
                         f.close()
                     newExtension = ExtensionButton(script, shortcut, self)
+                    self.extensionButtonGroup.addButton(newExtension)
                     newExtension.setToolTip(extension.replace("_", " ").\
                                             title() +\
                                             ("" if not shortcut\
@@ -641,6 +663,7 @@ self.origY + ev.globalY() - self.mouseY)
                         newExtension.setIcon(QIcon(icon_path))
                     else:
                         newExtension.setIcon(common.complete_icon("applications-other"))
+                    self._extensions.append(newExtension)
 
     # Toggle all the navigation buttons.
     def toggleActions(self):

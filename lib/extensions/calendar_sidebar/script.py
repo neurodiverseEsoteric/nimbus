@@ -1,6 +1,3 @@
-if not self.isCheckable():
-    self.setCheckable(True)
-    self.setChecked(True)
 try: self.parentWindow().calendarDock
 except:
     self.parentWindow().calendarDock = QDockWidget(self.parentWindow())
