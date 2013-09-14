@@ -28,7 +28,7 @@ def rm(fname):
 if sys.platform.startswith("win"):
     import shutil
     def rmr(fname):
-        subprocess.Popen(["rd", fname])
+        shutil.rmtree(fname)
     def cp(fname, dest):
         shutil.copy2(fname, dest)
     def cpr(fname, dest):
