@@ -362,7 +362,10 @@ class WebView(QWebView):
 
         # Add this webview to the list of webviews.
         common.webviews.append(self)
+
+        # These are used to store the current url.
         self._url = ""
+        self._oldURL = ""
 
         self._html = ""
 
@@ -375,6 +378,7 @@ class WebView(QWebView):
 
         # Stores the mime type of the current page.
         self._contentType = None
+        self._contentTypes = {}
 
         # This is used to store the text entered in using WebView.find(),
         # so that WebView.findNext() and WebView.findPrevious() work.
@@ -655,7 +659,10 @@ class WebView(QWebView):
 
     # Resets recorded content type.
     def resetContentType(self):
-        self._contentType = None
+        if self._oldURL != self._url:
+            self._contentType = None
+            self._contentTypes = {}
+            self._oldURL = self._url
 
     # Custom implementation of deleteLater that also removes
     # the WebView from common.webviews.
@@ -667,6 +674,7 @@ class WebView(QWebView):
     # If a request has finished and the request's URL is the current URL,
     # then set self._contentType.
     def ready(self, response):
+        self._contentTypes[response.url().toString()] = response.header(QNetworkRequest.ContentTypeHeader)
         if self._contentType == None and response.url() == self.url():
             try: contentType = response.header(QNetworkRequest.ContentTypeHeader)
             except: contentType = None
@@ -861,7 +869,9 @@ class WebView(QWebView):
         for extension in common.tlds:
             if upperFileName.endswith(extension):
                 fileName = fileName + ".html"
-        fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, fileName + (".html" if not "." in fileName else "")), tr("All files (*)"))
+        try: ext = "." + self._contentTypes[request.url().toString()].split("/")[-1].split(";")[0]
+        except: ext = ".html"
+        fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, fileName + (ext if not "." in fileName else "")), tr("All files (*)"))
         if type(fname) is tuple:
             fname = fname[0]
         if fname:
@@ -922,7 +932,9 @@ class WebView(QWebView):
             for extension in common.tlds:
                 if upperFileName.endswith(extension):
                     fileName = fileName + ".html"
-            fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, fileName + (".html" if not "." in fileName else "")), tr("All files (*)"))
+            try: ext = "." + self._contentTypes[self.url().toString()].split("/")[-1].split(";")[0]
+            except: ext = ".html"
+            fname = QFileDialog.getSaveFileName(None, tr("Save As..."), os.path.join(self.saveDirectory, fileName + (ext if not "." in fileName else "")), tr("All files (*)"))
         if type(fname) is tuple:
             fname = fname[0]
         if fname:
