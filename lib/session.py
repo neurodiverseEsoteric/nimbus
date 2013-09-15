@@ -17,12 +17,12 @@ from translate import tr
 from mainwindow import MainWindow
 try:
     from PyQt4.QtCore import Qt
-    from PyQt4.QtGui import QAction, QPushButton, QInputDialog, QListWidget
+    from PyQt4.QtGui import QAction, QMainWindow, QPushButton, QInputDialog, QListWidget, QToolBar
 except:
     from PySide.QtCore import Qt
-    from PySide.QtGui import QAction, QPushButton, QInputDialog, QListWidget
+    from PySide.QtGui import QAction, QMainWindow, QPushButton, QInputDialog, QListWidget, QToolBar
 
-class SessionLoader(QListWidget):
+class SessionManager(QMainWindow):
     def __init__(self, parent=None):
         QListWidget.__init__(self, parent)
         self.setWindowTitle(tr("Saved Sessions"))
@@ -31,14 +31,26 @@ class SessionLoader(QListWidget):
         hideAction.setShortcuts(["Esc", "Ctrl+W"])
         hideAction.triggered.connect(self.hide)
         self.addAction(hideAction)
-        self.itemActivated.connect(self.loadSession)
+        self.sessionList = QListWidget(self)
+        self.sessionList.itemActivated.connect(self.loadSession)
+        self.setCentralWidget(self.sessionList)
+        self.toolBar = QToolBar(self)
+        self.toolBar.setMovable(False)
+        self.toolBar.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.addToolBar(Qt.BottomToolBarArea, self.toolBar)
+        self.loadButton = QPushButton(tr("&Load"), self)
+        self.loadButton.clicked.connect(lambda: self.loadSession(self.sessionList.currentItem()))
+        self.toolBar.addWidget(self.loadButton)
+        self.saveButton = QPushButton(tr("&Save"), self)
+        self.saveButton.clicked.connect(saveSessionManually)
+        self.toolBar.addWidget(self.saveButton)
     def show(self):
-        self.clear()
+        self.sessionList.clear()
         if os.path.exists(settings.session_folder):
             sessions = os.listdir(settings.session_folder)
             for session in sessions:
-                self.addItem(session)
-        QListWidget.show(self)
+                self.sessionList.addItem(session)
+        QMainWindow.show(self)
     def loadSession(self, item):
         if os.path.exists(settings.session_folder):
             loadSession(os.path.join(settings.session_folder, item.text()))
@@ -94,7 +106,6 @@ def saveSession(session_file=settings.session_file):
                             window.tabWidget().widget(tab)._historyToBeLoaded\
                        else window.tabWidget().widget(tab)._historyToBeLoaded,
                        window.tabWidget().widget(tab).title(), window.tabWidget().widget(tab).incognito))
-                print(session[-1][-1])
         try:
             f = open(session_file, "wb")
         except:

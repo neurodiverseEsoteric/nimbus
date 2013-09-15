@@ -50,7 +50,7 @@ class SystemTrayIcon(QSystemTrayIcon):
 
         self.menu.addSeparator()
 
-        self.sessionLoader = session.SessionLoader(None)
+        self.sessionManager = session.SessionManager(None)
 
         # Load session action
         loadSessionAction = QAction(common.complete_icon("document-open"), tr("&Load Session..."), self)
@@ -70,7 +70,7 @@ class SystemTrayIcon(QSystemTrayIcon):
         self.menu.addAction(quitAction)
 
     def loadSession(self):
-        self.sessionLoader.show()
+        self.sessionManager.show()
 
     def saveSession(self):
         session.saveSessionManually()
