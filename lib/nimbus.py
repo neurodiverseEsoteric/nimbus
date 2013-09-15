@@ -14,7 +14,6 @@ import os
 import json
 import copy
 import traceback
-from session import *
 
 # This is a hack for installing Nimbus.
 try: import common
@@ -24,6 +23,7 @@ except:
         import nimbus.common as common
 sys.path.append(common.app_folder)
 
+from session import *
 import settings_dialog
 import browser
 import filtering
