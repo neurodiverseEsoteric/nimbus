@@ -32,14 +32,14 @@ try:
     from PyQt4.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
     from PyQt4.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
-    from PyQt4.QtWebKit import QWebView, QWebPage
+    from PyQt4.QtWebKit import QWebView, QWebPage, QWebHistory
     Signal = pyqtSignal
     Slot = pyqtSlot
 except:
     from PySide.QtCore import Qt, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
     from PySide.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
     from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
-    from PySide.QtWebKit import QWebView, QWebPage
+    from PySide.QtWebKit import QWebView, QWebPage, QWebHistory
 
 # Add an item to the browser history.
 def addHistoryItem(url):
@@ -392,6 +392,12 @@ class WebView(QWebView):
         # This stores the link last hovered over.
         self._hoveredLink = ""
 
+        # Stores history to be loaded.
+        self._historyToBeLoaded = None
+
+        # Temporary title.
+        self._tempTitle = None
+
         self.setPage(WebPage(self))
 
         # Create a NetworkAccessmanager that supports ad-blocking and set it.
@@ -482,11 +488,34 @@ class WebView(QWebView):
         except: pass
         QWebView.deleteLater(self)
 
-    def loadHistory(self, *args, **kwargs):
-        self.page().loadHistory(*args, **kwargs)
+    def paintEvent(self, ev):
+        if self._historyToBeLoaded:
+            self.page().loadHistory(self._historyToBeLoaded)
+            self._historyToBeLoaded = None
+        QWebView.paintEvent(self, ev)
 
-    def saveHistory(self, *args, **kwargs):
-        return self.page().saveHistory(*args, **kwargs)
+    def loadHistory(self, history, title=None):
+        self._historyToBeLoaded = history
+        out = QDataStream(history, QIODevice.ReadOnly)
+        if title:
+            self._tempTitle = title
+        else:
+            page = QWebPage(None)
+            history = page.history()
+            out.__rshift__(history)
+            self._tempTitle = history.currentItem().title()
+        self.titleChanged.emit(str(self._tempTitle))
+        try: page.deleteLater()
+        except: pass
+
+    def title(self):
+        if not self._tempTitle:
+            return QWebView.title(self)
+        else:
+            return self._tempTitle
+
+    def saveHistory(self):
+        return self.page().saveHistory()
 
     def setChangeCanGoNext(self, true=False):
         self._changeCanGoNext = true

@@ -107,7 +107,10 @@ def loadSession():
             win = MainWindow()
             for tab in range(len(window)):
                 win.addTab(index=tab)
-                win.tabWidget().widget(tab).loadHistory(window[tab])
+                if type(window[tab]) is tuple:
+                    win.tabWidget().widget(tab).loadHistory(window[tab][0], window[tab][1])
+                else:
+                    win.tabWidget().widget(tab).loadHistory(window[tab])
             win.show()
 
 # Stores whether the session is being written to or not.
@@ -122,8 +125,11 @@ def saveSession():
         for window in browser.windows:
             session.append([])
             for tab in range(window.tabWidget().count()):
-                session[-1].append(window.tabWidget().widget(tab).\
-                                   saveHistory())
+                session[-1].append((window.tabWidget().widget(tab).\
+                                   saveHistory() if not\
+                            window.tabWidget().widget(tab)._historyToBeLoaded\
+                       else window.tabWidget().widget(tab)._historyToBeLoaded,
+                       window.tabWidget().widget(tab).title()))
         try:
             f = open(settings.session_file, "wb")
         except:
