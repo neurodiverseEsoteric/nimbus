@@ -97,21 +97,24 @@ def reopenWindow():
 
 # Load session.
 def loadSession():
-    if os.path.exists(settings.session_file):
-        f = open(settings.session_file, "rb")
-        session = pickle.load(f)
-        f.close()
-        for window in session:
-            if len(window) == 0:
-                continue
-            win = MainWindow()
-            for tab in range(len(window)):
-                win.addTab(index=tab)
-                if type(window[tab]) is tuple:
-                    win.tabWidget().widget(tab).loadHistory(window[tab][0], window[tab][1])
-                else:
-                    win.tabWidget().widget(tab).loadHistory(window[tab])
-            win.show()
+    try:
+        if os.path.exists(settings.session_file):
+            f = open(settings.session_file, "rb")
+            session = pickle.load(f)
+            f.close()
+            for window in session:
+                if len(window) == 0:
+                    continue
+                win = MainWindow()
+                for tab in range(len(window)):
+                    win.addTab(index=tab)
+                    if type(window[tab]) is tuple:
+                        win.tabWidget().widget(tab).loadHistory(window[tab][0], window[tab][1])
+                    else:
+                        win.tabWidget().widget(tab).loadHistory(window[tab])
+                win.show()
+    except:
+        pass
 
 # Stores whether the session is being written to or not.
 sessionLock = False
