@@ -63,7 +63,12 @@ def loadSession(session_file=settings.session_file):
                     continue
                 win = MainWindow()
                 for tab in range(len(window)):
-                    win.addTab(index=tab)
+                    try:
+                        incognito = bool(window[tab][2])
+                    except:
+                        traceback.print_exc()
+                        incognito = False
+                    win.addTab(index=tab, incognito=incognito)
                     if type(window[tab]) is tuple:
                         win.tabWidget().widget(tab).loadHistory(window[tab][0], window[tab][1])
                     else:
@@ -88,7 +93,8 @@ def saveSession(session_file=settings.session_file):
                                    saveHistory() if not\
                             window.tabWidget().widget(tab)._historyToBeLoaded\
                        else window.tabWidget().widget(tab)._historyToBeLoaded,
-                       window.tabWidget().widget(tab).title()))
+                       window.tabWidget().widget(tab).title(), window.tabWidget().widget(tab).incognito))
+                print(session[-1][-1])
         try:
             f = open(session_file, "wb")
         except:

@@ -924,27 +924,21 @@ self.origY + ev.globalY() - self.mouseY)
             win.loadSession(session)
             win.show()
 
-    def addTab(self, webView=None, index=None, focus=True, **kwargs):
-        # If a URL is specified, load it.
-        if "incognito" in kwargs:
-            webview = WebView(incognito=True, parent=self)
-            if "url" in kwargs:
-                webview.load(QUrl.fromUserInput(kwargs["url"]))
-
-        elif "url" in kwargs:
-            url = kwargs["url"]
-            webview = WebView(incognito=not settings.\
-                              setting_to_bool("data/RememberHistory"),\
-                              parent=self)
-            webview.load(QUrl.fromUserInput(url))
-
+    def addTab(self, webView=None, index=None, focus=True, incognito=None, **kwargs):
         # If a WebView object is specified, use it.
-        elif webView != None:
+        if webView != None:
             webview = webView
-
-        # If nothing is specified, use a blank WebView.
         else:
-            webview = WebView(incognito=not settings.setting_to_bool("data/RememberHistory"), parent=self)
+            if incognito == True:
+                webview = WebView(incognito=True, parent=self)
+            elif incognito == False:
+                webview = WebView(incognito=False, parent=self)
+            else:
+                webview = WebView(incognito=not settings.setting_to_bool("data/RememberHistory"), parent=self)
+
+        if "url" in kwargs:
+            url = kwargs["url"]
+            webview.load(QUrl.fromUserInput(url))
 
         # Connect signals
         webview.loadProgress.connect(self.setProgress)
