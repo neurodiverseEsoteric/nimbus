@@ -46,7 +46,11 @@ class SearchManager(object):
             common.search_engines['Baidu'] = ["ba", "http://www.baidu.com/s?wd=%s"]
             common.search_engines['Yahoo'] = ["y", "http://search.yahoo.com/search?p=%s"]
             common.search_engines['YouTube'] = ["yt", "http://www.youtube.com/results?search_query=%s"]
+            common.search_engines["GitHub"] = ["gh", "https://github.com/search?q=%s&ref=cmdform"]
+            common.search_engines["Stack Overflow"] = ["so", "http://stackoverflow.com/search?q=%s"]
+            common.search_engines["Wolfram|Alpha"] = ["wa", "http://www.wolframalpha.com/input/?i=%s"]
             common.search_engines['deviantART'] = ["da", "http://www.deviantart.com/?q=%s"]
+            common.search_engines["TV Tropes"] = ["tv", "http://tvtropes.org/pmwiki/search_result.php?cx=partner-pub-6610802604051523:amzitfn8e7v&cof=FORID:10&ie=ISO-8859-1&q=%s"]
             common.search_engines['A-Z Lyrics'] = ["azl", "http://search.azlyrics.com/search.php?q=%s"]
             common.search_engines['MetroLyrics'] = ["mtl", "http://www.metrolyrics.com/search?search=%s"]
             common.search_engines['Openclipart'] = ["oca", "http://openclipart.org/search/?query=%s"]
@@ -104,6 +108,7 @@ class SearchEditor(QMainWindow):
         self.entryBar.addWidget(self.addSearchButton)
 
         self.engineList = QListWidget(self)
+        self.engineList.setAlternatingRowColors(True)
         self.engineList.itemClicked.connect(self.applySearch)
         self.engineList.itemActivated.connect(self.applySearch)
         self.engineList.itemActivated.connect(self.close)
@@ -137,7 +142,7 @@ class SearchEditor(QMainWindow):
 
     def reload_(self):
         self.engineList.clear()
-        for name in self.searchManager.searchEngines:
+        for name in sorted(self.searchManager.searchEngines.keys()):
             keyword = "None"
             if self.searchManager.searchEngines[name][0] != "":
                 keyword = self.searchManager.searchEngines[name][0]
