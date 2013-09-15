@@ -54,7 +54,7 @@ class SessionManager(QMainWindow):
     def loadSession(self, item):
         if os.path.exists(settings.session_folder):
             loadSession(os.path.join(settings.session_folder, item.text()))
-        #self.hide()
+        self.hide()
 
 def saveSessionManually():
     sname = QInputDialog.getText(None, tr("Save Session"), tr("Enter a name here:"))
