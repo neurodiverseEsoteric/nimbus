@@ -37,6 +37,7 @@ class SearchManager(object):
             common.search_engines['DuckDuckGo'] = ["d", "https://duckduckgo.com/?q=%s"]
             common.search_engines['Wikipedia'] = ["w", "https://en.wikipedia.org/w/index.php?search=%s&title=Special:Search"]
             common.search_engines['Wiktionary'] = ["wk", "http://en.wiktionary.org/w/index.php?search=%s&title=Special:Search"]
+            common.search_engines['Wikimedia Commons'] = ["wc", "http://commons.wikimedia.org/w/index.php?search=%s&title=Special:Search"]
             common.search_engines['Google'] = ["g", "http://www.google.com/search?client=nimbus&q=%s"]
             common.search_engines['Google Image Search'] = ["i", "http://www.google.com/search?client=nimbus&tbm=isch&q=%s"]
             common.search_engines['Google Music Search'] = ["m", "http://www.googlemusicsearch.com/search?q=%s"]
