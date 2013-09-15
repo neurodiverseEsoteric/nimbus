@@ -612,6 +612,13 @@ class WebView(QWebView):
                             pass
                 except:
                     pass
+        for anchor in anchors:
+            if "next" in anchor.toPlainText().lower():
+                try:
+                    self._canGoNext = anchor.attribute("href")
+                    return
+                except:
+                    pass
         self._canGoNext = False
 
     def canGoNext(self):
