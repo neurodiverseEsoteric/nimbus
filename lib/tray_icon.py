@@ -11,6 +11,7 @@
 # Import everything we need.
 import common
 import translate
+import session
 from translate import tr
 
 # Extremely specific imports from PyQt4/PySide.
@@ -47,7 +48,29 @@ class SystemTrayIcon(QSystemTrayIcon):
         reopenWindowAction.triggered.connect(self.windowReopenRequested.emit)
         self.menu.addAction(reopenWindowAction)
 
+        self.menu.addSeparator()
+
+        self.sessionLoader = session.SessionLoader(None)
+
+        # Load session action
+        loadSessionAction = QAction(common.complete_icon("document-open"), tr("&Load Session..."), self)
+        loadSessionAction.triggered.connect(self.loadSession)
+        self.menu.addAction(loadSessionAction)
+
+        # Save session action
+        saveSessionAction = QAction(common.complete_icon("document-save-as"), tr("&Save Session..."), self)
+        saveSessionAction.triggered.connect(self.saveSession)
+        self.menu.addAction(saveSessionAction)
+
+        self.menu.addSeparator()
+
         # Quit action
         quitAction = QAction(common.complete_icon("application-exit"), tr("Quit"), self)
         quitAction.triggered.connect(QApplication.quit)
         self.menu.addAction(quitAction)
+
+    def loadSession(self):
+        self.sessionLoader.show()
+
+    def saveSession(self):
+        session.saveSessionManually()

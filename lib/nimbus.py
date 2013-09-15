@@ -14,7 +14,7 @@ import os
 import json
 import copy
 import traceback
-import pickle
+from session import *
 
 # This is a hack for installing Nimbus.
 try: import common
@@ -94,53 +94,6 @@ def reopenWindow():
         win = MainWindow()
         win.loadSession(session)
         win.show()
-
-# Load session.
-def loadSession():
-    try:
-        if os.path.exists(settings.session_file):
-            f = open(settings.session_file, "rb")
-            session = pickle.load(f)
-            f.close()
-            for window in session:
-                if len(window) == 0:
-                    continue
-                win = MainWindow()
-                for tab in range(len(window)):
-                    win.addTab(index=tab)
-                    if type(window[tab]) is tuple:
-                        win.tabWidget().widget(tab).loadHistory(window[tab][0], window[tab][1])
-                    else:
-                        win.tabWidget().widget(tab).loadHistory(window[tab])
-                win.show()
-    except:
-        pass
-
-# Stores whether the session is being written to or not.
-sessionLock = False
-
-# Restore session.
-def saveSession():
-    global sessionLock
-    if not sessionLock:
-        sessionLock = True
-        session = []
-        for window in browser.windows:
-            session.append([])
-            for tab in range(window.tabWidget().count()):
-                session[-1].append((window.tabWidget().widget(tab).\
-                                   saveHistory() if not\
-                            window.tabWidget().widget(tab)._historyToBeLoaded\
-                       else window.tabWidget().widget(tab)._historyToBeLoaded,
-                       window.tabWidget().widget(tab).title()))
-        try:
-            f = open(settings.session_file, "wb")
-        except:
-            sessionLock = False
-            return
-        pickle.dump(session, f)
-        f.close()
-        sessionLock = False
 
 # Preparations to quit.
 def prepareQuit():
@@ -298,8 +251,7 @@ def main():
     sessionSaver.timeout.connect(data.saveData)
     sessionSaver.start(30000)
 
-    if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
-        loadSession()
+    #if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
     if (not "--daemon" in sys.argv and len(browser.windows) == 0) or\
        (not "--daemon" in sys.argv and len(sys.argv[1:]) > 0):
         # Create instance of MainWindow.

@@ -36,6 +36,8 @@ startpage = os.path.join(settings_folder, "start.html")
 # Session file.
 session_file = os.path.join(settings_folder, "session.pkl")
 
+session_folder = os.path.join(settings_folder, "Sessions")
+
 # Default settings.
 default_settings = {"proxy/Type": "None",
                     "proxy/Hostname": "",

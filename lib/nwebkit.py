@@ -30,14 +30,14 @@ import view_source_dialog
 # We give PyQt4 priority because it supports Qt5.
 try:
     from PyQt4.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
-    from PyQt4.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
+    from PyQt4.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton
     from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
     from PyQt4.QtWebKit import QWebView, QWebPage, QWebHistory
     Signal = pyqtSignal
     Slot = pyqtSlot
 except:
     from PySide.QtCore import Qt, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
-    from PySide.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon
+    from PySide.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton
     from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
     from PySide.QtWebKit import QWebView, QWebPage, QWebHistory
 
