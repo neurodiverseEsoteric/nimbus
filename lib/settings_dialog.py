@@ -50,9 +50,9 @@ class GeneralSettingsPanel(SettingsPanel):
         self.layout().addWidget(homepageRow)
 
         # Default search.
-        searchRow = custom_widgets.LineEditRow(tr("Search expression:"), self)
-        self.searchEntry = searchRow.lineEdit
-        self.layout().addWidget(searchRow)
+        #searchRow = custom_widgets.LineEditRow(tr("Search expression:"), self)
+        #self.searchEntry = searchRow.lineEdit
+        #self.layout().addWidget(searchRow)
 
         # Checkbox to toggle closing of window with last tab.
         self.closeWindowToggle = QCheckBox(tr("Close &window with last tab"), self)
@@ -81,7 +81,7 @@ class GeneralSettingsPanel(SettingsPanel):
 
     def loadSettings(self):
         self.homepageEntry.setText(str(settings.settings.value("general/Homepage")))
-        self.searchEntry.setText(str(settings.settings.value("general/Search")))
+        #self.searchEntry.setText(str(settings.settings.value("general/Search")))
         self.closeWindowToggle.setChecked(settings.setting_to_bool("general/CloseWindowWithLastTab"))
         self.reopenableTabCount.setValue(settings.setting_to_int("general/ReopenableTabCount"))
         self.reopenableWindowCount.setValue(settings.setting_to_int("general/ReopenableWindowCount"))
@@ -91,7 +91,7 @@ class GeneralSettingsPanel(SettingsPanel):
 
     def saveSettings(self):
         settings.settings.setValue("general/Homepage", self.homepageEntry.text())
-        settings.settings.setValue("general/Search", self.searchEntry.text())
+        #settings.settings.setValue("general/Search", self.searchEntry.text())
         settings.settings.setValue("general/CloseWindowWithLastTab", self.closeWindowToggle.isChecked())
         settings.settings.setValue("general/ReopenableWindowCount", self.reopenableWindowCount.text())
         settings.settings.setValue("general/ReopenableTabCount", self.reopenableTabCount.text())
