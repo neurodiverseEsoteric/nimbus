@@ -30,7 +30,7 @@ try:
     from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout,\
                             QKeySequence, QMessageBox, QSizePolicy, QIcon,\
                             QMenu, QAction, QMainWindow, QToolBar,\
-                            QToolButton, QComboBox, QTabWidget, QButtonGroup,\
+                            QToolButton, QComboBox, QButtonGroup,\
                             QLabel
     from PyQt4.QtNetwork import QNetworkRequest
     from PyQt4.QtWebKit import QWebPage
@@ -41,7 +41,7 @@ except:
                              QHBoxLayout, QKeySequence, QMessageBox,\
                              QSizePolicy, QIcon, QMenu, QAction,\
                              QMainWindow, QToolBar, QToolButton, QComboBox,\
-                             QTabWidget, QButtonGroup, QLabel
+                             QButtonGroup, QLabel
     from PySide.QtNetwork import QNetworkRequest
     from PySide.QtWebKit import QWebPage
 
@@ -120,7 +120,7 @@ class MainWindow(QMainWindow):
         self.addToolBar(self.toolBar)
 
         # Tab widget for tabbed browsing.
-        self.tabs = QTabWidget(self)
+        self.tabs = custom_widgets.TabWidget(self)
 
         # Remove border around tabs.
         self.tabs.setDocumentMode(True)

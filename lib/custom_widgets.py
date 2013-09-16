@@ -157,6 +157,13 @@ class ReadOnlyTextEdit(QTextEdit):
         self.setReadOnly(True)
         self.setFontFamily("monospace")
 
+# Tab widget.
+class TabWidget(QTabWidget):
+    def resizeEvent(self, ev):
+        size = self.tabBar().size()
+        QTabWidget.resizeEvent(self, ev)
+        self.tabBar().resize(size)
+
 # Licensing dialog.
 class LicenseDialog(QMainWindow):
     def __init__(self, parent=None):
