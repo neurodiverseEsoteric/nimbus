@@ -519,6 +519,8 @@ class WebView(QWebView):
             return self._tempTitle
 
     def saveHistory(self):
+        if self._historyToBeLoaded:
+            return self._historyToBeLoaded
         return self.page().saveHistory()
 
     def setChangeCanGoNext(self, true=False):
