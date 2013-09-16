@@ -19,7 +19,7 @@ except:
     mainWindow.bookmarksDock.setFeatures(QDockWidget.DockWidgetClosable)
     mainWindow.bookmarksList = QListWidget(browser.activeWindow().bookmarksDock)
     mainWindow.bookmarksDock.setWindowTitle("Bookmarks")
-    mainWindow.bookmarksList.addItem("Add bookmark")
+    mainWindow.bookmarksList.addItem("+")
     for bookmark in common.bookmarks:
         mainWindow.bookmarksList.addItem(bookmark)
     mainWindow.bookmarksDock.setWidget(browser.activeWindow().bookmarksList)
@@ -39,7 +39,7 @@ except:
     deleteAction.triggered.connect(removeBookmark)
     def loadBookmark(item):
         import json
-        if item.text() == "Add bookmark":
+        if item.text() == "+":
             url = QInputDialog.getText(None, "Add Bookmark", "Enter a URL here:", QLineEdit.Normal, browser.activeWindow().bookmarksExtensionWidget.parentWindow().tabs.currentWidget().url().toString())
             if url[1]:
                 browser.activeWindow().bookmarksList.addItem(url[0])
@@ -54,6 +54,6 @@ except:
 else:
     browser.activeWindow().bookmarksDock.setVisible(not browser.activeWindow().bookmarksDock.isVisible())
     browser.activeWindow().bookmarksList.clear()
-    browser.activeWindow().bookmarksList.addItem("Add bookmark")
+    browser.activeWindow().bookmarksList.addItem("+")
     for bookmark in common.bookmarks:
         browser.activeWindow().bookmarksList.addItem(bookmark)

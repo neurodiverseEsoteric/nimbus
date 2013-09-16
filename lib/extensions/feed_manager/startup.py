@@ -19,7 +19,7 @@ def toggleFeedsDock():
         mainWindow.feedsDock.setFeatures(QDockWidget.NoDockWidgetFeatures)
         mainWindow.feedsList = QListWidget(browser.activeWindow().feedsDock)
         mainWindow.feedsDock.setWindowTitle("Feeds")
-        mainWindow.feedsList.addItem("Add feed")
+        mainWindow.feedsList.addItem("+")
         for feed in common.feeds:
             mainWindow.feedsList.addItem(feed)
         mainWindow.feedsDock.setWidget(browser.activeWindow().feedsList)
@@ -39,7 +39,7 @@ def toggleFeedsDock():
         deleteAction.triggered.connect(removeBookmark)
         def loadFeed(item):
             import json
-            if item.text() == "Add feed":
+            if item.text() == "+":
                 url = QInputDialog.getText(None, "Add Feed", "Enter a URL here:", QLineEdit.Normal, browser.activeWindow().tabWidget().currentWidget().url().toString())
                 if url[1]:
                     browser.activeWindow().feedsList.addItem(url[0])
@@ -54,7 +54,7 @@ def toggleFeedsDock():
     else:
         browser.activeWindow().feedsDock.setVisible(not browser.activeWindow().feedsDock.isVisible())
         browser.activeWindow().feedsList.clear()
-        browser.activeWindow().feedsList.addItem("Add feed")
+        browser.activeWindow().feedsList.addItem("+")
         for feed in sorted(common.feeds):
             browser.activeWindow().feedsList.addItem(feed)
 self.feedMenuButton.triggered.connect(toggleFeedsDock)
