@@ -397,11 +397,14 @@ class MainWindow(QMainWindow):
 
         viewMenu.addSeparator()
 
+        # Add separator.
+        #self.tabsToolBar.addSeparator()
+
         # Add fullscreen button.
         self.toggleFullScreenButton = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
         self.toggleFullScreenButton.setCheckable(True)
         self.toggleFullScreenButton.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
-        self.toolBar.addAction(self.toggleFullScreenButton)
+        self.tabsToolBar.addAction(self.toggleFullScreenButton)
         self.toggleFullScreenButton.setVisible(False)
 
         # Add fullscreen action.
