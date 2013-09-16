@@ -25,20 +25,23 @@ from nwebkit import *
 # Extremely specific imports from PyQt4/PySide.
 # We give PyQt4 priority because it supports Qt5.
 try:
-    from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize
+    from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
+                             QDateTime
     from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout,\
                             QKeySequence, QMessageBox, QSizePolicy, QIcon,\
                             QMenu, QAction, QMainWindow, QToolBar,\
-                            QToolButton, QComboBox, QTabWidget, QButtonGroup
+                            QToolButton, QComboBox, QTabWidget, QButtonGroup,\
+                            QLabel
     from PyQt4.QtNetwork import QNetworkRequest
     from PyQt4.QtWebKit import QWebPage
 except:
-    from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize
+    from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
+                              QDateTime
     from PySide.QtGui import QApplication, QDockWidget, QWidget,\
                              QHBoxLayout, QKeySequence, QMessageBox,\
                              QSizePolicy, QIcon, QMenu, QAction,\
                              QMainWindow, QToolBar, QToolButton, QComboBox,\
-                             QTabWidget, QButtonGroup
+                             QTabWidget, QButtonGroup, QLabel
     from PySide.QtNetwork import QNetworkRequest
     from PySide.QtWebKit import QWebPage
 
@@ -211,6 +214,7 @@ class MainWindow(QMainWindow):
         # Regularly and forcibly enable and disable navigation actions
         # every few milliseconds.
         self.toggleActionsTimer = QTimer(timeout=self.toggleActions, parent=self)
+        self.dateTimeTimer = QTimer(timeout=self.updateDateTime, parent=self)
 
         # Set up navigation actions.
         self.backAction = self.actionsPage.action(QWebPage.Back)
@@ -278,6 +282,7 @@ class MainWindow(QMainWindow):
 
         # Start timer to forcibly enable and disable navigation actions.
         self.toggleActionsTimer.start(256)
+        self.dateTimeTimer.start(500)
 
         # Location bar. Note that this is a combo box.
         # At some point, I should make a custom location bar
@@ -399,6 +404,12 @@ class MainWindow(QMainWindow):
 
         # Add separator.
         #self.tabsToolBar.addSeparator()
+
+        # Displays the date and time while in fullscreen mode.
+        self.dateTime = QAction(self)
+        self.tabsToolBar.addAction(self.dateTime)
+        self.tabsToolBar.widgetForAction(self.dateTime).setStyleSheet("QToolButton { font-family: monospace; border-radius: 3px; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }")
+        self.dateTime.setVisible(False)
 
         # Add fullscreen button.
         self.toggleFullScreenButton = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
@@ -684,6 +695,10 @@ self.origY + ev.globalY() - self.mouseY)
                         newExtension.setIcon(common.complete_icon("applications-other"))
                     self._extensions.append(newExtension)
 
+    # Updates the time.
+    def updateDateTime(self):
+        self.dateTime.setText(QDateTime.currentDateTime().toString())
+
     # Toggle all the navigation buttons.
     def toggleActions(self):
         try:
@@ -910,6 +925,7 @@ self.origY + ev.globalY() - self.mouseY)
             try: self.toggleFullScreenAction.setChecked(True)
             except: pass
             self.toggleFullScreenButton.setVisible(True)
+            self.dateTime.setVisible(True)
             self._wasMaximized = self.isMaximized()
             self.showFullScreen()
         else:
@@ -918,6 +934,7 @@ self.origY + ev.globalY() - self.mouseY)
             try: self.toggleFullScreenAction.setChecked(False)
             except: pass
             self.toggleFullScreenButton.setVisible(False)
+            self.dateTime.setVisible(False)
             if not self._wasMaximized:
                 self.showNormal()
             else:
