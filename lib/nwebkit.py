@@ -666,8 +666,8 @@ class WebView(QWebView):
 
     # Resets recorded content type.
     def resetContentType(self):
+        self._contentType = None
         if self._oldURL != self._url:
-            self._contentType = None
             self._contentTypes = {}
             self._oldURL = self._url
 
