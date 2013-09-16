@@ -213,7 +213,7 @@ class MainWindow(QMainWindow):
         self.backAction.setShortcut("Alt+Left")
         self.backAction.triggered.connect(self.back)
         self.toolBar.addAction(self.backAction)
-        self.toolBar.widgetForAction(self.backAction).setPopupMode(QToolButton.DelayedPopup)
+        self.toolBar.widgetForAction(self.backAction).setPopupMode(QToolButton.MenuButtonPopup)
 
         # This is a dropdown menu for the back history items, but due to
         # instability, it is currently disabled.
@@ -224,7 +224,7 @@ class MainWindow(QMainWindow):
         self.forwardAction.setShortcut("Alt+Right")
         self.forwardAction.triggered.connect(self.forward)
         self.toolBar.addAction(self.forwardAction)
-        self.toolBar.widgetForAction(self.forwardAction).setPopupMode(QToolButton.DelayedPopup)
+        self.toolBar.widgetForAction(self.forwardAction).setPopupMode(QToolButton.MenuButtonPopup)
 
         # This is a dropdown menu for the forward history items, but due to
         # instability, it is currently disabled.
@@ -233,7 +233,7 @@ class MainWindow(QMainWindow):
 
         self.upAction = QAction(self, triggered=self.up, icon=common.complete_icon("go-up"), text=tr("Go Up"))
         self.toolBar.addAction(self.upAction)
-        self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.DelayedPopup)
+        self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.MenuButtonPopup)
         self.upAction.setVisible(False)
 
         self.upAction2 = QAction(self, triggered=self.up, shortcut="Alt+Up")
