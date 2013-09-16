@@ -251,7 +251,8 @@ def main():
     sessionSaver.timeout.connect(data.saveData)
     sessionSaver.start(30000)
 
-    #if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
+    if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
+        loadSession()
     if (not "--daemon" in sys.argv and len(browser.windows) == 0) or\
        (not "--daemon" in sys.argv and len(sys.argv[1:]) > 0):
         # Create instance of MainWindow.
