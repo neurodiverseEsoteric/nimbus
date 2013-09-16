@@ -310,10 +310,9 @@ class MainWindow(QMainWindow):
         self.toolBar.addWidget(self.locationBar)
 
         self.feedMenuButton = QAction(common.complete_icon("application-rss+xml"), tr("Feeds"), self)
-        self.feedMenuButton.setShortcut("Ctrl+Alt+R")
         self.toolBar.addAction(self.feedMenuButton)
         self.toolBar.widgetForAction(self.feedMenuButton).setPopupMode(QToolButton.InstantPopup)
-        self.feedMenuButton.triggered.connect(lambda: self.toolBar.widgetForAction(self.feedMenuButton).showMenu())
+        self.toolBar.widgetForAction(self.feedMenuButton).setShortcut(QKeySequence.fromString("Ctrl+Alt+R"))
         self.feedMenuButton.setVisible(False)
 
         self.feedMenu = QMenu(self)
@@ -544,6 +543,7 @@ class MainWindow(QMainWindow):
         # Load browser extensions.
         # Ripped off of Ricotta.
         self.reloadExtensions()
+        self.loadStartupExtensions()
 
     # Redefine show function.
     def show(self):
@@ -649,6 +649,23 @@ self.origY + ev.globalY() - self.mouseY)
     # Open settings dialog.
     def openSettings(self):
         settings.settingsDialog.show()
+
+    # Loads startup extensions.
+    def loadStartupExtensions(self):
+        for extension in settings.extensions:
+            if extension not in settings.extensions_whitelist:
+                continue
+            extension_path = os.path.join(settings.extensions_folder,\
+                                          extension)
+
+            if os.path.isdir(extension_path):
+                script_path = os.path.join(extension_path, "startup.py")
+                if os.path.isfile(script_path):
+                    f = open(script_path, "r")
+                    script = copy.copy(f.read())
+                    f.close()
+                    try: exec(script)
+                    except: traceback.print_exc()
 
     # Reload extensions.
     def reloadExtensions(self):
