@@ -738,7 +738,7 @@ self.origY + ev.globalY() - self.mouseY)
             self.backHistoryMenu.clear()
             history = self.tabWidget().currentWidget().history()
             backItems = history.backItems(10)
-            for item in range(0, len(backItems)):
+            for item in reversed(range(0, len(backItems))):
                 try:
                     action = custom_widgets.\
                              WebHistoryAction(item,\
