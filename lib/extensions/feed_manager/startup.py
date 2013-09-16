@@ -9,13 +9,14 @@ except:
     else:
         common.feeds = json.loads(feeds)
 self.toolBar.widgetForAction(self.feedMenuButton).setPopupMode(QToolButton.MenuButtonPopup)
+self.feedMenuButton.setCheckable(True)
 def toggleFeedsDock():
     try: browser.activeWindow().feedsDock
     except:
         mainWindow = browser.activeWindow()
         mainWindow.feedsDock = QDockWidget(mainWindow)
         mainWindow.feedsDock.setContextMenuPolicy(Qt.CustomContextMenu)
-        mainWindow.feedsDock.setFeatures(QDockWidget.DockWidgetClosable)
+        mainWindow.feedsDock.setFeatures(QDockWidget.NoDockWidgetFeatures)
         mainWindow.feedsList = QListWidget(browser.activeWindow().feedsDock)
         mainWindow.feedsDock.setWindowTitle("Feeds")
         mainWindow.feedsList.addItem("Add feed")
@@ -36,7 +37,7 @@ def toggleFeedsDock():
                 data.data.setValue("data/Feeds", json.dumps(common.feeds))
                 data.data.sync()
         deleteAction.triggered.connect(removeBookmark)
-        def loadBookmark(item):
+        def loadFeed(item):
             import json
             if item.text() == "Add feed":
                 url = QInputDialog.getText(None, "Add Feed", "Enter a URL here:", QLineEdit.Normal, browser.activeWindow().tabWidget().currentWidget().url().toString())
@@ -47,7 +48,7 @@ def toggleFeedsDock():
                     data.data.sync()
             else:
                 browser.activeWindow().tabs.currentWidget().load(QUrl.fromUserInput(item.text()))
-        browser.activeWindow().feedsList.itemActivated.connect(loadBookmark)
+        browser.activeWindow().feedsList.itemActivated.connect(loadFeed)
         mainWindow.addDockWidget(Qt.LeftDockWidgetArea, mainWindow.feedsDock)
         mainWindow.tabifyDockWidget(mainWindow.sideBar, mainWindow.feedsDock)
     else:
