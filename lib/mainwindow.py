@@ -44,7 +44,7 @@ except:
 
 tabbar_stylesheet = \
 """QTabBar { margin: 0; padding: 0; border-bottom: 0; }
-   QTabBar::tab { min-width: 8em; border: 1px solid palette(dark);
+   QTabBar::tab { min-width: 10em; border: 1px solid palette(dark);
                   border-left: 0; margin: 0; padding: 4px;
                   background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                               stop: 0 palette(window),
@@ -176,6 +176,18 @@ class MainWindow(QMainWindow):
         #self.tabsToolBar.addWidget(newTabToolBar)
         #self.tabs.setCornerWidget(newTabToolBar, Qt.TopRightCorner)
 
+        self.tabsToolBar.addWidget(custom_widgets.HorizontalExpander(self.tabsToolBar))
+
+        tabsMenuAction = QAction(self)
+        self.tabsToolBar.addAction(tabsMenuAction)
+        self.tabsToolBar.widgetForAction(tabsMenuAction).setPopupMode(QToolButton.InstantPopup)
+        self.tabsToolBar.widgetForAction(tabsMenuAction).setStyleSheet("QToolButton { max-width: 1em; }")
+        #self.tabsToolBar.widgetForAction(tabsMenuAction).setArrowType(Qt.DownArrow)
+
+        self.tabsMenu = QMenu(self)
+        self.tabsMenu.aboutToShow.connect(self.aboutToShowTabsMenu)
+        tabsMenuAction.setMenu(self.tabsMenu)
+
         # These are hidden actions used for the Ctrl[+Shift]+Tab feature
         # you see in most browsers.
         nextTabAction = QAction(self, triggered=self.nextTab, shortcut="Ctrl+Tab")
@@ -201,7 +213,7 @@ class MainWindow(QMainWindow):
         self.backAction.setShortcut("Alt+Left")
         self.backAction.triggered.connect(self.back)
         self.toolBar.addAction(self.backAction)
-        self.toolBar.widgetForAction(self.backAction).setPopupMode(QToolButton.MenuButtonPopup)
+        self.toolBar.widgetForAction(self.backAction).setPopupMode(QToolButton.DelayedPopup)
 
         # This is a dropdown menu for the back history items, but due to
         # instability, it is currently disabled.
@@ -212,7 +224,7 @@ class MainWindow(QMainWindow):
         self.forwardAction.setShortcut("Alt+Right")
         self.forwardAction.triggered.connect(self.forward)
         self.toolBar.addAction(self.forwardAction)
-        self.toolBar.widgetForAction(self.forwardAction).setPopupMode(QToolButton.MenuButtonPopup)
+        self.toolBar.widgetForAction(self.forwardAction).setPopupMode(QToolButton.DelayedPopup)
 
         # This is a dropdown menu for the forward history items, but due to
         # instability, it is currently disabled.
@@ -221,7 +233,7 @@ class MainWindow(QMainWindow):
 
         self.upAction = QAction(self, triggered=self.up, icon=common.complete_icon("go-up"), text=tr("Go Up"))
         self.toolBar.addAction(self.upAction)
-        self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.MenuButtonPopup)
+        self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.DelayedPopup)
         self.upAction.setVisible(False)
 
         self.upAction2 = QAction(self, triggered=self.up, shortcut="Alt+Up")
@@ -901,6 +913,16 @@ self.origY + ev.globalY() - self.mouseY)
             self.showNormal()
 
     # Tab-related methods.
+    def aboutToShowTabsMenu(self):
+        self.tabsMenu.clear()
+        for tab in range(self.tabWidget().count()):
+            tabAction = custom_widgets.IndexAction(tab, self.tabWidget().tabText(tab), self.tabsMenu)
+            if tab == self.tabWidget().currentIndex():
+                tabAction.setCheckable(True)
+                tabAction.setChecked(True)
+            tabAction.triggered2.connect(self.tabWidget().setCurrentIndex)
+            self.tabsMenu.addAction(tabAction)
+
     def currentWidget(self):
         return self.tabWidget().currentWidget()
 

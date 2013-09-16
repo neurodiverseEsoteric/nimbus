@@ -138,13 +138,17 @@ class LinkAction(QAction):
         else:
             self.triggered.connect(lambda: self.triggered2.emit(self.url))
 
-# Web history action for dropdown menus.
-class WebHistoryAction(QAction):
+# Action that emits a number.
+class IndexAction(QAction):
     triggered2 = Signal(int)
     def __init__(self, index, *args, **kwargs):
-        super(WebHistoryAction, self).__init__(*args, **kwargs)
+        super(IndexAction, self).__init__(*args, **kwargs)
         self.setData(index)
         self.triggered.connect(lambda: self.triggered2.emit(self.data()))
+
+# Web history action for dropdown menus.
+class WebHistoryAction(IndexAction):
+    pass
 
 # License view class.
 class ReadOnlyTextEdit(QTextEdit):
