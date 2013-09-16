@@ -92,7 +92,11 @@ class MainWindow(QMainWindow):
         # List of closed tabs.
         self.closedTabs = []
 
+        # Extension list
         self._extensions = []
+
+        # Stores whether the browser was maximized.
+        self._wasMaximized = False
 
         # List of sidebars.
         # Sidebars are part of the (incomplete) extensions API.
@@ -903,6 +907,7 @@ self.origY + ev.globalY() - self.mouseY)
             try: self.toggleFullScreenAction.setChecked(True)
             except: pass
             self.toggleFullScreenButton.setVisible(True)
+            self._wasMaximized = self.isMaximized()
             self.showFullScreen()
         else:
             try: self.toggleFullScreenButton.setChecked(False)
@@ -910,7 +915,11 @@ self.origY + ev.globalY() - self.mouseY)
             try: self.toggleFullScreenAction.setChecked(False)
             except: pass
             self.toggleFullScreenButton.setVisible(False)
-            self.showNormal()
+            if not self._wasMaximized:
+                self.showNormal()
+            else:
+                self.showNormal()
+                self.showMaximized()
 
     # Tab-related methods.
     def aboutToShowTabsMenu(self):
