@@ -37,7 +37,7 @@ def toggleFeedsDock():
                 data.data.setValue("data/Feeds", json.dumps(common.feeds))
                 data.data.sync()
         deleteAction.triggered.connect(removeBookmark)
-        def loadFeed(item):
+        def addFeed(item):
             import json
             if item.text() == "+":
                 url = QInputDialog.getText(None, "Add Feed", "Enter a URL here:", QLineEdit.Normal, browser.activeWindow().tabWidget().currentWidget().url().toString())
@@ -46,9 +46,12 @@ def toggleFeedsDock():
                     common.feeds.append(url[0])
                     data.data.setValue("data/Feeds", json.dumps(common.feeds))
                     data.data.sync()
-            else:
+        def loadFeed(item):
+            if not item.text() == "+":
                 browser.activeWindow().tabs.currentWidget().load(QUrl.fromUserInput(item.text()))
         browser.activeWindow().feedsList.itemActivated.connect(loadFeed)
+        browser.activeWindow().feedsList.itemActivated.connect(addFeed)
+        browser.activeWindow().feedsList.itemClicked.connect(addFeed)
         mainWindow.addDockWidget(Qt.RightDockWidgetArea, mainWindow.feedsDock)
     else:
         browser.activeWindow().feedsDock.setVisible(not browser.activeWindow().feedsDock.isVisible())
