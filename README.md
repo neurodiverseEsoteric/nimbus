@@ -2,9 +2,12 @@ nimbus
 ======
 
 Nimbus is a somewhat hacky Web browser coded in Python 3, using the Qt 4 and
-QtWebKit libraries via either PyQt4 or PySide. It attempts to use a "batteries
-included" approach, not unlike that of Python, and thus includes various odd
-functionality out of the box. It probably failed at doing so, however.
+QtWebKit libraries via either PyQt4 or PySide. It was originally supposed to
+have a "batteries included" approach, similar to that of Python. Ultimately,
+however, it simply ended up being made for my own selfish purposes, and is
+tailored primarily for my own browsing habits. Nonetheless, I have open-
+sourced it, since I have nothing to hide. Hopefully, someone else may find it
+useful for something.
 
 Features include:
 * Tabbed browsing
