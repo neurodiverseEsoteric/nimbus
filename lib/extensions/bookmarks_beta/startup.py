@@ -12,7 +12,7 @@ except:
         common.bookmarks = json.loads(bookmarks)
 self.addBookmarkButton = QToolButton(self)
 self.addBookmarkButton.setText(tr("Add Bookmark"))
-self.addBookmarkButton.setIcon(common.complete_icon("face-devilish"))
+self.addBookmarkButton.setIcon(common.complete_icon("bookmark-add"))
 self.toolBar.insertWidget(self.feedMenuButton, self.addBookmarkButton)
 def addBookmark():
     url = QInputDialog.getText(None, "Add Bookmark", "Enter a URL here:", QLineEdit.Normal, browser.activeWindow().tabs.currentWidget().url().toString())
