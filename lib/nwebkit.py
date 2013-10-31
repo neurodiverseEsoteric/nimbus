@@ -556,6 +556,17 @@ class WebView(QWebView):
             return
         else:
             self._changeCanGoNext = False
+        url_parts = self.url().toString().split("/")
+        fail = []
+        for part in range(len(url_parts)):
+            try: int(url_parts[part])
+            except: pass
+            else:
+                fail.append(part)
+        if len(fail) == 1:
+            url_parts[fail[0]] = str(int(url_parts[fail[0]]) + 1)
+            self._canGoNext = "/".join(url_parts)
+            return
         anchors = self.page().mainFrame().findAllElements("a")
         for anchor in anchors:
             for attribute in anchor.attributeNames():
