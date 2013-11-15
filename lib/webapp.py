@@ -12,6 +12,7 @@ def main():
     common.createUserAgent()
     data.loadData()
     view = WebView()
+    view.enableWebAppMode()
     view.show()
     if len(sys.argv) > 1:
         view.load(QUrl.fromUserInput(sys.argv[-1]))

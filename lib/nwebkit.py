@@ -393,6 +393,9 @@ class WebView(QWebView):
         # This is used to store the current page loading progress.
         self._loadProgress = 0
 
+        # Stores if window was maximized.
+        self._wasMaximized = False
+
         # Stores next page.
         self._canGoNext = False
 
@@ -483,6 +486,26 @@ class WebView(QWebView):
         self.sourceDialogs.append(sourceDialog)
         sourceDialog.setPlainText(self.page().mainFrame().toHtml())
         sourceDialog.show()
+
+    # Enables fullscreen in web app mode.
+    def enableWebAppMode(self):
+        self.isWebApp = True
+        fullScreenAction = QAction(self)
+        fullScreenAction.setShortcut("F11")
+        fullScreenAction.triggered.connect(self.toggleFullScreen)
+        self.addAction(fullScreenAction)
+
+    # Sends a request to become fullscreen.
+    def toggleFullScreen(self):
+        if not self.isFullScreen():
+            self._wasMaximized = self.isMaximized()
+            self.showFullScreen()
+        else:
+            if not self._wasMaximized:
+                self.showNormal()
+            else:
+                self.showNormal()
+                self.showMaximized()
 
     def saveHtml(self):
         self._html = self.page().mainFrame().toHtml()
