@@ -18,9 +18,11 @@ import base64
 try:
     from PyQt4.QtCore import qVersion, QLocale, QUrl
     from PyQt4.QtGui import QIcon
+    from PyQt4.QtWebKit import QWebPage
 except:
     from PySide.QtCore import qVersion, QLocale, QUrl
     from PySide.QtGui import QIcon
+    from PySide.QtWebKit import QWebPage
 
 def rm(fname):
     subprocess.Popen(["rm", fname])
@@ -88,6 +90,25 @@ def topLevelDomains():
 
 # Qt version.
 qt_version = qVersion()
+
+defaultUserAgent = None
+
+# Default user agent.
+def createUserAgent():
+    global defaultUserAgent
+    webPage = QWebPage()
+    nimbus_ua_sub = "Qt/" + qt_version + " Nimbus/" + \
+                    app_version + " QupZilla/1.4.3"
+    ua = webPage.userAgentForUrl(QUrl.fromUserInput("google.com"))
+    if qt_version.startswith("4") or not "python" in ua:
+        defaultUserAgent = ua.replace("Qt/" + qt_version,\
+                                             nimbus_ua_sub)
+    else:
+        defaultUserAgent = ua.replace("python", nimbus_ua_sub)
+    webPage.deleteLater()
+    del webPage
+    del ua
+    del nimbus_ua_sub
 
 # Python locale
 try: app_locale = str(locale.getlocale()[0])

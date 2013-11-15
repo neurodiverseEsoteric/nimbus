@@ -121,14 +121,19 @@ if has_dbus:
         @dbus.service.method("org.nimbus.Nimbus", in_signature="s",\
                              out_signature="s")
         def addTab(self, url="about:blank"):
-            for window in browser.windows[::-1]:
-                if window.isVisible():
-                    window.addTab(url=url)
-                    browser.windows[-1].activateWindow()
-                    return url
-            self.addWindow(url)
-            browser.windows[-1].activateWindow()
-            return url
+            if url.startswith("--app="):
+                url = url.replace("--app=", "")
+                os.system(os.path.join(common.app_folder, "webapp.py") + " " + url + " &")
+                return url
+            else:
+                for window in browser.windows[::-1]:
+                    if window.isVisible():
+                        window.addTab(url=url)
+                        browser.windows[-1].activateWindow()
+                        return url
+                self.addWindow(url)
+                browser.windows[-1].activateWindow()
+                return url
 
 # Main function to load everything.
 def main():
@@ -183,19 +188,7 @@ def main():
 
     # Build the browser's default user agent.
     # This should be improved as well.
-    webPage = QWebPage()
-    nimbus_ua_sub = "Qt/" + common.qt_version + " Nimbus/" + \
-                    common.app_version + " QupZilla/1.4.3"
-    ua = webPage.userAgentForUrl(QUrl.fromUserInput("google.com"))
-    if common.qt_version.startswith("4") or not "python" in ua:
-        common.defaultUserAgent = ua.replace("Qt/" + common.qt_version,\
-                                             nimbus_ua_sub)
-    else:
-        common.defaultUserAgent = ua.replace("python", nimbus_ua_sub)
-    webPage.deleteLater()
-    del webPage
-    del ua
-    del nimbus_ua_sub
+    common.createUserAgent()
 
     # Create tray icon.
     common.trayIcon = SystemTrayIcon(QCoreApplication.instance())
@@ -261,7 +254,9 @@ def main():
         # Open URLs from command line.
         if len(sys.argv[1:]) > 0:
             for arg in sys.argv[1:]:
-                if "." in arg or ":" in arg:
+                if arg.startswith("--app="):
+                    os.system("./webapp.py " + arg.replace("--app=", ""))
+                elif "." in arg or ":" in arg:
                     win.addTab(url=arg)
 
         if win.tabWidget().count() < 1:

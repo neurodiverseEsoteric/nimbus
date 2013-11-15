@@ -239,10 +239,13 @@ class WebPage(QWebPage):
 
     # Convenience function.
     def setUserAgent(self, ua=None):
-        if type(ua) is str:
-            self._userAgent = ua
-        else:
-            self._userAgent = common.defaultUserAgent
+        try:
+            if type(ua) is str:
+                self._userAgent = ua
+            else:
+                self._userAgent = common.defaultUserAgent
+        except:
+            pass
 
     # This is a hacky way of checking whether a website wants to use
     # geolocation. It checks the page source for navigator.geolocation,
