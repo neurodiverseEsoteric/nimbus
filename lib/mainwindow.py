@@ -984,7 +984,11 @@ self.origY + ev.globalY() - self.mouseY)
     def loadSession(self, session):
         for tab in range(len(session)):
             self.addTab(index=tab)
-            self.tabWidget().widget(tab).loadHistory(session[tab])
+            if index < settings.setting_to_int("general/PinnedTabCount"):
+                try: self.tabWidget().widget(tab).page().loadHistory(session[tab])
+                except: traceback.print_exc()
+            else:
+                self.tabWidget().widget(tab).loadHistory(session[tab])
 
     def reopenWindow(self):
         if len(browser.closedWindows) > 0:

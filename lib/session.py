@@ -82,7 +82,10 @@ def loadSession(session_file=settings.session_file):
                         incognito = False
                     win.addTab(index=tab, incognito=incognito)
                     if type(window[tab]) is tuple:
-                        win.tabWidget().widget(tab).loadHistory(window[tab][0], window[tab][1])
+                        if tab < settings.setting_to_int("general/PinnedTabCount"):
+                            win.tabWidget().widget(tab).page().loadHistory(window[tab][0])
+                        else:    
+                            win.tabWidget().widget(tab).loadHistory(window[tab][0], window[tab][1])
                     else:
                         win.tabWidget().widget(tab).loadHistory(window[tab])
                 win.show()
