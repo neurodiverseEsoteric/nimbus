@@ -47,7 +47,7 @@ except:
 
 tabbar_stylesheet = \
 """QTabBar { margin: 0; padding: 0; border-bottom: 0; }
-   QTabBar::tab { min-width: 10em; border: 1px solid palette(dark);
+   QTabBar::tab { border: 1px solid palette(dark);
                   border-left: 0; margin: 0; padding: 4px;
                   background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                               stop: 0 palette(window),
@@ -178,12 +178,12 @@ class MainWindow(QMainWindow):
         # We don't want this widget to have any decorations.
         #newTabToolBar.setStyleSheet(common.blank_toolbar)
 
+        self.tabsToolBar.addWidget(custom_widgets.HorizontalExpander(self.tabsToolBar))
+
         #self.tabsToolBar.addAction(newIncognitoTabAction)
         self.tabsToolBar.addAction(newTabAction)
         #self.tabsToolBar.addWidget(newTabToolBar)
         #self.tabs.setCornerWidget(newTabToolBar, Qt.TopRightCorner)
-
-        self.tabsToolBar.addWidget(custom_widgets.HorizontalExpander(self.tabsToolBar))
 
         tabsMenuAction = QAction(self)
         self.tabsToolBar.addAction(tabsMenuAction)
@@ -1058,12 +1058,9 @@ self.origY + ev.globalY() - self.mouseY)
     # Update the titles on every single tab.
     def updateTabTitles(self):
         for index in range(0, self.tabWidget().count()):
-            if index < settings.setting_to_int("general/PinnedTabCount"):
-                title = "\u26bf " + self.tabWidget().widget(index).windowTitle()
-            else:
-                title = self.tabWidget().widget(index).windowTitle()
-            self.tabWidget().setTabText(index, title[:24] + '...' if\
-                                        len(title) > 24 else title)
+            title = self.tabWidget().widget(index).windowTitle()
+            self.tabWidget().setTabText(index, "\u26bf" if index < settings.setting_to_int("general/PinnedTabCount") else (title[:24] + '...' if\
+                                        len(title) > 24 else title))
             if index == self.tabWidget().currentIndex():
                 self.setWindowTitle(title + " - " + tr("Nimbus"))
 
