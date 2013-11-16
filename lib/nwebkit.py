@@ -478,6 +478,10 @@ class WebView(QWebView):
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
 
+    def shortWindowTitle(self):
+        title = self.windowTitle()
+        return title[:24] + '...' if len(title) > 24 else title
+
     def viewSource(self):
         sourceDialog = view_source_dialog.ViewSourceDialog(None)
         for sd in self.sourceDialogs:

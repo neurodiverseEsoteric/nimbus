@@ -963,7 +963,7 @@ self.origY + ev.globalY() - self.mouseY)
     def aboutToShowTabsMenu(self):
         self.tabsMenu.clear()
         for tab in range(self.tabWidget().count()):
-            tabAction = custom_widgets.IndexAction(tab, self.tabWidget().tabText(tab), self.tabsMenu)
+            tabAction = custom_widgets.IndexAction(tab, self.tabWidget().widget(tab).shortWindowTitle(), self.tabsMenu)
             if tab == self.tabWidget().currentIndex():
                 tabAction.setCheckable(True)
                 tabAction.setChecked(True)
@@ -1061,9 +1061,8 @@ self.origY + ev.globalY() - self.mouseY)
     # Update the titles on every single tab.
     def updateTabTitles(self):
         for index in range(0, self.tabWidget().count()):
-            title = self.tabWidget().widget(index).windowTitle()
-            self.tabWidget().setTabText(index, "\u26bf" if index < settings.setting_to_int("general/PinnedTabCount") else (title[:24] + '...' if\
-                                        len(title) > 24 else title))
+            title = self.tabWidget().widget(index).shortWindowTitle()
+            self.tabWidget().setTabText(index, "\u26bf" if index < settings.setting_to_int("general/PinnedTabCount") else title)
             if index == self.tabWidget().currentIndex():
                 self.setWindowTitle(title + " - " + tr("Nimbus"))
 
