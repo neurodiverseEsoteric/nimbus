@@ -1029,6 +1029,9 @@ self.origY + ev.globalY() - self.mouseY)
         if type(index) is not int:
             self.tabWidget().addTab(webview, tr("New Tab"))
         else:
+            ptc = settings.setting_to_int("general/PinnedTabCount")
+            if index < ptc:
+                index = ptc
             self.tabWidget().insertTab(index, webview, tr("New Tab"))
 
         # Switch to new tab
