@@ -760,6 +760,7 @@ self.origY + ev.globalY() - self.mouseY)
             self.stopAction.setEnabled(False)
             self.reloadAction.setEnabled(False)
         self.toggleActions2()
+        self.updateTabTitles()
 
     def toggleActions2(self):
         try: self.nextAction.setEnabled(bool(self.tabWidget().\
@@ -1057,7 +1058,10 @@ self.origY + ev.globalY() - self.mouseY)
     # Update the titles on every single tab.
     def updateTabTitles(self):
         for index in range(0, self.tabWidget().count()):
-            title = self.tabWidget().widget(index).windowTitle()
+            if index < settings.setting_to_int("general/PinnedTabCount"):
+                title = "\u26bf " + self.tabWidget().widget(index).windowTitle()
+            else:
+                title = self.tabWidget().widget(index).windowTitle()
             self.tabWidget().setTabText(index, title[:24] + '...' if\
                                         len(title) > 24 else title)
             if index == self.tabWidget().currentIndex():
@@ -1072,7 +1076,9 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Removes a tab at index.
     def removeTab(self, index):
-        if self.tabWidget().count() == 1 and settings.setting_to_bool("general/CloseWindowWithLastTab"):
+        if index < settings.setting_to_int("general/PinnedTabCount"):
+            return
+        elif self.tabWidget().count() == 1 and settings.setting_to_bool("general/CloseWindowWithLastTab"):
             self.close()
             return
         try:

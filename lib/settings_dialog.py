@@ -68,6 +68,11 @@ class GeneralSettingsPanel(SettingsPanel):
         self.reopenableWindowCount.setMaximum(9999)
         self.layout().addWidget(self.reopenableWindowCountRow)
 
+        self.pinnedTabCountRow = custom_widgets.SpinBoxRow(tr("Number of pinned tabs:"), self)
+        self.pinnedTabCount = self.pinnedTabCountRow.spinBox
+        self.pinnedTabCount.setMaximum(9999)
+        self.layout().addWidget(self.pinnedTabCountRow)
+
         self.homeButtonVisibleToggle = QCheckBox(tr("Show &home button"), self)
         self.layout().addWidget(self.homeButtonVisibleToggle)
 
@@ -85,6 +90,7 @@ class GeneralSettingsPanel(SettingsPanel):
         self.closeWindowToggle.setChecked(settings.setting_to_bool("general/CloseWindowWithLastTab"))
         self.reopenableTabCount.setValue(settings.setting_to_int("general/ReopenableTabCount"))
         self.reopenableWindowCount.setValue(settings.setting_to_int("general/ReopenableWindowCount"))
+        self.pinnedTabCount.setValue(settings.setting_to_int("general/PinnedTabCount"))
         self.homeButtonVisibleToggle.setChecked(settings.setting_to_bool("general/HomeButtonVisible"))
         self.upButtonVisibleToggle.setChecked(settings.setting_to_bool("general/UpButtonVisible"))
         self.feedButtonVisibleToggle.setChecked(settings.setting_to_bool("general/FeedButtonVisible"))
@@ -95,6 +101,7 @@ class GeneralSettingsPanel(SettingsPanel):
         settings.settings.setValue("general/CloseWindowWithLastTab", self.closeWindowToggle.isChecked())
         settings.settings.setValue("general/ReopenableWindowCount", self.reopenableWindowCount.text())
         settings.settings.setValue("general/ReopenableTabCount", self.reopenableTabCount.text())
+        settings.settings.setValue("general/PinnedTabCount", self.pinnedTabCount.text())
         settings.settings.setValue("general/HomeButtonVisible", self.homeButtonVisibleToggle.isChecked())
         settings.settings.setValue("general/UpButtonVisible", self.upButtonVisibleToggle.isChecked())
         settings.settings.setValue("general/FeedButtonVisible", self.feedButtonVisibleToggle.isChecked())
