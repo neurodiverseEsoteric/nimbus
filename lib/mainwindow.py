@@ -1068,9 +1068,10 @@ self.origY + ev.globalY() - self.mouseY)
     def updateTabTitles(self):
         for index in range(0, self.tabWidget().count()):
             title = self.tabWidget().widget(index).shortWindowTitle()
+            longtitle = self.tabWidget().widget(index).windowTitle()
             self.tabWidget().setTabText(index, "\u26bf" if index < settings.setting_to_int("general/PinnedTabCount") else title)
             if index == self.tabWidget().currentIndex():
-                self.setWindowTitle(title + " - " + tr("Nimbus"))
+                self.setWindowTitle(longtitle + " - " + tr("Nimbus"))
 
     # Update the icons on every single tab.
     def updateTabIcons(self):
