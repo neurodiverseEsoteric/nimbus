@@ -52,8 +52,6 @@ tabbar_stylesheet = \
                   background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                               stop: 0 palette(window),
                                               stop: 1 palette(dark)); }
-   QTabBar::tab:first { border-top-left-radius: 8px; }
-   QTabBar::tab:last { border-top-right-radius: 8px; }
    QTabBar::tab:selected { background: qlineargradient(x1: 0, y1: 0,
                                                        x2: 0, y2: 1,
                                        stop: 0 palette(light),
