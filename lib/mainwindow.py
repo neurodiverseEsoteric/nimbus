@@ -109,15 +109,19 @@ class MainWindow(QMainWindow):
         self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
                            contextMenuPolicy=Qt.CustomContextMenu,\
                            parent=self)
-        self.addToolBar(self.tabsToolBar)
-
-        self.addToolBarBreak(Qt.TopToolBarArea)
+        if settings.setting_to_bool("general/TabsOnTop"):
+            self.addToolBar(self.tabsToolBar)
+            self.addToolBarBreak(Qt.TopToolBarArea)
+            self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # Main toolbar.
         self.toolBar = QToolBar(movable=False,\
                                 contextMenuPolicy=Qt.CustomContextMenu,\
                                 parent=self)
         self.addToolBar(self.toolBar)
+        if not settings.setting_to_bool("general/TabsOnTop"):
+            self.addToolBarBreak(Qt.TopToolBarArea)
+            self.addToolBar(self.tabsToolBar)
 
         # Tab widget for tabbed browsing.
         self.tabs = custom_widgets.TabWidget(self)
@@ -158,7 +162,6 @@ class MainWindow(QMainWindow):
         self.tabsToolBar.layout().setSpacing(0)
         self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
         self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
-        self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # New tab action.
         newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)
@@ -194,6 +197,12 @@ class MainWindow(QMainWindow):
         self.tabsMenu = QMenu(self)
         self.tabsMenu.aboutToShow.connect(self.aboutToShowTabsMenu)
         tabsMenuAction.setMenu(self.tabsMenu)
+
+        self.tabsOnTopAction = QAction(self)
+        self.tabsOnTopAction.setCheckable(True)
+        self.tabsOnTopAction.setChecked(settings.setting_to_bool("general/TabsOnTop"))
+        self.tabsOnTopAction.setText(tr("Show tabs on top"))
+        self.tabsOnTopAction.triggered.connect(self.toggleTabsOnTop)
 
         # These are hidden actions used for the Ctrl[+Shift]+Tab feature
         # you see in most browsers.
@@ -960,6 +969,21 @@ self.origY + ev.globalY() - self.mouseY)
                 self.showMaximized()
 
     # Tab-related methods.
+    def toggleTabsOnTop(self):
+        if not settings.setting_to_bool("general/TabsOnTop"):
+            settings.settings.setValue("general/TabsOnTop", True)
+            for window in browser.windows:
+                window.addToolBarBreak()
+                window.addToolBar(window.toolBar)
+                self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
+        else:
+            settings.settings.setValue("general/TabsOnTop", False)
+            for window in browser.windows:
+                window.addToolBarBreak()
+                window.addToolBar(window.tabsToolBar)
+                self.tabs.tabBar().setStyleSheet("")
+        settings.settings.sync()
+
     def aboutToShowTabsMenu(self):
         self.tabsMenu.clear()
         for tab in range(self.tabWidget().count()):
@@ -969,6 +993,8 @@ self.origY + ev.globalY() - self.mouseY)
                 tabAction.setChecked(True)
             tabAction.triggered2.connect(self.tabWidget().setCurrentIndex)
             self.tabsMenu.addAction(tabAction)
+        self.tabsMenu.addSeparator()
+        self.tabsMenu.addAction(self.tabsOnTopAction)
 
     def currentWidget(self):
         return self.tabWidget().currentWidget()

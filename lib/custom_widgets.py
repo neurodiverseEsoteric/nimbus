@@ -8,6 +8,8 @@
 # Description: Custom widgets used by Nimbus.
 
 import os
+try: import settings
+except: pass
 from common import app_folder, blank_toolbar
 from translate import tr
 
@@ -82,11 +84,16 @@ class MenuToolBar(QToolBar):
     def __init__(self, *args, **kwargs):
         super(MenuToolBar, self).__init__(*args, **kwargs)
     def paintEvent(self, event):
-        painter = QStylePainter(self)
-        option = QStyleOptionToolBar()
-        self.initStyleOption(option)
-        style = self.style()
-        style.drawControl(QStyle.CE_MenuBarEmptyArea, option, painter, self)
+        try: tabsontop = settings.setting_to_bool("general/TabsOnTop")
+        except: tabsontop = True
+        if tabsontop:
+            painter = QStylePainter(self)
+            option = QStyleOptionToolBar()
+            self.initStyleOption(option)
+            style = self.style()
+            style.drawControl(QStyle.CE_MenuBarEmptyArea, option, painter, self)
+        else:
+            QToolBar.paintEvent(self, event)
 
 # Location bar.
 class LocationBar(QComboBox):
