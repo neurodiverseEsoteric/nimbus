@@ -124,8 +124,6 @@ class MainWindow(QMainWindow):
 
         # Tab widget for tabbed browsing.
         self.tabs = custom_widgets.TabWidget(self)
-        if settings.setting_to_bool("general/TabsOnTop"):
-            self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # Remove border around tabs.
         self.tabs.setDocumentMode(True)
@@ -163,6 +161,8 @@ class MainWindow(QMainWindow):
         self.tabsToolBar.layout().setSpacing(0)
         self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
         self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
+        if settings.setting_to_bool("general/TabsOnTop"):
+            self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # New tab action.
         newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)
