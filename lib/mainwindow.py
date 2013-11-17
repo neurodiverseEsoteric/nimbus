@@ -112,7 +112,6 @@ class MainWindow(QMainWindow):
         if settings.setting_to_bool("general/TabsOnTop"):
             self.addToolBar(self.tabsToolBar)
             self.addToolBarBreak(Qt.TopToolBarArea)
-            self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # Main toolbar.
         self.toolBar = QToolBar(movable=False,\
@@ -125,6 +124,8 @@ class MainWindow(QMainWindow):
 
         # Tab widget for tabbed browsing.
         self.tabs = custom_widgets.TabWidget(self)
+        if settings.setting_to_bool("general/TabsOnTop"):
+            self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # Remove border around tabs.
         self.tabs.setDocumentMode(True)
