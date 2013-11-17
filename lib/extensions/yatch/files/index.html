@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<!--
+NAME: Yet Another Text Converter in HTML (YATCH)
+AUTHOR: foxhead128
+DESCRIPTION: YATCH is an HTML document that can convert plaintext to
+and from reversed text, Base64, 8 rounds of Base64, and Goomy Clicker
+save files. I originally made it to convert Base64, but then decided
+to add some more functionality to it, and ended up with this. It's
+kind of sloppy, and the layout is nothing to write home about, but
+it is functional. YATCH does not work in Internet Explorer 9 and
+below, so don't try it.
+
+LICENSING TERMS:
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+-->
+<html>
+    <head>
+        <title>
+            Yet Another Text Converter in HTML (YATCH)
+        </title>
+        <script type="text/javascript" src="http://ernston.com/goomyclicker/sprintf.min.js"></script>
+        <script type="text/javascript" src="http://ernston.com/goomyclicker/saveload.js"></script>
+        <script type="text/javascript" src="sprintf.min.js"></script>
+        <script type="text/javascript" src="saveload.js"></script>
+        <script type="text/javascript" src="base64.js"></script>
+        <script type="text/javascript" src="fhspeak.js"></script>
+        <script type="text/javascript" src="qbf.js"></script>
+        <script type="text/javascript" src="symbolfuck.js"></script>
+        <script type="text/javascript" src="eff.js"></script>
+        <script type="text/javascript">
+            function reverse(s) {
+                return s.split("").reverse().join("");
+            }
+        </script>
+        <script type="text/javascript" src="yatch.js"></script>
+        <script type="text/javascript">
+            window.onload = function() {
+                str_to_reverse();
+                str_to_eb64();
+                str_to_b64();
+                str_to_fhspeak();
+                str_to_qbf();
+                try { str_to_goomy(); }
+                catch (e) { null; }
+                str_to_binary();
+            }
+        </script>
+        <style type="text/css">
+            #binary-box:not(:hover) #binary-options > *:not(#binary-options-label) {
+                display: none;
+            }
+            #binary-box:hover #binary-options > #binary-options-label {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <table style="width: 100%;">
+            <tr>
+                <td rowspan="2" style="vertical-align: text-top;">
+                    <h1 style="position: absolute; margin: 0; width: 25%; z-index: -1;">Yet Another Text Converter in HTML (YATCH)</h1>
+                </td>
+                <td>
+                </td>
+                <td style="text-align: center;">
+                    Reverse
+                </td>
+                <td>
+                </td>
+                <td style="text-align: center;" >
+                    8-round Base64
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td>
+                    <textarea id="reverse" style="width: 100%; height: 128px;"></textarea>
+                </td>
+                <td>
+                </td>
+                <td>
+                    <textarea id="8x-base64" style="width: 100%; height: 128px;"></textarea>
+                </td>
+            </tr>
+            <tr style="text-align: center;">
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                    <input type="button" onclick="str_to_reverse()" value="&#8593;">
+                    <input type="button" onclick="reverse_to_str()" value="&#8595;">
+                </td>
+                <td>
+                    <input type="button" onclick="str_to_eb64()" value="&#8599;">
+                    <input type="button" onclick="eb64_to_str()" value="&#8601;">
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+            <tr style="text-align: center;">
+                <td>
+                    <a href="http://ernston.com/goomyclicker/" target="_blank">Goomy</a>
+                </td>
+                <td>
+                </td>
+                <td>
+                    Plaintext
+                </td>
+                <td>
+                </td>
+                <td>
+                    Base64
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <textarea id="goomy" style="width: 100%; height: 128px;"></textarea>
+                </td>
+                <td style="text-align: center;">
+                    <input type="button" onclick="str_to_goomy()" value="&#8592;">
+                    <br>
+                    <input type="button" onclick="goomy_to_str();" value="&#8594;">
+                </td>
+                <td style="text-align: center;">
+                    <textarea id="plaintext" style="width: 100%; height: 128px;">Hello, world!</textarea>
+                    <br>
+                    <input type="button" onclick="convert_all();" value="Convert all" style="font-size: 1.5em;">
+                </td>
+                <td style="text-align: center;">
+                    <input type="button" onclick="str_to_b64();" value="&#8594;">
+                    <br>
+                    <input type="button" onclick="b64_to_str();" value="&#8592;">
+                </td>
+                <td>
+                    <textarea id="base64" style="width: 100%; height: 128px;"></textarea>
+                </td>
+            </tr>
+            <tr style="text-align: center;">
+                <td>
+                </td>
+                <td>
+                    <input type="button" onclick="str_to_qbf();" value="&#8601;">
+                    <input type="button" onclick="qbf_to_str();" value="&#8599;">
+                </td>
+                <td>
+                    <input type="button" onclick="str_to_binary()" value="&#8595;">
+                    <input type="button" onclick="binary_to_str()" value="&#8593;">
+                </td>
+                <td>
+                    <input type="button" onclick="str_to_fhspeak();" value="&#8600;">
+                    <input type="button" onclick="fhspeak_to_str();" value="&#8598;">
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+            <tr style="text-align: center;">
+                <td>
+                    Symbolfuck
+                </td>
+                <td>
+                </td>
+                <td>
+                    Binary
+                </td>
+                <td>
+                </td>
+                <td>
+                    fhspeak
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">
+                    <textarea id="qbf" style="width: 100%; height: 128px;"></textarea>
+                </td>
+                <td>
+                </td>
+                <td id="binary-box" style="text-align: center;">
+                    <textarea id="binary" style="width: 100%; height: 128px;"></textarea>
+                </td>
+                <td>
+                </td>
+                <td style="text-align: center;">
+                    <textarea id="fhspeak" style="width: 100%; height: 128px;"></textarea>
+                </td>
+            </tr>
+            <tr style="text-align: center; vertical-align: text-top;">
+                <td>
+                    <input type="button" onclick="qbf_to_qbf();" value="Add round">
+                </td>
+                <td>
+                </td>
+                <td>
+                    <input type="button" onclick="binary_to_fmorse();" value="To fake Morse code">
+                    <br>
+                    <input type="button" onclick="binary_to_wtf();" value="To WTF?!">
+                    <input type="button" onclick="binary_to_circlefuck();" value="To Circlefuck">
+                    <br>
+                    <input type="button" onclick="binary_to_mockery();" value="To Mockery">
+                    <input type="button" onclick="binary_to_mockery2();" value="To Mockery2">
+                    <br>
+                    <input type="button" onclick="binary_to_e();" value="To Eee">
+                    <input type="button" onclick="binary_to_nono();" value="To Nono">
+                    <br>
+                    <input type="button" onclick="binary_to_smilies();" value="To Smilies">
+                    <input type="button" onclick="binary_to_xoxo();" value="To xoxo">
+                </td>
+                <td>
+                </td>
+                <td>
+                    <input type="button" onclick="fhspeak_to_fhspeak();" value="Add round">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <b>DISCLAIMER:</b> Some features may not work properly in Internet Explorer 9 and below. Use a more modern Web browser instead.
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
