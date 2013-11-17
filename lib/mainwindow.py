@@ -977,12 +977,14 @@ self.origY + ev.globalY() - self.mouseY)
                 window.addToolBarBreak()
                 window.addToolBar(window.toolBar)
                 self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
+                window.tabsOnTopAction.setChecked(settings.setting_to_bool("general/TabsOnTop"))
         else:
             settings.settings.setValue("general/TabsOnTop", False)
             for window in browser.windows:
                 window.addToolBarBreak()
                 window.addToolBar(window.tabsToolBar)
                 self.tabs.tabBar().setStyleSheet("")
+                window.tabsOnTopAction.setChecked(settings.setting_to_bool("general/TabsOnTop"))
         settings.settings.sync()
 
     def aboutToShowTabsMenu(self):
