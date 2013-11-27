@@ -11,7 +11,8 @@ except:
     else:
         common.feeds = json.loads(feeds)
 self.toolBar.widgetForAction(self.feedMenuButton).setToolTip("Bookmarks")
-self.toolBar.widgetForAction(self.feedMenuButton).setIcon(common.icon("bookmarks.png"))
+try: self.toolBar.widgetForAction(self.feedMenuButton).setIcon(QIcon(common.icon("bookmarks.png")))
+except: pass
 self.toolBar.widgetForAction(self.feedMenuButton).setPopupMode(QToolButton.MenuButtonPopup)
 self.feedMenuButton.setCheckable(True)
 def toggleFeedsDock():
