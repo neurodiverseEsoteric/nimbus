@@ -985,6 +985,8 @@ self.origY + ev.globalY() - self.mouseY)
                 window.addToolBar(window.tabsToolBar)
                 self.tabs.tabBar().setStyleSheet("")
                 window.tabsOnTopAction.setChecked(settings.setting_to_bool("general/TabsOnTop"))
+        self.tabs.setStyleSheet("QTabWidget::pane { top: -%s; } " %\
+             (self.tabs.tabBar().height(),))
         settings.settings.sync()
 
     def aboutToShowTabsMenu(self):
