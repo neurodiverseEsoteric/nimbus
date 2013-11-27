@@ -10,7 +10,7 @@ except:
         data.data.sync()
     else:
         common.feeds = json.loads(feeds)
-self.toolBar.widgetForAction(self.feedMenuButton).setToolTip("Bookmarks")
+self.feedMenuButton.setText(tr("Bookmarks"))
 try: self.feedMenuButton.setIcon(QIcon(common.complete_icon("bookmarks")))
 except: traceback.print_exc()
 self.toolBar.widgetForAction(self.feedMenuButton).setPopupMode(QToolButton.MenuButtonPopup)
