@@ -1,4 +1,6 @@
 import json
+settings.settings.setValue("general/FeedButtonVisible", True)
+settings.settings.sync()
 try: common.feeds
 except:
     feeds = data.data.value("data/Feeds")
@@ -8,6 +10,8 @@ except:
         data.data.sync()
     else:
         common.feeds = json.loads(feeds)
+self.toolBar.widgetForAction(self.feedMenuButton).setToolTip("Bookmarks")
+self.toolBar.widgetForAction(self.feedMenuButton).setIcon(common.complete_icon("bookmarks"))
 self.toolBar.widgetForAction(self.feedMenuButton).setPopupMode(QToolButton.MenuButtonPopup)
 self.feedMenuButton.setCheckable(True)
 def toggleFeedsDock():
@@ -18,7 +22,7 @@ def toggleFeedsDock():
         mainWindow.feedsDock.setContextMenuPolicy(Qt.CustomContextMenu)
         mainWindow.feedsDock.setFeatures(QDockWidget.NoDockWidgetFeatures)
         mainWindow.feedsList = QListWidget(browser.activeWindow().feedsDock)
-        mainWindow.feedsDock.setWindowTitle("Feeds")
+        mainWindow.feedsDock.setWindowTitle("Bookmarks")
         mainWindow.feedsList.addItem("+")
         for feed in common.feeds:
             mainWindow.feedsList.addItem(feed)
