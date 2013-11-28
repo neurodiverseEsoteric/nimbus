@@ -1005,7 +1005,7 @@ self.origY + ev.globalY() - self.mouseY)
     def loadSession(self, session):
         for tab in range(len(session)):
             self.addTab(index=tab)
-            if index < settings.setting_to_int("general/PinnedTabCount"):
+            if tab < settings.setting_to_int("general/PinnedTabCount"):
                 try: self.tabWidget().widget(tab).page().loadHistory(session[tab])
                 except: traceback.print_exc()
             else:
