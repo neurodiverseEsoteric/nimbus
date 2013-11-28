@@ -160,6 +160,10 @@ class ContentSettingsPanel(SettingsPanel):
         self.javaToggle = QCheckBox(tr("Enable &Java"), self)
         pluginsRow.addWidget(self.javaToggle)
 
+        # Checkbox to toggle Flash.
+        self.flashToggle = QCheckBox(tr("Enable Flash"), self)
+        pluginsRow.addWidget(self.flashToggle)
+
         # Checkbox to toggle plugins.
         self.pluginsToggle = QCheckBox(tr("Enable &plugins"), self)
         pluginsRow.addWidget(self.pluginsToggle)
@@ -207,6 +211,7 @@ class ContentSettingsPanel(SettingsPanel):
         self.javascriptCanCloseWindowsToggle.setChecked(settings.setting_to_bool("content/JavascriptCanCloseWindows"))
         self.javascriptCanAccessClipboardToggle.setChecked(settings.setting_to_bool("content/JavascriptCanAccessClipboard"))
         self.javaToggle.setChecked(settings.setting_to_bool("content/JavaEnabled"))
+        self.flashToggle.setChecked(settings.setting_to_bool("content/FlashEnabled"))
         self.elementBackgroundsToggle.setChecked(settings.setting_to_bool("content/PrintElementBackgrounds"))
         self.pluginsToggle.setChecked(settings.setting_to_bool("content/PluginsEnabled"))
         self.adblockToggle.setChecked(settings.setting_to_bool("content/AdblockEnabled"))
@@ -224,6 +229,7 @@ class ContentSettingsPanel(SettingsPanel):
         settings.settings.setValue("content/JavascriptCanCloseWindows", self.javascriptCanCloseWindowsToggle.isChecked())
         settings.settings.setValue("content/JavascriptCanAccessClipboard", self.javascriptCanAccessClipboardToggle.isChecked())
         settings.settings.setValue("content/JavaEnabled", self.javaToggle.isChecked())
+        settings.settings.setValue("content/FlashEnabled", self.flashToggle.isChecked())
         settings.settings.setValue("content/PrintElementBackgrounds   ", self.elementBackgroundsToggle.isChecked())
         settings.settings.setValue("content/PluginsEnabled", self.pluginsToggle.isChecked())
         settings.settings.setValue("content/AdblockEnabled", self.adblockToggle.isChecked())
