@@ -11,6 +11,7 @@ except:
     else:
         common.feeds = json.loads(feeds)
 self.feedMenuButton.setText(tr("Bookmarks"))
+self.feedMenuButton.setShortcut("Ctrl+Shift+B")
 try: self.feedMenuButton.setIcon(QIcon(common.complete_icon("bookmarks")))
 except: traceback.print_exc()
 self.toolBar.widgetForAction(self.feedMenuButton).setPopupMode(QToolButton.MenuButtonPopup)
