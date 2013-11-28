@@ -22,6 +22,7 @@ except:
 
 # Common settings manager.
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
+settings.setValue("general/TabsOnTop", True)
 
 # This is a global variable that gets the settings folder on any platform.
 settings_folder = os.path.dirname(settings.fileName())

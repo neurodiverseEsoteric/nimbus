@@ -199,12 +199,6 @@ class MainWindow(QMainWindow):
         self.tabsMenu.aboutToShow.connect(self.aboutToShowTabsMenu)
         tabsMenuAction.setMenu(self.tabsMenu)
 
-        self.tabsOnTopAction = QAction(self)
-        self.tabsOnTopAction.setCheckable(True)
-        self.tabsOnTopAction.setChecked(settings.setting_to_bool("general/TabsOnTop"))
-        self.tabsOnTopAction.setText(tr("Show tabs on top"))
-        self.tabsOnTopAction.triggered.connect(self.toggleTabsOnTop)
-
         # These are hidden actions used for the Ctrl[+Shift]+Tab feature
         # you see in most browsers.
         nextTabAction = QAction(self, triggered=self.nextTab, shortcut="Ctrl+Tab")
@@ -977,14 +971,12 @@ self.origY + ev.globalY() - self.mouseY)
                 window.addToolBarBreak()
                 window.addToolBar(window.toolBar)
                 self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
-                window.tabsOnTopAction.setChecked(settings.setting_to_bool("general/TabsOnTop"))
         else:
             settings.settings.setValue("general/TabsOnTop", False)
             for window in browser.windows:
                 window.addToolBarBreak()
                 window.addToolBar(window.tabsToolBar)
                 self.tabs.tabBar().setStyleSheet("")
-                window.tabsOnTopAction.setChecked(settings.setting_to_bool("general/TabsOnTop"))
         self.tabs.setStyleSheet("QTabWidget::pane { top: -%s; } " %\
              (self.tabs.tabBar().height(),))
         settings.settings.sync()
@@ -998,8 +990,6 @@ self.origY + ev.globalY() - self.mouseY)
                 tabAction.setChecked(True)
             tabAction.triggered2.connect(self.tabWidget().setCurrentIndex)
             self.tabsMenu.addAction(tabAction)
-        self.tabsMenu.addSeparator()
-        self.tabsMenu.addAction(self.tabsOnTopAction)
 
     def currentWidget(self):
         return self.tabWidget().currentWidget()
