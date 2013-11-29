@@ -22,7 +22,6 @@ except:
 
 # Common settings manager.
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
-settings.setValue("general/TabsOnTop", True)
 
 # This is a global variable that gets the settings folder on any platform.
 settings_folder = os.path.dirname(settings.fileName())
@@ -76,8 +75,7 @@ default_settings = {"proxy/Type": "None",
                     "general/FeedButtonVisible": False,
                     "extensions/Whitelist": [],
                     "general/ReopenableTabCount": 10,
-                    "general/ReopenableWindowCount": 10,
-                    "general/TabsOnTop": True}
+                    "general/ReopenableWindowCount": 10}
 default_port = default_settings["proxy/Port"]
 
 # New tab page.

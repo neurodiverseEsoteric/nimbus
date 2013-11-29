@@ -109,18 +109,14 @@ class MainWindow(QMainWindow):
         self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
                            contextMenuPolicy=Qt.CustomContextMenu,\
                            parent=self)
-        if settings.setting_to_bool("general/TabsOnTop"):
-            self.addToolBar(self.tabsToolBar)
-            self.addToolBarBreak(Qt.TopToolBarArea)
+        self.addToolBar(self.tabsToolBar)
+        self.addToolBarBreak(Qt.TopToolBarArea)
 
         # Main toolbar.
         self.toolBar = QToolBar(movable=False,\
                                 contextMenuPolicy=Qt.CustomContextMenu,\
                                 parent=self)
         self.addToolBar(self.toolBar)
-        if not settings.setting_to_bool("general/TabsOnTop"):
-            self.addToolBarBreak(Qt.TopToolBarArea)
-            self.addToolBar(self.tabsToolBar)
 
         # Tab widget for tabbed browsing.
         self.tabs = custom_widgets.TabWidget(self)
@@ -161,8 +157,7 @@ class MainWindow(QMainWindow):
         self.tabsToolBar.layout().setSpacing(0)
         self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
         self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
-        if settings.setting_to_bool("general/TabsOnTop"):
-            self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
+        self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # New tab action.
         newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)
