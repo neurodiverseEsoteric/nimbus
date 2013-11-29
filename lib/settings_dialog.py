@@ -191,6 +191,9 @@ class ContentSettingsPanel(SettingsPanel):
         self.hostFilterToggle = QCheckBox(tr("Enable host &filtering"), self)
         contentFilteringRow.layout().addWidget(self.hostFilterToggle)
 
+        self.gifsToggle = QCheckBox(tr("Block GIF images"), self)
+        contentFilteringRow.layout().addWidget(self.gifsToggle)
+
         # Checkbox to toggle tiled backing.
         self.tiledBackingStoreToggle = QCheckBox(tr("Enable tiled backing store"), self)
         self.layout().addWidget(self.tiledBackingStoreToggle)
@@ -215,6 +218,7 @@ class ContentSettingsPanel(SettingsPanel):
         self.elementBackgroundsToggle.setChecked(settings.setting_to_bool("content/PrintElementBackgrounds"))
         self.pluginsToggle.setChecked(settings.setting_to_bool("content/PluginsEnabled"))
         self.adblockToggle.setChecked(settings.setting_to_bool("content/AdblockEnabled"))
+        self.gifsToggle.setChecked(not settings.setting_to_bool("content/GIFsEnabled"))
         self.hostFilterToggle.setChecked(settings.setting_to_bool("content/HostFilterEnabled"))
         self.mediaToggle.setChecked(settings.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"))
         self.contentViewersToggle.setChecked(settings.setting_to_bool("content/UseOnlineContentViewers"))
@@ -230,9 +234,10 @@ class ContentSettingsPanel(SettingsPanel):
         settings.settings.setValue("content/JavascriptCanAccessClipboard", self.javascriptCanAccessClipboardToggle.isChecked())
         settings.settings.setValue("content/JavaEnabled", self.javaToggle.isChecked())
         settings.settings.setValue("content/FlashEnabled", self.flashToggle.isChecked())
-        settings.settings.setValue("content/PrintElementBackgrounds   ", self.elementBackgroundsToggle.isChecked())
+        settings.settings.setValue("content/PrintElementBackgrounds", self.elementBackgroundsToggle.isChecked())
         settings.settings.setValue("content/PluginsEnabled", self.pluginsToggle.isChecked())
         settings.settings.setValue("content/AdblockEnabled", self.adblockToggle.isChecked())
+        settings.settings.setValue("content/GIFsEnabled", not self.gifsToggle.isChecked())
         settings.settings.setValue("content/HostFilterEnabled", self.hostFilterToggle.isChecked())
         settings.settings.setValue("content/ReplaceHTML5MediaTagsWithEmbedTags", self.mediaToggle.isChecked())
         filtering.adblock_filter_loader.start()
