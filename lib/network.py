@@ -104,10 +104,11 @@ class NetworkAccessManager(QNetworkAccessManager):
     def createRequest(self, op, request, device=None):
         url = request.url()
         urlString = url.toString()
+        lurlString = urlString.lower()
         x = filtering.adblock_filter.match(urlString)
         y = url.authority() in filtering.host_rules if settings.setting_to_bool("content/HostFilterEnabled") and url.authority() != "" else False
-        z = urlString.endswith(".swf") and not settings.setting_to_bool("content/FlashEnabled")
-        aa = urlString.endswith(".gif") and not settings.setting_to_bool("content/GIFsEnabled")
+        z = lurlString.endswith(".swf") and not settings.setting_to_bool("content/FlashEnabled")
+        aa = lurlString.endswith(".gif") and not settings.setting_to_bool("content/GIFsEnabled")
         if url.scheme() == "file" and os.path.isdir(os.path.abspath(url.path())):
             html = directoryView % {"title": urlString, "heading": url.path(), "links": "".join(["<a href=\"%s\">%s</a><br/>" % (QUrl.fromUserInput(os.path.join(urlString, path)).toString(), path,) for path in [".."] + sorted(os.listdir(os.path.abspath(url.path())))])}
             return NetworkReply(self, url, self.GetOperation, html)
