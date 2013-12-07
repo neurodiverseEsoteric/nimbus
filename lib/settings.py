@@ -74,7 +74,7 @@ default_settings = {"proxy/Type": "None",
                     "general/UpButtonVisible": False,
                     "general/HomeButtonVisible": False,
                     "general/FeedButtonVisible": False,
-                    "extensions/Whitelist": ["allow_site_to_track_my_location", "bookmarks", "facebook_sidebar", "gmail_sidebar", "navigation_buttons_menu_only", "readability", "translate", "weather_sidebar", "wikipedia_sidebar", "xkcd_random", "yatch", "YouTube_Video_Downloader.user.js"],
+                    "extensions/Whitelist": [],
                     "general/ReopenableTabCount": 10,
                     "general/ReopenableWindowCount": 10}
 default_port = default_settings["proxy/Port"]
@@ -105,7 +105,7 @@ extensions = []
 extension_buttons = []
 
 # List of extensions to load.
-extensions_whitelist = ["allow_site_to_track_my_location", "bookmarks", "facebook_sidebar", "gmail_sidebar", "navigation_buttons_menu_only", "readability", "translate", "weather_sidebar", "wikipedia_sidebar", "xkcd_random", "yatch", "YouTube_Video_Downloader.user.js"]
+extensions_whitelist = []
 
 # List of extensions not to load.
 extensions_blacklist = []
