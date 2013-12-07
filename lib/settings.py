@@ -105,7 +105,7 @@ extensions = []
 extension_buttons = []
 
 # List of extensions to load.
-extensions_whitelist = []
+extensions_whitelist = ["allow_site_to_track_my_location", "bookmarks", "facebook_sidebar", "gmail_sidebar", "navigation_buttons_menu_only", "readability", "translate", "weather_sidebar", "wikipedia_sidebar", "xkcd_random", "yatch", "YouTube_Video_Downloader.user.js"]
 
 # List of extensions not to load.
 extensions_blacklist = []
