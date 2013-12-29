@@ -14,12 +14,12 @@ from common import app_folder, blank_toolbar
 from translate import tr
 
 try:
-    from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl
+    from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
     Signal = pyqtSignal
-    from PyQt4.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
+    from PyQt4.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
 except:
-    from PySide.QtCore import Qt, Signal, QPoint, QUrl
-    from PySide.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu
+    from PySide.QtCore import Qt, Signal, QPoint, QUrl, QSize
+    from PySide.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
 
 # Blank widget to take up space.
 class Expander(QLabel):
@@ -164,8 +164,19 @@ class ReadOnlyTextEdit(QTextEdit):
         self.setReadOnly(True)
         self.setFontFamily("monospace")
 
+# Tab bar.
+class TabBar(QTabBar):
+    def minimumSizeHint(self):
+        return QSize(0, 0)
+
 # Tab widget.
 class TabWidget(QTabWidget):
+    def __init__(self, *args, **kwargs):
+        super(TabWidget, self).__init__(*args, **kwargs)
+        tabbar = TabBar()
+        self.setTabBar(tabbar)
+    def minimumSizeHint(self):
+        return QSize(0, 0)
     def resizeEvent(self, ev):
         size = self.tabBar().size()
         QTabWidget.resizeEvent(self, ev)

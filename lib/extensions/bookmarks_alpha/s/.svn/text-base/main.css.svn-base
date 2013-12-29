@@ -1,0 +1,28 @@
+#wcChars {
+  text-align: center;
+  width: 100%;
+  font-size: 22pt;
+  font-family: 'Georgia','Serif';
+  font-weight: bold;
+}
+.wcCharsLess140 {
+  color: #ccc;
+}
+.wcCharsMore140 {
+  color: #D40D12;
+}
+#wcWords, #wcLines {
+  padding-top: 5px;
+  text-align: left;
+  font-size: 10px;
+  font-family: 'courier';
+  color: #aaa;
+}
+#tweetThis a {
+  color: #330066;
+  font-family: Arial, Helvetica, sans-serif;;
+  font-size: 10px;
+}
+#tweetThis a:hover {
+  background-color: #ccc;
+}

@@ -1,0 +1,17 @@
+{% extends "template.html" %}
+
+{% block heading %} Add the <a href="{{bookmarklet}}">Count</a> bookmarklet {% endblock %}
+{% block content %}
+<p><a href="{{bookmarklet}}">Count</a> is a <a href="http://en.wikipedia.org/wiki/Bookmarklet">bookmarklet</a> for counting characters (and words and lines) on a web page. Simply select some text on the page, click the bookmarklet and watch the count.</p>
+<p><a href="{{bookmarklet}}">Try it!</a>  -  come on, <a href="{{bookmarklet}}">click me</a> and select some text on the page!</p>
+<ul>
+  <li>Why whould I want to use Count?<li>
+  <li>Many services such as <a href="http://twitter.com/">Twitter</a> limit their input to 140 characters. When using one of the twitter front-ends there's a built-in counter to help you count characters but sometimes you want to send twits, or simply count characters when not in twitter. This bookmarlet will do that for you. For example, when sending DM (direct messages) in <a href="http://topify.com/">Topify</a>.
+</ul>
+{% endblock %}
+
+{% block about %}
+<h3>ABOUT</h3>
+<p>This bookmarklet was created by <a href="http://twitter.com/rantav">@rantav</a> to help me count charactes when I was <a href="http://ouriel.typepad.com/myblog/2009/05/twinterview5-rantav-ran-tavory-from-google.html">Twinterviewed</a> by <a href="http://ouriel.typepad.com/">Ouriel</a>.</p>
+<p>All code is open-sourced in <a href="http://code.google.com/p/charcount/">Google code here</a></p>
+{% endblock %}

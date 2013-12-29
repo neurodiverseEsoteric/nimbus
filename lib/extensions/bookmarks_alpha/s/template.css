@@ -1,0 +1,139 @@
+body{
+        margin: 0px;
+        padding: 0px;
+        background: #333 url(images/gback.gif) top left repeat-x;
+        text-align: center;
+}
+
+/* Reset */
+
+h1, h2, h3, h4, h5, p, ul, li, blockquote, strong{
+        margin: 0px;
+        padding: 0px;
+        font-family: Helvetica, Arial, "MS Trebuchet", sans-serif;
+        letter-spacing: 0;
+        color: #666;
+}
+
+ul{
+        list-style: none;
+        font-size: 12px;
+        margin-bottom: 15px;
+}
+a{
+        color: #0091d0;
+        text-decoration: none;
+}
+a:hover{
+        color: #000;
+        text-decoration: none;
+}
+
+/* Typography */
+
+h1{
+        font-size: 72px;
+        color: #0091d0;
+        line-height: 0.85em;
+        text-transform: uppercase;
+        background: url('images/page-title-corner-shadow.jpg') 0 70px no-repeat;
+        padding: 60px 0px 40px 50px;
+        margin-left: -50px;
+}
+h1 a{
+        color: #900;
+        text-decoration: none;
+}
+h1 a:hover{
+        color: #000;
+        text-decoration: none;
+}
+h2{
+        font-family: Georgia, "MS Trebuchet", sans-serif;
+        font-weight: normal;
+        font-size: 36px;
+        color: #000;
+        padding-bottom: 15px;
+}
+p{
+        font-size: 12px;
+        padding-bottom: 15px;
+}
+.gray{
+color: #ccc;
+}
+
+/* Images */
+
+img.top_right{ float: right; padding: 0px 0px 20px 0px; }
+img.middle_right{ float: right; padding: 20px 0px 20px 0px; }
+
+img.top_left{ float: left; padding: 0px 20px 20px 0px; }
+img.middle_left{ float: left; padding: 20px 20px 20px 0px; }
+
+/* Page Elements */
+
+div.divider{
+        clear: both;
+        width: 840px;
+        padding: 0px;
+        border-top: 1px solid #ccc;
+}
+html>body div.divider{
+        clear: both;
+        width: 840px;
+        padding: 0px 0px 15px 0px;
+        border-top: 1px solid #ccc;
+}
+#home_nav_container{
+        width: 400px;
+}
+
+/* Layout ******************************************/
+
+#container{
+        width: 840px;
+        padding: 0px 60px 30px 60px;
+        margin: 0px auto 0px auto;
+        text-align: left;
+        background-color: #fff;
+        overflow: hidden;
+        margin-top: 100px;
+}
+
+/* Header */
+
+#header{
+        position: relative;
+        width: 840px;
+        height: 130px;
+        margin: 60px auto 0px auto;
+        padding: 0px 60px;
+        background: #000;
+        text-align: left;
+        overflow: hidden;
+}
+#header #logo{
+        position: absolute;
+        left: 60px;
+        top: 50px;
+}
+
+/* Header - Main Nav */
+
+#header {
+        position: absolute;
+        right: 60px;
+        top: 30px;
+}
+
+/* Content - Main *************************************/
+
+#content_main{
+        position:relative;
+        width: 840px;
+}
+
+img{ border: none; }
+
+
