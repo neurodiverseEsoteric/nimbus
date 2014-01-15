@@ -286,14 +286,17 @@ class WebPage(QWebPage):
 
     # Fires JavaScript events pertaining to online/offline mode.
     def setNavigatorOnline(self):
-        script = "window.navigator.onLine = " + str(network.isConnectedToNetwork()).lower() + ";"
-        self.mainFrame().evaluateJavaScript(script)
-        self.mainFrame().evaluateJavaScript("if (window.onLine) {\n" + \
-                                            "   document.dispatchEvent(window.nimbus.onLineEvent);\n" + \
-                                            "}")
-        self.mainFrame().evaluateJavaScript("if (!window.onLine) {\n" + \
-                                            "   document.dispatchEvent(window.nimbus.offLineEvent);\n" + \
-                                            "}")
+        try:
+            script = "window.navigator.onLine = " + str(network.isConnectedToNetwork()).lower() + ";"
+            self.mainFrame().evaluateJavaScript(script)
+            self.mainFrame().evaluateJavaScript("if (window.onLine) {\n" + \
+                                                "   document.dispatchEvent(window.nimbus.onLineEvent);\n" + \
+                                                "}")
+            self.mainFrame().evaluateJavaScript("if (!window.onLine) {\n" + \
+                                                "   document.dispatchEvent(window.nimbus.offLineEvent);\n" + \
+                                                "}")
+        except:
+            self.isOnlineTimer.stop()
 
     # This loads a bunch of hacks to improve HTML5 support.
     def tweakDOM(self):
