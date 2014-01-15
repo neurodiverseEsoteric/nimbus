@@ -296,7 +296,7 @@ class WebPage(QWebPage):
                                                 "   document.dispatchEvent(window.nimbus.offLineEvent);\n" + \
                                                 "}")
         except:
-            self.isOnlineTimer.stop()
+            pass
 
     # This loads a bunch of hacks to improve HTML5 support.
     def tweakDOM(self):
