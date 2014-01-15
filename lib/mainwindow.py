@@ -619,6 +619,7 @@ class MainWindow(QMainWindow):
         if ev.button() != Qt.LeftButton:
             return QMainWindow.mousePressEvent(self, ev)
         else:
+            QApplication.setOverrideCursor(Qt.SizeAllCursor)
             self.mouseX = ev.globalX()
             self.origX = self.x()
             self.mouseY = ev.globalY()
@@ -628,6 +629,10 @@ class MainWindow(QMainWindow):
         if self.mouseX and self.mouseY and not self.isMaximized():
             self.move(self.origX + ev.globalX() - self.mouseX,
 self.origY + ev.globalY() - self.mouseY)
+
+    def mouseReleaseEvent(self, ev):
+        QApplication.restoreOverrideCursor()
+        return QMainWindow.mouseReleaseEvent(self, ev)
 
     # Deletes any closed windows above the reopenable window count,
     # and blanks all the tabs and sidebars.
