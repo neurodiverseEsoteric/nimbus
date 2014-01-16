@@ -384,31 +384,43 @@ class ClippingsPanel(SettingsPanel):
         super(ClippingsPanel, self).__init__(parent)
         self.setWindowTitle(tr("Clippings Manager"))
 
+        row1 = custom_widgets.Row(self)
+        self.layout().addWidget(row1)
+
+        column1 = custom_widgets.Column(self)
+        column2 = custom_widgets.Column(self)
+        row1.addWidget(column1)
+        row1.addWidget(column2)
+
+        # Title
+        self.title = QLabel(tr("<b>Clippings</b>"), self)
+        column1.addWidget(self.title)
+
+        # Clipping list.
+        self.clippingList = QListWidget(self)
+        self.clippingList.currentTextChanged.connect(self.loadClipping)
+        column1.addWidget(self.clippingList)
+
+        self.removeClippingButton = QPushButton(tr("Remove"))
+        self.removeClippingButton.clicked.connect(lambda: self.removeClipping(True))
+        column1.addWidget(self.removeClippingButton)
+
+        self.removeAction = QAction(self)
+        self.removeAction.setShortcut("Del")
+        self.removeAction.triggered.connect(self.removeClipping)
+        self.addAction(self.removeAction)
+
         clippingNameRow = custom_widgets.LineEditRow(tr("Name:"), self)
         self.nameEntry = clippingNameRow.lineEdit
         self.nameEntry.returnPressed.connect(self.addClipping)
-        self.layout().addWidget(clippingNameRow)
+        column2.addWidget(clippingNameRow)
 
         self.addClippingButton = QPushButton(tr("Add"))
         self.addClippingButton.clicked.connect(self.addClipping)
         clippingNameRow.layout().addWidget(self.addClippingButton)
 
         self.clippingEntry = QTextEdit(self)
-        self.layout().addWidget(self.clippingEntry)
-
-        # Clipping list.
-        self.clippingList = QListWidget(self)
-        self.clippingList.currentTextChanged.connect(self.loadClipping)
-        self.layout().addWidget(self.clippingList)
-
-        self.removeClippingButton = QPushButton(tr("Remove"))
-        self.removeClippingButton.clicked.connect(lambda: self.removeClipping(True))
-        self.layout().addWidget(self.removeClippingButton)
-
-        self.removeAction = QAction(self)
-        self.removeAction.setShortcut("Del")
-        self.removeAction.triggered.connect(self.removeClipping)
-        self.addAction(self.removeAction)
+        column2.addWidget(self.clippingEntry)
 
     def show(self):
         self.setVisible(True)
