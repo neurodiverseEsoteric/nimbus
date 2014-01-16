@@ -13,6 +13,7 @@ import sys
 import os
 import json
 import copy
+import base64
 import traceback
 
 # This is a hack for installing Nimbus.
@@ -65,11 +66,11 @@ except:
 try:
     from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer
     from PyQt4.QtGui import QApplication, QAction
-    from PyQt4.QtWebKit import QWebPage
+    from PyQt4.QtWebKit import QWebPage, QWebSettings
 except:
     from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer
     from PySide.QtGui import QApplication, QAction
-    from PySide.QtWebKit import QWebPage
+    from PySide.QtWebKit import QWebPage, QWebSettings
 
 # chdir to the app folder. This way, we won't have issues related to
 # relative paths.
@@ -201,6 +202,8 @@ def main():
 
     # Create instance of clear history dialog.
     common.chistorydialog = clear_history_dialog.ClearHistoryDialog()
+
+    QWebSettings.globalSettings().setAttribute(QWebSettings.globalSettings().DeveloperExtrasEnabled, True)
 
     # Set up settings dialog.
     settings.settingsDialog = settings_dialog.SettingsDialog()

@@ -134,10 +134,6 @@ class WebPage(QWebPage):
     def __init__(self, *args, **kwargs):
         super(WebPage, self).__init__(*args, **kwargs)
 
-        # Load userContent.css
-        if os.path.exists(filtering.adblock_css):
-            self.settings().setUserStyleSheetUrl(QUrl(filtering.adblock_css))
-
         # Connect this so that permissions for geolocation and stuff work.
         self.featurePermissionRequested.connect(self.permissionRequested)
 
@@ -429,9 +425,6 @@ class WebView(QWebView):
             self.nAM = network.incognito_network_access_manager
         self.page().setNetworkAccessManager(self.nAM)
         self.nAM.setParent(QCoreApplication.instance())
-
-        # Enable Web Inspector
-        self.settings().setAttribute(self.settings().DeveloperExtrasEnabled, True)
 
         self.updateProxy()
         self.updateNetworkSettings()
@@ -746,8 +739,6 @@ class WebView(QWebView):
             if "xml" in str(self._contentType) and ("<rss" in html or ("<feed" in html and "atom" in html)):
                 try: self.setHtml(rss_parser.feedToHtml(html), self.url())
                 except: traceback.print_exc()
-            else:
-                self.settings().setUserStyleSheetUrl(QUrl())
 
     # This is a custom implementation of mousePressEvent.
     # It allows the user to Ctrl-click or middle-click links to open them in

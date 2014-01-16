@@ -36,6 +36,9 @@ startpage = os.path.join(settings_folder, "start.html")
 # Session file.
 session_file = os.path.join(settings_folder, "session.pkl")
 
+# User CSS
+user_css = os.path.join(settings_folder, "user.css")
+
 session_folder = os.path.join(settings_folder, "Sessions")
 
 # Default settings.
