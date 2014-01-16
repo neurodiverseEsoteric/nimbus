@@ -18,12 +18,12 @@ import filtering
 import settings
 from translate import tr
 try:
-    from PyQt4.QtCore import QCoreApplication, QUrl, QTimer, SIGNAL
-    from PyQt4.QtGui import QInputDialog, QLineEdit
-    from PyQt4.QtNetwork import QNetworkInterface, QNetworkCookieJar, QNetworkAccessManager, QNetworkDiskCache, QNetworkRequest, QNetworkReply
+    from PyQt5.QtCore import QCoreApplication, QUrl, QTimer
+    from PyQt5.QtWidgets import QInputDialog, QLineEdit
+    from PyQt5.QtNetwork import QNetworkInterface, QNetworkCookieJar, QNetworkAccessManager, QNetworkDiskCache, QNetworkRequest, QNetworkReply
 except:
-    from PySide.QtCore import QCoreApplication, QUrl, QTimer, SIGNAL
-    from PySide.QtGui import QInputDialog, QLineEdit
+    from PySide.QtCore import QCoreApplication, QUrl, QTimer
+    from PySide.QtWidgets import QInputDialog, QLineEdit
     from PySide.QtNetwork import QNetworkInterface, QNetworkCookieJar, QNetworkAccessManager, QNetworkDiskCache, QNetworkRequest, QNetworkReply
 
 # Global cookiejar to store cookies.
@@ -46,8 +46,8 @@ class NetworkReply(QNetworkReply):
         self.offset = 0
         self.setHeader(QNetworkRequest.ContentTypeHeader, "text/html; charset=UTF-8")
         self.setHeader(QNetworkRequest.ContentLengthHeader, len(self.content))
-        QTimer.singleShot(0, self, SIGNAL("readyRead()"))
-        QTimer.singleShot(0, self, SIGNAL("finished()"))
+        QTimer.singleShot(0, self, readyRead())
+        QTimer.singleShot(0, self, finished())
         self.open(self.ReadOnly | self.Unbuffered)
         self.setUrl(url)
 

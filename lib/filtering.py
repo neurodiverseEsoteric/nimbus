@@ -11,7 +11,7 @@ import os.path
 import abpy
 import common
 import settings
-try: from PyQt4.QtCore import QThread
+try: from PyQt5.QtCore import QThread
 except: from PySide.QtCore import QThread
 
 # Dummy adblock filter class.

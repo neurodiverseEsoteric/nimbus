@@ -4,8 +4,8 @@ import sys
 import common
 import data
 from nwebkit import WebView
-from PyQt4.QtCore import QUrl
-from PyQt4.QtGui import QApplication
+from PyQt5.QtCore import QUrl
+from PyQt5.QtWidgets import QApplication
 
 def main():
     app = QApplication(sys.argv)

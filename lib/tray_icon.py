@@ -14,15 +14,15 @@ import translate
 import session
 from translate import tr
 
-# Extremely specific imports from PyQt4/PySide.
-# We give PyQt4 priority because it supports Qt5.
+# Extremely specific imports from PyQt5/PySide.
+# We give PyQt5 priority because it supports Qt5.
 try:
-    from PyQt4.QtCore import pyqtSignal
+    from PyQt5.QtCore import pyqtSignal
     Signal = pyqtSignal
-    from PyQt4.QtGui import QApplication, QMenu, QAction, QSystemTrayIcon
+    from PyQt5.QtWidgets import QApplication, QMenu, QAction, QSystemTrayIcon
 except:
     from PySide.QtCore import Signal
-    from PySide.QtGui import QApplication, QMenu, QAction, QSystemTrayIcon
+    from PySide.QtWidgets import QApplication, QMenu, QAction, QSystemTrayIcon
 
 # System tray icon.
 class SystemTrayIcon(QSystemTrayIcon):

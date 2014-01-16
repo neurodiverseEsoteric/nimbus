@@ -18,11 +18,11 @@ import network
 import data
 from translate import tr
 try:
-    from PyQt4.QtCore import Qt
-    from PyQt4.QtGui import QWidget, QVBoxLayout, QLabel, QMainWindow, QAction, QToolBar, QComboBox, QPushButton
+    from PyQt5.QtCore import Qt
+    from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QMainWindow, QAction, QToolBar, QComboBox, QPushButton
 except:
     from PySide.QtCore import Qt
-    from PySide.QtGui import QWidget, QVBoxLayout, QLabel, QMainWindow, QAction, QToolBar, QComboBox, QPushButton
+    from PySide.QtWidgets import QWidget, QVBoxLayout, QLabel, QMainWindow, QAction, QToolBar, QComboBox, QPushButton
 
 class ClearHistoryDialog(QMainWindow):
     def __init__(self, parent=None):

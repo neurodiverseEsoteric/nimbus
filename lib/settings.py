@@ -14,8 +14,8 @@ import os.path
 import json
 import common
 try:
-    from PyQt4.QtCore import QCoreApplication, QUrl, QSettings
-    from PyQt4.QtNetwork import QNetworkCookie
+    from PyQt5.QtCore import QCoreApplication, QUrl, QSettings
+    from PyQt5.QtNetwork import QNetworkCookie
 except:
     from PySide.QtCore import QCoreApplication, QUrl, QSettings
     from PySide.QtNetwork import QNetworkCookie

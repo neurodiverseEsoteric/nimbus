@@ -26,18 +26,21 @@ import network
 import rss_parser
 import view_source_dialog
 
-# Extremely specific imports from PyQt4/PySide.
-# We give PyQt4 priority because it supports Qt5.
+# Extremely specific imports from PyQt5/PySide.
+# We give PyQt5 priority because it supports Qt5.
 try:
-    from PyQt4.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
-    from PyQt4.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton
-    from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
-    from PyQt4.QtWebKit import QWebView, QWebPage, QWebHistory
+    from PyQt5.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
+    from PyQt5.QtGui import QIcon, QImage
+    from PyQt5.QtWidgets import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QAction, QToolBar, QLineEdit, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton
+    from PyQt5.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
+    from PyQt5.QtNetwork import QNetworkProxy, QNetworkRequest
+    from PyQt5.QtWebKit import QWebHistory
+    from PyQt5.QtWebKitWidgets import QWebView, QWebPage
     Signal = pyqtSignal
     Slot = pyqtSlot
 except:
     from PySide.QtCore import Qt, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
-    from PySide.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton
+    from PySide.QtWidgets import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton
     from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
     from PySide.QtWebKit import QWebView, QWebPage, QWebHistory
 
@@ -464,7 +467,7 @@ class WebView(QWebView):
         self.statusBarMessage.connect(self.setStatusBarMessage)
         self.loadProgress.connect(self.setLoadProgress)
 
-        # PyQt4 doesn't support <audio> and <video> tags on Windows.
+        # PyQt5 doesn't support <audio> and <video> tags on Windows.
         # This is a little hack to work around it.
         self.loadStarted.connect(self.resetContentType)
         self.page().networkAccessManager().finished.connect(self.ready)
@@ -807,7 +810,7 @@ class WebView(QWebView):
 
     # Method to replace all <audio> and <video> tags with <embed> tags.
     # This is mainly a hack for Windows, where <audio> and <video> tags are not
-    # properly supported under PyQt4.
+    # properly supported under PyQt5.
     def replaceAVTags(self):
         if not settings.setting_to_bool("content/ReplaceHTML5MediaTagsWithEmbedTags"):
             return

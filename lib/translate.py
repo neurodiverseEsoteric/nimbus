@@ -11,7 +11,7 @@
 import os.path
 from common import app_folder, app_locale
 
-try: from PyQt4.QtCore import QCoreApplication, QLocale, QTranslator, QObject
+try: from PyQt5.QtCore import QCoreApplication, QLocale, QTranslator, QObject
 except: from PySide.QtCore import QCoreApplication, QLocale, QTranslator, QObject
 
 # Translation.

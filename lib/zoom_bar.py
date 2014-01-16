@@ -12,12 +12,12 @@ import common
 from translate import tr
 
 try:
-    from PyQt4.QtCore import pyqtSignal, Qt
+    from PyQt5.QtCore import pyqtSignal, Qt
     Signal = pyqtSignal
-    from PyQt4.QtGui import QAction, QDoubleSpinBox, QToolBar
+    from PyQt5.QtWidgets import QAction, QDoubleSpinBox, QToolBar
 except:
     from PySide.QtCore import Signal, Qt
-    from PySide.QtGui import QAction, QDoubleSpinBox, QToolBar
+    from PySide.QtWidgets import QAction, QDoubleSpinBox, QToolBar
 
 # Zoom bar.
 class ZoomBar(QToolBar):

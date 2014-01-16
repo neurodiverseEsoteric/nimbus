@@ -16,9 +16,9 @@ import subprocess
 import locale
 import base64
 try:
-    from PyQt4.QtCore import qVersion, QLocale, QUrl
-    from PyQt4.QtGui import QIcon
-    from PyQt4.QtWebKit import QWebPage
+    from PyQt5.QtCore import qVersion, QLocale, QUrl
+    from PyQt5.QtGui import QIcon
+    from PyQt5.QtWebKitWidgets import QWebPage
 except:
     from PySide.QtCore import qVersion, QLocale, QUrl
     from PySide.QtGui import QIcon

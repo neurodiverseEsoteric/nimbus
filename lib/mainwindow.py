@@ -22,22 +22,23 @@ import status_bar
 import data
 from nwebkit import *
 
-# Extremely specific imports from PyQt4/PySide.
-# We give PyQt4 priority because it supports Qt5.
+# Extremely specific imports from PyQt5/PySide.
+# We give PyQt5 priority because it supports Qt5.
 try:
-    from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
+    from PyQt5.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
                              QDateTime
-    from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout,\
-                            QKeySequence, QMessageBox, QSizePolicy, QIcon,\
+    from PyQt5.QtGui import QKeySequence, QIcon
+    from PyQt5.QtWidgets import QApplication, QDockWidget, QWidget, QHBoxLayout,\
+                            QMessageBox, QSizePolicy,\
                             QMenu, QAction, QMainWindow, QToolBar,\
                             QToolButton, QComboBox, QButtonGroup,\
                             QLabel
-    from PyQt4.QtNetwork import QNetworkRequest
-    from PyQt4.QtWebKit import QWebPage
+    from PyQt5.QtNetwork import QNetworkRequest
+    from PyQt5.QtWebKitWidgets import QWebPage
 except:
     from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
                               QDateTime
-    from PySide.QtGui import QApplication, QDockWidget, QWidget,\
+    from PySide.QtWidgets import QApplication, QDockWidget, QWidget,\
                              QHBoxLayout, QKeySequence, QMessageBox,\
                              QSizePolicy, QIcon, QMenu, QAction,\
                              QMainWindow, QToolBar, QToolButton, QComboBox,\

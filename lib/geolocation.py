@@ -12,7 +12,7 @@ import urllib.request
 import time
 
 try:
-    from PyQt4.QtCore import QObject, pyqtSlot
+    from PyQt5.QtCore import QObject, pyqtSlot
     Slot = pyqtSlot
 except:
     from PySide.QtCore import QObject, Slot
