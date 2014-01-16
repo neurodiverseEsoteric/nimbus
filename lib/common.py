@@ -105,7 +105,7 @@ def createUserAgent():
     nimbus_ua_sub = "Qt/" + qt_version + " Nimbus/" + \
                     app_version + " QupZilla/1.4.3"
     ua = webPage.userAgentForUrl(QUrl.fromUserInput("google.com"))
-    if qt_version.startswith("4") or not "python" in ua:
+    if qt_version.startswith("4") or "Qt/" in ua:
         defaultUserAgent = ua.replace("Qt/" + qt_version,\
                                              nimbus_ua_sub)
     else:
