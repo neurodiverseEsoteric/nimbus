@@ -110,16 +110,16 @@ def prepareQuit():
 if has_dbus:
     class DBusServer(dbus.service.Object):
         def __init__(self, bus=None):
-            busName = dbus.service.BusName("org.nimbus.Nimbus", bus=bus)
+            busName = dbus.service.BusName("org.nimbus.Classic", bus=bus)
             dbus.service.Object.__init__(self, busName, "/Nimbus")
 
-        @dbus.service.method("org.nimbus.Nimbus", in_signature="s",\
+        @dbus.service.method("org.nimbus.Classic", in_signature="s",\
                              out_signature="s")
         def addWindow(self, url=None):
             addWindow(url)
             return url
 
-        @dbus.service.method("org.nimbus.Nimbus", in_signature="s",\
+        @dbus.service.method("org.nimbus.Classic", in_signature="s",\
                              out_signature="s")
         def addTab(self, url="about:blank"):
             if url.startswith("--app="):
@@ -155,7 +155,7 @@ def main():
     if has_dbus:
         bus = dbus.SessionBus()
 
-    try: proxy = bus.get_object("org.nimbus.Nimbus", "/Nimbus")
+    try: proxy = bus.get_object("org.nimbus.Classic", "/Nimbus")
     except: dbus_present = False
     else: dbus_present = True
 
