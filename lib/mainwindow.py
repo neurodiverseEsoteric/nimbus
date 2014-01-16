@@ -498,8 +498,9 @@ class MainWindow(QMainWindow):
         settingsAction.triggered.connect(self.openSettings)
         mainMenu.addAction(settingsAction)
 
-        clippingsAction = QAction(tr("Manage Clippings..."), self)
-        clippingsAction.triggered.connect(lambda: settings.clippingsManager.show())
+        clippingsAction = QAction(tr("&Manage Clippings..."), self)
+        clippingsAction.setShortcut("Ctrl+Shift+M")
+        clippingsAction.triggered.connect(self.openClippings)
         mainMenu.addAction(clippingsAction)
 
         mainMenu.addSeparator()
@@ -671,6 +672,10 @@ self.origY + ev.globalY() - self.mouseY)
     # Open settings dialog.
     def openSettings(self):
         settings.settingsDialog.show()
+
+    # Open clippings manager.
+    def openClippings(self):
+        settings.clippingsManager.show()
 
     # Loads startup extensions.
     def loadStartupExtensions(self):
