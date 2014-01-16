@@ -13,10 +13,10 @@ import sys
 import os
 import json
 import common
-from qsettings import QSettings
 try:
     from PyQt5.QtCore import QCoreApplication, QUrl
     from PyQt5.QtNetwork import QNetworkCookie
+    from qsettings import QSettings
 except:
     try:
         from PyQt4.QtCore import QCoreApplication, QUrl, QSettings
