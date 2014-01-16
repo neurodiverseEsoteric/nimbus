@@ -512,7 +512,7 @@ class MainWindow(QMainWindow):
                                                "<h3>" + tr("Nimbus") + " " +\
                                                common.app_version +\
                                                "</h3>" +\
-                                               tr("Python 3/Qt 4-based Web browser.")))
+                                               tr("A Qt-based web browser made in Python.")))
         mainMenu.addAction(aboutAction)
 
         # Licensing information.
