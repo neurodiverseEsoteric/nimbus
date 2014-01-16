@@ -31,7 +31,7 @@ class StatusBar(QToolBar):
         self.progressBar = QProgressBar(self.statusBar)
         self.progressBar.hide()
         self.progressBar.setStyleSheet("min-height: 1em; max-height: 1em; min-width: 200px; max-width: 200px;")
-        self.statusBar.addWidget(self.progressBar)
+        self.statusBar.addPermanentWidget(self.progressBar)
     def addToolBar(self, toolbar):
         self.downloadsBar.addToolBar(toolbar)
     def setValue(self, value=0):
