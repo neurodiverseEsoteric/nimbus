@@ -1,8 +1,8 @@
 nimbus
 ======
 
-Nimbus is a somewhat hacky Web browser coded in Python 3, using the Qt 4 and
-QtWebKit libraries via either PyQt4 or PySide. It was originally supposed to
+Nimbus is a somewhat hacky Web browser coded in Python 3, using either Qt 5 via
+PyQt5, or Qt 4 via either PyQt4 or PySide. It was originally supposed to
 cater to whatever few users my old browser Ryouko had, and was meant to employ
 a "batteries included" approach similar to that of Python. Ultimately,
 however, it simply ended up being made for my own selfish purposes, and is
@@ -37,18 +37,18 @@ Features include:
 Dependencies
 ======
 
-Nimbus depends on Python >=3.2 and either PyQt4 or PySide, with python3-dbus
-and feedparser as optional dependencies. It does not work in Python 2.x. It is
-possible that it will work in versions of Python 3 below 3.2 as well, but this
-has not been tested before.
+Nimbus depends on Python >=3.2 and either PyQt5, PyQt4, or PySide, with
+python3-dbus and feedparser as optional dependencies. It does not work in
+Python 2.x. It is possible that it will work in versions of Python 3 below
+3.2 as well, but this has not been tested before.
 
 On Windows, you can download Python 3 from http://www.python.org/getit/ and
-PyQt4 from http://www.riverbankcomputing.com/software/pyqt/download.
+PyQt5 from http://www.riverbankcomputing.com/software/pyqt/download.
 
 You can install all of Nimbus's dependencies on Ubuntu using the following
 command:
 
-    sudo apt-get install python3 python3-pyqt4 python3-dbus python3-dbus.mainloop.qt python3-feedparser
+    sudo apt-get install python3 python3-pyqt5 python3-dbus python3-dbus.mainloop.qt python3-feedparser
 
 Installing/compiling Nimbus on Windows
 ======

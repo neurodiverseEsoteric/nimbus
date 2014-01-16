@@ -13,8 +13,12 @@ try:
     from PyQt5.QtCore import Qt
     from PyQt5.QtWidgets import QToolBar, QStatusBar, QFrame, QMainWindow, QLineEdit, QProgressBar, QSizeGrip
 except:
-    from PySide.QtCore import Qt
-    from PySide.QtWidgets import QToolBar, QStatusBar, QFrame, QMainWindow, QLineEdit, QProgressBar, QSizeGrip
+    try:
+        from PyQt4.QtCore import Qt
+        from PyQt4.QtGui import QToolBar, QStatusBar, QFrame, QMainWindow, QLineEdit, QProgressBar, QSizeGrip
+    except:
+        from PySide.QtCore import Qt
+        from PySide.QtGui import QToolBar, QStatusBar, QFrame, QMainWindow, QLineEdit, QProgressBar, QSizeGrip
 
 class StatusBar(QToolBar):
     def __init__(self, parent=None):

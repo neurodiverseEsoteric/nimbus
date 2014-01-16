@@ -18,8 +18,12 @@ try:
     from PyQt5.QtCore import QCoreApplication, QUrl
     from PyQt5.QtNetwork import QNetworkCookie
 except:
-    from PySide.QtCore import QCoreApplication, QUrl
-    from PySide.QtNetwork import QNetworkCookie
+    try:
+        from PyQt4.QtCore import QCoreApplication, QUrl, QSettings
+        from PyQt4.QtNetwork import QNetworkCookie
+    except:
+        from PySide.QtCore import QCoreApplication, QUrl, QSettings
+        from PySide.QtNetwork import QNetworkCookie
 
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
 

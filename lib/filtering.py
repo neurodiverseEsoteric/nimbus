@@ -12,7 +12,9 @@ import abpy
 import common
 import settings
 try: from PyQt5.QtCore import QThread
-except: from PySide.QtCore import QThread
+except:
+    try: from PyQt4.QtCore import QThread
+    except: from PySide.QtCore import QThread
 
 # Dummy adblock filter class.
 class Filter(object):

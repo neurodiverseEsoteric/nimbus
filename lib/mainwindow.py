@@ -36,15 +36,26 @@ try:
     from PyQt5.QtNetwork import QNetworkRequest
     from PyQt5.QtWebKitWidgets import QWebPage
 except:
-    from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
-                              QDateTime
-    from PySide.QtWidgets import QApplication, QDockWidget, QWidget,\
-                             QHBoxLayout, QKeySequence, QMessageBox,\
-                             QSizePolicy, QIcon, QMenu, QAction,\
-                             QMainWindow, QToolBar, QToolButton, QComboBox,\
-                             QButtonGroup, QLabel
-    from PySide.QtNetwork import QNetworkRequest
-    from PySide.QtWebKit import QWebPage
+    try:
+        from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
+                                 QDateTime
+        from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout,\
+                                QKeySequence, QMessageBox, QSizePolicy, QIcon,\
+                                QMenu, QAction, QMainWindow, QToolBar,\
+                                QToolButton, QComboBox, QButtonGroup,\
+                                QLabel
+        from PyQt4.QtNetwork import QNetworkRequest
+        from PyQt4.QtWebKit import QWebPage
+    except:
+        from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
+                                  QDateTime
+        from PySide.QtGui import QApplication, QDockWidget, QWidget,\
+                                 QHBoxLayout, QKeySequence, QMessageBox,\
+                                 QSizePolicy, QIcon, QMenu, QAction,\
+                                 QMainWindow, QToolBar, QToolButton, QComboBox,\
+                                 QButtonGroup, QLabel
+        from PySide.QtNetwork import QNetworkRequest
+        from PySide.QtWebKit import QWebPage
 
 tabbar_stylesheet = \
 """QTabBar { margin: 0; padding: 0; border-bottom: 0; }

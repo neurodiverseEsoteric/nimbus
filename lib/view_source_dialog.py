@@ -18,8 +18,13 @@ try:
     from PyQt5.QtGui import QTextDocument
     from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QAction, QTextEdit, QFileDialog, QInputDialog, QLineEdit
 except:
-    from PySide.QtCore import Signal, QObject
-    from PySide.QtWidgets import QMainWindow, QMenuBar, QMenu, QAction, QTextEdit, QTextDocument, QFileDialog, QInputDialog, QLineEdit
+    try:
+        from PyQt4.QtCore import pyqtSignal, QObject
+        Signal = pyqtSignal
+        from PyQt4.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QTextEdit, QTextDocument, QFileDialog, QInputDialog, QLineEdit
+    except:
+        from PySide.QtCore import Signal, QObject
+        from PySide.QtGui import QMainWindow, QMenuBar, QMenu, QAction, QTextEdit, QTextDocument, QFileDialog, QInputDialog, QLineEdit
 try:
     __file__
 except:

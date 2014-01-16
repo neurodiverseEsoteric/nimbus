@@ -19,8 +19,13 @@ try:
     from PyQt5.QtGui import QIcon
     from PyQt5.QtWidgets import QMainWindow, QAction, QToolButton, QPushButton, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
 except:
-    from PySide.QtCore import Qt, Signal, QPoint, QUrl, QSize
-    from PySide.QtWidgets import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
+    try:
+        from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
+        Signal = pyqtSignal
+        from PyQt4.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
+    except:
+        from PySide.QtCore import Qt, Signal, QPoint, QUrl, QSize
+        from PySide.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
 
 # Blank widget to take up space.
 class Expander(QLabel):

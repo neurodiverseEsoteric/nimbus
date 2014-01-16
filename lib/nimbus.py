@@ -69,9 +69,14 @@ try:
     from PyQt5.QtWebKit import QWebSettings
     from PyQt5.QtWebKitWidgets import QWebPage
 except:
-    from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer
-    from PySide.QtWidgets import QApplication, QAction
-    from PySide.QtWebKit import QWebPage, QWebSettings
+    try:
+        from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer
+        from PyQt4.QtGui import QApplication, QAction
+        from PyQt4.QtWebKit import QWebPage, QWebSettings
+    except:
+        from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer
+        from PySide.QtGui import QApplication, QAction
+        from PySide.QtWebKit import QWebPage, QWebSettings
 
 # chdir to the app folder. This way, we won't have issues related to
 # relative paths.

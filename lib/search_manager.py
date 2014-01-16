@@ -20,8 +20,13 @@ try:
     from PyQt5.QtWidgets import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QDesktopWidget
     Signal = pyqtSignal
 except:
-    from PySide.QtCore import Qt, Signal
-    from PySide.QtWidgets import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor, QDesktopWidget
+    try:
+        from PyQt4.QtCore import Qt, pyqtSignal
+        from PyQt4.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor, QDesktopWidget
+        Signal = pyqtSignal
+    except:
+        from PySide.QtCore import Qt, Signal
+        from PySide.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor, QDesktopWidget
 
 def unicode(*args, **kwargs):
     return str(*args, **kwargs)

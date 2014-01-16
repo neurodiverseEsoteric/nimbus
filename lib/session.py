@@ -19,8 +19,12 @@ try:
     from PyQt5.QtCore import Qt
     from PyQt5.QtWidgets import QAction, QMainWindow, QPushButton, QInputDialog, QListWidget, QToolBar
 except:
-    from PySide.QtCore import Qt
-    from PySide.QtWidgets import QAction, QMainWindow, QPushButton, QInputDialog, QListWidget, QToolBar
+    try:
+        from PyQt4.QtCore import Qt
+        from PyQt4.QtGui import QAction, QMainWindow, QPushButton, QInputDialog, QListWidget, QToolBar
+    except:
+        from PySide.QtCore import Qt
+        from PySide.QtGui import QAction, QMainWindow, QPushButton, QInputDialog, QListWidget, QToolBar
 
 class SessionManager(QMainWindow):
     def __init__(self, parent=None):

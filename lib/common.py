@@ -20,9 +20,14 @@ try:
     from PyQt5.QtGui import QIcon
     from PyQt5.QtWebKitWidgets import QWebPage
 except:
-    from PySide.QtCore import qVersion, QLocale, QUrl
-    from PySide.QtGui import QIcon
-    from PySide.QtWebKit import QWebPage
+    try:
+        from PyQt4.QtCore import qVersion, QLocale, QUrl
+        from PyQt4.QtGui import QIcon
+        from PyQt4.QtWebKit import QWebPage
+    except:
+        from PySide.QtCore import qVersion, QLocale, QUrl
+        from PySide.QtGui import QIcon
+        from PySide.QtWebKit import QWebPage
 
 def rm(fname):
     subprocess.Popen(["rm", fname])

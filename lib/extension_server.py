@@ -14,7 +14,9 @@ import os
 from http.server import SimpleHTTPRequestHandler
 import http.server
 try: from PyQt5.QtCore import QThread
-except: from PySide.QtCore import QThread
+except:
+    try: from PyQt4.QtCore import QThread
+    except: from PySide.QtCore import QThread
 import common
 from settings import extensions_folder
 

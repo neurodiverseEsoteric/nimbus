@@ -21,8 +21,13 @@ try:
     Signal = pyqtSignal
     from PyQt5.QtWidgets import QApplication, QMenu, QAction, QSystemTrayIcon
 except:
-    from PySide.QtCore import Signal
-    from PySide.QtWidgets import QApplication, QMenu, QAction, QSystemTrayIcon
+    try:
+        from PyQt4.QtCore import pyqtSignal
+        Signal = pyqtSignal
+        from PyQt4.QtGui import QApplication, QMenu, QAction, QSystemTrayIcon
+    except:
+        from PySide.QtCore import Signal
+        from PySide.QtGui import QApplication, QMenu, QAction, QSystemTrayIcon
 
 # System tray icon.
 class SystemTrayIcon(QSystemTrayIcon):

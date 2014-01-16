@@ -15,8 +15,12 @@ try:
     from PyQt5.QtCore import QCoreApplication, QByteArray, QUrl
     from PyQt5.QtNetwork import QNetworkCookie
 except:
-    from PySide.QtCore import QCoreApplication, QByteArray, QUrl
-    from PySide.QtNetwork import QNetworkCookie
+    try:
+        from PyQt4.QtCore import QCoreApplication, QByteArray, QUrl, QSettings
+        from PyQt4.QtNetwork import QNetworkCookie
+    except:
+        from PySide.QtCore import QCoreApplication, QByteArray, QUrl, QSettings
+        from PySide.QtNetwork import QNetworkCookie
 
 # Global list to store history.
 history = []

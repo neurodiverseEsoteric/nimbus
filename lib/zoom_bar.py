@@ -16,8 +16,13 @@ try:
     Signal = pyqtSignal
     from PyQt5.QtWidgets import QAction, QDoubleSpinBox, QToolBar
 except:
-    from PySide.QtCore import Signal, Qt
-    from PySide.QtWidgets import QAction, QDoubleSpinBox, QToolBar
+    try:
+        from PyQt4.QtCore import pyqtSignal, Qt
+        Signal = pyqtSignal
+        from PyQt4.QtGui import QAction, QDoubleSpinBox, QToolBar
+    except:
+        from PySide.QtCore import Signal, Qt
+        from PySide.QtGui import QAction, QDoubleSpinBox, QToolBar
 
 # Zoom bar.
 class ZoomBar(QToolBar):
