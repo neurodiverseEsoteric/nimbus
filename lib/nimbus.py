@@ -231,6 +231,14 @@ def main():
     closeSettingsDialogAction.triggered.connect(settings.settingsDialog.hide)
     settings.settingsDialog.addAction(closeSettingsDialogAction)
 
+    # Set up clippings manager.
+    settings.clippingsManager = settings_dialog.ClippingsPanel()
+    settings.clippingsManager.setWindowFlags(Qt.Dialog)
+    closeClippingsManagerAction = QAction(settings.clippingsManager)
+    closeClippingsManagerAction.setShortcuts(["Esc", "Ctrl+W"])
+    closeClippingsManagerAction.triggered.connect(settings.clippingsManager.hide)
+    settings.clippingsManager.addAction(closeClippingsManagerAction)
+
     # Create DBus server
     if has_dbus:
         server = DBusServer(bus)

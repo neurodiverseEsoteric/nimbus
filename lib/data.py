@@ -39,8 +39,12 @@ def load_clippings():
     try: clippings = json.loads(data.value("data/Clippings"))
     except: pass
 
+load_clippings()
+
 def save_clippings():
-    try: data.setValue("data/Clippings", json.dumps(clippings))
+    try:
+        data.setValue("data/Clippings", json.dumps(clippings))
+        data.sync()
     except: pass
 
 # This function loads the browser's settings.

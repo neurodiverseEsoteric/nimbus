@@ -22,14 +22,14 @@ from translate import tr
 try:
     from PyQt5.QtCore import Qt, QUrl
     from PyQt5.QtGui import QKeySequence, QIcon
-    from PyQt5.QtWidgets import QWidget, QLabel, QMainWindow, QCheckBox, QGroupBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+    from PyQt5.QtWidgets import QWidget, QLabel, QMainWindow, QCheckBox, QGroupBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget, QTextEdit
 except:
     try:
         from PyQt4.QtCore import Qt, QUrl
-        from PyQt4.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QGroupBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+        from PyQt4.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QGroupBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget, QTextEdit
     except:
         from PySide.QtCore import Qt, QUrl
-        from PySide.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QGroupBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget
+        from PySide.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QGroupBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget, QTextEdit
 
 # Basic settings panel.
 class SettingsPanel(QWidget):
@@ -378,6 +378,70 @@ class DataSettingsPanel(SettingsPanel):
         data.geolocation_blacklist = [self.geolocationBlacklist.item(authority).text() for authority in range(0, self.geolocationBlacklist.count())]
         data.saveData()
 
+# Clippings manager
+class ClippingsPanel(SettingsPanel):
+    def __init__(self, parent=None):
+        super(ClippingsPanel, self).__init__(parent)
+        self.setWindowTitle(tr("Clippings Manager"))
+
+        clippingNameRow = custom_widgets.LineEditRow(tr("Name:"), self)
+        self.nameEntry = clippingNameRow.lineEdit
+        self.nameEntry.returnPressed.connect(self.addClipping)
+        self.layout().addWidget(clippingNameRow)
+
+        self.addClippingButton = QPushButton(tr("Add"))
+        self.addClippingButton.clicked.connect(self.addClipping)
+        clippingNameRow.layout().addWidget(self.addClippingButton)
+
+        self.clippingEntry = QTextEdit(self)
+        self.layout().addWidget(self.clippingEntry)
+
+        # Clipping list.
+        self.clippingList = QListWidget(self)
+        self.clippingList.currentTextChanged.connect(self.loadClipping)
+        self.layout().addWidget(self.clippingList)
+
+        self.removeClippingButton = QPushButton(tr("Remove"))
+        self.removeClippingButton.clicked.connect(lambda: self.removeClipping(True))
+        self.layout().addWidget(self.removeClippingButton)
+
+        self.removeAction = QAction(self)
+        self.removeAction.setShortcut("Del")
+        self.removeAction.triggered.connect(self.removeClipping)
+        self.addAction(self.removeAction)
+
+    def show(self):
+        self.setVisible(True)
+        self.loadSettings()
+
+    def loadSettings(self):
+        data.load_clippings()
+        self.clippingList.clear()
+        for item in data.clippings.keys():
+            self.clippingList.addItem(item)
+
+    def saveSettings(self):
+        data.save_clippings()
+
+    def removeClipping(self, forceFocus=False):
+        if self.clippingList.hasFocus() or forceFocus:
+            name = self.clippingList.currentItem().text()
+            del data.clippings[name]
+            self.clippingList.takeItem(self.clippingList.row(self.clippingList.currentItem()))
+            self.saveSettings()
+
+    def loadClipping(self, text):
+        try:
+            self.nameEntry.setText(text)
+            self.clippingEntry.setPlainText(data.clippings[text])
+        except:
+            pass
+
+    def addClipping(self):
+        data.clippings[self.nameEntry.text()] = self.clippingEntry.toPlainText()
+        self.saveSettings()
+        self.loadSettings()
+
 # Network configuration panel
 class NetworkSettingsPanel(SettingsPanel):
     def __init__(self, parent=None):
@@ -388,7 +452,7 @@ class NetworkSettingsPanel(SettingsPanel):
         self.layout().addWidget(self.dnsPrefetchingToggle)
 
         # Checkbox to toggle XSS auditing.
-        self.xssAuditingToggle = QCheckBox(tr("Enable &XSS auditing"), self)
+        self.xssAuditingToggle = QCheckBox(tr("Enable X&SS auditing"), self)
         self.layout().addWidget(self.xssAuditingToggle)
 
         # Proxy label.
@@ -565,8 +629,8 @@ class SettingsDialog(QWidget):
         self.tabs.addTab(ContentSettingsPanel(self), tr("Con&tent"))
         self.tabs.addTab(AdremoverSettingsPanel(self), tr("Ad &Remover"))
         self.tabs.addTab(DataSettingsPanel(self), tr("&Data && Privacy"))
-        self.tabs.addTab(NetworkSettingsPanel(self), tr("&Network"))
-        self.tabs.addTab(ExtensionsSettingsPanel(self), tr("&Extensions"))
+        self.tabs.addTab(NetworkSettingsPanel(self), tr("N&etwork"))
+        self.tabs.addTab(ExtensionsSettingsPanel(self), tr("E&xtensions"))
 
         # Toolbar
         self.toolBar = QToolBar(self)

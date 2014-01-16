@@ -498,6 +498,10 @@ class MainWindow(QMainWindow):
         settingsAction.triggered.connect(self.openSettings)
         mainMenu.addAction(settingsAction)
 
+        clippingsAction = QAction(tr("Manage Clippings..."), self)
+        clippingsAction.triggered.connect(lambda: settings.clippingsManager.show())
+        mainMenu.addAction(clippingsAction)
+
         mainMenu.addSeparator()
 
         # About Qt action.
