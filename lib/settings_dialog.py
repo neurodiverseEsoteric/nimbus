@@ -247,6 +247,51 @@ class ContentSettingsPanel(SettingsPanel):
         settings.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())
         settings.settings.sync()
 
+# Ad Remover settings panel
+class AdremoverSettingsPanel(SettingsPanel):
+    def __init__(self, parent=None):
+        super(AdremoverSettingsPanel, self).__init__(parent)
+
+        filterEntryRow = custom_widgets.LineEditRow(tr("Add filter:"), self)
+        self.filterEntry = filterEntryRow.lineEdit
+        self.filterEntry.returnPressed.connect(self.addFilter)
+        self.layout().addWidget(filterEntryRow)
+
+        self.addFilterButton = QPushButton(tr("Add"))
+        self.addFilterButton.clicked.connect(self.addFilter)
+        filterEntryRow.layout().addWidget(self.addFilterButton)
+
+        # Ad Remover filter list.
+        self.filterList = QListWidget(self)
+        self.layout().addWidget(self.filterList)
+
+        self.removeFilterButton = QPushButton(tr("Remove"))
+        self.removeFilterButton.clicked.connect(lambda: self.removeFilter(True))
+        self.layout().addWidget(self.removeFilterButton)
+
+        self.removeAction = QAction(self)
+        self.removeAction.setShortcut("Del")
+        self.removeAction.triggered.connect(self.removeFilter)
+        self.addAction(self.removeAction)
+
+    def removeFilter(self, forceFocus=False):
+        if self.filterList.hasFocus() or forceFocus:
+            self.filterList.takeItem(self.filterList.row(self.filterList.currentItem()))
+
+    def addFilter(self):
+        self.filterList.addItem(self.filterEntry.text())
+        self.filterEntry.clear()
+
+    def loadSettings(self):
+        settings.load_adremover_filters()
+        self.filterList.clear()
+        for f in settings.adremover_filters:
+            self.filterList.addItem(f)
+
+    def saveSettings(self):
+        settings.adremover_filters = [self.filterList.item(f).text() for f in range(0, self.filterList.count())]
+        settings.save_adremover_filters()
+
 # Data settings panel
 class DataSettingsPanel(SettingsPanel):
     def __init__(self, parent=None):
@@ -324,11 +369,7 @@ class DataSettingsPanel(SettingsPanel):
         settings.settings.setValue("data/MaximumCacheSize", self.maximumCacheSize.value())
         settings.settings.setValue("data/RememberHistory", self.rememberHistoryToggle.isChecked())
         settings.settings.setValue("network/GeolocationEnabled", self.geolocationToggle.isChecked())
-        while len(data.geolocation_whitelist) > 0:
-            data.geolocation_whitelist.pop()
         data.geolocation_whitelist = [self.geolocationWhitelist.item(authority).text() for authority in range(0, self.geolocationWhitelist.count())]
-        while len(data.geolocation_blacklist) > 0:
-            data.geolocation_blacklist.pop()
         data.geolocation_blacklist = [self.geolocationBlacklist.item(authority).text() for authority in range(0, self.geolocationBlacklist.count())]
         data.saveData()
 
@@ -516,7 +557,8 @@ class SettingsDialog(QWidget):
         self.layout().addWidget(self.tabs)
 
         self.tabs.addTab(GeneralSettingsPanel(self), tr("&General"))
-        self.tabs.addTab(ContentSettingsPanel(self), tr("&Content"))
+        self.tabs.addTab(ContentSettingsPanel(self), tr("Con&tent"))
+        self.tabs.addTab(AdremoverSettingsPanel(self), tr("Ad &Remover"))
         self.tabs.addTab(DataSettingsPanel(self), tr("&Data && Privacy"))
         self.tabs.addTab(NetworkSettingsPanel(self), tr("&Network"))
         self.tabs.addTab(ExtensionsSettingsPanel(self), tr("&Extensions"))
@@ -534,9 +576,9 @@ class SettingsDialog(QWidget):
         self.toolBar.addWidget(applyButton)
 
         # Reload settings button
-        reloadButton = QPushButton(tr("&Reload"), self)
-        reloadButton.clicked.connect(self.loadSettings)
-        self.toolBar.addWidget(reloadButton)
+        closeButton = QPushButton(tr("&Close"), self)
+        closeButton.clicked.connect(self.hide)
+        self.toolBar.addWidget(closeButton)
 
         # Load settings
         self.loadSettings()

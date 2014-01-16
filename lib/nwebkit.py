@@ -214,6 +214,15 @@ class WebPage(QWebPage):
     def loadUserScripts(self):
         if not self._userScriptsLoaded:
             self._userScriptsLoaded = True
+            if settings.setting_to_bool("content/HostFilterEnabled") or settings.setting_to_bool("content/AdblockEnabled"):
+                self.mainFrame().evaluateJavaScript("""var __NimbusAdRemoverQueries = %s;
+for (var i=0; i<__NimbusAdRemoverQueries.length; i++) {
+    var cl = document.querySelectorAll(__NimbusAdRemoverQueries[i]);
+    for (var j=0; j<cl.length; j++) {
+        cl[j].style.display = "none";
+    }
+}
+delete __NimbusAdRemoverQueries;""" % (settings.adremover_filters,))
             for userscript in settings.userscripts:
                 for match in userscript["match"]:
                     try:

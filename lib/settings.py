@@ -57,6 +57,7 @@ default_settings = {"proxy/Type": "None",
                     "content/FrameFlatteningEnabled": False,
                     "content/PluginsEnabled": True,
                     "content/AdblockEnabled": False,
+                    "content/AdremoverFilters": """["#HOME_TOP_RIGHT_BOXAD", "#TOP_RIGHT_BOXAD", "#WikiaTopAds", ".headerads", ".home-top-right-ads", ".home_right_column", ".SelfServeUrl", ".adcode_container", ".ad-blocking-makes-fella-confused", "div[id*='adcode']", "div[id*='div-gpt-ad']", "div[class*='sleekadbubble']", "div[class*='gr-adcast']"]""",
                     "content/HostFilterEnabled": True,
                     "content/ReplaceHTML5MediaTagsWithEmbedTags": (True if "win" in sys.platform else False),
                     "content/UseOnlineContentViewers": True,
@@ -110,6 +111,22 @@ extensions_whitelist = []
 
 # List of extensions not to load.
 extensions_blacklist = []
+
+# Ad Remover filters.
+adremover_filters = ["#HOME_TOP_RIGHT_BOXAD", "#TOP_RIGHT_BOXAD", "#WikiaTopAds", ".headerads", ".home-top-right-ads", ".home_right_column", ".SelfServeUrl", ".adcode_container", ".ad-blocking-makes-fella-confused", "div[id*='adcode']", "div[id*='div-gpt-ad']", "div[class*='sleekadbubble']", "div[class*='gr-adcast']"]
+
+# Load Ad Remover filters.
+def load_adremover_filters():
+    global adremover_filters
+    try: adremover_filters = json.loads(settings.value("content/AdremoverFilters"))
+    except: pass
+
+# Load Ad Remover filters.
+def save_adremover_filters():
+    try: settings.setValue("content/AdremoverFilters", json.dumps(adremover_filters))
+    except: pass
+
+load_adremover_filters()
 
 # Userscripts
 userscripts = []
