@@ -17,6 +17,7 @@ import urllib.parse
 import hashlib
 import common
 import geolocation
+import custom_widgets
 import filtering
 import translate
 from translate import tr
@@ -30,8 +31,8 @@ import view_source_dialog
 # We give PyQt5 priority because it supports Qt5.
 try:
     from PyQt5.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
-    from PyQt5.QtGui import QIcon, QImage
-    from PyQt5.QtWidgets import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QAction, QToolBar, QLineEdit, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton
+    from PyQt5.QtGui import QIcon, QImage, QClipboard
+    from PyQt5.QtWidgets import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QAction, QToolBar, QLineEdit, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget
     from PyQt5.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
     from PyQt5.QtNetwork import QNetworkProxy, QNetworkRequest
     from PyQt5.QtWebKit import QWebHistory
@@ -41,14 +42,14 @@ try:
 except:
     try:
         from PyQt4.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
-        from PyQt4.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton
+        from PyQt4.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard
         from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
         from PyQt4.QtWebKit import QWebView, QWebPage, QWebHistory
         Signal = pyqtSignal
         Slot = pyqtSlot
     except:
         from PySide.QtCore import Qt, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
-        from PySide.QtGui import QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton
+        from PySide.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard
         from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
         from PySide.QtWebKit import QWebView, QWebPage, QWebHistory
 
@@ -491,8 +492,26 @@ class WebView(QWebView):
 
         self.setWindowTitle("")
 
+        self.clippingsMenu = QMenu(self)
+
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
+
+    def contextMenuEvent(self, ev):
+        if QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier and len(data.clippings) > 0:
+            menu = self.clippingsMenu
+            menu.clear()
+            for clipping in data.clippings:
+                a = custom_widgets.LinkAction(data.clippings[clipping], clipping, menu)
+                a.triggered2.connect(QApplication.clipboard().setText)
+                a.triggered2.connect(lambda: self.page().action(QWebPage.Paste).trigger())
+                menu.addAction(a)
+            menu.show()
+            y = QDesktopWidget()
+            menu.move(min(ev.globalX(), y.width()-menu.width()), min(ev.globalY(), y.height()-menu.height()))
+            y.deleteLater()
+        else:
+            super(WebView, self).contextMenuEvent(ev)
 
     def shortWindowTitle(self):
         title = self.windowTitle()

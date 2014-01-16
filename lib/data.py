@@ -31,6 +31,18 @@ data = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "data", QCo
 geolocation_whitelist = []
 geolocation_blacklist = []
 
+# Clippings.
+clippings = {}
+
+def load_clippings():
+    global clippings
+    try: clippings = json.loads(data.value("data/Clippings"))
+    except: pass
+
+def save_clippings():
+    try: data.setValue("data/Clippings", json.dumps(clippings))
+    except: pass
+
 # This function loads the browser's settings.
 def loadData():
     # Load history.
