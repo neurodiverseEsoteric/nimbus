@@ -51,8 +51,12 @@ class NetworkReply(QNetworkReply):
         self.offset = 0
         self.setHeader(QNetworkRequest.ContentTypeHeader, "text/html; charset=UTF-8")
         self.setHeader(QNetworkRequest.ContentLengthHeader, len(self.content))
-        QTimer.singleShot(0, self, readyRead())
-        QTimer.singleShot(0, self, finished())
+        try:
+            QTimer.singleShot(0, self.readyRead)
+            QTimer.singleShot(0, self.finished)
+        except:
+            QTimer.singleShot(0, self, SIGNAL("readyRead()"))
+            QTimer.singleShot(0, self, SIGNAL("finished()"))
         self.open(self.ReadOnly | self.Unbuffered)
         self.setUrl(url)
 
