@@ -1,7 +1,7 @@
 name = "Gmail"
 url = "http://m.gmail.com/"
 clip = "mail.google"
-ua = "Mozilla/5.0 (Linux; U; Android 2.3.5; en-us; HTC Vision Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
+ua = None
 if not self.isCheckable():
     self.setCheckable(True)
     self.setChecked(True)
