@@ -109,7 +109,10 @@ def createUserAgent():
         defaultUserAgent = ua.replace("Qt/" + qt_version,\
                                              nimbus_ua_sub)
     else:
-        defaultUserAgent = ua.replace("python", nimbus_ua_sub)
+        if "nimbus" in ua:
+            defaultUserAgent = ua.replace("nimbus", nimbus_ua_sub)
+        else:
+            defaultUserAgent = ua.replace("python", nimbus_ua_sub)
     webPage.deleteLater()
     del webPage
     del ua
