@@ -10,17 +10,17 @@
 #              functions.
 
 import sys
-import os.path
+import os
 import json
 import common
+from qsettings import QSettings
 try:
-    from PyQt5.QtCore import QCoreApplication, QUrl, QSettings
+    from PyQt5.QtCore import QCoreApplication, QUrl
     from PyQt5.QtNetwork import QNetworkCookie
 except:
-    from PySide.QtCore import QCoreApplication, QUrl, QSettings
+    from PySide.QtCore import QCoreApplication, QUrl
     from PySide.QtNetwork import QNetworkCookie
 
-# Common settings manager.
 settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
 
 # This is a global variable that gets the settings folder on any platform.
@@ -166,8 +166,8 @@ def reload_extensions2():
     global extensions_blacklist
     global extensions_whitelist
     try:
-        extensions_blacklist = [extension for extension in extensions if extension not in json.loads(settings.value("extensions/whitelist"))]
-        extensions_whitelist = [extension for extension in extensions if extension in json.loads(settings.value("extensions/whitelist"))]
+        extensions_blacklist = [extension for extension in extensions if extension not in json.loads(settings.value("extensions/Whitelist"))]
+        extensions_whitelist = [extension for extension in extensions if extension in json.loads(settings.value("extensions/Whitelist"))]
     except:
         extensions_blacklist = [extension for extension in extensions]
         extensions_whitelist = []

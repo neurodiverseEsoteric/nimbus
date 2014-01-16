@@ -10,11 +10,12 @@
 
 import network
 import json
+from qsettings import QSettings
 try:
-    from PyQt5.QtCore import QCoreApplication, QByteArray, QUrl, QSettings
+    from PyQt5.QtCore import QCoreApplication, QByteArray, QUrl
     from PyQt5.QtNetwork import QNetworkCookie
 except:
-    from PySide.QtCore import QCoreApplication, QByteArray, QUrl, QSettings
+    from PySide.QtCore import QCoreApplication, QByteArray, QUrl
     from PySide.QtNetwork import QNetworkCookie
 
 # Global list to store history.
