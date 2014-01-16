@@ -57,7 +57,7 @@ default_settings = {"proxy/Type": "None",
                     "content/FrameFlatteningEnabled": False,
                     "content/PluginsEnabled": True,
                     "content/AdblockEnabled": False,
-                    "content/AdremoverFilters": """["#HOME_TOP_RIGHT_BOXAD", "#TOP_RIGHT_BOXAD", "#WikiaTopAds", ".headerads", ".home-top-right-ads", ".home_right_column", ".SelfServeUrl", ".adcode_container", ".ad-blocking-makes-fella-confused", "div[id*='adcode']", "div[id*='div-gpt-ad']", "div[class*='sleekadbubble']", "div[class*='gr-adcast']"]""",
+                    "content/AdremoverFilters": """["#HOME_TOP_RIGHT_BOXAD", "#TOP_RIGHT_BOXAD", "#WikiaTopAds", ".headerads", ".home-top-right-ads", ".home_right_column", ".SelfServeUrl", ".adcode_container", ".ad-blocking-makes-fella-confused", "div[id*='adcode']", "div[id*='div-gpt-ad']", "div[class*='sleekadbubble']", "div[class*='gr-adcast']", "div[class*='textbanner-ad']", "div[class*='dp-ad-visible']", "div[class*='partial-ad']"]""",
                     "content/HostFilterEnabled": True,
                     "content/ReplaceHTML5MediaTagsWithEmbedTags": (True if "win" in sys.platform else False),
                     "content/UseOnlineContentViewers": True,
@@ -113,7 +113,7 @@ extensions_whitelist = []
 extensions_blacklist = []
 
 # Ad Remover filters.
-adremover_filters = ["#HOME_TOP_RIGHT_BOXAD", "#TOP_RIGHT_BOXAD", "#WikiaTopAds", ".headerads", ".home-top-right-ads", ".home_right_column", ".SelfServeUrl", ".adcode_container", ".ad-blocking-makes-fella-confused", "div[id*='adcode']", "div[id*='div-gpt-ad']", "div[class*='sleekadbubble']", "div[class*='gr-adcast']"]
+adremover_filters = []
 
 # Load Ad Remover filters.
 def load_adremover_filters():
