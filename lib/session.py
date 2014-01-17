@@ -47,13 +47,25 @@ class SessionManager(QMainWindow):
         self.toolBar.addWidget(self.loadButton)
         self.saveButton = QPushButton(tr("&Save"), self)
         self.saveButton.clicked.connect(saveSessionManually)
+        self.saveButton.clicked.connect(self.refresh)
         self.toolBar.addWidget(self.saveButton)
-    def show(self):
+        deleteAction = QAction(self)
+        deleteAction.setShortcut("Del")
+        deleteAction.triggered.connect(self.delete)
+        self.addAction(deleteAction)
+    def refresh(self):
         self.sessionList.clear()
         if os.path.exists(settings.session_folder):
             sessions = os.listdir(settings.session_folder)
             for session in sessions:
                 self.sessionList.addItem(session)
+    def delete(self):
+        if self.sessionList.hasFocus():
+            try: os.remove(os.path.join(settings.session_folder, self.sessionList.currentItem().text()))
+            except: pass
+            self.refresh()
+    def show(self):
+        self.refresh()
         QMainWindow.show(self)
     def loadSession(self, item):
         if os.path.exists(settings.session_folder):

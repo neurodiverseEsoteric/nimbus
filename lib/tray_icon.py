@@ -11,6 +11,7 @@
 # Import everything we need.
 import common
 import translate
+import settings
 import session
 from translate import tr
 
@@ -63,9 +64,21 @@ class SystemTrayIcon(QSystemTrayIcon):
         self.menu.addAction(loadSessionAction)
 
         # Save session action
-        saveSessionAction = QAction(common.complete_icon("document-save-as"), tr("&Save Session..."), self)
+        saveSessionAction = QAction(common.complete_icon("document-save-as"), tr("Sa&ve Session..."), self)
         saveSessionAction.triggered.connect(self.saveSession)
         self.menu.addAction(saveSessionAction)
+
+        self.menu.addSeparator()
+
+        # Settings action
+        settingsAction = QAction(common.complete_icon("preferences-system"), tr("&Settings..."), self)
+        settingsAction.triggered.connect(self.openSettings)
+        self.menu.addAction(settingsAction)
+
+        # Clippings manager
+        clippingsAction = QAction(tr("&Manage Clippings..."), self)
+        clippingsAction.triggered.connect(self.openClippings)
+        self.menu.addAction(clippingsAction)
 
         self.menu.addSeparator()
 
@@ -73,6 +86,14 @@ class SystemTrayIcon(QSystemTrayIcon):
         quitAction = QAction(common.complete_icon("application-exit"), tr("Quit"), self)
         quitAction.triggered.connect(QApplication.quit)
         self.menu.addAction(quitAction)
+
+    # Open settings dialog.
+    def openSettings(self):
+        settings.settingsDialog.show()
+
+    # Open clippings manager.
+    def openClippings(self):
+        settings.clippingsManager.show()
 
     def loadSession(self):
         self.sessionManager.show()
