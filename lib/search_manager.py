@@ -62,6 +62,7 @@ class SearchManager(object):
             common.search_engines['A-Z Lyrics'] = ["azl", "http://search.azlyrics.com/search.php?q=%s"]
             common.search_engines['MetroLyrics'] = ["mtl", "http://www.metrolyrics.com/search?search=%s"]
             common.search_engines['Openclipart'] = ["oca", "http://openclipart.org/search/?query=%s"]
+            common.search_engines['Safebooru'] = ["sb", "http://safebooru.org/index.php?page=post&s=list&tags=%s"]
             settings.settings.setValue("SearchEngines", json.dumps(common.search_engines))
             settings.settings.sync()
         else:
