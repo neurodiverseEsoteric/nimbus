@@ -498,7 +498,7 @@ class WebView(QWebView):
             self.load(QUrl("about:blank"))
 
     def contextMenuEvent(self, ev):
-        if QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier and len(data.clippings) > 0:
+        if QCoreApplication.instance().keyboardModifiers() in (Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier) and len(data.clippings) > 0:
             menu = self.clippingsMenu
             menu.clear()
             for clipping in data.clippings:
