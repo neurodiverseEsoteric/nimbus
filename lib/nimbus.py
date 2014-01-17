@@ -261,28 +261,26 @@ def main():
 
     if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
         loadSession()
-    if (not "--daemon" in sys.argv and len(browser.windows) == 0) or\
-       (not "--daemon" in sys.argv and len(sys.argv[1:]) > 0):
+    if not "--daemon" in sys.argv and len(sys.argv[1:]) > 0:
         # Create instance of MainWindow.
-        if len(sys.argv) > 1:
-            if len(sys.argv[1:]) < 3 and sys.argv[-1].startswith("--app="):
-                os.system(os.path.join(common.app_folder, "webapp.py") + " " + sys.argv[-1].replace("--app=", "") + " &")
+        if len(browser.windows) > 0:
+            win = browser.windows[-1]
         else:
             win = MainWindow()
 
-            # Open URLs from command line.
-            if len(sys.argv[1:]) > 0:
-                for arg in sys.argv[1:]:
-                    if arg.startswith("--app="):
-                        os.system(os.path.join(common.app_folder, "webapp.py") + " " + arg.replace("--app=", "") + " &")
-                    elif "." in arg or ":" in arg:
-                        win.addTab(url=arg)
+        # Open URLs from command line.
+        if len(sys.argv[1:]) > 0:
+           for arg in sys.argv[1:]:
+                if arg.startswith("--app="):
+                    os.system(os.path.join(common.app_folder, "webapp.py") + " " + arg.replace("--app=", "") + " &")
+                elif "." in arg or ":" in arg:
+                    win.addTab(url=arg)
 
-            if win.tabWidget().count() < 1:
-                win.addTab(url=settings.settings.value("general/Homepage"))
+        if win.tabWidget().count() < 1:
+            win.addTab(url=settings.settings.value("general/Homepage"))
 
             # Show window.
-            win.show()
+        win.show()
 
     # Start app.
     app.exec_()
