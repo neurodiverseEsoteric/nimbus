@@ -59,7 +59,6 @@ except:
 
 tabbar_stylesheet = \
 """QTabBar { margin: 0; padding: 0; border-bottom: 0; }
-   QTabBar::tab:last, QTabBar::tab:only-one { border-top-right-radius: 8px; }
    QTabBar::tab { border: 1px solid palette(dark);
                   border-left: 0; margin: 0; padding: 4px;
                   background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
