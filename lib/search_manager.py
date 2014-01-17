@@ -149,7 +149,10 @@ class SearchEditor(QMainWindow):
 
     def reload_(self):
         self.engineList.clear()
-        for name in sorted(self.searchManager.searchEngines.keys()):
+        keys = self.searchManager.searchEngines.keys()
+        if type(keys) is not list:
+            keys = [key for key in keys]
+        for name in sorted(keys):
             keyword = "None"
             if self.searchManager.searchEngines[name][0] != "":
                 keyword = self.searchManager.searchEngines[name][0]
@@ -163,8 +166,9 @@ class SearchEditor(QMainWindow):
     def addSearch(self):
         if "%s" in self.expEntry.text():
             name = QInputDialog.getText(self, tr('Query'), tr('Enter a name here:'))
-            if name and name != "":
-                keyword = QInputDialog.getText(self, tr('Query'), tr('Enter a keyword here:'))
+            if name[1] and name[0] != "":
+                name = name[0]
+                keyword = QInputDialog.getText(self, tr('Query'), tr('Enter a keyword here:'))[0]
                 self.searchManager.add(name, self.expEntry.text(), keyword)
             self.reload_()
         else:
