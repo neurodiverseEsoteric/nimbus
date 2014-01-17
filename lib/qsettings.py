@@ -29,6 +29,8 @@ class QSettings(object):
     def value(self, key):
         try: return self.tables[key]
         except: return None
+    def allKeys(self):
+        return sorted([key for key in self.tables.keys()])
     def sync(self):
         try: f = open(self.fileName(), "w")
         except: pass
