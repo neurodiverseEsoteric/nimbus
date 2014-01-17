@@ -471,7 +471,7 @@ class WebView(QWebView):
         self.page().downloadRequested.connect(self.downloadFile)
 
         # Connect signals.
-        self.titleChanged.connect(self.setWindowTitle)
+        self.titleChanged.connect(self.setWindowTitle2)
         self.page().linkHovered.connect(self.setStatusBarMessage)
         self.statusBarMessage.connect(self.setStatusBarMessage)
         self.loadProgress.connect(self.setLoadProgress)
@@ -496,6 +496,12 @@ class WebView(QWebView):
 
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
+
+    def setWindowTitle2(self, text):
+        if text == "" and self.url().toString() not in ("", "about:blank"):
+            pass
+        else:
+            self.setWindowTitle(text)
 
     def contextMenuEvent(self, ev):
         if QCoreApplication.instance().keyboardModifiers() in (Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier) and len(data.clippings) > 0:
