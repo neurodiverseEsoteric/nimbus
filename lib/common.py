@@ -144,10 +144,20 @@ content_viewers = (("https://docs.google.com/viewer?url=%s", (".doc", ".pps", ".
 def icon(name):
     return os.path.join(app_icons_folder, name)
 
+complete_icons = {}
+
 # Returns a QIcon
 def complete_icon(name):
-    try: return QIcon().fromTheme(name, QIcon(icon(name + ".png")))
-    except: return QIcon()
+    global complete_icons
+    try: return complete_icons[name]
+    except:
+        ic = icon(name + ".png")
+        if not os.path.isfile(ic):
+            ic = icon(name + ".gif")
+        try: nic = QIcon().fromTheme(name, QIcon(ic))
+        except: nic = QIcon()
+        complete_icons[name] = nic
+        return complete_icons[name]
 
 def shortenURL(url):
     return QUrl(url).authority().replace("www.", "")

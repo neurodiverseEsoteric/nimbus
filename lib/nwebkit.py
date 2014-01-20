@@ -31,7 +31,7 @@ import view_source_dialog
 # Extremely specific imports from PyQt5/PySide.
 # We give PyQt5 priority because it supports Qt5.
 try:
-    from PyQt5.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
+    from PyQt5.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
     from PyQt5.QtGui import QIcon, QImage, QClipboard
     from PyQt5.QtWidgets import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QAction, QToolBar, QLineEdit, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget
     from PyQt5.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
@@ -42,14 +42,14 @@ try:
     Slot = pyqtSlot
 except:
     try:
-        from PyQt4.QtCore import Qt, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
+        from PyQt4.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
         from PyQt4.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard
         from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
         from PyQt4.QtWebKit import QWebView, QWebPage, QWebHistory
         Signal = pyqtSignal
         Slot = pyqtSlot
     except:
-        from PySide.QtCore import Qt, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
+        from PySide.QtCore import Qt, QSize, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
         from PySide.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard
         from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
         from PySide.QtWebKit import QWebView, QWebPage, QWebHistory
@@ -391,6 +391,8 @@ class WebView(QWebView):
         self._url = ""
         self._oldURL = ""
 
+        self.isLoading = False
+
         self._html = ""
 
         self._changeCanGoNext = False
@@ -476,6 +478,8 @@ class WebView(QWebView):
         self.page().linkHovered.connect(self.setStatusBarMessage)
         self.statusBarMessage.connect(self.setStatusBarMessage)
         self.loadProgress.connect(self.setLoadProgress)
+        self.loadStarted.connect(self.setLoading)
+        self.loadFinished.connect(self.unsetLoading)
 
         # PyQt5 doesn't support <audio> and <video> tags on Windows.
         # This is a little hack to work around it.
@@ -497,6 +501,14 @@ class WebView(QWebView):
 
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
+
+    def setLoading(self):
+        self.isLoading = True
+        self.iconChanged.emit()
+
+    def unsetLoading(self):
+        self.isLoading = False
+        self.iconChanged.emit()
 
     def setWindowTitle2(self, text):
         if text == "" and self.url().toString() not in ("", "about:blank"):
@@ -886,9 +898,15 @@ class WebView(QWebView):
     # Returns a devilish face if in incognito mode;
     # else page icon.
     def icon(self):
-        if self.incognito:
+        if self.isLoading:
+            return common.complete_icon("image-loading")
+        elif self.incognito:
             return common.complete_icon("face-devilish")
-        return QWebView.icon(self)
+        icon = QWebView.icon(self)
+        if icon.pixmap(QSize(16, 16)).width() == 0:
+            return common.complete_icon("text-html")
+        else:
+            return icon
 
     # Function to update proxy list.
     def updateProxy(self):
