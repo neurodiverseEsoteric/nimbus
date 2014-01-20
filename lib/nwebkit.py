@@ -768,7 +768,10 @@ class WebView(QWebView):
     # If a request has finished and the request's URL is the current URL,
     # then set self._contentType.
     def ready(self, response):
-        self._contentTypes[response.url().toString()] = response.header(QNetworkRequest.ContentTypeHeader)
+        try:
+            self._contentTypes[response.url().toString()] = response.header(QNetworkRequest.ContentTypeHeader)
+        except:
+            return
         if self._contentType == None and response.url() == self.url():
             try: contentType = response.header(QNetworkRequest.ContentTypeHeader)
             except: contentType = None
