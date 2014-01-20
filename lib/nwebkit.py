@@ -12,6 +12,7 @@ import sys
 import os
 import re
 import subprocess
+import browser
 import traceback
 import urllib.parse
 import hashlib
@@ -127,6 +128,23 @@ class FullScreenRequester(QObject):
     def setFullScreen(self, fullscreen=False):
         self.fullScreenRequested.emit(fullscreen)
 
+isOnlineTimer = QTimer()
+
+def setNavigatorOnline():
+    script = "window.navigator.onLine = " + str(network.isConnectedToNetwork()).lower() + ";"
+    for window in browser.windows:
+        for tab in range(window.tabWidget().count()):
+            try:
+                window.tabWidget().widget(tab).page().mainFrame().evaluateJavaScript(script)
+                window.tabWidget().widget(tab).page().mainFrame().evaluateJavaScript("if (window.onLine) {\n" + \
+                                            "   document.dispatchEvent(window.nimbus.onLineEvent);\n" + \
+                                            "}")
+                window.tabWidget().widget(tab).page().mainFrame().evaluateJavaScript("if (!window.onLine) {\n" + \
+                                            "   document.dispatchEvent(window.nimbus.offLineEvent);\n" + \
+                                            "}")
+            except:
+                traceback.print_exc()
+
 # Custom WebPage class with support for filesystem.
 class WebPage(QWebPage):
     plugins = (("qcalendarwidget", QCalendarWidget),
@@ -138,9 +156,6 @@ class WebPage(QWebPage):
                ("qdatetimeedit", QDateTimeEdit),
                ("qdial", QDial),
                ("qspinbox", QSpinBox))
-    
-    # This is used to fire JavaScript events related to navigator.onLine.
-    isOnlineTimer = QTimer()
 
     fullScreenRequested = Signal(bool)
     def __init__(self, *args, **kwargs):
@@ -173,9 +188,9 @@ class WebPage(QWebPage):
         self._fullScreen = False
 
         # Start self.isOnlineTimer.
-        if not self.isOnlineTimer.isActive():
-            self.isOnlineTimer.timeout.connect(self.setNavigatorOnline)
-            self.isOnlineTimer.start(1000)
+        if not isOnlineTimer.isActive():
+            isOnlineTimer.timeout.connect(setNavigatorOnline)
+            isOnlineTimer.start(1000)
 
         # Set user agent to default value.
         self.setUserAgent()
@@ -300,20 +315,6 @@ delete __NimbusAdRemoverQueries;""" % (settings.adremover_filters,))
                 self.setFeaturePermission(frame, feature, self.PermissionDeniedByUser)
             return confirm == QMessageBox.Ok
         return False
-
-    # Fires JavaScript events pertaining to online/offline mode.
-    def setNavigatorOnline(self):
-        try:
-            script = "window.navigator.onLine = " + str(network.isConnectedToNetwork()).lower() + ";"
-            self.mainFrame().evaluateJavaScript(script)
-            self.mainFrame().evaluateJavaScript("if (window.onLine) {\n" + \
-                                                "   document.dispatchEvent(window.nimbus.onLineEvent);\n" + \
-                                                "}")
-            self.mainFrame().evaluateJavaScript("if (!window.onLine) {\n" + \
-                                                "   document.dispatchEvent(window.nimbus.offLineEvent);\n" + \
-                                                "}")
-        except:
-            pass
 
     # This loads a bunch of hacks to improve HTML5 support.
     def tweakDOM(self):
@@ -560,6 +561,8 @@ class WebView(QWebView):
 
     def deleteLater(self):
         try: common.webviews.remove(self)
+        except: pass
+        try: self.page().networkAccessManager().finished.disconnect(self.ready)
         except: pass
         QWebView.deleteLater(self)
 
