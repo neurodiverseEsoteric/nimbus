@@ -42,18 +42,6 @@ from nwebkit import *
 from mainwindow import *
 from tray_icon import *
 
-# Python DBus
-has_dbus = True
-if not "-no-remote" in sys.argv:
-    try:
-        import dbus
-        import dbus.service
-        from dbus.mainloop.qt import DBusQtMainLoop
-    except:
-        has_dbus = False
-else:
-    has_dbus = False
-
 # This was made for an attempt to compile Nimbus to CPython,
 # but it is now useless.
 try: exec
@@ -68,15 +56,38 @@ try:
     from PyQt5.QtWidgets import QApplication, QAction
     from PyQt5.QtWebKit import QWebSettings
     from PyQt5.QtWebKitWidgets import QWebPage
+
+    # Python DBus
+    has_dbus = False
+    if not "-no-remote" in sys.argv:
+        try:
+            import dbus
+            import dbus.service
+            from dbus.mainloop.pyqt5 import DBusQtMainLoop
+            has_dbus = True
+        except:
+            pass
 except:
     try:
         from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer
         from PyQt4.QtGui import QApplication, QAction
         from PyQt4.QtWebKit import QWebPage, QWebSettings
+
+        # Python DBus
+        has_dbus = False
+        if not "-no-remote" in sys.argv:
+            try:
+                import dbus
+                import dbus.service
+                from dbus.mainloop.qt import DBusQtMainLoop
+                has_dbus = True
+            except:
+                pass
     except:
         from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer
         from PySide.QtGui import QApplication, QAction
         from PySide.QtWebKit import QWebPage, QWebSettings
+
 
 # chdir to the app folder. This way, we won't have issues related to
 # relative paths.
