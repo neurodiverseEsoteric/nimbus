@@ -117,18 +117,20 @@ class MainWindow(QMainWindow):
         # Sidebars are part of the (incomplete) extensions API.
         self.sideBars = {}
 
+        # Main toolbar.
+        self.toolBar = custom_widgets.MenuToolBar(movable=False,\
+                                contextMenuPolicy=Qt.CustomContextMenu,\
+                                parent=self)
+        self.toolBar.setStyleSheet("QToolBar { padding: 0; } QToolButton { max-height: 28px; } ")
+        self.addToolBar(self.toolBar)
+        self.addToolBarBreak(Qt.TopToolBarArea)
+
         # Tabs toolbar.
-        self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
+        self.tabsToolBar = QToolBar(movable=False,\
                            contextMenuPolicy=Qt.CustomContextMenu,\
                            parent=self)
         self.addToolBar(self.tabsToolBar)
-        self.addToolBarBreak(Qt.TopToolBarArea)
-
-        # Main toolbar.
-        self.toolBar = QToolBar(movable=False,\
-                                contextMenuPolicy=Qt.CustomContextMenu,\
-                                parent=self)
-        self.addToolBar(self.toolBar)
+        self.tabsToolBar.setStyleSheet("QToolBar { margin: 0; background: transparent; border: 0; border-bottom: 1px solid palette(dark); }")
 
         # Tab widget for tabbed browsing.
         self.tabs = custom_widgets.TabWidget(self)
@@ -168,8 +170,8 @@ class MainWindow(QMainWindow):
         self.tabs.tabBar().setExpanding(False)
         self.tabsToolBar.layout().setSpacing(0)
         self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
-        self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
-        self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
+        #self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
+        #self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # New tab action.
         newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)
@@ -1012,6 +1014,10 @@ self.origY + ev.globalY() - self.mouseY)
                 tabAction.setChecked(True)
             tabAction.triggered2.connect(self.tabWidget().setCurrentIndex)
             self.tabsMenu.addAction(tabAction)
+        self.tabsMenu.addSeparator()
+        countAction = QAction(tr("You currently have %s %s open") % (self.tabs.count(), tr("tab") if self.tabs.count() == 1 else tr("tabs")), self.tabsMenu)
+        countAction.setEnabled(False)
+        self.tabsMenu.addAction(countAction)
 
     def currentWidget(self):
         return self.tabWidget().currentWidget()
