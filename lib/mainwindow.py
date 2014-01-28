@@ -28,7 +28,7 @@ try:
     from PyQt5.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
                              QDateTime
     from PyQt5.QtGui import QKeySequence, QIcon
-    from PyQt5.QtWidgets import QApplication, QDockWidget, QWidget, QHBoxLayout,\
+    from PyQt5.QtWidgets import QApplication, QDockWidget, QWidget, QFrame, QHBoxLayout,\
                             QMessageBox, QSizePolicy,\
                             QMenu, QAction, QMainWindow, QToolBar,\
                             QToolButton, QComboBox, QButtonGroup,\
@@ -39,7 +39,7 @@ except:
     try:
         from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
                                  QDateTime
-        from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout,\
+        from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QFrame, QHBoxLayout,\
                                 QKeySequence, QMessageBox, QSizePolicy, QIcon,\
                                 QMenu, QAction, QMainWindow, QToolBar,\
                                 QToolButton, QComboBox, QButtonGroup,\
@@ -50,7 +50,7 @@ except:
         from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
                                   QDateTime
         from PySide.QtGui import QApplication, QDockWidget, QWidget,\
-                                 QHBoxLayout, QKeySequence, QMessageBox,\
+                                 QFrame, QHBoxLayout, QKeySequence, QMessageBox,\
                                  QSizePolicy, QIcon, QMenu, QAction,\
                                  QMainWindow, QToolBar, QToolButton, QComboBox,\
                                  QButtonGroup, QLabel
@@ -93,6 +93,10 @@ class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
+        # These store what have 16 pixel margins applied to them.
+        self.sixteenTop = []
+        self.sixteenBottom = []
+
         # These are used to store where the mouse pressed down.
         # This is used in a hack to drag the window by the toolbar.
         self.mouseX = False
@@ -100,6 +104,7 @@ class MainWindow(QMainWindow):
 
         # Add self to global list of windows.
         browser.windows.append(self)
+        self.setWindowFlags(Qt.FramelessWindowHint)
 
         # Set window icon.
         self.setWindowIcon(common.app_icon)
@@ -118,7 +123,7 @@ class MainWindow(QMainWindow):
         self.sideBars = {}
 
         # Tabs toolbar.
-        self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
+        self.tabsToolBar = QToolBar(movable=False,\
                            contextMenuPolicy=Qt.CustomContextMenu,\
                            parent=self)
         self.addToolBar(self.tabsToolBar)
@@ -128,6 +133,7 @@ class MainWindow(QMainWindow):
         self.toolBar = QToolBar(movable=False,\
                                 contextMenuPolicy=Qt.CustomContextMenu,\
                                 parent=self)
+        self.toolBar.setStyleSheet("QToolBar { border-left: 1px solid palette(shadow); border-right: 1px solid palette(shadow); }")
         self.addToolBar(self.toolBar)
 
         # Tab widget for tabbed browsing.
@@ -158,7 +164,9 @@ class MainWindow(QMainWindow):
         # Set tabs as central widget.
         self.setCentralWidget(self.tabs)
 
-        self.tabsWidget = QWidget(self)
+        self.tabsWidget = QFrame(self)
+        self.tabsWidget.setStyleSheet("QFrame { padding-top: 16px; } ")
+        self.sixteenTop.append(self.tabsWidget)
         tabsLayout = QHBoxLayout(self.tabsWidget)
         self.tabsWidget.setLayout(tabsLayout)
         self.tabsToolBar.addWidget(self.tabsWidget)
@@ -168,7 +176,7 @@ class MainWindow(QMainWindow):
         self.tabs.tabBar().setExpanding(False)
         self.tabsToolBar.layout().setSpacing(0)
         self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
-        self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
+        self.tabsToolBar.setStyleSheet("QToolBar { margin: 0; background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 palette(light), stop:1 palette(window)); border: 1px solid palette(shadow); border-bottom: 0; }")
         self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # New tab action.
@@ -188,8 +196,6 @@ class MainWindow(QMainWindow):
 
         # We don't want this widget to have any decorations.
         #newTabToolBar.setStyleSheet(common.blank_toolbar)
-
-        self.tabsToolBar.addAction(newTabAction)
 
         self.tabsToolBar.addWidget(custom_widgets.HorizontalExpander(self.tabsToolBar))
 
@@ -227,6 +233,8 @@ class MainWindow(QMainWindow):
         # every few milliseconds.
         self.toggleActionsTimer = QTimer(timeout=self.toggleActions, parent=self)
         self.dateTimeTimer = QTimer(timeout=self.updateDateTime, parent=self)
+
+        self.toolBar.addAction(newTabAction)
 
         # Set up navigation actions.
         self.backAction = self.actionsPage.action(QWebPage.Back)
@@ -428,6 +436,45 @@ class MainWindow(QMainWindow):
         self.toggleFullScreenButton.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
         self.tabsToolBar.addAction(self.toggleFullScreenButton)
         self.toggleFullScreenButton.setVisible(False)
+
+        self.tabsToolBar.addSeparator()
+
+        # Window control toolbar
+        self.windowControls = QFrame(self)
+        self.windowControls.setStyleSheet("QFrame { padding-bottom: 16px; }")
+        self.sixteenBottom.append(self.windowControls)
+        windowControlsLayout = QHBoxLayout(self.windowControls)
+        self.windowControls.setLayout(windowControlsLayout)
+        self.tabsToolBar.addWidget(self.windowControls)
+        self.windowControls.layout().setSpacing(0)
+        self.windowControls.layout().setContentsMargins(0,0,0,0)
+
+        self.windowControlsToolBar = QToolBar(self)
+        self.windowControlsToolBar.layout().setSpacing(0)
+        self.windowControlsToolBar.layout().setContentsMargins(0,0,0,0)
+        self.windowControlsToolBar.setMovable(False)
+        self.windowControlsToolBar.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.windowControlsToolBar.setStyleSheet("QToolBar { background: none; border: 0; margin: 0; padding: 0; } ")
+        self.windowControls.layout().addWidget(self.windowControlsToolBar)
+
+        # Window controls.
+        minimizeButton = QAction(self)
+        minimizeButton.setText("-")
+        minimizeButton.triggered.connect(self.showMinimized)
+        self.windowControlsToolBar.addAction(minimizeButton)
+        self.windowControlsToolBar.widgetForAction(minimizeButton).setStyleSheet("QToolButton { min-width: 1em; }")
+
+        maximizeButton = QAction(self)
+        maximizeButton.setText("+")
+        maximizeButton.triggered.connect(self.toggleMaximized)
+        self.windowControlsToolBar.addAction(maximizeButton)
+        self.windowControlsToolBar.widgetForAction(maximizeButton).setStyleSheet("QToolButton { min-width: 1em; }")
+
+        closeButton = QAction(self)
+        closeButton.setText("X")
+        closeButton.triggered.connect(self.close)
+        self.windowControlsToolBar.addAction(closeButton)
+        self.windowControlsToolBar.widgetForAction(closeButton).setStyleSheet("QToolButton { min-width: 1em; }")
 
         # Add fullscreen action.
         self.toggleFullScreenAction = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
@@ -960,6 +1007,30 @@ self.origY + ev.globalY() - self.mouseY)
         try: self.statusBar.setValue(self.tabWidget().\
                                      currentWidget()._loadProgress)
         except: self.statusBar.setValue(0)
+
+    def showNormal(self):
+        super(MainWindow, self).showNormal()
+        for widget in self.sixteenTop:
+            widget.setStyleSheet("QFrame { padding-top: 16px; } ")
+        for widget in self.sixteenBottom:
+            widget.setStyleSheet("QFrame { padding-bottom: 16px; } ")
+        self.toolBar.setStyleSheet("QToolBar { border-left: 1px solid palette(shadow); border-right: 1px solid palette(shadow); }")
+        self.tabsToolBar.setStyleSheet("QToolBar { margin: 0; background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 palette(light), stop:1 palette(window)); border: 1px solid palette(shadow); border-bottom: 0; }")
+    
+    def showMaximized(self):
+        super(MainWindow, self).showMaximized()
+        for widget in self.sixteenTop:
+            widget.setStyleSheet("QFrame { padding-top: 0px; } ")
+        for widget in self.sixteenBottom:
+            widget.setStyleSheet("QFrame { padding-bottom: 0px; } ")
+        self.toolBar.setStyleSheet("QToolBar { border: 0; }")
+        self.tabsToolBar.setStyleSheet("QToolBar { margin: 0; background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop:0 palette(light), stop:1 palette(window)); border: 0; }")
+
+    def toggleMaximized(self):
+        if self.isMaximized():
+            self.showNormal()
+        else:
+            self.showMaximized()
 
     # Fullscreen mode.
     def setFullScreen(self, fullscreen=False):

@@ -282,6 +282,7 @@ def main():
     sessionSaver = QTimer(QCoreApplication.instance())
     sessionSaver.timeout.connect(saveSession)
     sessionSaver.timeout.connect(data.saveData)
+    sessionSaver.timeout.connect(QApplication.restoreOverrideCursor)
     sessionSaver.start(30000)
 
     if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
