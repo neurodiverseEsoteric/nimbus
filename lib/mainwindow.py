@@ -121,7 +121,7 @@ class MainWindow(QMainWindow):
         self.toolBar = custom_widgets.MenuToolBar(movable=False,\
                                 contextMenuPolicy=Qt.CustomContextMenu,\
                                 parent=self)
-        self.toolBar.setStyleSheet("QToolBar { padding: 0; } QToolButton { max-height: 28px; } ")
+        self.toolBar.setStyleSheet("QToolBar { padding: 0 0 0 2px; } QToolButton { max-height: 28px; } ")
         self.addToolBar(self.toolBar)
         self.addToolBarBreak(Qt.TopToolBarArea)
 
