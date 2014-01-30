@@ -13,7 +13,6 @@ import sys
 import os
 import json
 import copy
-import base64
 
 # This is a hack for installing Nimbus.
 try: import common
@@ -221,15 +220,9 @@ def main():
 
     QWebSettings.globalSettings().setAttribute(QWebSettings.globalSettings().DeveloperExtrasEnabled, True)
     if os.path.isfile(settings.user_css):
-        try: f = open(settings.user_css, "r")
-        except: uc = QUrl.fromUserInput(settings.user_css)
-        else:
-            try: uc = QUrl("data:text/css;base64," + base64.b64encode(f.read().encode("utf-8")).decode("utf-8"))
-            except:
-                uc = QUrl.fromUserInput(settings.user_css)
-            f.close()
+        uc = QUrl.fromUserInput(settings.user_css)
         QWebSettings.globalSettings().setUserStyleSheetUrl(uc)
-        print(uc.toString())
+        print(QWebSettings.globalSettings().userStyleSheetUrl ())
         print("Nyahahaha!")
 
     # Set up settings dialog.
