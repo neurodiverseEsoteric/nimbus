@@ -1,6 +1,6 @@
 self.styleMenuButton = QAction(self)
 self.styleMenuButton.setText(tr("User CSS Editor"))
-self.styleMenuButton.setShortcut("Ctrl+Shift+B")
+self.styleMenuButton.setShortcut("Alt+Shift+U")
 try: self.styleMenuButton.setIcon(QIcon(common.complete_icon("style")))
 except: traceback.print_exc()
 self.styleMenuButton.setCheckable(True)
