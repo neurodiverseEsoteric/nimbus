@@ -219,11 +219,11 @@ def main():
     common.chistorydialog = clear_history_dialog.ClearHistoryDialog()
 
     QWebSettings.globalSettings().setAttribute(QWebSettings.globalSettings().DeveloperExtrasEnabled, True)
-    if os.path.isfile(settings.user_css):
-        uc = QUrl.fromUserInput(settings.user_css)
-        QWebSettings.globalSettings().setUserStyleSheetUrl(uc)
-        print(QWebSettings.globalSettings().userStyleSheetUrl ())
-        print("Nyahahaha!")
+
+    uc = QUrl.fromUserInput(settings.user_css)
+    QWebSettings.globalSettings().setUserStyleSheetUrl(uc)
+    print(QWebSettings.globalSettings().userStyleSheetUrl())
+    print("Nyahahaha!")
 
     # Set up settings dialog.
     settings.settingsDialog = settings_dialog.SettingsDialog()

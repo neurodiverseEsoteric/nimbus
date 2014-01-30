@@ -20,6 +20,7 @@ import settings
 import status_bar
 import data
 from nwebkit import *
+import traceback
 
 # Extremely specific imports from PyQt5/PySide.
 # We give PyQt5 priority because it supports Qt5.
