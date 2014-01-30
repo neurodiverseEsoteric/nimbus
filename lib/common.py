@@ -9,7 +9,6 @@
 #              rest of Nimbus' components.
 
 # Import everything we need.
-import traceback
 import sys
 import os
 import subprocess
@@ -87,7 +86,7 @@ if os.path.isfile(tlds_file):
     except: pass
     else:
         try: tlds = ["." + dom for dom in f.read().split("\n") if dom != ""]
-        except: traceback.print_exc()
+        except: pass
         f.close()
 
 def topLevelDomains():

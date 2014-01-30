@@ -14,7 +14,6 @@ import os
 import json
 import copy
 import base64
-import traceback
 
 # This is a hack for installing Nimbus.
 try: import common
@@ -227,7 +226,6 @@ def main():
         else:
             try: uc = QUrl("data:text/css;base64," + base64.b64encode(f.read().encode("utf-8")).decode("utf-8"))
             except:
-                traceback.print_exc()
                 uc = QUrl.fromUserInput(settings.user_css)
             f.close()
         QWebSettings.globalSettings().setUserStyleSheetUrl(uc)
@@ -312,7 +310,4 @@ def main():
 
 # Start program
 if __name__ == "__main__":
-    try:
-        main()
-    except:
-        traceback.print_exc()
+    main()

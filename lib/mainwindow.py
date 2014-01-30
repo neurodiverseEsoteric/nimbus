@@ -11,7 +11,6 @@
 import os
 import json
 import copy
-import traceback
 import common
 import browser
 import translate
@@ -814,9 +813,9 @@ self.origY + ev.globalY() - self.mouseY)
                     action.triggered2.connect(self.loadBackHistoryItem)
                     self.backHistoryMenu.addAction(action)
                 except:
-                    traceback.print_exc()
+                    pass
         except:
-            traceback.print_exc()
+            pass
 
     def loadBackHistoryItem(self, index):
         history = self.tabWidget().currentWidget().history()
@@ -839,9 +838,9 @@ self.origY + ev.globalY() - self.mouseY)
                     action.triggered2.connect(self.loadForwardHistoryItem)
                     self.forwardHistoryMenu.addAction(action)
                 except:
-                    traceback.print_exc()
+                    pass
         except:
-            traceback.print_exc()
+            pass
 
     def loadForwardHistoryItem(self, index):
         history = self.tabWidget().currentWidget().history()
@@ -869,7 +868,7 @@ self.origY + ev.globalY() - self.mouseY)
                         connect(self.tabWidget().currentWidget().load)
                         self.upMenu.addAction(action)
                 except:
-                    traceback.print_exc()
+                    pass
 
     def reload(self):
         self.tabWidget().currentWidget().reload()
@@ -1030,7 +1029,7 @@ self.origY + ev.globalY() - self.mouseY)
             self.addTab(index=tab)
             if tab < settings.setting_to_int("general/PinnedTabCount"):
                 try: self.tabWidget().widget(tab).page().loadHistory(session[tab])
-                except: traceback.print_exc()
+                except: pass
             else:
                 self.tabWidget().widget(tab).loadHistory(session[tab])
 
@@ -1142,7 +1141,7 @@ self.origY + ev.globalY() - self.mouseY)
                     self.closedTabs.pop(0)
             webView.deleteLater()
         except:
-            traceback.print_exc()
+            pass
         self.tabWidget().removeTab(index)
         if self.tabWidget().count() == 0 and\
         not settings.setting_to_bool("general/CloseWindowWithLastTab"):

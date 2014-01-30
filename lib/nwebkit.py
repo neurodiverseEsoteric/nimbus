@@ -13,7 +13,6 @@ import os
 import re
 import subprocess
 import browser
-import traceback
 import urllib.parse
 import hashlib
 import common
@@ -143,7 +142,7 @@ def setNavigatorOnline():
                                             "   document.dispatchEvent(window.nimbus.offLineEvent);\n" + \
                                             "}")
             except:
-                traceback.print_exc()
+                pass
 
 # Custom WebPage class with support for filesystem.
 class WebPage(QWebPage):
@@ -781,18 +780,17 @@ class WebView(QWebView):
     # then set self._contentType.
     def ready(self, response):
         try:
-            self._contentTypes[response.url().toString()] = response.header(QNetworkRequest.ContentTypeHeader)
+            if self._contentType == None and response.url() == self.url():
+                try: contentType = response.header(QNetworkRequest.ContentTypeHeader)
+                except: contentType = None
+                if contentType != None:
+                    self._contentType = contentType
+                html = self.page().mainFrame().toHtml()
+                if "xml" in str(self._contentType) and ("<rss" in html or ("<feed" in html and "atom" in html)):
+                    try: self.setHtml(rss_parser.feedToHtml(html), self.url())
+                    except: pass
         except:
-            return
-        if self._contentType == None and response.url() == self.url():
-            try: contentType = response.header(QNetworkRequest.ContentTypeHeader)
-            except: contentType = None
-            if contentType != None:
-                self._contentType = contentType
-            html = self.page().mainFrame().toHtml()
-            if "xml" in str(self._contentType) and ("<rss" in html or ("<feed" in html and "atom" in html)):
-                try: self.setHtml(rss_parser.feedToHtml(html), self.url())
-                except: traceback.print_exc()
+            pass
 
     # This is a custom implementation of mousePressEvent.
     # It allows the user to Ctrl-click or middle-click links to open them in

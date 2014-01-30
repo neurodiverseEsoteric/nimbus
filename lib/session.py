@@ -11,7 +11,6 @@
 import os
 import pickle
 import settings
-import traceback
 import browser
 from translate import tr
 from mainwindow import MainWindow
@@ -94,7 +93,7 @@ def loadSession(session_file=settings.session_file):
                     try:
                         incognito = bool(window[tab][2])
                     except:
-                        traceback.print_exc()
+                        pass
                         incognito = False
                     win.addTab(index=tab, incognito=incognito)
                     if type(window[tab]) is tuple:
@@ -106,7 +105,7 @@ def loadSession(session_file=settings.session_file):
                         win.tabWidget().widget(tab).loadHistory(window[tab])
                 win.show()
     except:
-        traceback.print_exc()
+        pass
 
 # Stores whether the session is being written to or not.
 sessionLock = False

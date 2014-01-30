@@ -38,7 +38,7 @@ class SearchManager(object):
         self.currentSearch = ""
     def reload_(self):
         try: search_engines = settings.settings.value("SearchEngines")
-        except: traceback.print_exc()
+        except: pass
         if not search_engines:
             common.search_engines = {}
             common.search_engines['DuckDuckGo'] = ["d", "https://duckduckgo.com/?q=%s"]
@@ -73,7 +73,7 @@ class SearchManager(object):
             settings.settings.setValue("SearchEngines", json.dumps(common.search_engines))
             settings.settings.sync()
         except:
-            traceback.print_exc()
+            pass
     def change(self, name):
         try: self.currentSearch = common.search_engines[name][1]
         except: pass
