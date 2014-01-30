@@ -21,7 +21,7 @@ def togglestyleDock():
         mainWindow.styleDock.setContextMenuPolicy(Qt.CustomContextMenu)
         mainWindow.styleDock.setFeatures(QDockWidget.NoDockWidgetFeatures)
         mainWindow.styleEdit = QTextEdit(browser.activeWindow().styleDock)
-        mainWindow.styleDock.setWindowTitle("User CSS Editor")
+        mainWindow.styleDock.setWindowTitle(tr("User CSS Editor"))
         mainWindow.styleDock.setWidget(browser.activeWindow().styleEdit)
         mainWindow.addDockWidget(Qt.RightDockWidgetArea, mainWindow.styleDock)
         def save():
