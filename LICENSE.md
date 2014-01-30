@@ -4,7 +4,7 @@ Nimbus
 *All components of Nimbus, unless otherwise specified, are released under the following terms:*
 
 Nimbus is a Qt-based web browser made in Python 3.
-Copyright (C) 2013  Foxical Paradox
+Copyright (C) 2013  Daniel Sim
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
