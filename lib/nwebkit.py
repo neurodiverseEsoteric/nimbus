@@ -376,6 +376,7 @@ class WebView(QWebView):
 
     # This is a signal used to tell everyone a download has started.
     downloadStarted = Signal(QToolBar)
+    urlChanged2 = Signal(QUrl)
 
     nextExpressions = ("start=", "offset=", "page=", "first=", "pn=", "=",)
 
@@ -388,6 +389,7 @@ class WebView(QWebView):
 
         # These are used to store the current url.
         self._url = ""
+        self._urlText = ""
         self._oldURL = ""
 
         self.isLoading = False
@@ -443,6 +445,7 @@ class WebView(QWebView):
         self.updateProxy()
         self.updateNetworkSettings()
         self.updateContentSettings()
+        self.urlChanged.connect(self.setUrlText)
 
         # What to do if private browsing is not enabled.
         if not self.incognito:
@@ -500,6 +503,12 @@ class WebView(QWebView):
 
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
+
+    def setUrlText(self, text):
+        if type(text) is QUrl:
+            text = text.toString()
+        self._urlText = str(text)
+        self.urlChanged2.emit(QUrl(self._urlText))
 
     def setLoading(self):
         self.isLoading = True

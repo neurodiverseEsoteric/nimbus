@@ -315,6 +315,7 @@ class MainWindow(QMainWindow):
 
         # Load a page when Enter is pressed.
         self.locationBar.lineEdit().returnPressed.connect(lambda: self.load(self.locationBar.lineEdit().text()))
+        self.locationBar.lineEdit().textChanged.connect(lambda x: self.tabWidget().currentWidget().setUrlText(x))
         self.locationBar.view().activated.connect(lambda index: self.load(index.data()))
 
         # This is so that the location bar can shrink to a width
@@ -1064,6 +1065,7 @@ self.origY + ev.globalY() - self.mouseY)
         webview.titleChanged.connect(self.updateTabTitles)
         webview.page().fullScreenRequested.connect(self.setFullScreen)
         webview.urlChanged.connect(self.updateLocationText)
+        webview.urlChanged2.connect(self.updateLocationText)
         webview.iconChanged.connect(self.updateTabIcons)
         webview.iconChanged.connect(self.updateLocationIcon)
         webview.windowCreated.connect(lambda webView:\
@@ -1164,11 +1166,11 @@ self.origY + ev.globalY() - self.mouseY)
     # Method to update the location bar text.
     def updateLocationText(self, url=None):
         try:
-            if type(url) != QUrl:
-                url = self.tabWidget().currentWidget().url()
-            currentUrl = self.tabWidget().currentWidget().url()
-            if url == currentUrl:
-                self.locationBar.setEditText(currentUrl.toString())
+            if type(url) not in (QUrl, str):
+                url = self.tabWidget().currentWidget()._urlText
+            elif type(url) is QUrl:
+                url = url.toString()
+            self.locationBar.setEditText(url)
         except:
             pass
 
