@@ -315,7 +315,7 @@ class MainWindow(QMainWindow):
 
         # Load a page when Enter is pressed.
         self.locationBar.lineEdit().returnPressed.connect(lambda: self.load(self.locationBar.lineEdit().text()))
-        self.locationBar.lineEdit().textChanged.connect(lambda x: self.tabWidget().currentWidget().setUrlText(x))
+        self.locationBar.lineEdit().textChanged.connect(lambda x: self.tabWidget().currentWidget().setUrlText(x, emit=False))
         self.locationBar.view().activated.connect(lambda index: self.load(index.data()))
 
         # This is so that the location bar can shrink to a width

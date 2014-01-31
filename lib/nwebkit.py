@@ -504,11 +504,12 @@ class WebView(QWebView):
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
 
-    def setUrlText(self, text):
+    def setUrlText(self, text, emit=True):
         if type(text) is QUrl:
             text = text.toString()
         self._urlText = str(text)
-        self.urlChanged2.emit(QUrl(self._urlText))
+        if emit:
+            self.urlChanged2.emit(QUrl(self._urlText))
 
     def setLoading(self):
         self.isLoading = True
