@@ -1,6 +1,6 @@
 self.styleMenuButton = QAction(self)
 self.styleMenuButton.setText(tr("User CSS Editor"))
-self.styleMenuButton.setShortcut("Alt+E")
+self.styleMenuButton.setShortcut("Ctrl+Shift+C")
 try: self.styleMenuButton.setIcon(QIcon(common.complete_icon("style")))
 except: traceback.print_exc()
 self.styleMenuButton.setCheckable(True)
@@ -40,4 +40,8 @@ def togglestyleDock():
         u = f.read()
         f.close()
     browser.activeWindow().styleEdit.setPlainText(u)
+    try:
+        browser.activeWindow().feedsDock.hide()
+        browser.activeWindow().feedMenuButton.setChecked(False)
+    except: pass
 self.styleMenuButton.triggered.connect(togglestyleDock)

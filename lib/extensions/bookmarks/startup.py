@@ -62,4 +62,8 @@ def toggleFeedsDock():
         browser.activeWindow().feedsList.addItem("+")
         for feed in sorted(common.feeds):
             browser.activeWindow().feedsList.addItem(feed)
+    try:
+        browser.activeWindow().styleDock.hide()
+        browser.activeWindow().styleMenuButton.setChecked(False)
+    except: pass
 self.feedMenuButton.triggered.connect(toggleFeedsDock)
