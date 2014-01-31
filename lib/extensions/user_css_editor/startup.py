@@ -22,6 +22,7 @@ def togglestyleDock():
         mainWindow.styleDock.setFeatures(QDockWidget.NoDockWidgetFeatures)
         mainWindow.styleEdit = QTextEdit(browser.activeWindow().styleDock)
         mainWindow.styleEdit.setAcceptRichText(False)
+        mainWindow.styleEdit.setFontFamily("monospace")
         mainWindow.styleDock.setWindowTitle(tr("User CSS Editor"))
         mainWindow.styleDock.setWidget(browser.activeWindow().styleEdit)
         mainWindow.addDockWidget(Qt.RightDockWidgetArea, mainWindow.styleDock)
