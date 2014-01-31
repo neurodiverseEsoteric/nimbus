@@ -1014,6 +1014,11 @@ self.origY + ev.globalY() - self.mouseY)
                 tabAction.setChecked(True)
             tabAction.triggered2.connect(self.tabWidget().setCurrentIndex)
             self.tabsMenu.addAction(tabAction)
+        self.tabsMenu.addSeparator()
+        tabCountAction = QAction(self.tabsMenu)
+        tabCountAction.setText(tr("You currently have %s tab(s) open") % (self.tabWidget().count(),))
+        tabCountAction.setEnabled(False)
+        self.tabsMenu.addAction(tabCountAction)
 
     def currentWidget(self):
         return self.tabWidget().currentWidget()
