@@ -76,6 +76,7 @@ class ViewSourceDialog(QMainWindow):
 
         self.sourceView = QTextEdit(self)
         self.sourceView.setReadOnly(True)
+        self.sourceView.setFontFamily("monospace")
         self.setCentralWidget(self.sourceView)
         closeWindowAction = QAction(self)
         closeWindowAction.setShortcuts(["Esc", "Ctrl+W"])
