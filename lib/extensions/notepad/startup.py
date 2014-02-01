@@ -44,8 +44,10 @@ def togglenotePadDock():
     browser.activeWindow().notePadEdit.setPlainText(u)
     try:
         browser.activeWindow().feedsDock.hide()
-        browser.activeWindow().styleDock.hide()
         browser.activeWindow().feedMenuButton.setChecked(False)
+    except: pass
+    try:
+        browser.activeWindow().styleDock.hide()
         browser.activeWindow().styleMenuButton.setChecked(False)
     except: pass
 self.notePadMenuButton.triggered.connect(togglenotePadDock)

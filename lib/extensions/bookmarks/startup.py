@@ -66,4 +66,8 @@ def toggleFeedsDock():
         browser.activeWindow().styleDock.hide()
         browser.activeWindow().styleMenuButton.setChecked(False)
     except: pass
+    try:
+        browser.activeWindow().notePadDock.hide()
+        browser.activeWindow().notePadMenuButton.setChecked(False)
+    except: pass
 self.feedMenuButton.triggered.connect(toggleFeedsDock)
