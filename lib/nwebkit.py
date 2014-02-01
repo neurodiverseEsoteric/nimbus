@@ -506,7 +506,7 @@ class WebView(QWebView):
             self.load(QUrl("about:blank"))
 
     def updateHistoryTitle(self, title):
-        data.history[self.url().toString()]["title"] = title
+        data.history[self.url().toString()]["title"] = (title if len(title) > 0 else tr("(Untitled)"))
 
     def setUrlText(self, text, emit=True):
         if type(text) is QUrl:
