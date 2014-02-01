@@ -56,6 +56,7 @@ except:
 # Add an item to the browser history.
 def addHistoryItem(url, title=None):
     if settings.setting_to_bool("data/RememberHistory"):
+        url = url.split("#")[0]
         data.history[url] = {"title": title}
 
 # Progress bar used for downloads.
@@ -506,7 +507,8 @@ class WebView(QWebView):
             self.load(QUrl("about:blank"))
 
     def updateHistoryTitle(self, title):
-        data.history[self.url().toString()]["title"] = (title if len(title) > 0 else tr("(Untitled)"))
+        url = self.url().toString().split("#")[0]
+        data.history[url]["title"] = (title if len(title) > 0 else tr("(Untitled)"))
 
     def setUrlText(self, text, emit=True):
         if type(text) is QUrl:
