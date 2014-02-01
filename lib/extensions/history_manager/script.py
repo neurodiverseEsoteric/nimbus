@@ -14,4 +14,4 @@ html = """<!DOCTYPE html>
         %s
     </body>
 </html>""" % (tr("History"), tr("History"), links)
-mainWindow.tabWidget().currentWidget().setHtml(html)
+mainWindow.tabWidget().currentWidget().setHtml(html, QUrl("nimbus://history"))
