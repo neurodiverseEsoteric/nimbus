@@ -303,8 +303,12 @@ class MainWindow(QMainWindow):
         self.locationBar = custom_widgets.LocationBar(icon=None, parent=self)
 
         # Load stored browser history.
-        for url in data.history:
-            self.locationBar.addItem(url)
+        if type(data.history) is list:
+            for url in data.history:
+                self.locationBar.addItem(url)
+        else:
+            for url in data.history.keys():
+                self.locationBar.addItem(data.shortUrl(url))
 
         # Combo boxes are not normally editable by default.
         self.locationBar.setEditable(True)

@@ -23,7 +23,7 @@ except:
         from PySide.QtNetwork import QNetworkCookie
 
 # Global list to store history.
-history = []
+history = {}
 
 data = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "data", QCoreApplication.instance())
 
@@ -47,6 +47,11 @@ def save_clippings():
         data.sync()
     except: pass
 
+def shortUrl(url):
+    i = url.partition("://")[-1] if "://" in url else url
+    i = i.replace(("www." if i.startswith("www.") else ""), "")
+    return i
+
 # This function loads the browser's settings.
 def loadData():
     # Load history.
@@ -56,6 +61,11 @@ def loadData():
     raw_history = data.value("data/History")
     if type(raw_history) is str:
         history = json.loads(raw_history)
+        if type(history) is list:
+            new_history = {}
+            for item in history:
+                new_history[item] = {"title": item}
+            history = new_history
 
     # Load cookies.
     try: raw_cookies = json.loads(str(data.value("data/Cookies")))
@@ -81,10 +91,9 @@ def loadData():
 def saveData():
     # Save history.
     global history
-    history = [(item.partition("://")[-1] if "://" in item else item) for item in history]
-    history = [item.replace(("www." if item.startswith("www.") else ""), "") for item in history]
-    history = list(set(history))
-    history.sort()
+    for item in history:
+        try: del history[item]["short"]
+        except: pass
     data.setValue("data/History", json.dumps(history))
 
     # Save cookies.
@@ -100,7 +109,7 @@ def saveData():
 # Clear history.
 def clearHistory():
     global history
-    history = []
+    history = {}
     saveData()
 
 # Clear cookies.

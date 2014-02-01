@@ -54,9 +54,9 @@ except:
         from PySide.QtWebKit import QWebView, QWebPage, QWebHistory
 
 # Add an item to the browser history.
-def addHistoryItem(url):
-    if not url in data.history and settings.setting_to_bool("data/RememberHistory"):
-        data.history.append(url)
+def addHistoryItem(url, title=None):
+    if settings.setting_to_bool("data/RememberHistory"):
+        data.history[url] = {"title": title}
 
 # Progress bar used for downloads.
 # This was ripped off of Ryouko.
@@ -477,6 +477,7 @@ class WebView(QWebView):
 
         # Connect signals.
         self.titleChanged.connect(self.setWindowTitle2)
+        self.titleChanged.connect(self.updateHistoryTitle)
         self.page().linkHovered.connect(self.setStatusBarMessage)
         self.statusBarMessage.connect(self.setStatusBarMessage)
         self.loadProgress.connect(self.setLoadProgress)
@@ -503,6 +504,9 @@ class WebView(QWebView):
 
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
+
+    def updateHistoryTitle(self, title):
+        data.history[self.url().toString()]["title"] = title
 
     def setUrlText(self, text, emit=True):
         if type(text) is QUrl:
@@ -1073,7 +1077,7 @@ class WebView(QWebView):
 
     # Adds a QUrl to the browser history.
     def addHistoryItem(self, url):
-        addHistoryItem(url.toString())
+        addHistoryItem(url.toString(), self.windowTitle())
 
     # Redefine createWindow. Emits windowCreated signal so that others
     # can utilize the newly-created WebView instance.

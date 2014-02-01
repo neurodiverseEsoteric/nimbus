@@ -1,11 +1,9 @@
-import json
-history = data.data.value("data/History")
-history = sorted(json.loads(history))
+history = data.history
 mainWindow = browser.activeWindow()
 mainWindow.addTab()
 links = ""
-for item in history:
-    links += "<a href='%s'>%s</a><br>" % (QUrl.fromUserInput(item).toString(),item)
+for item in sorted(history.keys()):
+    links += "<a href='%s'>%s</a><br>" % (QUrl.fromUserInput(item).toString(),history[item]["title"])
 html = """<!DOCTYPE html>
 <html>
     <head>
