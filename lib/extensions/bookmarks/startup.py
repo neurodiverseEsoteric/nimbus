@@ -47,10 +47,11 @@ def toggleFeedsDock():
         deleteAction.triggered.connect(removeBookmark)
         def loadFeed(item):
             import json
+            mainWindow = browser.activeWindow()
             if item.text() == "+":
-                url = QInputDialog.getText(None, "Add Feed", "Enter a URL here:", QLineEdit.Normal, browser.activeWindow().tabWidget().currentWidget().url().toString())
+                url = QInputDialog.getText(None, "Add Feed", "Enter a URL here:", QLineEdit.Normal, mainWindow.tabWidget().currentWidget().url().toString())
                 if url[1]:
-                    browser.activeWindow().feedsList.addItem(url[0])
+                    mainWindow.feedsList.addItem(url[0].split("://")[-1])
                     common.feeds.append(url[0].split("://")[-1])
                     for window in browser.windows:
                         window.locationBar.insertItem(len(common.feeds)-1, url[0].split("://")[-1])
