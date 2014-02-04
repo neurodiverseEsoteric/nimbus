@@ -11,7 +11,7 @@ except:
     else:
         common.feeds = json.loads(feeds)
 for feed in reversed(range(len(common.feeds))):
-    self.locationBar.insertItem(0, common.feeds[feed])
+    self.locationBar.insertItem(0, common.feeds[feed].split("://")[-1])
 self.feedMenuButton.setText(tr("Bookmarks"))
 self.feedMenuButton.setShortcut("Ctrl+Shift+B")
 try: self.feedMenuButton.setIcon(QIcon(common.complete_icon("bookmarks")))
@@ -29,7 +29,7 @@ def toggleFeedsDock():
         mainWindow.feedsDock.setWindowTitle("Bookmarks")
         mainWindow.feedsList.addItem("+")
         for feed in common.feeds:
-            mainWindow.feedsList.addItem(feed)
+            mainWindow.feedsList.addItem(feed.split("://")[-1])
         mainWindow.feedsDock.setWidget(browser.activeWindow().feedsList)
         deleteAction = QAction(browser.activeWindow().feedsList)
         deleteAction.setShortcut("Del")
