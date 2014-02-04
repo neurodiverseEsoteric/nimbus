@@ -66,7 +66,7 @@ def toggleFeedsDock():
         browser.activeWindow().feedsList.clear()
         browser.activeWindow().feedsList.addItem("+")
         for feed in sorted(common.feeds):
-            browser.activeWindow().feedsList.addItem(feed)
+            browser.activeWindow().feedsList.addItem(feed.split("://")[-1])
     try:
         browser.activeWindow().styleDock.hide()
         browser.activeWindow().styleMenuButton.setChecked(False)
