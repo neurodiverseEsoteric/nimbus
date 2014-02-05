@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-
 try: common.webutations
 except: common.webutations = os.path.join(settings.extensions_folder, "webutations")
 if not common.webutations in sys.path:
     sys.path.append(common.webutations)
 
-import urllib.request
 import io
 from bs4 import BeautifulSoup
 
@@ -19,6 +16,11 @@ html = stdout_handle.read()
 soup = BeautifulSoup(io.StringIO(html))
 score = soup.find("span", {"class": "score"})
 mx = soup.find("span", {"class": "max"})
-scor = score.text + "/" + mx.text
+if score and mx:
+    scor = score.text + "/" + mx.text
+else:
+    scor = "Unknown domain"
 print(scor)
 currentWidget.page().mainFrame().evaluateJavaScript("\nwindow.alert(\'Webutation: " + scor + "\');")
+if not (score and mx):
+    mainWindow.addTab(url=newurl)
