@@ -11,7 +11,7 @@ except:
     else:
         common.feeds = json.loads(feeds)
 for feed in reversed(range(len(common.feeds))):
-    self.locationBar.insertItem(0, common.feeds[feed].split("://")[-1])
+    self.locationBar.insertItem(0, common.feeds[feed])
 self.feedMenuButton.setText(tr("Bookmarks"))
 self.feedMenuButton.setShortcut("Ctrl+Shift+B")
 try: self.feedMenuButton.setIcon(QIcon(common.complete_icon("bookmarks")))
@@ -29,7 +29,7 @@ def toggleFeedsDock():
         mainWindow.feedsDock.setWindowTitle("Bookmarks")
         mainWindow.feedsList.addItem("+")
         for feed in common.feeds:
-            mainWindow.feedsList.addItem(feed.split("://")[-1])
+            mainWindow.feedsList.addItem(feed)
         mainWindow.feedsDock.setWidget(browser.activeWindow().feedsList)
         deleteAction = QAction(browser.activeWindow().feedsList)
         deleteAction.setShortcut("Del")
@@ -51,10 +51,12 @@ def toggleFeedsDock():
             if item.text() == "+":
                 url = QInputDialog.getText(None, "Add Feed", "Enter a URL here:", QLineEdit.Normal, mainWindow.tabWidget().currentWidget().url().toString())
                 if url[1]:
-                    mainWindow.feedsList.addItem(url[0].split("://")[-1])
-                    common.feeds.append(url[0].split("://")[-1])
+                    bookmark = url[0].split("://")[-1]
+                    mainWindow.feedsList.addItem(bookmark)
+                    common.feeds.append(bookmark)
                     for window in browser.windows:
-                        window.locationBar.insertItem(len(common.feeds)-1, url[0].split("://")[-1])
+                        window.locationBar.insertItem(len(common.feeds)-1, bookmark)
+                    common.feeds = [feed.split("://")[-1] for feed in common.feeds]
                     data.data.setValue("data/Feeds", json.dumps(common.feeds))
                     data.data.sync()
             else:
@@ -66,7 +68,7 @@ def toggleFeedsDock():
         browser.activeWindow().feedsList.clear()
         browser.activeWindow().feedsList.addItem("+")
         for feed in sorted(common.feeds):
-            browser.activeWindow().feedsList.addItem(feed.split("://")[-1])
+            browser.activeWindow().feedsList.addItem(feed)
     try:
         browser.activeWindow().styleDock.hide()
         browser.activeWindow().styleMenuButton.setChecked(False)
