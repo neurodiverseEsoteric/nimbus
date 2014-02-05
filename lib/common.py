@@ -101,7 +101,7 @@ defaultUserAgent = None
 def createUserAgent():
     global defaultUserAgent
     webPage = QWebPage()
-    nimbus_ua_sub = "Qt/" + qt_version + " Nimbus/" + \
+    nimbus_ua_sub = "Qt/" + qt_version + " Chrome/22.0.1216.0 Nimbus/" + \
                     app_version + " QupZilla/1.4.3"
     ua = webPage.userAgentForUrl(QUrl.fromUserInput("google.com"))
     if qt_version.startswith("4") or "Qt/" in ua:
