@@ -103,6 +103,8 @@ class MainWindow(QMainWindow):
         # This is used in a hack to drag the window by the toolbar.
         self.mouseX = False
         self.mouseY = False
+        
+        #self.setStyleSheet("* { font-family: Liberation Sans, sans; }")
 
         # Add self to global list of windows.
         browser.windows.append(self)
@@ -1140,8 +1142,9 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Update the titles on every single tab.
     def updateTabTitles(self):
-        for index in range(0, self.tabWidget().count()):
-            title = self.tabWidget().widget(index).shortWindowTitle()
+        count = self.tabWidget().count()
+        for index in range(0, count):
+            title = ("[%s]" % (str(index+1),) if index < 8 else ("[9]" if index == count-1 else "")) + " " + self.tabWidget().widget(index).shortWindowTitle()
             longtitle = self.tabWidget().widget(index).windowTitle()
             self.tabWidget().setTabText(index, "\u26bf" if index < settings.setting_to_int("general/PinnedTabCount") else title)
             if index == self.tabWidget().currentIndex():
