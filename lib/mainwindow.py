@@ -29,6 +29,7 @@ try:
                              QDateTime
     from PyQt5.QtGui import QKeySequence, QIcon
     from PyQt5.QtWidgets import QApplication, QDockWidget, QWidget, QHBoxLayout,\
+                            QVBoxLayout,\
                             QMessageBox, QSizePolicy,\
                             QMenu, QAction, QMainWindow, QToolBar,\
                             QToolButton, QComboBox, QButtonGroup,\
@@ -40,6 +41,7 @@ except:
         from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
                                  QDateTime
         from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout,\
+                                QVBoxLayout,\
                                 QKeySequence, QMessageBox, QSizePolicy, QIcon,\
                                 QMenu, QAction, QMainWindow, QToolBar,\
                                 QToolButton, QComboBox, QButtonGroup,\
@@ -50,6 +52,7 @@ except:
         from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
                                   QDateTime
         from PySide.QtGui import QApplication, QDockWidget, QWidget,\
+                                 QVBoxLayout,\
                                  QHBoxLayout, QKeySequence, QMessageBox,\
                                  QSizePolicy, QIcon, QMenu, QAction,\
                                  QMainWindow, QToolBar, QToolButton, QComboBox,\
@@ -631,7 +634,7 @@ class MainWindow(QMainWindow):
 
     # Adds a sidebar.
     # Part of the extensions API.
-    def addSideBar(self, name="", url="about:blank", clip=None, ua=None):
+    def addSideBar(self, name="", url="about:blank", clip=None, ua=None, toolbar=True):
         self.sideBars[name] = {"sideBar": QDockWidget(self),\
                                "url": QUrl(url), "clip": clip}
         self.sideBars[name]["sideBar"].setWindowTitle(name)
@@ -648,8 +651,24 @@ class MainWindow(QMainWindow):
              webView.setUserAgent(ua)
         self.sideBars[name]["sideBar"].\
              webView.load(QUrl(url))
-        self.sideBars[name]["sideBar"].setWidget(self.sideBars[name]\
-                                                 ["sideBar"].webView)
+        container = QWidget(self.sideBars[name]["sideBar"])
+        layout = QVBoxLayout(container)
+        layout.setContentsMargins(0,0,0,0)
+        layout.setSpacing(0)
+        container.setLayout(layout)
+        if toolbar:
+            toolBar = QToolBar(container)
+            toolBar.setIconSize(QSize(16, 16))
+            toolBar.setMovable(False)
+            toolBar.setContextMenuPolicy(Qt.CustomContextMenu)
+            toolBar.addAction(self.sideBars[name]["sideBar"].webView.page().action(QWebPage.Back))
+            toolBar.addAction(self.sideBars[name]["sideBar"].webView.page().action(QWebPage.Forward))
+            toolBar.addAction(self.sideBars[name]["sideBar"].webView.page().action(QWebPage.Stop))
+            toolBar.addAction(self.sideBars[name]["sideBar"].webView.page().action(QWebPage.Reload))
+            container.layout().addWidget(toolBar)
+        container.layout().addWidget(self.sideBars[name]\
+                                   ["sideBar"].webView)
+        self.sideBars[name]["sideBar"].setWidget(container)
         for sidebar in self.sideBars.values():
             sidebar["sideBar"].setVisible(False)
         self.addDockWidget(Qt.LeftDockWidgetArea,\
