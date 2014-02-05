@@ -571,6 +571,19 @@ class MainWindow(QMainWindow):
         self.reloadExtensions()
         self.loadStartupExtensions()
 
+        # Tab hotkeys
+
+        for tab in range(0, 8):
+            exec("tab%sAction = QAction(self)" % (tab,))
+            exec('tab%sAction.setShortcuts(["Ctrl+" + str(%s+1), "Alt+" + str(%s+1)])' % (tab,tab,tab))
+            exec("tab%sAction.triggered.connect(lambda: browser.activeWindow().tabWidget().setCurrentIndex(%s))" % (tab,tab))
+            exec('self.addAction(tab%sAction)' % (tab,))
+
+        tabNineAction = QAction(self)
+        tabNineAction.setShortcuts(["Ctrl+9", "Alt+9"])
+        tabNineAction.triggered.connect(lambda: self.tabWidget().setCurrentIndex(self.tabWidget().count()-1))
+        self.addAction(tabNineAction)
+
     # Redefine show function.
     def show(self):
         self.setVisible(True)
