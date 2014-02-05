@@ -505,7 +505,7 @@ class MainWindow(QMainWindow):
 
         # Add settings dialog action.
         settingsAction = QAction(common.complete_icon("preferences-system"), tr("&Settings..."), self)
-        settingsAction.setShortcuts(["Ctrl+,", "Ctrl+Alt+P"])
+        settingsAction.setShortcut("Ctrl+,")
         settingsAction.triggered.connect(self.openSettings)
         mainMenu.addAction(settingsAction)
 
