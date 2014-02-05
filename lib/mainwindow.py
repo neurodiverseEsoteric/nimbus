@@ -71,8 +71,11 @@ tabbar_stylesheet = \
 
 # Extension button class.
 class ExtensionButton(QToolButton):
-    def __init__(self, script="", shortcut=None, parent=None):
+    def __init__(self, name=None, script="", shortcut=None, parent=None):
         super(ExtensionButton, self).__init__(parent)
+        self.name = "new-extension"
+        if name:
+            self.name = name
         if shortcut:
             self.setShortcut(QKeySequence.fromString(shortcut))
         settings.extension_buttons.append(self)
@@ -729,7 +732,7 @@ self.origY + ev.globalY() - self.mouseY)
                         f = open(shortcut_path, "r")
                         shortcut = copy.copy(f.read().replace("\n", ""))
                         f.close()
-                    newExtension = ExtensionButton(script, shortcut, self)
+                    newExtension = ExtensionButton(extension, script, shortcut, self)
                     self.extensionButtonGroup.addButton(newExtension)
                     newExtension.setToolTip(extension.replace("_", " ").\
                                             title() +\

@@ -1,5 +1,5 @@
 try: common.webutations
-except: common.webutations = os.path.join(settings.extensions_folder, "webutations")
+except: common.webutations = os.path.join(settings.extensions_folder, self.name)
 if not common.webutations in sys.path:
     sys.path.append(common.webutations)
 
@@ -20,7 +20,7 @@ if score and mx:
     scor = score.text + "/" + mx.text
 else:
     scor = "Unknown domain"
-print(scor)
+#print(scor)
 currentWidget.page().mainFrame().evaluateJavaScript("\nwindow.alert(\'Webutation: " + scor + "\');")
 if not (score and mx):
     mainWindow.addTab(url=newurl)
