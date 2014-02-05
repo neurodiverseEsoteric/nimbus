@@ -71,22 +71,25 @@ tabbar_stylesheet = \
 
 # Extension button class.
 class ExtensionButton(QToolButton):
-    def __init__(self, name=None, script="", shortcut=None, parent=None):
+    def __init__(self, name=None, script="", etype="python", shortcut=None, parent=None):
         super(ExtensionButton, self).__init__(parent)
         self.name = "new-extension"
         if name:
             self.name = name
         if shortcut:
             self.setShortcut(QKeySequence.fromString(shortcut))
+        self.etype = etype
         settings.extension_buttons.append(self)
         self._parent = parent
         self.script = script
     def parentWindow(self):
         return self._parent
     def loadScript(self):
-        try: exec(self.script)
-        except:
-            traceback.print_exc()
+        if self.etype == "python":
+            try: exec(self.script)
+            except:
+                QMessageBox.information(self, tr("Error"), traceback.format_exc())
+        else:
             self._parent.currentWidget().page().mainFrame().\
             evaluateJavaScript(self.script)
 
@@ -732,8 +735,10 @@ self.origY + ev.globalY() - self.mouseY)
 
             if os.path.isdir(extension_path):
                 script_path = os.path.join(extension_path, "script.py")
+                etype = "python"
                 if not os.path.isfile(script_path):
                     script_path = os.path.join(extension_path, "script.js")
+                    etype = "js"
                 icon_path = os.path.join(extension_path, "icon.png")
                 shortcut_path = os.path.join(extension_path, "shortcut.txt")
                 if os.path.isfile(script_path):
@@ -745,7 +750,7 @@ self.origY + ev.globalY() - self.mouseY)
                         f = open(shortcut_path, "r")
                         shortcut = copy.copy(f.read().replace("\n", ""))
                         f.close()
-                    newExtension = ExtensionButton(extension, script, shortcut, self)
+                    newExtension = ExtensionButton(extension, script, etype, shortcut, self)
                     self.extensionButtonGroup.addButton(newExtension)
                     newExtension.setToolTip(extension.replace("_", " ").\
                                             title() +\
