@@ -528,7 +528,7 @@ class MainWindow(QMainWindow):
         settingsAction.triggered.connect(self.openSettings)
         mainMenu.addAction(settingsAction)
 
-        clippingsAction = QAction(tr("&Manage Clippings..."), self)
+        clippingsAction = QAction(common.complete_icon("edit-paste"), tr("&Manage Clippings..."), self)
         clippingsAction.setShortcut("Ctrl+Shift+M")
         clippingsAction.triggered.connect(self.openClippings)
         mainMenu.addAction(clippingsAction)

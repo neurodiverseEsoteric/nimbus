@@ -83,7 +83,7 @@ class SystemTrayIcon(QSystemTrayIcon):
         self.menu.addAction(settingsAction)
 
         # Clippings manager
-        clippingsAction = QAction(tr("&Manage Clippings..."), self)
+        clippingsAction = QAction(common.complete_icon("edit-paste"), tr("&Manage Clippings..."), self)
         clippingsAction.triggered.connect(self.openClippings)
         self.menu.addAction(clippingsAction)
 
