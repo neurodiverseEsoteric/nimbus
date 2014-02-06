@@ -566,16 +566,22 @@ class MainWindow(QMainWindow):
 
         # Add main menu action/button.
         self.mainMenuAction =\
-             QAction(common.complete_icon("document-properties"),\
-                     tr("&Menu"), self)
+             QAction(tr("&Menu"), self)
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
         self.mainMenuAction.setMenu(mainMenu)
         self.addAction(self.mainMenuAction)
-        self.toolBar.addAction(self.mainMenuAction)
-        self.toolBar.widgetForAction(self.mainMenuAction).\
-             setPopupMode(QToolButton.InstantPopup)
+        if self.appMode:
+            self.tabsToolBar.addSeparator()
+            self.tabsToolBar.addAction(self.mainMenuAction)
+            self.tabsToolBar.widgetForAction(self.mainMenuAction).\
+                setPopupMode(QToolButton.InstantPopup)
+        else:
+            self.mainMenuAction.setIcon(common.complete_icon("document-properties"))
+            self.toolBar.addAction(self.mainMenuAction)
+            self.toolBar.widgetForAction(self.mainMenuAction).\
+                setPopupMode(QToolButton.InstantPopup)
         self.mainMenuAction.triggered.\
-             connect(lambda: self.toolBar.\
+             connect(lambda: (self.tabsToolBar if self.appMode else self.toolBar).\
              widgetForAction(self.mainMenuAction).showMenu())
 
         # This is a dummy sidebar used to
