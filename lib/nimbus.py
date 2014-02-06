@@ -129,17 +129,19 @@ if has_dbus:
         @dbus.service.method("org.nimbus.Nimbus", in_signature="s",\
                              out_signature="s")
         def addTab(self, url="about:blank"):
-            if url.startswith("--app="):
+            if url == "--app":
                 win = MainWindow()
                 win.toolBar.setVisible(False)
                 win.statusBar.setVisible(False)
-                win.addTab(url=url.replace("--app=", ""))
+                win.addTab(url="about:blank")
                 win.show()
                 return url
             else:
                 for window in browser.windows[::-1]:
                     if window.isVisible():
                         window.addTab(url=url)
+                        if window.tabWidget().widget(0).url().toString() == "about:blank":
+                            window.removeTab(0)
                         browser.windows[-1].activateWindow()
                         return url
                 self.addWindow(url)
@@ -174,8 +176,7 @@ def main():
     # exit.
     if dbus_present:
         for arg in sys.argv[1:]:
-            if "." in arg or ":" in arg:
-                proxy.addTab(arg)
+            proxy.addTab(arg)
         if len(sys.argv) < 2:
             proxy.addWindow()
         return

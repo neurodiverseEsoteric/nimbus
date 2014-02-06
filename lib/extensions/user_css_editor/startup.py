@@ -4,6 +4,7 @@ self.styleMenuButton.setShortcut("Ctrl+Shift+C")
 try: self.styleMenuButton.setIcon(QIcon(common.complete_icon("style")))
 except: traceback.print_exc()
 self.styleMenuButton.setCheckable(True)
+self.addAction(self.styleMenuButton)
 self.toolBar.insertAction(self.feedMenuButton, self.styleMenuButton)
 def togglestyleDock():
     try: browser.activeWindow().styleDock

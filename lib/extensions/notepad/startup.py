@@ -4,6 +4,7 @@ self.notePadMenuButton.setShortcut("Ctrl+Shift+E")
 try: self.notePadMenuButton.setIcon(QIcon(common.complete_icon("accessories-text-editor")))
 except: traceback.print_exc()
 self.notePadMenuButton.setCheckable(True)
+self.addAction(self.notePadMenuButton)
 self.toolBar.insertAction(self.feedMenuButton, self.notePadMenuButton)
 def togglenotePadDock():
     try: browser.activeWindow().notePadDock
