@@ -201,7 +201,7 @@ def main():
     # Create tray icon.
     common.trayIcon = SystemTrayIcon(QCoreApplication.instance())
     common.trayIcon.newWindowRequested.connect(addWindow)
-    common.trayIcon.windowReopenRequested.connect(reopenWindow)
+    #common.trayIcon.windowReopenRequested.connect(reopenWindow)
     common.trayIcon.show()
 
     # Creates a licensing information dialog.
