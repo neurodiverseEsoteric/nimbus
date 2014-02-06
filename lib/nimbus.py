@@ -130,8 +130,11 @@ if has_dbus:
                              out_signature="s")
         def addTab(self, url="about:blank"):
             if url.startswith("--app="):
-                url = url.replace("--app=", "")
-                os.system(os.path.join(common.app_folder, "webapp.py") + " " + url + " &")
+                win = MainWindow()
+                win.toolBar.setVisible(False)
+                win.statusBar.setVisible(False)
+                win.addTab(url=url.replace("--app=", ""))
+                win.show()
                 return url
             else:
                 for window in browser.windows[::-1]:
