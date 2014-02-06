@@ -78,6 +78,9 @@ class GeneralSettingsPanel(SettingsPanel):
         self.pinnedTabCount.setMaximum(9999)
         self.layout().addWidget(self.pinnedTabCountRow)
 
+        self.tabHotkeysToggle = QCheckBox(tr("E&nable tab hotkeys"), self)
+        self.layout().addWidget(self.tabHotkeysToggle)
+
         self.homeButtonVisibleToggle = QCheckBox(tr("Show &home button"), self)
         self.layout().addWidget(self.homeButtonVisibleToggle)
 
@@ -96,6 +99,7 @@ class GeneralSettingsPanel(SettingsPanel):
         self.reopenableTabCount.setValue(settings.setting_to_int("general/ReopenableTabCount"))
         self.reopenableWindowCount.setValue(settings.setting_to_int("general/ReopenableWindowCount"))
         self.pinnedTabCount.setValue(settings.setting_to_int("general/PinnedTabCount"))
+        self.tabHotkeysToggle.setChecked(settings.setting_to_bool("general/TabHotkeysVisible"))
         self.homeButtonVisibleToggle.setChecked(settings.setting_to_bool("general/HomeButtonVisible"))
         self.upButtonVisibleToggle.setChecked(settings.setting_to_bool("general/UpButtonVisible"))
         self.feedButtonVisibleToggle.setChecked(settings.setting_to_bool("general/FeedButtonVisible"))
@@ -107,6 +111,7 @@ class GeneralSettingsPanel(SettingsPanel):
         settings.settings.setValue("general/ReopenableWindowCount", self.reopenableWindowCount.text())
         settings.settings.setValue("general/ReopenableTabCount", self.reopenableTabCount.text())
         settings.settings.setValue("general/PinnedTabCount", self.pinnedTabCount.text())
+        settings.settings.setValue("general/TabHotkeysVisible", self.tabHotkeysToggle.isChecked())
         settings.settings.setValue("general/HomeButtonVisible", self.homeButtonVisibleToggle.isChecked())
         settings.settings.setValue("general/UpButtonVisible", self.upButtonVisibleToggle.isChecked())
         settings.settings.setValue("general/FeedButtonVisible", self.feedButtonVisibleToggle.isChecked())
