@@ -167,6 +167,9 @@ class MainWindow(QMainWindow):
         self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
         self.addToolBarBreak(Qt.BottomToolBarArea)
 
+        # Extensions toolbar.
+        self.extensionBar = self.statusBar.widgetToolBar
+
         # Set tabs as central widget.
         self.setCentralWidget(self.tabs)
 
@@ -362,14 +365,6 @@ class MainWindow(QMainWindow):
 
         self.extensionButtonGroup = QButtonGroup(self)
         self.extensionButtonGroup.setExclusive(True)
-
-        # Extensions toolbar.
-        self.extensionBar = QToolBar(self)
-        self.extensionBar.setMovable(False)
-        self.extensionBar.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.extensionBar.setStyleSheet("QToolBar { border: 0; border-right: 1px solid palette(dark); background: palette(window); }")
-        self.addToolBar(Qt.LeftToolBarArea, self.extensionBar)
-        self.extensionBar.hide()
 
         # Main menu.
         mainMenu = QMenu(self)
