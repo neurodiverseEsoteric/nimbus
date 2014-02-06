@@ -131,7 +131,7 @@ class MainWindow(QMainWindow):
 
         # Tabs toolbar.
         self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
-                           #contextMenuPolicy=Qt.CustomContextMenu,\
+                           contextMenuPolicy=Qt.CustomContextMenu,\
                            parent=self,
                            windowTitle=tr("Tabs"))
         self.addToolBar(self.tabsToolBar)
@@ -139,7 +139,7 @@ class MainWindow(QMainWindow):
 
         # Main toolbar.
         self.toolBar = QToolBar(movable=False,\
-                                #contextMenuPolicy=Qt.CustomContextMenu,\
+                                contextMenuPolicy=Qt.CustomContextMenu,\
                                 parent=self,
                                 windowTitle=tr("Navigation Toolbar"))
         self.addToolBar(self.toolBar)
@@ -166,6 +166,7 @@ class MainWindow(QMainWindow):
         self.tabs.tabCloseRequested.connect(self.removeTab)
 
         self.statusBar = status_bar.StatusBar(self)
+        self.statusBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.statusBar.setWindowTitle(tr("Status Bar"))
         self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
         self.addToolBarBreak(Qt.BottomToolBarArea)
@@ -250,6 +251,7 @@ class MainWindow(QMainWindow):
         self.backAction = self.actionsPage.action(QWebPage.Back)
         self.backAction.setShortcut("Alt+Left")
         self.backAction.triggered.connect(self.back)
+        self.addAction(self.backAction)
         self.toolBar.addAction(self.backAction)
         self.toolBar.widgetForAction(self.backAction).setPopupMode(QToolButton.MenuButtonPopup)
 
@@ -261,6 +263,7 @@ class MainWindow(QMainWindow):
         self.forwardAction = self.actionsPage.action(QWebPage.Forward)
         self.forwardAction.setShortcut("Alt+Right")
         self.forwardAction.triggered.connect(self.forward)
+        self.addAction(self.forwardAction)
         self.toolBar.addAction(self.forwardAction)
         self.toolBar.widgetForAction(self.forwardAction).setPopupMode(QToolButton.MenuButtonPopup)
 
@@ -270,6 +273,7 @@ class MainWindow(QMainWindow):
         self.forwardAction.setMenu(self.forwardHistoryMenu)
 
         self.upAction = QAction(self, triggered=self.up, icon=common.complete_icon("go-up"), text=tr("Go Up"))
+        self.addAction(self.upAction)
         self.toolBar.addAction(self.upAction)
         self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.MenuButtonPopup)
         self.upAction.setVisible(False)
@@ -281,12 +285,14 @@ class MainWindow(QMainWindow):
         self.upAction.setMenu(self.upMenu)
 
         self.nextAction = QAction(self, triggered=self.next, icon=common.complete_icon("media-skip-forward"), text=tr("Go Next"))
+        self.addAction(self.nextAction)
         self.toolBar.addAction(self.nextAction)
 
         self.stopAction = self.actionsPage.action(QWebPage.Stop)
         self.stopAction.triggered.connect(self.stop)
         self.stopAction.triggered.connect(lambda: self.stopAction.setEnabled(True))
         self.stopAction.triggered.connect(lambda: self.reloadAction.setEnabled(True))
+        self.addAction(self.stopAction)
         self.toolBar.addAction(self.stopAction)
 
         self.stopAction2 = QAction(self, triggered=self.stop, shortcut="Esc")
@@ -296,6 +302,7 @@ class MainWindow(QMainWindow):
         self.reloadAction.triggered.connect(self.reload)
         self.reloadAction.triggered.connect(lambda: self.stopAction.setEnabled(True))
         self.reloadAction.triggered.connect(lambda: self.reloadAction.setEnabled(True))
+        self.addAction(self.reloadAction)
         self.toolBar.addAction(self.reloadAction)
 
         self.reloadAction2 = QAction(self, triggered=self.reload)
@@ -304,6 +311,7 @@ class MainWindow(QMainWindow):
 
         # Go home button.
         self.homeAction = QAction(self, triggered=self.goHome, icon=common.complete_icon("go-home"), text=tr("Go Home"))
+        self.addAction(self.homeAction)
         self.toolBar.addAction(self.homeAction)
         self.homeAction.setVisible(False)
 
@@ -345,6 +353,7 @@ class MainWindow(QMainWindow):
         self.toolBar.addWidget(self.locationBar)
 
         self.feedMenuButton = QAction(common.complete_icon("application-rss+xml"), tr("Feeds"), self)
+        self.addAction(self.feedMenuButton)
         self.toolBar.addAction(self.feedMenuButton)
         self.toolBar.widgetForAction(self.feedMenuButton).setPopupMode(QToolButton.InstantPopup)
         self.toolBar.widgetForAction(self.feedMenuButton).setShortcut(QKeySequence.fromString("Ctrl+Alt+R"))
@@ -357,6 +366,7 @@ class MainWindow(QMainWindow):
         self.searchEditButton = QAction(common.complete_icon("system-search"), tr("Manage Search Engines"), self)
         self.searchEditButton.setShortcut("Ctrl+K")
         self.searchEditButton.triggered.connect(common.searchEditor.show)
+        self.addAction(self.searchEditButton)
         self.toolBar.addAction(self.searchEditButton)
 
         # Ctrl+L/Alt+D focuses the location bar.
@@ -554,6 +564,7 @@ class MainWindow(QMainWindow):
                      tr("&Menu"), self)
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
         self.mainMenuAction.setMenu(mainMenu)
+        self.addAction(self.mainMenuAction)
         self.toolBar.addAction(self.mainMenuAction)
         self.toolBar.widgetForAction(self.mainMenuAction).\
              setPopupMode(QToolButton.InstantPopup)

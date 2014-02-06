@@ -276,12 +276,14 @@ def main():
         else:
             win = MainWindow()
 
+        if "--app" in sys.argv:
+            win.toolBar.setVisible(False)
+            win.statusBar.setVisible(False)
+
         # Open URLs from command line.
         if len(sys.argv[1:]) > 0:
-           for arg in sys.argv[1:]:
-                if arg.startswith("--app="):
-                    os.system(os.path.join(common.app_folder, "webapp.py") + " " + arg.replace("--app=", "") + " &")
-                elif "." in arg or ":" in arg:
+            for arg in sys.argv[1:]:
+                if "." in arg or ":" in arg:
                     win.addTab(url=arg)
 
         if win.tabWidget().count() < 1:
