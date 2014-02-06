@@ -94,11 +94,12 @@ def loadSession(session_file=settings.session_file):
                 if type(window) is dict:
                     try:
                         closed_tabs = window["closed_tabs"]
+                        appMode = window["app_mode"]
                         window = window["tabs"]
                     except: window = []
                 if len(window) == 0:
                     continue
-                win = MainWindow()
+                win = MainWindow(appMode=appMode)
                 try: win.closedTabs = closed_tabs
                 except: pass
                 for tab in range(len(window)):
@@ -125,7 +126,9 @@ sessionLock = False
 def reopenWindow():
     if len(browser.closedWindows) > 0:
         session = browser.closedWindows.pop()
-        win = MainWindow()
+        try: appMode = session["app_mode"]
+        except: appMode = False
+        win = MainWindow(appMode=appMode)
         win.loadSession(session["tabs"])
         win.closedTabs = session["closed_tabs"]
         win.show()
@@ -138,7 +141,7 @@ def saveSession(session_file=settings.session_file):
         session_full = {}
         session = []
         for window in browser.windows:
-            session.append({"tabs": [], "closed_tabs": window.closedTabs})
+            session.append({"tabs": [], "closed_tabs": window.closedTabs, "app_mode": window.appMode})
             for tab in range(window.tabWidget().count()):
                 session[-1]["tabs"].append((window.tabWidget().widget(tab).\
                                    saveHistory() if not\

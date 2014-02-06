@@ -130,9 +130,7 @@ if has_dbus:
                              out_signature="s")
         def addTab(self, url="about:blank"):
             if url == "--app":
-                win = MainWindow()
-                win.toolBar.setVisible(False)
-                win.statusBar.setVisible(False)
+                win = MainWindow(appMode=True)
                 win.addTab(url="about:blank")
                 win.show()
                 return url
@@ -278,11 +276,7 @@ def main():
         if len(browser.windows) > 0:
             win = browser.windows[-1]
         else:
-            win = MainWindow()
-
-        if "--app" in sys.argv:
-            win.toolBar.setVisible(False)
-            win.statusBar.setVisible(False)
+            win = MainWindow(appMode = ("--app" in sys.argv))
 
         # Open URLs from command line.
         if len(sys.argv[1:]) > 0:

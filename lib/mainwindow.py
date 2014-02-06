@@ -99,13 +99,15 @@ class ExtensionButton(QToolButton):
 # Custom MainWindow class.
 # This contains basic navigation controls, a location bar, and a menu.
 class MainWindow(QMainWindow):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, appMode=False, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         # These are used to store where the mouse pressed down.
         # This is used in a hack to drag the window by the toolbar.
         self.mouseX = False
         self.mouseY = False
+        
+        self.appMode = bool(appMode)
         
         #self.setStyleSheet("* { font-family: Liberation Sans, sans; }")
 
@@ -143,6 +145,8 @@ class MainWindow(QMainWindow):
                                 parent=self,
                                 windowTitle=tr("Navigation Toolbar"))
         self.addToolBar(self.toolBar)
+        if self.appMode:
+            self.toolBar.setVisible(False)
 
         # Tab widget for tabbed browsing.
         self.tabs = custom_widgets.TabWidget(self)
@@ -169,6 +173,8 @@ class MainWindow(QMainWindow):
         self.statusBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.statusBar.setWindowTitle(tr("Status Bar"))
         self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
+        if self.appMode:
+            self.statusBar.setVisible(False)
         self.addToolBarBreak(Qt.BottomToolBarArea)
 
         # Extensions toolbar.
@@ -709,7 +715,7 @@ self.origY + ev.globalY() - self.mouseY)
     # Deletes any closed windows above the reopenable window count,
     # and blanks all the tabs and sidebars.
     def closeEvent(self, ev):
-        window_session = {"tabs": [], "closed_tabs": self.closedTabs}
+        window_session = {"tabs": [], "closed_tabs": self.closedTabs, "app_mode": self.appMode}
         for tab in range(self.tabWidget().count()):
             window_session["tabs"].append(self.tabWidget().widget(tab).saveHistory())
         browser.closedWindows.append(window_session)
@@ -1195,7 +1201,7 @@ self.origY + ev.globalY() - self.mouseY)
             webView.url().toString() not in\
             ("about:blank", "",\
              QUrl.fromUserInput(settings.new_tab_page).toString(),) or webView._historyToBeLoaded:
-                self.closedTabs.append((webView.saveHistory(), index))
+                self.closedTabs.append((webView.saveHistory(), index, webView.incognito))
                 while len(self.closedTabs) >\
                 settings.setting_to_int("general/ReopenableTabCount"):
                     self.closedTabs.pop(0)
@@ -1211,7 +1217,9 @@ self.origY + ev.globalY() - self.mouseY)
     def reopenTab(self):
         if len(self.closedTabs) > 0:
             index = self.closedTabs[-1][1]
-            self.addTab(index=index)
+            try: incognito = self.closedTabs[-1][2]
+            except: incognito = False
+            self.addTab(index=index, incognito=incognito)
             self.tabWidget().setCurrentIndex(index)
             self.tabWidget().widget(index).loadHistory(self.closedTabs[-1][0])
             del self.closedTabs[-1]
