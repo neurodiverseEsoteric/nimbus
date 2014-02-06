@@ -700,9 +700,9 @@ self.origY + ev.globalY() - self.mouseY)
     # Deletes any closed windows above the reopenable window count,
     # and blanks all the tabs and sidebars.
     def closeEvent(self, ev):
-        window_session = []
+        window_session = {"tabs": [], "closed_tabs": self.closedTabs}
         for tab in range(self.tabWidget().count()):
-            window_session.append(self.tabWidget().widget(tab).saveHistory())
+            window_session["tabs"].append(self.tabWidget().widget(tab).saveHistory())
         browser.closedWindows.append(window_session)
         while len(browser.closedWindows) >\
                settings.setting_to_int("general/ReopenableWindowCount"):
@@ -1090,7 +1090,8 @@ self.origY + ev.globalY() - self.mouseY)
         if len(browser.closedWindows) > 0:
             session = browser.closedWindows.pop()
             win = MainWindow()
-            win.loadSession(session)
+            win.loadSession(session["tabs"])
+            win.closedTabs = session["closed_tabs"]
             win.show()
 
     def addTab(self, webView=None, index=None, focus=True, incognito=None, **kwargs):

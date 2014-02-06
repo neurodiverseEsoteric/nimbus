@@ -83,12 +83,24 @@ def loadSession(session_file=settings.session_file):
     try:
         if os.path.exists(session_file):
             f = open(session_file, "rb")
-            session = pickle.load(f)
+            session_full = pickle.load(f)
             f.close()
+            if type(session_full) is dict:
+                session = session_full["session"]
+                browser.closedWindows = session_full["closed_windows"]
+            else:
+                session = session_full
             for window in session:
+                if type(window) is dict:
+                    try:
+                        closed_tabs = window["closed_tabs"]
+                        window = window["tabs"]
+                    except: window = []
                 if len(window) == 0:
                     continue
                 win = MainWindow()
+                try: win.closedTabs = closed_tabs
+                except: pass
                 for tab in range(len(window)):
                     try:
                         incognito = bool(window[tab][2])
@@ -115,11 +127,12 @@ def saveSession(session_file=settings.session_file):
     global sessionLock
     if not sessionLock:
         sessionLock = True
+        session_full = {}
         session = []
         for window in browser.windows:
-            session.append([])
+            session.append({"tabs": [], "closed_tabs": window.closedTabs})
             for tab in range(window.tabWidget().count()):
-                session[-1].append((window.tabWidget().widget(tab).\
+                session[-1]["tabs"].append((window.tabWidget().widget(tab).\
                                    saveHistory() if not\
                             window.tabWidget().widget(tab)._historyToBeLoaded\
                        else window.tabWidget().widget(tab)._historyToBeLoaded,
@@ -129,6 +142,8 @@ def saveSession(session_file=settings.session_file):
         except:
             sessionLock = False
             return
-        pickle.dump(session, f)
+        session_full["session"] = session
+        session_full["closed_windows"] = browser.closedWindows
+        pickle.dump(session_full, f)
         f.close()
         sessionLock = False
