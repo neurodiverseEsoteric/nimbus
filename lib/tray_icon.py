@@ -51,7 +51,7 @@ class SystemTrayIcon(QSystemTrayIcon):
 
         # Reopen window action
         reopenWindowAction = QAction(common.complete_icon("reopen-window"), tr("R&eopen Window"), self)
-        reopenWindowAction.triggered.connect(self.windowReopenRequested.emit)
+        reopenWindowAction.triggered.connect(self.reopenWindow)
         self.menu.addAction(reopenWindowAction)
 
         self.menu.addSeparator()
@@ -86,6 +86,10 @@ class SystemTrayIcon(QSystemTrayIcon):
         quitAction = QAction(common.complete_icon("application-exit"), tr("Quit"), self)
         quitAction.triggered.connect(QApplication.quit)
         self.menu.addAction(quitAction)
+
+    # Reopen window.
+    def reopenWindow(self):
+        session.reopenWindow()
 
     # Open settings dialog.
     def openSettings(self):

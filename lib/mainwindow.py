@@ -131,15 +131,17 @@ class MainWindow(QMainWindow):
 
         # Tabs toolbar.
         self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
-                           contextMenuPolicy=Qt.CustomContextMenu,\
-                           parent=self)
+                           #contextMenuPolicy=Qt.CustomContextMenu,\
+                           parent=self,
+                           windowTitle=tr("Tabs"))
         self.addToolBar(self.tabsToolBar)
         self.addToolBarBreak(Qt.TopToolBarArea)
 
         # Main toolbar.
         self.toolBar = QToolBar(movable=False,\
-                                contextMenuPolicy=Qt.CustomContextMenu,\
-                                parent=self)
+                                #contextMenuPolicy=Qt.CustomContextMenu,\
+                                parent=self,
+                                windowTitle=tr("Navigation Toolbar"))
         self.addToolBar(self.toolBar)
 
         # Tab widget for tabbed browsing.
@@ -164,6 +166,7 @@ class MainWindow(QMainWindow):
         self.tabs.tabCloseRequested.connect(self.removeTab)
 
         self.statusBar = status_bar.StatusBar(self)
+        self.statusBar.setWindowTitle(tr("Status Bar"))
         self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
         self.addToolBarBreak(Qt.BottomToolBarArea)
 
@@ -1082,12 +1085,7 @@ self.origY + ev.globalY() - self.mouseY)
                 self.tabWidget().widget(tab).loadHistory(session[tab])
 
     def reopenWindow(self):
-        if len(browser.closedWindows) > 0:
-            session = browser.closedWindows.pop()
-            win = MainWindow()
-            win.loadSession(session["tabs"])
-            win.closedTabs = session["closed_tabs"]
-            win.show()
+        common.trayIcon.reopenWindow()
 
     def addTab(self, webView=None, index=None, focus=True, incognito=None, **kwargs):
         # If a WebView object is specified, use it.

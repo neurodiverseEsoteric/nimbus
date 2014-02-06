@@ -103,14 +103,6 @@ def addWindow(url=None):
         win.addTab(url=url)
     win.show()
 
-# Reopen window method.
-def reopenWindow():
-    if len(browser.closedWindows) > 0:
-        session = browser.closedWindows.pop()
-        win = MainWindow()
-        win.loadSession(session)
-        win.show()
-
 # Preparations to quit.
 def prepareQuit():
     saveSession()

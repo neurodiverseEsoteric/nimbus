@@ -122,6 +122,14 @@ def loadSession(session_file=settings.session_file):
 # Stores whether the session is being written to or not.
 sessionLock = False
 
+def reopenWindow():
+    if len(browser.closedWindows) > 0:
+        session = browser.closedWindows.pop()
+        win = MainWindow()
+        win.loadSession(session["tabs"])
+        win.closedTabs = session["closed_tabs"]
+        win.show()
+
 # Restore session.
 def saveSession(session_file=settings.session_file):
     global sessionLock
