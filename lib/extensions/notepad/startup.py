@@ -25,7 +25,7 @@ def togglenotePadDock():
         mainWindow.notePadEdit.setFontFamily("monospace")
         mainWindow.notePadDock.setWindowTitle(tr("Notepad"))
         mainWindow.notePadDock.setWidget(browser.activeWindow().notePadEdit)
-        mainWindow.addDockWidget(Qt.RightDockWidgetArea, mainWindow.notePadDock)
+        mainWindow.addDockWidget((Qt.RightDockWidgetArea if mainWindow.layoutDirection() == Qt.LeftToRight else Qt.LeftDockWidgetArea), mainWindow.notePadDock)
         def save():
             try: f = open(os.path.join(settings.settings_folder, "notes.txt"), "w")
             except: pass

@@ -62,7 +62,7 @@ def toggleFeedsDock():
             else:
                 browser.activeWindow().tabs.currentWidget().load(QUrl.fromUserInput(item.text()))
         browser.activeWindow().feedsList.itemActivated.connect(loadFeed)
-        mainWindow.addDockWidget(Qt.RightDockWidgetArea, mainWindow.feedsDock)
+        mainWindow.addDockWidget((Qt.RightDockWidgetArea if mainWindow.layoutDirection() == Qt.LeftToRight else Qt.LeftDockWidgetArea), mainWindow.feedsDock)
     else:
         browser.activeWindow().feedsDock.setVisible(not browser.activeWindow().feedsDock.isVisible())
         browser.activeWindow().feedsList.clear()

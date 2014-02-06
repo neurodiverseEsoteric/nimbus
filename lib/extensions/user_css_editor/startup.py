@@ -25,7 +25,7 @@ def togglestyleDock():
         mainWindow.styleEdit.setFontFamily("monospace")
         mainWindow.styleDock.setWindowTitle(tr("User CSS Editor"))
         mainWindow.styleDock.setWidget(browser.activeWindow().styleEdit)
-        mainWindow.addDockWidget(Qt.RightDockWidgetArea, mainWindow.styleDock)
+        mainWindow.addDockWidget((Qt.RightDockWidgetArea if mainWindow.layoutDirection() == Qt.LeftToRight else Qt.LeftDockWidgetArea), mainWindow.styleDock)
         def save():
             try: f = open(settings.user_css, "w")
             except: pass

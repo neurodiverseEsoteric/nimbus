@@ -63,7 +63,7 @@ except:
 tabbar_stylesheet = \
 """QTabBar { margin: 0; padding: 0; border-bottom: 0; }
    QTabBar::tab { border: 1px solid palette(dark);
-                  border-left: 0; margin: 0; padding: 4px;
+                  border-%s: 0; margin: 0; padding: 4px;
                   background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                               stop: 0 palette(window),
                                               stop: 1 palette(dark)); }
@@ -184,7 +184,7 @@ class MainWindow(QMainWindow):
         self.tabsToolBar.layout().setSpacing(0)
         self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
         self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
-        self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
+        self.tabs.tabBar().setStyleSheet(tabbar_stylesheet % ("left" if self.layoutDirection() == Qt.LeftToRight else "right",))
 
         # New tab action.
         newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)
@@ -566,7 +566,7 @@ class MainWindow(QMainWindow):
         self.sideBar.setMaximumWidth(320)
         self.sideBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.sideBar.setFeatures(QDockWidget.NoDockWidgetFeatures)
-        self.addDockWidget(Qt.LeftDockWidgetArea, self.sideBar)
+        self.addDockWidget((Qt.LeftDockWidgetArea if self.layoutDirection() == Qt.LeftToRight else Qt.RightDockWidgetArea), self.sideBar)
         self.sideBar.hide()
 
         # Load browser extensions.
@@ -666,7 +666,7 @@ class MainWindow(QMainWindow):
         self.sideBars[name]["sideBar"].setWidget(container)
         for sidebar in self.sideBars.values():
             sidebar["sideBar"].setVisible(False)
-        self.addDockWidget(Qt.LeftDockWidgetArea,\
+        self.addDockWidget((Qt.LeftDockWidgetArea if self.layoutDirection() == Qt.LeftToRight else Qt.RightDockWidgetArea),\
                            self.sideBars[name]["sideBar"])
         self.tabifyDockWidget(self.sideBar, self.sideBars[name]["sideBar"])
         self.sideBars[name]["sideBar"].setVisible(True)
