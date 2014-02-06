@@ -1159,7 +1159,7 @@ self.origY + ev.globalY() - self.mouseY)
     def updateTabTitles(self):
         count = self.tabWidget().count()
         for index in range(0, count):
-            title = ("[%s]" % (str(index+1),) if index < 8 else ("[9]" if index == count-1 else "")) + " " + self.tabWidget().widget(index).shortWindowTitle()
+            title = ("[%s] " % (str(index+1),) if index < 8 else ("[9] " if index == count-1 else "")) + self.tabWidget().widget(index).shortWindowTitle()
             longtitle = self.tabWidget().widget(index).windowTitle()
             self.tabWidget().setTabText(index, "\u26bf" if index < settings.setting_to_int("general/PinnedTabCount") else title)
             if index == self.tabWidget().currentIndex():
