@@ -20,15 +20,16 @@ from translate import tr
 try:
     from PyQt5.QtCore import pyqtSignal
     Signal = pyqtSignal
-    from PyQt5.QtWidgets import QApplication, QMenu, QAction, QSystemTrayIcon
+    from PyQt5.QtGui import QCursor
+    from PyQt5.QtWidgets import QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget
 except:
     try:
         from PyQt4.QtCore import pyqtSignal
         Signal = pyqtSignal
-        from PyQt4.QtGui import QApplication, QMenu, QAction, QSystemTrayIcon
+        from PyQt4.QtGui import QCursor, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget
     except:
         from PySide.QtCore import Signal
-        from PySide.QtGui import QApplication, QMenu, QAction, QSystemTrayIcon
+        from PySide.QtGui import QCursor, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget
 
 # System tray icon.
 class SystemTrayIcon(QSystemTrayIcon):
@@ -43,6 +44,8 @@ class SystemTrayIcon(QSystemTrayIcon):
         # Set context menu.
         self.menu = QMenu(None)
         self.setContextMenu(self.menu)
+
+        self.activated.connect(self.showMenu)
 
         # New window action
         newWindowAction = QAction(common.complete_icon("window-new"), tr("&New Window"), self)
@@ -86,6 +89,14 @@ class SystemTrayIcon(QSystemTrayIcon):
         quitAction = QAction(common.complete_icon("application-exit"), tr("Quit"), self)
         quitAction.triggered.connect(QApplication.quit)
         self.menu.addAction(quitAction)
+
+    # Show menu.
+    def showMenu(self, reason=None):
+        self.menu.show()
+        if reason == QSystemTrayIcon.Trigger:
+            y = QDesktopWidget()
+            self.menu.move(min(QCursor.pos().x(), y.width() - self.menu.width()), min(QCursor.pos().y(), y.height() - self.menu.height()))
+            y.deleteLater()
 
     # Reopen window.
     def reopenWindow(self):
