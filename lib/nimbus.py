@@ -138,7 +138,7 @@ if has_dbus:
                 for window in browser.windows[::-1]:
                     if window.isVisible():
                         window.addTab(url=url)
-                        if window.tabWidget().widget(0).url().toString() == "about:blank":
+                        if not (window.tabWidget().widget(0).history().canGoBack() or window.tabWidget().widget(0).history().canGoForward()) and window.tabWidget().widget(0).url().toString() in ("about:blank", "", QUrl.fromUserInput(settings.new_tab_page).toString(),):
                             window.removeTab(0)
                         browser.windows[-1].activateWindow()
                         return url

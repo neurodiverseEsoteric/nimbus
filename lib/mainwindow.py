@@ -1119,6 +1119,9 @@ self.origY + ev.globalY() - self.mouseY)
         if "url" in kwargs:
             url = kwargs["url"]
             webview.load(QUrl.fromUserInput(url))
+        elif self.appMode == True:
+            url = settings.settings.value("general/Homepage")
+            webview.load(QUrl.fromUserInput(url))
 
         # Connect signals
         webview.loadProgress.connect(self.setProgress)
