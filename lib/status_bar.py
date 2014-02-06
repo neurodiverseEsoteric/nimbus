@@ -32,6 +32,7 @@ class StatusBar(QToolBar):
         self.fullStatusBar.layout().setSpacing(0)
         self.addWidget(self.fullStatusBar)
         self.downloadsBar = QMainWindow(self)
+        self.downloadsBar.setLayoutDirection(self.parent().layoutDirection())
         self.fullStatusBar.addWidget(self.downloadsBar)
         self.statusBar = QStatusBar(self)
         self.statusBar.setSizeGripEnabled(False)
