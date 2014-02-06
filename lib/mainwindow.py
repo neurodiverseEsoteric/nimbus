@@ -542,12 +542,7 @@ class MainWindow(QMainWindow):
 
         # About Nimbus action.
         aboutAction = QAction(common.complete_icon("help-about"), tr("A&bout Nimbus"), self)
-        aboutAction.triggered.connect(lambda: QMessageBox.about(self,\
-                                               tr("About Nimbus"),\
-                                               "<h3>" + tr("Nimbus") + " " +\
-                                               common.app_version +\
-                                               "</h3>" +\
-                                               tr("A Qt-based web browser made in Python.")))
+        aboutAction.triggered.connect(common.trayIcon.about)
         mainMenu.addAction(aboutAction)
 
         # Licensing information.

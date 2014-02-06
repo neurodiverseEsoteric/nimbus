@@ -18,18 +18,18 @@ from translate import tr
 # Extremely specific imports from PyQt5/PySide.
 # We give PyQt5 priority because it supports Qt5.
 try:
-    from PyQt5.QtCore import pyqtSignal
+    from PyQt5.QtCore import pyqtSignal, Qt
     Signal = pyqtSignal
     from PyQt5.QtGui import QCursor
-    from PyQt5.QtWidgets import QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget
+    from PyQt5.QtWidgets import QWidget, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget, QMessageBox
 except:
     try:
-        from PyQt4.QtCore import pyqtSignal
+        from PyQt4.QtCore import pyqtSignal, Qt
         Signal = pyqtSignal
-        from PyQt4.QtGui import QCursor, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget
+        from PyQt4.QtGui import QWidget, QCursor, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget, QMessageBox
     except:
-        from PySide.QtCore import Signal
-        from PySide.QtGui import QCursor, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget
+        from PySide.QtCore import Signal, Qt
+        from PySide.QtGui import QWidget, QCursor, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget, QMessageBox
 
 # System tray icon.
 class SystemTrayIcon(QSystemTrayIcon):
@@ -40,6 +40,10 @@ class SystemTrayIcon(QSystemTrayIcon):
 
         # Set tooltip.
         self.setToolTip(tr("Nimbus"))
+        
+        self.widget = QWidget(None)
+        self.widget.resize(0, 0)
+        self.widget.setWindowFlags(Qt.FramelessWindowHint)
 
         # Set context menu.
         self.menu = QMenu(None)
@@ -85,6 +89,11 @@ class SystemTrayIcon(QSystemTrayIcon):
 
         self.menu.addSeparator()
 
+        # About Nimbus action.
+        aboutAction = QAction(common.complete_icon("help-about"), tr("A&bout Nimbus"), self)
+        aboutAction.triggered.connect(self.about)
+        self.menu.addAction(aboutAction)
+
         # Quit action
         quitAction = QAction(common.complete_icon("application-exit"), tr("Quit"), self)
         quitAction.triggered.connect(QApplication.quit)
@@ -97,6 +106,19 @@ class SystemTrayIcon(QSystemTrayIcon):
             y = QDesktopWidget()
             self.menu.move(min(QCursor.pos().x(), y.width() - self.menu.width()), min(QCursor.pos().y(), y.height() - self.menu.height()))
             y.deleteLater()
+
+    # About.
+    def about(self):
+        try: parent = browser.windows[-1]
+        except:
+            parent = self.widget
+            self.widget.show()
+        QMessageBox.about(parent, tr("About Nimbus"),\
+                          "<h3>" + tr("Nimbus") + " " +\
+                          common.app_version +\
+                          "</h3>" +\
+                          tr("A Qt-based web browser made in Python."))
+        self.widget.hide()
 
     # Reopen window.
     def reopenWindow(self):
