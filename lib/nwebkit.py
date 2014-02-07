@@ -184,6 +184,9 @@ class WebPage(QWebPage):
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
         self.loadFinished.connect(self.loadUserScripts)
 
+        # Custom userscript.
+        self.userScript = ""
+
         # This stores the user agent.
         self._userAgent = ""
         self._fullScreen = False
@@ -195,6 +198,10 @@ class WebPage(QWebPage):
 
         # Set user agent to default value.
         self.setUserAgent()
+
+    def setUserScript(self, script):
+        if script:
+            self.userScript = script
 
     # Performs a hack on Google pages to change their URLs.
     def doGoogleHack(self):
@@ -247,6 +254,7 @@ for (var i=0; i<__NimbusAdRemoverQueries.length; i++) {
     }
 }
 delete __NimbusAdRemoverQueries;""" % (settings.adremover_filters,))
+            self.mainFrame().evaluateJavaScript(self.userScript)
             for userscript in settings.userscripts:
                 for match in userscript["match"]:
                     try:

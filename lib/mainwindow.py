@@ -650,7 +650,7 @@ class MainWindow(QMainWindow):
 
     # Adds a sidebar.
     # Part of the extensions API.
-    def addSideBar(self, name="", url="about:blank", clip=None, ua=None, toolbar=True):
+    def addSideBar(self, name="", url="about:blank", clip=None, ua=None, toolbar=True, script=None, style=None):
         self.sideBars[name] = {"sideBar": QDockWidget(self),\
                                "url": QUrl(url), "clip": clip}
         self.sideBars[name]["sideBar"].setWindowTitle(name)
@@ -662,7 +662,12 @@ class MainWindow(QMainWindow):
         self.sideBars[name]["sideBar"].\
              webView = WebView(self.sideBars[name]["sideBar"])
         self.sideBars[name]["sideBar"].\
+             webView.page().setUserScript(script)
+        self.sideBars[name]["sideBar"].\
              webView.windowCreated.connect(self.addTab)
+        if style:
+            self.sideBars[name]["sideBar"].\
+                 webView.settings().setUserStyleSheetUrl(QUrl.fromUserInput(str(style)))    
         self.sideBars[name]["sideBar"].\
              webView.setUserAgent(ua)
         self.sideBars[name]["sideBar"].\
