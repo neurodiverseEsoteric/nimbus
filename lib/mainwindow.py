@@ -301,7 +301,7 @@ class MainWindow(QMainWindow):
         self.addAction(self.stopAction)
         self.toolBar.addAction(self.stopAction)
 
-        self.stopAction2 = QAction(self, triggered=self.stop, shortcut="Esc")
+        self.stopAction2 = QAction(self, triggered=self.toggleFindToolBar, shortcut="Esc")
         self.addAction(self.stopAction2)
 
         self.reloadAction = self.actionsPage.action(QWebPage.Reload)
@@ -579,6 +579,28 @@ class MainWindow(QMainWindow):
              connect(lambda: (self.tabsToolBar if self.appMode else self.toolBar).\
              widgetForAction(self.mainMenuAction).showMenu())
 
+        self.addToolBarBreak(Qt.TopToolBarArea)
+
+        self.findToolBar = QToolBar(self)
+        self.findToolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-top: 1px solid palette(dark);}")
+        self.findToolBar.setIconSize(QSize(16, 16))
+        self.findToolBar.setMovable(False)
+        self.findToolBar.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.addToolBar(Qt.BottomToolBarArea, self.findToolBar)
+        self.findToolBar.hide()
+
+        self.findBar = QLineEdit(self.findToolBar)
+        self.findBar.returnPressed.connect(self.findEither)
+
+        hideFindToolBarAction = QAction(self)
+        hideFindToolBarAction.triggered.connect(self.findToolBar.hide)
+        hideFindToolBarAction.setIcon(common.complete_icon("window-close"))
+
+        self.findToolBar.addWidget(self.findBar)
+        self.findToolBar.addAction(findPreviousAction)
+        self.findToolBar.addAction(findNextAction)
+        self.findToolBar.addAction(hideFindToolBarAction)
+        
         # This is a dummy sidebar used to
         # dock extension sidebars with.
         # You will never actually see this sidebar.
@@ -966,15 +988,43 @@ self.origY + ev.globalY() - self.mouseY)
                                                currentWidget().load2)
                 self.feedMenu.addAction(action)
 
+    def toggleFindToolBar(self):
+        if self.findBar.hasFocus():
+            self.findToolBar.hide()
+        else:
+            self.stop()
+
     # Find text/Text search methods.
     def find(self):
-        self.tabWidget().currentWidget().find()
+        currentWidget = self.tabWidget().currentWidget()
+        if type(currentWidget._findText) is not str:
+            currentWidget._findText = ""
+        self.findToolBar.show()
+        self.findBar.setFocus()
+        self.findBar.selectAll()
+        #currentWidget.findText(currentWidget._findText, QWebPage.FindWrapsAroundDocument)
+
+    def findEither(self):
+        if not QCoreApplication.instance().keyboardModifiers() == Qt.ShiftModifier:
+            self.findNext()
+        else:
+            self.findPrevious()
 
     def findNext(self):
-        self.tabWidget().currentWidget().findNext()
+        currentWidget = self.tabWidget().currentWidget()
+        if not currentWidget._findText and self.findBar.text() == "":
+            self.find()
+        else:
+            currentWidget._findText = self.findBar.text()
+            currentWidget.findText(currentWidget._findText, QWebPage.FindWrapsAroundDocument)
 
     def findPrevious(self):
-        self.tabWidget().currentWidget().findPrevious()
+        currentWidget = self.tabWidget().currentWidget()
+        if not currentWidget._findText and self.findBar.text() == "":
+            self.find()
+        else:
+            currentWidget._findText = self.findBar.text()
+            currentWidget.findText(currentWidget._findText, QWebPage.FindWrapsAroundDocument | QWebPage.FindBackward)
 
     # Page printing methods.
     def printPage(self):

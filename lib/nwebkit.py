@@ -122,6 +122,32 @@ class DownloadBar(QToolBar):
         abortAction.triggered.connect(self.deleteLater)
         self.addAction(abortAction)
 
+"""class JavaScriptBar(QToolBar):
+    def __init__(self, frame=None, msg=None, parent=None):
+        super(JavaScriptAlertBar, self).__init__(parent)
+        self.setStyleSheet("QToolBar{background-color: #FFBF00;border:0;border-bottom:1px solid #FF7F00;}QToolBar,QLabel{color:#1A1A1A;}")
+        self.setMovable(False)
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        
+        e1 = custom_widgets.HorizontalExpander(self)
+        self.addWidget(e1)
+        
+        self.toolBar = QToolBar(self)
+        self.toolBar.setStyleSheet("QToolBar{background-color:transparent;border:0;padding:0;margin:0;}")
+        self.addWidget(self.toolBar)
+        
+        e2 = custom_widgets.HorizontalExpander(self)
+        self.addWidget(e2)
+
+        self.button = QPushButton(self)
+        self.button.setText(tr("OK"))
+        self.button.clicked.connect(self.deleteLater)
+        self.addWidget(self.button)
+
+class JavaScriptAlertBar(JavaScriptBar):
+    def __init__(self, *args, **kwargs):
+        super(JavaScriptAlertBar, self).__init__(*args, **kwargs)"""
+
 # Class for exposing fullscreen API to DOM.
 class FullScreenRequester(QObject):
     fullScreenRequested = Signal(bool)
