@@ -647,6 +647,11 @@ class MainWindow(QMainWindow):
             return True
         return False
 
+    def getSideBar(self, name):
+        if self.hasSideBar(name):
+            return self.sideBars[name]
+        return None
+
     # Toggles the sidebar with name name.
     # Part of the extensions API.
     def toggleSideBar(self, name):
