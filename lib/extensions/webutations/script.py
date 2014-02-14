@@ -16,11 +16,18 @@ html = stdout_handle.read()
 soup = BeautifulSoup(io.StringIO(html))
 score = soup.find("span", {"class": "score"})
 mx = soup.find("span", {"class": "max"})
+sources = ["google-safebrowsing", "antivirus", "norton-safeweb", "webutation-reviews", "wot", "wikipedia", "child-safety"]
+data = []
+for source in sources:
+    try: data.append(soup.find("dt", {"id": source}).find("span", {"class": "pull-right"})["class"])
+    except: data.append("Unknown")
 if score and mx:
     scor = score.text + "/" + mx.text
+    try: data = [source[1].split("-")[-1].title() if len(source[1].split("-")[-1]) > 2 else "Safe" for source in data]
+    except: pass
 else:
     scor = "Unknown domain"
-#print(scor)
-currentWidget.page().mainFrame().evaluateJavaScript("\nwindow.alert(\'Webutation: " + scor + "\');")
+print(data + [scor,])
+QMessageBox.information(self, tr("Webutation"), "Google Safebrowsing: %s\nWebsite Antivirus: %s\nNorton Safeweb: %s\n\nWebutation Reviews: %s\nWOT (Web of Trust): %s\nWikipedia Trust Links: %s\nG-Rated / Child Safety: %s\n\n" "Webutation: %s" % tuple(data + [scor,]))
 if not (score and mx):
     mainWindow.addTab(url=newurl)
