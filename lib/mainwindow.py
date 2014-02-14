@@ -725,7 +725,8 @@ class MainWindow(QMainWindow):
         if ev.button() != Qt.LeftButton:
             return QMainWindow.mousePressEvent(self, ev)
         else:
-            QApplication.setOverrideCursor(Qt.SizeAllCursor)
+            if not QCoreApplication.instance().keyboardModifiers() in (Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier):
+                QApplication.setOverrideCursor(Qt.SizeAllCursor)
             self.mouseX = ev.globalX()
             self.origX = self.x()
             self.mouseY = ev.globalY()
