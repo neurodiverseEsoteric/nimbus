@@ -687,7 +687,7 @@ class MainWindow(QMainWindow):
         self.sideBars[name]["sideBar"].\
              setFeatures(QDockWidget.NoDockWidgetFeatures)
         self.sideBars[name]["sideBar"].\
-             webView = WebView(self.sideBars[name]["sideBar"], sizeHint=QSize(320, 320), minimumSizeHint=QSize(320, 320))
+             webView = WebView(self.sideBars[name]["sideBar"], sizeHint=QSize(320, 320))
         self.sideBars[name]["sideBar"].\
              webView.page().setUserScript(script)
         self.sideBars[name]["sideBar"].\
