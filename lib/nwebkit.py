@@ -417,8 +417,11 @@ class WebView(QWebView):
     nextExpressions = ("start=", "offset=", "page=", "first=", "pn=", "=",)
 
     # Initialize class.
-    def __init__(self, *args, incognito=False, **kwargs):
+    def __init__(self, *args, incognito=False, sizeHint=None, minimumSizeHint=None, **kwargs):
         super(WebView, self).__init__(*args, **kwargs)
+
+        self._sizeHint = sizeHint
+        self._minimumSizeHint = minimumSizeHint
 
         # Add this webview to the list of webviews.
         common.webviews.append(self)
@@ -540,6 +543,16 @@ class WebView(QWebView):
 
         if os.path.exists(settings.new_tab_page):
             self.load(QUrl("about:blank"))
+
+    def minimumSizeHint(self):
+        if not self._minimumSizeHint:
+            return super(WebView, self).minimumSizeHint()
+        return self._minimumSizeHint
+
+    def sizeHint(self):
+        if not self._sizeHint:
+            return super(WebView, self).sizeHint()
+        return self._sizeHint
 
     def updateHistoryTitle(self, title):
         url = self.url().toString().split("#")[0]

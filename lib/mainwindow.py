@@ -606,7 +606,7 @@ class MainWindow(QMainWindow):
         # You will never actually see this sidebar.
         self.sideBar = QDockWidget(self)
         self.sideBar.setWindowTitle(tr("Sidebar"))
-        self.sideBar.setMaximumWidth(320)
+        #self.sideBar.setMaximumWidth(320)
         self.sideBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.sideBar.setFeatures(QDockWidget.NoDockWidgetFeatures)
         self.addDockWidget((Qt.LeftDockWidgetArea if self.layoutDirection() == Qt.LeftToRight else Qt.RightDockWidgetArea), self.sideBar)
@@ -681,13 +681,13 @@ class MainWindow(QMainWindow):
         self.sideBars[name] = {"sideBar": QDockWidget(self),\
                                "url": QUrl(url), "clip": clip}
         self.sideBars[name]["sideBar"].setWindowTitle(name)
-        self.sideBars[name]["sideBar"].setMaximumWidth(320)
+        #self.sideBars[name]["sideBar"].setMaximumWidth(320)
         self.sideBars[name]["sideBar"].\
              setContextMenuPolicy(Qt.CustomContextMenu)
         self.sideBars[name]["sideBar"].\
              setFeatures(QDockWidget.NoDockWidgetFeatures)
         self.sideBars[name]["sideBar"].\
-             webView = WebView(self.sideBars[name]["sideBar"])
+             webView = WebView(self.sideBars[name]["sideBar"], sizeHint=QSize(320, 320), minimumSizeHint=QSize(320, 320))
         self.sideBars[name]["sideBar"].\
              webView.page().setUserScript(script)
         self.sideBars[name]["sideBar"].\
