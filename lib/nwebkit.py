@@ -907,10 +907,6 @@ class WebView(QWebView):
         self._cacheLoaded = False
         dirname = url.path()
         self._url = url.toString()
-        if url.scheme() == "nimbus":
-            x = common.htmlToBase64("<!DOCTYPE html><html><head><title>" + tr("Settings") + "</title></head><body><object type=\"application/x-qt-plugin\" classid=\"settingsDialog\" style=\"position: fixed; top: 0; left: 0; width: 100%; height: 100%;\"></object></body></html>")
-            QWebView.load(self, QUrl(x))
-            return
         if url.toString() == "about:blank":
             if os.path.exists(settings.new_tab_page):
                 loadwin = QWebView.load(self, QUrl.fromUserInput(settings.new_tab_page))
