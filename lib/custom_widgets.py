@@ -18,14 +18,30 @@ try:
     Signal = pyqtSignal
     from PyQt5.QtGui import QIcon
     from PyQt5.QtWidgets import QMainWindow, QAction, QToolButton, QPushButton, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
+    from PyQt5.QtWebKitWidgets import QWebView
 except:
     try:
         from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
         Signal = pyqtSignal
         from PyQt4.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
+        from PyQt5.QtWebKit import QWebView
     except:
         from PySide.QtCore import Qt, Signal, QPoint, QUrl, QSize
         from PySide.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
+        from PyQt5.QtWebKit import QWebView
+
+# About View
+class AboutView(QWebView):
+    def __init__(self, *args, sizeHint=None, **kwargs):
+        super(AboutView, self).__init__(*args, **kwargs)
+        self._sizeHint = sizeHint
+    def sizeHint(self):
+        if type(self._sizeHint) is QSize:
+            return self._sizeHint
+        return super(AboutView, self).sizeHint()
+    def load(self, url):
+        if "file" in url.scheme():
+            super(AboutView, self).load(url)
 
 # Blank widget to take up space.
 class Expander(QLabel):

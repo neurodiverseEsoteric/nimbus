@@ -11,7 +11,7 @@ if not self.parentWindow().hasSideBar(name):
     toolBar = self.parentWindow().getSideBar(name)["sideBar"].toolBar
     self.parentWindow().miniLocationBar = QLineEdit(container)
     focusMiniLocationBarAction = QAction(self.parentWindow())
-    focusMiniLocationBarAction.setShortcuts(["Alt+Shift+L", "Alt+Shift+D"])
+    focusMiniLocationBarAction.setShortcuts(["Alt+Shift+L", "Alt+Shift+D", "Alt+E"])
     focusMiniLocationBarAction.triggered.connect(self.parentWindow().miniLocationBar.setFocus)
     focusMiniLocationBarAction.triggered.connect(self.parentWindow().miniLocationBar.selectAll)
     self.parentWindow().addAction(focusMiniLocationBarAction)

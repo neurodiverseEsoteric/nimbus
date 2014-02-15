@@ -545,12 +545,12 @@ class WebView(QWebView):
             self.load(QUrl("about:blank"))
 
     def minimumSizeHint(self):
-        if not self._minimumSizeHint:
+        if not type(self._minimumSizeHint) is QSize:
             return super(WebView, self).minimumSizeHint()
         return self._minimumSizeHint
 
     def sizeHint(self):
-        if not self._sizeHint:
+        if not type(self._sizeHint) is QSize:
             return super(WebView, self).sizeHint()
         return self._sizeHint
 
