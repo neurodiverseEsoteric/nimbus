@@ -36,7 +36,15 @@ class BackgroundToolBar(QToolBar):
     def __init__(self, *args, **kwargs):
         super(BackgroundToolBar, self).__init__(*args, **kwargs)
         self.setIconSize(QSize(22, 22))
+        self.shownOnce = False
         self.setWindowFlags(Qt.FramelessWindowHint|Qt.WindowStaysOnTopHint)
+    def show(self):
+        super(BackgroundToolBar, self).show()
+        if not self.shownOnce:
+            y = QDesktopWidget()
+            self.move(y.width()-self.width(), 0)
+            y.deleteLater()
+            self.shownOnce = True
     def mousePressEvent(self, ev):
         if ev.button() != Qt.LeftButton:
             return QToolBar.mousePressEvent(self, ev)
@@ -59,6 +67,7 @@ self.origY + ev.globalY() - self.mouseY)
         elif self.x() < 0:
             self.move(0, self.y())
         return QToolBar.mouseReleaseEvent(self, ev)
+        y.deleteLater()
 
 # System tray icon.
 class SystemTrayIcon(QSystemTrayIcon):
