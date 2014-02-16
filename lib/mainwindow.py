@@ -418,7 +418,7 @@ class MainWindow(QMainWindow):
         # Save page action.
         savePageAction = QAction(common.complete_icon("document-save-as"), tr("Save Page &As..."), self)
         savePageAction.setShortcut("Ctrl+S")
-        savePageAction.triggered.connect(lambda: self.tabWidget().currentWidget().downloadFile(QNetworkRequest(self.tabWidget().currentWidget().url())))
+        savePageAction.triggered.connect(self.savePage)
         mainMenu.addAction(savePageAction)
 
         mainMenu.addSeparator()
@@ -629,6 +629,13 @@ class MainWindow(QMainWindow):
         tabNineAction.setShortcuts(["Ctrl+9", "Alt+9"])
         tabNineAction.triggered.connect(lambda: self.tabWidget().setCurrentIndex(self.tabWidget().count()-1))
         self.addAction(tabNineAction)
+
+    def savePage(self):
+        currentWidget = self.tabWidget().currentWidget()
+        if currentWidget.url().toString() in ("", "about:blank", QUrl.fromUserInput(settings.new_tab_page).toString(),) and not currentWidget._cacheLoaded:
+            currentWidget.savePage()
+        else:
+            currentWidget.downloadFile(QNetworkRequest(currentWidget.url()))
 
     # Redefine show function.
     def show(self):
