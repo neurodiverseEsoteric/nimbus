@@ -37,13 +37,14 @@ class BackgroundToolBar(QToolBar):
         super(BackgroundToolBar, self).__init__(*args, **kwargs)
         self.setIconSize(QSize(22, 22))
         self.shownOnce = False
+        self.desktopWidget = QDesktopWidget()
         self.setWindowFlags(Qt.FramelessWindowHint|Qt.WindowStaysOnTopHint)
+    def halfScreen(self):
+        return int((self.desktopWidget.height()-self.height())/2)
     def show(self):
         super(BackgroundToolBar, self).show()
         if not self.shownOnce:
-            y = QDesktopWidget()
-            self.move(y.width()-self.width(), 0)
-            y.deleteLater()
+            self.move(self.desktopWidget.width()-self.width(), self.halfScreen())
             self.shownOnce = True
     def mousePressEvent(self, ev):
         if ev.button() != Qt.LeftButton:
@@ -61,13 +62,15 @@ class BackgroundToolBar(QToolBar):
 self.origY + ev.globalY() - self.mouseY)
     def mouseReleaseEvent(self, ev):
         QApplication.restoreOverrideCursor()
-        y = QDesktopWidget()
-        if self.x() + self.width() > y.width():
-            self.move(y.width()-self.width(), self.y())
+        if self.x() + self.width() > self.desktopWidget.width():
+            self.move(self.desktopWidget.width()-self.width(), self.y())
+            if self.halfScreen() - 64 <= self.y() <= self.halfScreen() + 64:
+                self.move(self.x(), self.halfScreen())
         elif self.x() < 0:
             self.move(0, self.y())
+            if self.halfScreen() - 64 <= self.y() <= self.halfScreen() + 64:
+                self.move(self.x(), self.halfScreen())
         return QToolBar.mouseReleaseEvent(self, ev)
-        y.deleteLater()
 
 # System tray icon.
 class SystemTrayIcon(QSystemTrayIcon):
