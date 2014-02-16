@@ -1303,11 +1303,13 @@ self.origY + ev.globalY() - self.mouseY)
     # Method to update the location bar text.
     def updateLocationText(self, url=None):
         try:
+            currentWidget = self.tabWidget().currentWidget()
             if type(url) not in (QUrl, str):
-                url = self.tabWidget().currentWidget()._urlText
+                url = currentWidget._urlText
             elif type(url) is QUrl:
                 url = url.toString()
-            self.locationBar.setEditText(url)
+            if url in (currentWidget.url().toString(), currentWidget._urlText):
+                self.locationBar.setEditText(url)
         except:
             pass
 
