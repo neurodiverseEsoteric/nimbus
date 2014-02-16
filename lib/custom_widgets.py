@@ -24,11 +24,11 @@ except:
         from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
         Signal = pyqtSignal
         from PyQt4.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
-        from PyQt5.QtWebKit import QWebView
+        from PyQt4.QtWebKit import QWebView
     except:
         from PySide.QtCore import Qt, Signal, QPoint, QUrl, QSize
         from PySide.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
-        from PyQt5.QtWebKit import QWebView
+        from PySide.QtWebKit import QWebView
 
 # About View
 class AboutView(QWebView):
