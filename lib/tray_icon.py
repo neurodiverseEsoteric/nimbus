@@ -10,6 +10,7 @@
 
 # Import everything we need.
 import common
+import browser
 import translate
 import settings
 import session
@@ -18,18 +19,46 @@ from translate import tr
 # Extremely specific imports from PyQt5/PySide.
 # We give PyQt5 priority because it supports Qt5.
 try:
-    from PyQt5.QtCore import pyqtSignal, Qt
+    from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QSize
     Signal = pyqtSignal
     from PyQt5.QtGui import QCursor
-    from PyQt5.QtWidgets import QWidget, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget, QMessageBox
+    from PyQt5.QtWidgets import QWidget, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget, QMessageBox, QToolButton, QToolBar, QLabel
 except:
     try:
-        from PyQt4.QtCore import pyqtSignal, Qt
+        from PyQt4.QtCore import pyqtSignal, Qt, QTimer, QSize
         Signal = pyqtSignal
-        from PyQt4.QtGui import QWidget, QCursor, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget, QMessageBox
+        from PyQt4.QtGui import QWidget, QCursor, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget, QMessageBox, QToolButton, QToolBar, QLabel
     except:
-        from PySide.QtCore import Signal, Qt
-        from PySide.QtGui import QWidget, QCursor, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget, QMessageBox
+        from PySide.QtCore import Signal, Qt, QTimer, QSize
+        from PySide.QtGui import QWidget, QCursor, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget, QMessageBox, QToolButton, QToolBar, QLabel
+
+class BackgroundToolBar(QToolBar):
+    def __init__(self, *args, **kwargs):
+        super(BackgroundToolBar, self).__init__(*args, **kwargs)
+        self.setIconSize(QSize(22, 22))
+        self.setWindowFlags(Qt.FramelessWindowHint|Qt.WindowStaysOnTopHint)
+    def mousePressEvent(self, ev):
+        if ev.button() != Qt.LeftButton:
+            return QToolBar.mousePressEvent(self, ev)
+        else:
+            if not QApplication.instance().keyboardModifiers() in (Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier):
+                QApplication.setOverrideCursor(Qt.SizeAllCursor)
+            self.mouseX = ev.globalX()
+            self.origX = self.x()
+            self.mouseY = ev.globalY()
+            self.origY = self.y()
+    def mouseMoveEvent(self, ev):
+        if self.mouseX and self.mouseY and not self.isMaximized():
+            self.move(self.origX + ev.globalX() - self.mouseX,
+self.origY + ev.globalY() - self.mouseY)
+    def mouseReleaseEvent(self, ev):
+        QApplication.restoreOverrideCursor()
+        y = QDesktopWidget()
+        if self.x() + self.width() > y.width():
+            self.move(y.width()-self.width(), self.y())
+        elif self.x() < 0:
+            self.move(0, self.y())
+        return QToolBar.mouseReleaseEvent(self, ev)
 
 # System tray icon.
 class SystemTrayIcon(QSystemTrayIcon):
@@ -99,10 +128,30 @@ class SystemTrayIcon(QSystemTrayIcon):
         quitAction.triggered.connect(QApplication.quit)
         self.menu.addAction(quitAction)
 
+        if self.geometry().width() < 8:
+            self.toolBar = BackgroundToolBar(None)
+            self.toolBar.setWindowTitle(tr("Nimbus"))
+            #self.toolBar.setStyleSheet("QToolBar{background:palette(window);border:0;}")
+            self.button = QToolButton(self.toolBar)
+            self.button.setIcon(common.app_icon)
+            self.button.clicked.connect(self.showMenu)
+            self.toolBar.addWidget(self.button)
+            extender = QLabel(tr("Nimbus"), self.toolBar)
+            self.toolBar.addWidget(extender)
+            self.toolBar.hide()
+            timer = QTimer(timeout=self.toggleButton, parent=self)
+            timer.start(500)
+
+    def toggleButton(self):
+        if len(browser.windows) == 0:
+            self.toolBar.show()
+        else:
+            self.toolBar.hide()
+
     # Show menu.
     def showMenu(self, reason=None):
         self.menu.show()
-        if reason == QSystemTrayIcon.Trigger:
+        if reason == QSystemTrayIcon.Trigger or not reason:
             y = QDesktopWidget()
             self.menu.move(min(QCursor.pos().x(), y.width() - self.menu.width()), min(QCursor.pos().y(), y.height() - self.menu.height()))
             y.deleteLater()
