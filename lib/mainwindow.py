@@ -317,6 +317,17 @@ class MainWindow(QMainWindow):
         self.reloadAction2.setShortcuts(["F5", "Ctrl+R"])
         self.addAction(self.reloadAction2)
 
+        """self.tabToSideBarAction = QAction(self, triggered=self.removeSideBar)
+        self.tabToSideBarAction.triggered.connect(self.tabToSideBar)
+        self.tabToSideBarAction.setText(tr("Tab To Sidebar"))
+        self.tabToSideBarAction.setIcon(common.complete_icon("format-indent-less"))
+        self.toolBar.addAction(self.tabToSideBarAction)
+
+        self.tabToSideBarAction2 = QAction(self, triggered=self.removeSideBar)
+        self.tabToSideBarAction2.triggered.connect(self.tabToSideBar)
+        self.tabToSideBarAction2.setShortcut("Ctrl+Shift+S")
+        self.addAction(self.tabToSideBarAction2)"""
+
         # Go home button.
         self.homeAction = QAction(self, triggered=self.goHome, icon=common.complete_icon("go-home"), text=tr("Go Home"))
         self.addAction(self.homeAction)
@@ -685,41 +696,67 @@ class MainWindow(QMainWindow):
                     self.sideBars[name]["sideBar"].\
                          webView.load(self.sideBars[name]["url"])
 
+    # Removes sidebar
     def removeSideBar(self):
         removeKeys = []
         for key in self.sideBars.keys():
             try: self.sideBars[key]["sideBar"].setVisible(self.sideBars[key]["sideBar"].isVisible())
             except: removeKeys.append(key)
         for key in removeKeys:
+            try: self.sideBars[key]["webView"].tabRequested.disconnect(self.sideBars[key]["sideBar"].deleteLater)
+            except: pass
             del self.sideBars[key]
-        print(self.sideBars)
+        #print(self.sideBars)
+
+    def tabToSideBar(self, index=None):
+        return
+        if not index:
+            index = self.tabWidget().currentIndex()
+        webView = self.tabWidget().widget(index)
+        self.tabWidget().removeTab(index)
+        name = webView.windowTitle()
+        if self.hasSideBar(name):
+            x = 0
+            while self.hasSideBar(name + (" (%s)" % (x,))):
+                x += 1
+            name = name + (" (%s)" % (x,))
+        self.addSideBar(name=name, webView=webView)
 
     # Adds a sidebar.
     # Part of the extensions API.
-    def addSideBar(self, name="", url="about:blank", clip=None, ua=None, toolbar=True, script=None, style=None):
+    def addSideBar(self, name="", url="about:blank", clip=None, ua=None, toolbar=True, script=None, style=None, webView=None):
         self.sideBars[name] = {"sideBar": QDockWidget(self),\
-                               "url": QUrl(url), "clip": clip}
+                               "url": QUrl(url), "clip": clip,
+                               "webView": None}
         self.sideBars[name]["sideBar"].setWindowTitle(name)
         #self.sideBars[name]["sideBar"].setMaximumWidth(320)
         self.sideBars[name]["sideBar"].\
              setContextMenuPolicy(Qt.CustomContextMenu)
         self.sideBars[name]["sideBar"].\
              setFeatures(QDockWidget.NoDockWidgetFeatures)
-        self.sideBars[name]["sideBar"].\
-             webView = WebView(self.sideBars[name]["sideBar"], sizeHint=QSize(320, 320))
-        self.sideBars[name]["sideBar"].\
-             webView.page().setUserScript(script)
-        self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.addTab)
-        self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.sideBars[name]["sideBar"].deleteLater)
-        self.sideBars[name]["sideBar"].\
-             webView.windowCreated.connect(self.addTab)
-        if style:
+        if not webView:
             self.sideBars[name]["sideBar"].\
-                 webView.settings().setUserStyleSheetUrl(QUrl.fromUserInput(str(style)))    
-        self.sideBars[name]["sideBar"].\
-             webView.setUserAgent(ua)
-        self.sideBars[name]["sideBar"].\
-             webView.load(QUrl(url))
+             webView = WebView(self.sideBars[name]["sideBar"], sizeHint=QSize(320, 320))
+            self.sideBars[name]["webView"] = self.sideBars[name]["sideBar"].webView
+            self.sideBars[name]["sideBar"].\
+             webView.page().setUserScript(script)
+            self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.addTab)
+            self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.sideBars[name]["sideBar"].deleteLater)
+            self.sideBars[name]["sideBar"].\
+                 webView.windowCreated.connect(self.addTab)
+            if style:
+                self.sideBars[name]["sideBar"].\
+                     webView.settings().setUserStyleSheetUrl(QUrl.fromUserInput(str(style)))    
+            self.sideBars[name]["sideBar"].\
+                 webView.setUserAgent(ua)
+            self.sideBars[name]["sideBar"].\
+                 webView.load(QUrl(url))
+        else:
+            webView._sizeHint = QSize(320, 320)
+            self.sideBars[name]["sideBar"].webView = webView
+            self.sideBars[name]["webView"] = self.sideBars[name]["sideBar"].webView
+            webView.setParent(self.sideBars[name]["sideBar"])
+            self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.sideBars[name]["sideBar"].deleteLater)
         container = QWidget(self.sideBars[name]["sideBar"])
         layout = QVBoxLayout(container)
         layout.setContentsMargins(0,0,0,0)
@@ -742,6 +779,7 @@ class MainWindow(QMainWindow):
             container.layout().addWidget(self.sideBars[name]["sideBar"].toolBar)
         container.layout().addWidget(self.sideBars[name]\
                                    ["sideBar"].webView)
+        self.sideBars[name]["sideBar"].webView.show()
         self.sideBars[name]["sideBar"].setWidget(container)
         for sidebar in self.sideBars.values():
             try: sidebar["sideBar"].setVisible(False)
@@ -1207,6 +1245,7 @@ self.origY + ev.globalY() - self.mouseY)
                 webview = WebView(incognito=False, forceBlankPage=forceBlankPage, parent=self)
             else:
                 webview = WebView(incognito=not settings.setting_to_bool("data/RememberHistory"), forceBlankPage=forceBlankPage, parent=self)
+            webview.tabRequested.connect(self.addTab)
 
         if "url" in kwargs:
             url = kwargs["url"]
@@ -1216,6 +1255,19 @@ self.origY + ev.globalY() - self.mouseY)
             webview.load(QUrl.fromUserInput(url))
 
         # Connect signals
+        try:
+            webview.loadProgress.disconnect(self.setProgress)
+            webview.statusBarMessage.disconnect(self.setStatusBarMessage)
+            webview.page().linkHovered.disconnect(self.setStatusBarMessage)
+            webview.titleChanged.disconnect(self.updateTabTitles)
+            webview.page().fullScreenRequested.disconnect(self.setFullScreen)
+            webview.urlChanged.disconnect(self.updateLocationText)
+            webview.urlChanged2.disconnect(self.updateLocationText)
+            webview.iconChanged.disconnect(self.updateTabIcons)
+            webview.iconChanged.disconnect(self.updateLocationIcon)
+            webview.windowCreated.disconnect(self.addTab2)
+            webview.downloadStarted.disconnect(self.addDownloadToolBar)
+        except: pass
         webview.loadProgress.connect(self.setProgress)
         webview.statusBarMessage.connect(self.setStatusBarMessage)
         webview.page().linkHovered.connect(self.setStatusBarMessage)
@@ -1225,11 +1277,7 @@ self.origY + ev.globalY() - self.mouseY)
         webview.urlChanged2.connect(self.updateLocationText)
         webview.iconChanged.connect(self.updateTabIcons)
         webview.iconChanged.connect(self.updateLocationIcon)
-        webview.windowCreated.connect(lambda webView:\
-                                      self.addTab(webView=webView,\
-                                      index=self.tabWidget().\
-                                            currentIndex()+1,\
-                                      focus=False))
+        webview.windowCreated.connect(self.addTab2)
         webview.downloadStarted.connect(self.addDownloadToolBar)
 
         # Add tab
@@ -1247,6 +1295,11 @@ self.origY + ev.globalY() - self.mouseY)
 
         # Update icons so we see the globe icon on new tabs.
         self.updateTabIcons()
+
+    def addTab2(self, webView):
+        self.addTab(webView=webView,\
+                    index=self.tabWidget().currentIndex()+1,\
+                    focus=False)
 
     # Goes to the next tab.
     # Loops around if there is none.
