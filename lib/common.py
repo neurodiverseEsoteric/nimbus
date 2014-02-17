@@ -102,8 +102,7 @@ mobileUserAgent = "Mozilla/5.0 (Linux; U; Android 2.3.5; en-us) AppleWebKit/533.
 def createUserAgent():
     global defaultUserAgent
     webPage = QWebPage()
-    nimbus_ua_sub = "Qt/" + qt_version + " Chrome/22.0.1216.0 Nimbus/" + \
-                    app_version + " QupZilla/1.4.3"
+    nimbus_ua_sub = "Qt/" + qt_version + " Chrome/22.0.1216.0 QupZilla/1.4.3"
     ua = webPage.userAgentForUrl(QUrl.fromUserInput("google.com"))
     if qt_version.startswith("4") or "Qt/" in ua:
         defaultUserAgent = ua.replace("Qt/" + qt_version,\
@@ -113,6 +112,7 @@ def createUserAgent():
             defaultUserAgent = ua.replace("nimbus", nimbus_ua_sub)
         else:
             defaultUserAgent = ua.replace("python", nimbus_ua_sub)
+    defaultUserAgent = defaultUserAgent.replace("Mozilla/5.0", "Nimbus/" + app_version)
     webPage.deleteLater()
     del webPage
     del ua
