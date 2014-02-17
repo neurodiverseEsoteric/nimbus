@@ -18,16 +18,16 @@ try:
     from PyQt5.QtCore import qVersion, QLocale, QUrl
     from PyQt5.QtGui import QIcon
     from PyQt5.QtWebKit import qWebKitVersion
-    from PyQt5.QtWebKitWidgets import QWebPage
+    #from PyQt5.QtWebKitWidgets import QWebPage
 except:
     try:
         from PyQt4.QtCore import qVersion, QLocale, QUrl
         from PyQt4.QtGui import QIcon
-        from PyQt4.QtWebKit import QWebPage, qWebKitVersion
+        from PyQt4.QtWebKit import qWebKitVersion#, QWebPage
     except:
         from PySide.QtCore import qVersion, QLocale, QUrl
         from PySide.QtGui import QIcon
-        from PySide.QtWebKit import QWebPage, qWebKitVersion
+        from PySide.QtWebKit import qWebKitVersion#, QWebPage
 
 def rm(fname):
     subprocess.Popen(["rm", fname])
@@ -102,11 +102,11 @@ mobileUserAgent = "Mozilla/5.0 (Linux; U; Android 2.3.5; en-us) AppleWebKit/533.
 # Default user agent.
 def createUserAgent():
     global defaultUserAgent
-    webPage = QWebPage()
+    #webPage = QWebPage()
     #nimbus_ua_sub = "Chrome/" + qWebKitVersion() + " Safari/" + qWebKitVersion()
-    defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).split(" (KHTML, like Gecko)")[0].replace("Mozilla/5.0", "Nimbus/" + app_version) + " Chrome/22." + qt_version + " Safari/" + qWebKitVersion()
-    webPage.deleteLater()
-    del webPage
+    defaultUserAgent = "Nimbus/%(app_version)s (%(platform)s) Chrome/22.%(qt_version)s Safari/%(webkit_version)s" % {"app_version": app_version, "platform": sys.platform.title(), "qt_version": qt_version, "webkit_version": qWebKitVersion()}
+    #webPage.deleteLater()
+    #del webPage
     #del ua
     #del nimbus_ua_sub
 
