@@ -22,8 +22,7 @@ except:
         from PySide.QtCore import QObject, Slot
 
 def geolocate():
-    ip = urllib.request.urlopen('http://icanhazip.com/').read().decode('utf-8').replace("\n", "")
-    response = eval(urllib.request.urlopen('http://freegeoip.net/json/' + ip).read())
+    response = eval(urllib.request.urlopen('http://freegeoip.net/json/').read())
     return response
 
 def getCurrentPosition():
