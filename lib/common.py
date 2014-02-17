@@ -96,6 +96,7 @@ def topLevelDomains():
 qt_version = qVersion()
 
 defaultUserAgent = None
+mobileUserAgent = "Mozilla/5.0 (Linux; U; Android 2.3.5; en-us) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
 
 # Default user agent.
 def createUserAgent():

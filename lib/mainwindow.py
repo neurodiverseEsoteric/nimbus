@@ -720,7 +720,7 @@ class MainWindow(QMainWindow):
             while self.hasSideBar(name + (" (%s)" % (x,))):
                 x += 1
             name = name + (" (%s)" % (x,))
-        self.addSideBar(name=name, webView=webView)
+        self.addSideBar(name=name, ua=common.mobileUserAgent, webView=webView)
         if self.tabWidget().count() == 0:
             self.addTab()
 
@@ -756,6 +756,7 @@ class MainWindow(QMainWindow):
                  webView.load(QUrl(url))
         else:
             webView._sizeHint = QSize(320, 320)
+            webView.setUserAgent(ua)
             self.sideBars[name]["sideBar"].webView = webView
             self.sideBars[name]["webView"] = self.sideBars[name]["sideBar"].webView
             webView.setParent(self.sideBars[name]["sideBar"])
@@ -1263,6 +1264,7 @@ self.origY + ev.globalY() - self.mouseY)
         # Connect signals
         try: webview.disconnect()
         except: pass
+        webview.setUserAgent()
         webview.loadProgress.connect(self.setProgress)
         webview.statusBarMessage.connect(self.setStatusBarMessage)
         webview.page().linkHovered.connect(self.setStatusBarMessage)

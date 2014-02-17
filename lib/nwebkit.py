@@ -826,7 +826,7 @@ class WebView(QWebView):
 
     # Convenience function.
     def setUserAgent(self, ua=None):
-        self.page().setUserAgent(ua=None)
+        self.page().setUserAgent(ua)
 
     # Returns whether the browser has loaded a content viewer.
     def isUsingContentViewer(self):
