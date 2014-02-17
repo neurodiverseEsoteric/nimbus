@@ -721,9 +721,6 @@ class MainWindow(QMainWindow):
                 x += 1
             name = name + (" (%s)" % (x,))
         self.addSideBar(name=name, webView=webView)
-        for extension in self._extensions:
-            if extension.isCheckable():
-                extension.setChecked(False)
         if self.tabWidget().count() == 0:
             self.addTab()
 
