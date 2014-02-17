@@ -104,7 +104,7 @@ def createUserAgent():
     global defaultUserAgent
     webPage = QWebPage()
     #nimbus_ua_sub = "Chrome/" + qWebKitVersion() + " Safari/" + qWebKitVersion()
-    defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).split(" (KHTML, like Gecko)")[0].replace("Mozilla/5.0", "Nimbus/" + app_version) + " Chrome/" + qt_version + " Safari/" + qWebKitVersion()
+    defaultUserAgent = webPage.userAgentForUrl(QUrl.fromUserInput("google.com")).split(" (KHTML, like Gecko)")[0].replace("Mozilla/5.0", "Nimbus/" + app_version) + " Chrome/22." + qt_version + " Safari/" + qWebKitVersion()
     webPage.deleteLater()
     del webPage
     #del ua
