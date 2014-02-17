@@ -1175,15 +1175,18 @@ self.origY + ev.globalY() - self.mouseY)
 
     def addTab(self, webView=None, index=None, focus=True, incognito=None, **kwargs):
         # If a WebView object is specified, use it.
+        forceBlankPage = False
+        if "forceBlankPage" in kwargs:
+            forceBlankPage = kwargs["forceBlankPage"]
         if webView != None:
             webview = webView
         else:
             if incognito == True:
-                webview = WebView(incognito=True, parent=self)
+                webview = WebView(incognito=True, forceBlankPage=forceBlankPage, parent=self)
             elif incognito == False:
-                webview = WebView(incognito=False, parent=self)
+                webview = WebView(incognito=False, forceBlankPage=forceBlankPage, parent=self)
             else:
-                webview = WebView(incognito=not settings.setting_to_bool("data/RememberHistory"), parent=self)
+                webview = WebView(incognito=not settings.setting_to_bool("data/RememberHistory"), forceBlankPage=forceBlankPage, parent=self)
 
         if "url" in kwargs:
             url = kwargs["url"]
@@ -1291,7 +1294,7 @@ self.origY + ev.globalY() - self.mouseY)
             index = self.closedTabs[-1][1]
             try: incognito = self.closedTabs[-1][2]
             except: incognito = False
-            self.addTab(index=index, incognito=incognito)
+            self.addTab(index=index, incognito=incognito, forceBlankPage=True)
             self.tabWidget().setCurrentIndex(index)
             self.tabWidget().widget(index).loadHistory(self.closedTabs[-1][0])
             del self.closedTabs[-1]

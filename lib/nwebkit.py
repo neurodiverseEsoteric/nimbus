@@ -417,7 +417,7 @@ class WebView(QWebView):
     nextExpressions = ("start=", "offset=", "page=", "first=", "pn=", "=",)
 
     # Initialize class.
-    def __init__(self, *args, incognito=False, sizeHint=None, minimumSizeHint=None, **kwargs):
+    def __init__(self, *args, incognito=False, sizeHint=None, minimumSizeHint=None, forceBlankPage=False, **kwargs):
         super(WebView, self).__init__(*args, **kwargs)
 
         self._sizeHint = sizeHint
@@ -541,7 +541,7 @@ class WebView(QWebView):
 
         self.clippingsMenu = QMenu(self)
 
-        if os.path.exists(settings.new_tab_page):
+        if os.path.exists(settings.new_tab_page) and not forceBlankPage:
             self.load(QUrl("about:blank"))
 
     def minimumSizeHint(self):
