@@ -162,6 +162,7 @@ class MainWindow(QMainWindow):
         # Update tab titles and icons when the current tab is changed.
         #self.tabs.currentChanged.connect(self.updateTabTitles)
         self.tabs.currentChanged.connect(self.updateTabIcons)
+        self.tabs.currentChanged.connect(self.setProgress)
 
         # Hacky way of updating the location bar text when the tab is changed.
         self.tabs.currentChanged.connect(self.updateLocationText)
@@ -1153,7 +1154,7 @@ self.origY + ev.globalY() - self.mouseY)
                                                 _statusBarMessage)
         except: self.statusBar.setStatusBarMessage("")
 
-    def setProgress(self, progress):
+    def setProgress(self, progress=None):
         try: self.statusBar.setValue(self.tabWidget().\
                                      currentWidget()._loadProgress)
         except: self.statusBar.setValue(0)
