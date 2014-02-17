@@ -735,6 +735,7 @@ class MainWindow(QMainWindow):
             self.sideBars[name]["sideBar"].toolBar.addAction(self.sideBars[name]["sideBar"].webView.page().action(QWebPage.Stop))
             self.sideBars[name]["sideBar"].toolBar.addAction(self.sideBars[name]["sideBar"].webView.page().action(QWebPage.Reload))
             sideBarToTabAction = QAction(self.sideBars[name]["sideBar"].toolBar)
+            sideBarToTabAction.setText(tr("Open As Tab"))
             sideBarToTabAction.setIcon(common.complete_icon("tab-new"))
             sideBarToTabAction.triggered.connect(self.sideBars[name]["sideBar"].webView.requestTab)
             self.sideBars[name]["sideBar"].toolBar.addAction(sideBarToTabAction)
