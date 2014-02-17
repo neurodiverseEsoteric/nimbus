@@ -96,19 +96,12 @@ def topLevelDomains():
 # Qt version.
 qt_version = qVersion()
 
-defaultUserAgent = None
+defaultUserAgent = "Nimbus/%(app_version)s (%(platform)s) Chrome/22.%(qt_version)s Safari/%(webkit_version)s" % {"app_version": app_version, "platform": sys.platform.title(), "qt_version": qt_version, "webkit_version": qWebKitVersion()}
 mobileUserAgent = "Mozilla/5.0 (Linux; U; Android 2.3.5; en-us) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
 
 # Default user agent.
 def createUserAgent():
-    global defaultUserAgent
-    #webPage = QWebPage()
-    #nimbus_ua_sub = "Chrome/" + qWebKitVersion() + " Safari/" + qWebKitVersion()
-    defaultUserAgent = "Nimbus/%(app_version)s (%(platform)s) Chrome/22.%(qt_version)s Safari/%(webkit_version)s" % {"app_version": app_version, "platform": sys.platform.title(), "qt_version": qt_version, "webkit_version": qWebKitVersion()}
-    #webPage.deleteLater()
-    #del webPage
-    #del ua
-    #del nimbus_ua_sub
+    pass
 
 # Python locale
 try: app_locale = str(locale.getlocale()[0])
