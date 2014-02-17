@@ -317,7 +317,7 @@ class MainWindow(QMainWindow):
         self.reloadAction2.setShortcuts(["F5", "Ctrl+R"])
         self.addAction(self.reloadAction2)
 
-        """self.tabToSideBarAction = QAction(self, triggered=self.removeSideBar)
+        self.tabToSideBarAction = QAction(self, triggered=self.removeSideBar)
         self.tabToSideBarAction.triggered.connect(self.tabToSideBar)
         self.tabToSideBarAction.setText(tr("Tab To Sidebar"))
         self.tabToSideBarAction.setIcon(common.complete_icon("format-indent-less"))
@@ -326,7 +326,7 @@ class MainWindow(QMainWindow):
         self.tabToSideBarAction2 = QAction(self, triggered=self.removeSideBar)
         self.tabToSideBarAction2.triggered.connect(self.tabToSideBar)
         self.tabToSideBarAction2.setShortcut("Ctrl+Shift+S")
-        self.addAction(self.tabToSideBarAction2)"""
+        self.addAction(self.tabToSideBarAction2)
 
         # Go home button.
         self.homeAction = QAction(self, triggered=self.goHome, icon=common.complete_icon("go-home"), text=tr("Go Home"))
@@ -676,7 +676,7 @@ class MainWindow(QMainWindow):
     # Part of the extensions API.
     def toggleSideBar(self, name):
         for sidebar in self.sideBars:
-            if sidebar != name:
+            if sidebar != name and self.sideBars[sidebar]["radio"]:
                 try: self.sideBars[sidebar]["sideBar"].setVisible(False)
                 except: pass
         if self.hasSideBar(name):
@@ -703,13 +703,13 @@ class MainWindow(QMainWindow):
             try: self.sideBars[key]["sideBar"].setVisible(self.sideBars[key]["sideBar"].isVisible())
             except: removeKeys.append(key)
         for key in removeKeys:
-            try: self.sideBars[key]["webView"].tabRequested.disconnect(self.sideBars[key]["sideBar"].deleteLater)
+            try: self.sideBars[key]["webView"].disconnect()
             except: pass
             del self.sideBars[key]
         #print(self.sideBars)
 
     def tabToSideBar(self, index=None):
-        return
+        #return
         if not index:
             index = self.tabWidget().currentIndex()
         webView = self.tabWidget().widget(index)
@@ -721,13 +721,16 @@ class MainWindow(QMainWindow):
                 x += 1
             name = name + (" (%s)" % (x,))
         self.addSideBar(name=name, webView=webView)
+        if self.tabWidget().count() == 0:
+            self.addTab()
 
     # Adds a sidebar.
     # Part of the extensions API.
     def addSideBar(self, name="", url="about:blank", clip=None, ua=None, toolbar=True, script=None, style=None, webView=None):
         self.sideBars[name] = {"sideBar": QDockWidget(self),\
                                "url": QUrl(url), "clip": clip,
-                               "webView": None}
+                               "webView": None,
+                               "radio": True}
         self.sideBars[name]["sideBar"].setWindowTitle(name)
         #self.sideBars[name]["sideBar"].setMaximumWidth(320)
         self.sideBars[name]["sideBar"].\
@@ -740,8 +743,8 @@ class MainWindow(QMainWindow):
             self.sideBars[name]["webView"] = self.sideBars[name]["sideBar"].webView
             self.sideBars[name]["sideBar"].\
              webView.page().setUserScript(script)
-            self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.addTab)
             self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.sideBars[name]["sideBar"].deleteLater)
+            self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.addTab)
             self.sideBars[name]["sideBar"].\
                  webView.windowCreated.connect(self.addTab)
             if style:
@@ -757,6 +760,8 @@ class MainWindow(QMainWindow):
             self.sideBars[name]["webView"] = self.sideBars[name]["sideBar"].webView
             webView.setParent(self.sideBars[name]["sideBar"])
             self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.sideBars[name]["sideBar"].deleteLater)
+            self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.addTab)
+            self.sideBars[name]["radio"] = False
         container = QWidget(self.sideBars[name]["sideBar"])
         layout = QVBoxLayout(container)
         layout.setContentsMargins(0,0,0,0)
@@ -782,8 +787,9 @@ class MainWindow(QMainWindow):
         self.sideBars[name]["sideBar"].webView.show()
         self.sideBars[name]["sideBar"].setWidget(container)
         for sidebar in self.sideBars.values():
-            try: sidebar["sideBar"].setVisible(False)
-            except: pass
+            if sidebar["radio"]:
+                try: sidebar["sideBar"].setVisible(False)
+                except: pass
         self.addDockWidget((Qt.LeftDockWidgetArea if self.layoutDirection() == Qt.LeftToRight else Qt.RightDockWidgetArea),\
                            self.sideBars[name]["sideBar"])
         self.tabifyDockWidget(self.sideBar, self.sideBars[name]["sideBar"])
@@ -1255,18 +1261,7 @@ self.origY + ev.globalY() - self.mouseY)
             webview.load(QUrl.fromUserInput(url))
 
         # Connect signals
-        try:
-            webview.loadProgress.disconnect(self.setProgress)
-            webview.statusBarMessage.disconnect(self.setStatusBarMessage)
-            webview.page().linkHovered.disconnect(self.setStatusBarMessage)
-            webview.titleChanged.disconnect(self.updateTabTitles)
-            webview.page().fullScreenRequested.disconnect(self.setFullScreen)
-            webview.urlChanged.disconnect(self.updateLocationText)
-            webview.urlChanged2.disconnect(self.updateLocationText)
-            webview.iconChanged.disconnect(self.updateTabIcons)
-            webview.iconChanged.disconnect(self.updateLocationIcon)
-            webview.windowCreated.disconnect(self.addTab2)
-            webview.downloadStarted.disconnect(self.addDownloadToolBar)
+        try: webview.disconnect()
         except: pass
         webview.loadProgress.connect(self.setProgress)
         webview.statusBarMessage.connect(self.setStatusBarMessage)

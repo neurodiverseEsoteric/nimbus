@@ -487,7 +487,6 @@ class WebView(QWebView):
         self.updateProxy()
         self.updateNetworkSettings()
         self.updateContentSettings()
-        self.urlChanged.connect(self.setUrlText)
 
         # What to do if private browsing is not enabled.
         if not self.incognito:
@@ -496,10 +495,6 @@ class WebView(QWebView):
 
             # Do this so that cookie_jar doesn't get deleted along with WebView.
             network.cookie_jar.setParent(QCoreApplication.instance())
-
-            # Recording history should only be done in normal browsing mode.
-            self.urlChanged.connect(self.addHistoryItem)
-            self.urlChanged.connect(lambda: self.setChangeCanGoNext(True))
 
         # What to do if private browsing is enabled.
         else:
@@ -518,34 +513,48 @@ class WebView(QWebView):
         self.page().downloadRequested.connect(self.downloadFile)
 
         # Connect signals.
-        self.titleChanged.connect(self.setWindowTitle2)
-        self.titleChanged.connect(self.updateHistoryTitle)
         self.page().linkHovered.connect(self.setStatusBarMessage)
-        self.statusBarMessage.connect(self.setStatusBarMessage)
-        self.loadProgress.connect(self.setLoadProgress)
-        self.loadStarted.connect(self.setLoading)
-        self.loadFinished.connect(self.unsetLoading)
 
         # PyQt5 doesn't support <audio> and <video> tags on Windows.
         # This is a little hack to work around it.
-        self.loadStarted.connect(self.resetContentType)
         self.page().networkAccessManager().finished.connect(self.ready)
-        self.loadFinished.connect(self.replaceAVTags)
-        self.loadFinished.connect(self.setCanGoNext)
-        self.loadFinished.connect(self.savePageToCache)
         #self.loadFinished.connect(lambda: print("\n".join(self.rssFeeds()) + "\n"))
 
         # Check if content viewer.
         self._isUsingContentViewer = False
-        self.loadStarted.connect(self.checkIfUsingContentViewer)
-        self.loadFinished.connect(self.finishLoad)
 
         self.setWindowTitle("")
 
         self.clippingsMenu = QMenu(self)
 
+        self.init()
+
         if os.path.exists(settings.new_tab_page) and not forceBlankPage:
             self.load(QUrl("about:blank"))
+
+    def disconnect(self):
+        super(WebView, self).disconnect()
+        self.init()
+
+    def init(self):
+        self.urlChanged.connect(self.setUrlText)
+        if not self.incognito:
+            self.urlChanged.connect(self.addHistoryItem)
+            self.urlChanged.connect(lambda: self.setChangeCanGoNext(True))
+        self.titleChanged.connect(self.setWindowTitle2)
+        self.titleChanged.connect(self.updateHistoryTitle)
+        self.titleChanged.connect(self.setWindowTitle2)
+        self.titleChanged.connect(self.updateHistoryTitle)
+        self.statusBarMessage.connect(self.setStatusBarMessage)
+        self.loadProgress.connect(self.setLoadProgress)
+        self.loadStarted.connect(self.setLoading)
+        self.loadFinished.connect(self.unsetLoading)
+        self.loadStarted.connect(self.resetContentType)
+        self.loadFinished.connect(self.replaceAVTags)
+        self.loadFinished.connect(self.setCanGoNext)
+        self.loadFinished.connect(self.savePageToCache)
+        self.loadStarted.connect(self.checkIfUsingContentViewer)
+        self.loadFinished.connect(self.finishLoad)
 
     def requestTab(self):
         self.tabRequested.emit(self)
@@ -816,8 +825,8 @@ class WebView(QWebView):
             QWebPage.extension(self, extension, option, output)
 
     # Convenience function.
-    def setUserAgent(self, ua):
-        self.page().setUserAgent(ua)
+    def setUserAgent(self, ua=None):
+        self.page().setUserAgent(ua=None)
 
     # Returns whether the browser has loaded a content viewer.
     def isUsingContentViewer(self):
