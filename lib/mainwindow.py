@@ -89,6 +89,8 @@ class ExtensionButton(QToolButton):
         return self._parent
     def loadScript(self):
         if self.etype == "python":
+            if "sidebar(" in self.script.lower():
+                self.parentWindow().removeSideBar()
             try: exec(self.script)
             except:
                 QMessageBox.information(self, tr("Error"), traceback.format_exc())
@@ -664,7 +666,8 @@ class MainWindow(QMainWindow):
     def toggleSideBar(self, name):
         for sidebar in self.sideBars:
             if sidebar != name:
-                self.sideBars[sidebar]["sideBar"].setVisible(False)
+                try: self.sideBars[sidebar]["sideBar"].setVisible(False)
+                except: pass
         if self.hasSideBar(name):
             isVisible = not self.sideBars[name]["sideBar"].isVisible()
             self.sideBars[name]["sideBar"].\
@@ -682,6 +685,15 @@ class MainWindow(QMainWindow):
                     self.sideBars[name]["sideBar"].\
                          webView.load(self.sideBars[name]["url"])
 
+    def removeSideBar(self):
+        removeKeys = []
+        for key in self.sideBars.keys():
+            try: self.sideBars[key]["sideBar"].setVisible(self.sideBars[key]["sideBar"].isVisible())
+            except: removeKeys.append(key)
+        for key in removeKeys:
+            del self.sideBars[key]
+        print(self.sideBars)
+
     # Adds a sidebar.
     # Part of the extensions API.
     def addSideBar(self, name="", url="about:blank", clip=None, ua=None, toolbar=True, script=None, style=None):
@@ -697,6 +709,8 @@ class MainWindow(QMainWindow):
              webView = WebView(self.sideBars[name]["sideBar"], sizeHint=QSize(320, 320))
         self.sideBars[name]["sideBar"].\
              webView.page().setUserScript(script)
+        self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.addTab)
+        self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.sideBars[name]["sideBar"].deleteLater)
         self.sideBars[name]["sideBar"].\
              webView.windowCreated.connect(self.addTab)
         if style:
@@ -720,12 +734,17 @@ class MainWindow(QMainWindow):
             self.sideBars[name]["sideBar"].toolBar.addAction(self.sideBars[name]["sideBar"].webView.page().action(QWebPage.Forward))
             self.sideBars[name]["sideBar"].toolBar.addAction(self.sideBars[name]["sideBar"].webView.page().action(QWebPage.Stop))
             self.sideBars[name]["sideBar"].toolBar.addAction(self.sideBars[name]["sideBar"].webView.page().action(QWebPage.Reload))
+            sideBarToTabAction = QAction(self.sideBars[name]["sideBar"].toolBar)
+            sideBarToTabAction.setIcon(common.complete_icon("tab-new"))
+            sideBarToTabAction.triggered.connect(self.sideBars[name]["sideBar"].webView.requestTab)
+            self.sideBars[name]["sideBar"].toolBar.addAction(sideBarToTabAction)
             container.layout().addWidget(self.sideBars[name]["sideBar"].toolBar)
         container.layout().addWidget(self.sideBars[name]\
                                    ["sideBar"].webView)
         self.sideBars[name]["sideBar"].setWidget(container)
         for sidebar in self.sideBars.values():
-            sidebar["sideBar"].setVisible(False)
+            try: sidebar["sideBar"].setVisible(False)
+            except: pass
         self.addDockWidget((Qt.LeftDockWidgetArea if self.layoutDirection() == Qt.LeftToRight else Qt.RightDockWidgetArea),\
                            self.sideBars[name]["sideBar"])
         self.tabifyDockWidget(self.sideBar, self.sideBars[name]["sideBar"])

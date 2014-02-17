@@ -409,6 +409,9 @@ class WebView(QWebView):
 
     # This is a signal used to inform everyone a new window was created.
     windowCreated = Signal(QWebView)
+    
+    # Requests tab
+    tabRequested = Signal(QWebView)
 
     # This is a signal used to tell everyone a download has started.
     downloadStarted = Signal(QToolBar)
@@ -543,6 +546,9 @@ class WebView(QWebView):
 
         if os.path.exists(settings.new_tab_page) and not forceBlankPage:
             self.load(QUrl("about:blank"))
+
+    def requestTab(self):
+        self.tabRequested.emit(self)
 
     def minimumSizeHint(self):
         if not type(self._minimumSizeHint) is QSize:
