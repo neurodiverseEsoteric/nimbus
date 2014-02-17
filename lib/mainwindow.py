@@ -1157,7 +1157,9 @@ self.origY + ev.globalY() - self.mouseY)
     def setProgress(self, progress=None):
         try: self.statusBar.setValue(self.tabWidget().\
                                      currentWidget()._loadProgress)
-        except: self.statusBar.setValue(0)
+        except:
+            try: self.statusBar.setValue(progress)
+            except: self.statusBar.setValue(0)
 
     # Fullscreen mode.
     def setFullScreen(self, fullscreen=False):
