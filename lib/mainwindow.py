@@ -121,6 +121,7 @@ class MainWindow(QMainWindow):
 
         # List of closed tabs.
         self.closedTabs = []
+        self.tabWidgetStack = None
 
         # Extension list
         self._extensions = []
@@ -255,6 +256,7 @@ class MainWindow(QMainWindow):
         # every few milliseconds.
         self.toggleActionsTimer = QTimer(timeout=self.toggleActions, parent=self)
         self.dateTimeTimer = QTimer(timeout=self.updateDateTime, parent=self)
+        self.reconnectWebViewsTimer = QTimer(timeout=self.reconnectWebViews, parent=self)
 
         # Set up navigation actions.
         self.backAction = self.actionsPage.action(QWebPage.Back)
@@ -330,6 +332,7 @@ class MainWindow(QMainWindow):
         # Start timer to forcibly enable and disable navigation actions.
         self.toggleActionsTimer.start(256)
         self.dateTimeTimer.start(500)
+        self.reconnectWebViewsTimer.start(5000)
         #self.lostTabsTimer.start(5000)
 
         # Location bar. Note that this is a combo box.
@@ -1162,6 +1165,22 @@ self.origY + ev.globalY() - self.mouseY)
                                                   value("general/Search")\
                                                   % (url,)))
 
+    def reconnectWebViews(self):
+        for webview in common.webviews:
+            if webview.disconnected and webview.parent() is self.tabWidgetStack:
+                webview.loadProgress.connect(self.setProgress)
+                webview.statusBarMessage.connect(self.setStatusBarMessage)
+                webview.page().linkHovered.connect(self.setStatusBarMessage)
+                webview.titleChanged.connect(self.updateTabTitles)
+                webview.page().fullScreenRequested.connect(self.setFullScreen)
+                webview.urlChanged.connect(self.updateLocationText)
+                webview.urlChanged2.connect(self.updateLocationText)
+                webview.iconChanged.connect(self.updateTabIcons)
+                webview.iconChanged.connect(self.updateLocationIcon)
+                webview.windowCreated.connect(self.addTab2)
+                webview.downloadStarted.connect(self.addDownloadToolBar)
+                webview.disconnected = False
+
     # Status bar related methods.
     def setStatusBarMessage(self, message):
         try: self.statusBar.setStatusBarMessage(self.tabWidget().\
@@ -1298,11 +1317,15 @@ self.origY + ev.globalY() - self.mouseY)
         # Add tab
         if type(index) is not int:
             self.tabWidget().addTab(webview, tr("New Tab"))
+            if not self.tabWidgetStack:
+                self.tabWidgetStack = webview.parent()
         else:
             ptc = settings.setting_to_int("general/PinnedTabCount")
             if index < ptc:
                 index = ptc
             self.tabWidget().insertTab(index, webview, tr("New Tab"))
+            if not self.tabWidgetStack:
+                self.tabWidgetStack = webview.parent()
 
         # Switch to new tab
         if focus:

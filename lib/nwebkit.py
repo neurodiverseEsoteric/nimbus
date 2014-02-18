@@ -434,6 +434,8 @@ class WebView(QWebView):
         self._urlText = ""
         self._oldURL = ""
 
+        self.disconnected = False
+
         self.isLoading = False
 
         self._html = ""
@@ -532,9 +534,10 @@ class WebView(QWebView):
         if os.path.exists(settings.new_tab_page) and not forceBlankPage:
             self.load(QUrl("about:blank"))
 
-    def disconnect(self):
-        super(WebView, self).disconnect()
+    def disconnect(self, *args, **kwargs):
+        super(WebView, self).disconnect(*args, **kwargs)
         self.init()
+        self.disconnected = True
 
     def init(self):
         self.urlChanged.connect(self.setUrlText)
