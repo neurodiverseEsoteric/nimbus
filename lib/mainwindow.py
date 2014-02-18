@@ -410,12 +410,12 @@ class MainWindow(QMainWindow):
         self.tabToSideBarAction.setIcon(common.complete_icon("format-indent-less"))
         mainMenu.addAction(self.tabToSideBarAction)
 
-        self.sideBarsToTabsAction = QAction(self, triggered=self.removeSideBar)
-        self.sideBarsToTabsAction.triggered.connect(self.sideBarsToTabs)
-        self.sideBarsToTabsAction.setText(tr("Sidebars to Tabs"))
-        self.sideBarsToTabsAction.setShortcut("Ctrl+Shift+D")
-        self.sideBarsToTabsAction.setIcon(common.complete_icon("format-indent-more"))
-        mainMenu.addAction(self.sideBarsToTabsAction)
+        self.sideBarToTabAction = QAction(self, triggered=self.removeSideBar)
+        self.sideBarToTabAction.triggered.connect(self.sideBarToTab)
+        self.sideBarToTabAction.setText(tr("Sidebar to Tab"))
+        self.sideBarToTabAction.setShortcut("Ctrl+Shift+D")
+        self.sideBarToTabAction.setIcon(common.complete_icon("format-indent-more"))
+        mainMenu.addAction(self.sideBarToTabAction)
 
         mainMenu.addSeparator()
 
@@ -730,10 +730,11 @@ class MainWindow(QMainWindow):
         if self.tabWidget().count() == 0:
             self.addTab()
 
-    def sideBarsToTabs(self):
+    def sideBarToTab(self):
         for name in self.sideBars.keys():
             if self.sideBars[name]["sideBar"].isVisible():
                 self.sideBars[name]["sideBar"].webView.requestTab()
+                break
 
     # Adds a sidebar.
     # Part of the extensions API.
@@ -1353,7 +1354,7 @@ self.origY + ev.globalY() - self.mouseY)
         if index < settings.setting_to_int("general/PinnedTabCount"):
             return
         elif self.tabWidget().count() == 1 and settings.setting_to_bool("general/CloseWindowWithLastTab"):
-            self.sideBarsToTabs()
+            self.sideBarToTab()
             if self.tabWidget().count() == 1:
                 self.close()
                 return
