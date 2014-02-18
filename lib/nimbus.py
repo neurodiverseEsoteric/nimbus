@@ -150,7 +150,7 @@ if has_dbus:
 def recoverLostTabs():
     for webview in common.webviews:
         if webview.parent() == None:
-            browser.windows[-1].addTab(webview)
+            browser.activeWindow().addTab(webview)
 
 # Main function to load everything.
 def main():
