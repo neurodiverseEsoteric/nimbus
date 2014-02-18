@@ -276,7 +276,7 @@ def main():
     sessionSaver.start(30000)
 
     lostTabsTimer = QTimer(timeout=recoverLostTabs, parent=QCoreApplication.instance())
-    lostTabsTimer.start(1000)
+    lostTabsTimer.start(500)
 
     if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
         loadSession()
