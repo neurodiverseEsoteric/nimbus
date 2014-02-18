@@ -330,6 +330,7 @@ class MainWindow(QMainWindow):
         # Start timer to forcibly enable and disable navigation actions.
         self.toggleActionsTimer.start(256)
         self.dateTimeTimer.start(500)
+        #self.lostTabsTimer.start(5000)
 
         # Location bar. Note that this is a combo box.
         # At some point, I should make a custom location bar

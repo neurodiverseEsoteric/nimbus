@@ -146,6 +146,12 @@ if has_dbus:
                 browser.windows[-1].activateWindow()
                 return url
 
+
+def recoverLostTabs():
+    for webview in common.webviews:
+        if webview.parent() == None:
+            browser.windows[-1].addTab(webview)
+
 # Main function to load everything.
 def main():
     # Start DBus loop
@@ -268,6 +274,9 @@ def main():
     sessionSaver.timeout.connect(saveSession)
     sessionSaver.timeout.connect(data.saveData)
     sessionSaver.start(30000)
+
+    lostTabsTimer = QTimer(timeout=recoverLostTabs, parent=QCoreApplication.instance())
+    lostTabsTimer.start(1000)
 
     if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
         loadSession()
