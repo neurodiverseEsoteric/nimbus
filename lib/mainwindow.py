@@ -318,28 +318,6 @@ class MainWindow(QMainWindow):
         self.reloadAction2.setShortcuts(["F5", "Ctrl+R"])
         self.addAction(self.reloadAction2)
 
-        self.tabToSideBarAction = QAction(self, triggered=self.removeSideBar)
-        self.tabToSideBarAction.triggered.connect(self.tabToSideBar)
-        self.tabToSideBarAction.setText(tr("Tab To Sidebar"))
-        self.tabToSideBarAction.setIcon(common.complete_icon("format-indent-less"))
-        self.toolBar.addAction(self.tabToSideBarAction)
-
-        self.tabToSideBarAction2 = QAction(self, triggered=self.removeSideBar)
-        self.tabToSideBarAction2.triggered.connect(self.tabToSideBar)
-        self.tabToSideBarAction2.setShortcut("Ctrl+Shift+S")
-        self.addAction(self.tabToSideBarAction2)
-
-        self.sideBarsToTabsAction = QAction(self, triggered=self.removeSideBar)
-        self.sideBarsToTabsAction.triggered.connect(self.sideBarsToTabs)
-        self.sideBarsToTabsAction.setText(tr("Sidebars to Tabs"))
-        self.sideBarsToTabsAction.setIcon(common.complete_icon("format-indent-more"))
-        self.toolBar.addAction(self.sideBarsToTabsAction)
-
-        self.sideBarsToTabsAction2 = QAction(self, triggered=self.removeSideBar)
-        self.sideBarsToTabsAction2.triggered.connect(self.sideBarsToTabs)
-        self.sideBarsToTabsAction2.setShortcut("Ctrl+Shift+D")
-        self.addAction(self.sideBarsToTabsAction2)
-
         # Go home button.
         self.homeAction = QAction(self, triggered=self.goHome, icon=common.complete_icon("go-home"), text=tr("Go Home"))
         self.addAction(self.homeAction)
@@ -422,6 +400,22 @@ class MainWindow(QMainWindow):
         newWindowAction.setShortcut("Ctrl+N")
         newWindowAction.triggered.connect(self.addWindow)
         mainMenu.addAction(newWindowAction)
+
+        mainMenu.addSeparator()
+
+        self.tabToSideBarAction = QAction(self, triggered=self.removeSideBar)
+        self.tabToSideBarAction.triggered.connect(self.tabToSideBar)
+        self.tabToSideBarAction.setText(tr("Tab To Sidebar"))
+        self.tabToSideBarAction.setShortcut("Ctrl+Shift+S")
+        self.tabToSideBarAction.setIcon(common.complete_icon("format-indent-less"))
+        mainMenu.addAction(self.tabToSideBarAction)
+
+        self.sideBarsToTabsAction = QAction(self, triggered=self.removeSideBar)
+        self.sideBarsToTabsAction.triggered.connect(self.sideBarsToTabs)
+        self.sideBarsToTabsAction.setText(tr("Sidebars to Tabs"))
+        self.sideBarsToTabsAction.setShortcut("Ctrl+Shift+D")
+        self.sideBarsToTabsAction.setIcon(common.complete_icon("format-indent-more"))
+        mainMenu.addAction(self.sideBarsToTabsAction)
 
         mainMenu.addSeparator()
 
