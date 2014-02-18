@@ -329,6 +329,17 @@ class MainWindow(QMainWindow):
         self.tabToSideBarAction2.setShortcut("Ctrl+Shift+S")
         self.addAction(self.tabToSideBarAction2)
 
+        self.sideBarsToTabsAction = QAction(self, triggered=self.removeSideBar)
+        self.sideBarsToTabsAction.triggered.connect(self.sideBarsToTabs)
+        self.sideBarsToTabsAction.setText(tr("Sidebars to Tabs"))
+        self.sideBarsToTabsAction.setIcon(common.complete_icon("format-indent-more"))
+        self.toolBar.addAction(self.sideBarsToTabsAction)
+
+        self.sideBarsToTabsAction2 = QAction(self, triggered=self.removeSideBar)
+        self.sideBarsToTabsAction2.triggered.connect(self.sideBarsToTabs)
+        self.sideBarsToTabsAction2.setShortcut("Ctrl+Shift+D")
+        self.addAction(self.sideBarsToTabsAction2)
+
         # Go home button.
         self.homeAction = QAction(self, triggered=self.goHome, icon=common.complete_icon("go-home"), text=tr("Go Home"))
         self.addAction(self.homeAction)
@@ -724,6 +735,10 @@ class MainWindow(QMainWindow):
         self.addSideBar(name=name, ua=common.mobileUserAgent, webView=webView)
         if self.tabWidget().count() == 0:
             self.addTab()
+
+    def sideBarsToTabs(self):
+        for name in self.sideBars.keys():
+            self.sideBars[name]["sideBar"].webView.requestTab()
 
     # Adds a sidebar.
     # Part of the extensions API.
