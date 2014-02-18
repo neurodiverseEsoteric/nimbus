@@ -1353,8 +1353,13 @@ self.origY + ev.globalY() - self.mouseY)
         if index < settings.setting_to_int("general/PinnedTabCount"):
             return
         elif self.tabWidget().count() == 1 and settings.setting_to_bool("general/CloseWindowWithLastTab"):
-            self.close()
-            return
+            self.sideBarsToTabs()
+            if self.tabWidget().count() == 1:
+                self.close()
+                return
+            else:
+                self.removeTab(0)
+                return
         try:
             webView = self.tabWidget().widget(index)
             if webView.history().canGoBack() or\
