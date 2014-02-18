@@ -1167,7 +1167,7 @@ self.origY + ev.globalY() - self.mouseY)
 
     def reconnectWebViews(self):
         mine = []
-        print(common.disconnected)
+        #print(common.disconnected)
         for webview in common.disconnected:
             if webview.parent() is self.tabWidgetStack:
                 webview.loadProgress.connect(self.setProgress)
@@ -1183,7 +1183,7 @@ self.origY + ev.globalY() - self.mouseY)
                 webview.downloadStarted.connect(self.addDownloadToolBar)
                 mine.append(webview)
                 #webview.disconnected = False
-        print(mine)
+        #print(mine)
         for webview in mine:
             common.disconnected.remove(webview)
 
