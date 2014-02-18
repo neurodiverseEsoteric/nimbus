@@ -121,7 +121,8 @@ settingsDialog = None
 ###################
 
 # Content viewers
-content_viewers = (("https://docs.google.com/viewer?url=%s", (".doc", ".pps", ".odt", ".sxw", ".pdf", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tif", ".tiff", ".dxf", ".svg", ".eps", ".ps", ".ttf", ".xps", ".zip", ".rar")),
+content_viewers = (("http://view.samurajdata.se/ps.php?url=%s", (".pdf", ".ps.gz", ".ps", ".doc")),
+                   ("https://docs.google.com/viewer?url=%s", (".pps", ".odt", ".sxw", ".ppt", ".pptx", ".docx", ".xls", ".xlsx", ".pages", ".ai", ".psd", ".tif", ".tiff", ".dxf", ".svg", ".eps", ".ttf", ".xps", ".zip", ".rar")),
                    ("http://viewdocsonline.com/view.php?url=", (".ods", ".odp", ".odg", ".sxc", ".sxi", ".sxd")),
                    ("http://vuzit.com/view?url=", (".bmp", ".ppm", ".xpm")))
 
