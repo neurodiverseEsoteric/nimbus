@@ -1260,6 +1260,8 @@ self.origY + ev.globalY() - self.mouseY)
         if "forceBlankPage" in kwargs:
             forceBlankPage = kwargs["forceBlankPage"]
         if webView != None:
+            try: webView.disconnect()
+            except: pass
             webview = webView
         else:
             if incognito == True:
@@ -1278,8 +1280,6 @@ self.origY + ev.globalY() - self.mouseY)
             webview.load(QUrl.fromUserInput(url))
 
         # Connect signals
-        try: webview.disconnect()
-        except: pass
         webview.setUserAgent()
         webview.loadProgress.connect(self.setProgress)
         webview.statusBarMessage.connect(self.setStatusBarMessage)
