@@ -1166,8 +1166,10 @@ self.origY + ev.globalY() - self.mouseY)
                                                   % (url,)))
 
     def reconnectWebViews(self):
-        for webview in common.webviews:
-            if webview.disconnected and webview.parent() is self.tabWidgetStack:
+        mine = []
+        print(common.disconnected)
+        for webview in common.disconnected:
+            if webview.parent() is self.tabWidgetStack:
                 webview.loadProgress.connect(self.setProgress)
                 webview.statusBarMessage.connect(self.setStatusBarMessage)
                 webview.page().linkHovered.connect(self.setStatusBarMessage)
@@ -1179,7 +1181,11 @@ self.origY + ev.globalY() - self.mouseY)
                 webview.iconChanged.connect(self.updateLocationIcon)
                 webview.windowCreated.connect(self.addTab2)
                 webview.downloadStarted.connect(self.addDownloadToolBar)
-                webview.disconnected = False
+                mine.append(webview)
+                #webview.disconnected = False
+        print(mine)
+        for webview in mine:
+            common.disconnected.remove(webview)
 
     # Status bar related methods.
     def setStatusBarMessage(self, message):
