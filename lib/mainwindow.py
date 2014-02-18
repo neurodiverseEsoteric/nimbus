@@ -756,6 +756,8 @@ class MainWindow(QMainWindow):
             self.sideBars[name]["sideBar"].\
                  webView.load(QUrl(url))
         else:
+            try: webView.disconnect()
+            except: pass
             webView._sizeHint = QSize(320, 320)
             webView.setUserAgent(ua)
             self.sideBars[name]["sideBar"].webView = webView
@@ -763,6 +765,7 @@ class MainWindow(QMainWindow):
             webView.setParent(self.sideBars[name]["sideBar"])
             self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.sideBars[name]["sideBar"].deleteLater)
             self.sideBars[name]["sideBar"].webView.tabRequested.connect(self.addTab)
+            self.sideBars[name]["sideBar"].webView.windowCreated.connect(self.addTab)
             self.sideBars[name]["radio"] = False
         container = QWidget(self.sideBars[name]["sideBar"])
         layout = QVBoxLayout(container)
