@@ -738,7 +738,8 @@ class MainWindow(QMainWindow):
 
     def sideBarsToTabs(self):
         for name in self.sideBars.keys():
-            self.sideBars[name]["sideBar"].webView.requestTab()
+            if self.sideBars[name]["sideBar"].isVisible():
+                self.sideBars[name]["sideBar"].webView.requestTab()
 
     # Adds a sidebar.
     # Part of the extensions API.
