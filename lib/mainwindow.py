@@ -1167,24 +1167,30 @@ self.origY + ev.globalY() - self.mouseY)
 
     def reconnectWebViews(self):
         mine = []
+        killitwithfire = []
         #print(common.disconnected)
         for webview in common.disconnected:
-            if webview.parent() is self.tabWidgetStack:
-                webview.loadProgress.connect(self.setProgress)
-                webview.statusBarMessage.connect(self.setStatusBarMessage)
-                webview.page().linkHovered.connect(self.setStatusBarMessage)
-                webview.titleChanged.connect(self.updateTabTitles)
-                webview.page().fullScreenRequested.connect(self.setFullScreen)
-                webview.urlChanged.connect(self.updateLocationText)
-                webview.urlChanged2.connect(self.updateLocationText)
-                webview.iconChanged.connect(self.updateTabIcons)
-                webview.iconChanged.connect(self.updateLocationIcon)
-                webview.windowCreated.connect(self.addTab2)
-                webview.downloadStarted.connect(self.addDownloadToolBar)
-                mine.append(webview)
-                #webview.disconnected = False
+            try:
+                if webview.parent() is self.tabWidgetStack:
+                    webview.loadProgress.connect(self.setProgress)
+                    webview.statusBarMessage.connect(self.setStatusBarMessage)
+                    webview.page().linkHovered.connect(self.setStatusBarMessage)
+                    webview.titleChanged.connect(self.updateTabTitles)
+                    webview.page().fullScreenRequested.connect(self.setFullScreen)
+                    webview.urlChanged.connect(self.updateLocationText)
+                    webview.urlChanged2.connect(self.updateLocationText)
+                    webview.iconChanged.connect(self.updateTabIcons)
+                    webview.iconChanged.connect(self.updateLocationIcon)
+                    webview.windowCreated.connect(self.addTab2)
+                    webview.downloadStarted.connect(self.addDownloadToolBar)
+                    mine.append(webview)
+                    #webview.disconnected = False
+            except:
+                killitwithfire.append(webview)
         #print(mine)
         for webview in mine:
+            common.disconnected.remove(webview)
+        for webview in killitwithfire:
             common.disconnected.remove(webview)
 
     # Status bar related methods.
