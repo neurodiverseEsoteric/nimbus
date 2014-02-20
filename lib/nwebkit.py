@@ -32,7 +32,7 @@ if not sys.platform.startswith("linux"):
 # Extremely specific imports from PyQt5/PySide.
 # We give PyQt5 priority because it supports Qt5.
 try:
-    from PyQt5.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
+    from PyQt5.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime
     from PyQt5.QtGui import QIcon, QImage, QClipboard
     from PyQt5.QtWidgets import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QAction, QToolBar, QLineEdit, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget
     from PyQt5.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
@@ -43,14 +43,14 @@ try:
     Slot = pyqtSlot
 except:
     try:
-        from PyQt4.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
+        from PyQt4.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime
         from PyQt4.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard
         from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
         from PyQt4.QtWebKit import QWebView, QWebPage, QWebHistory
         Signal = pyqtSignal
         Slot = pyqtSlot
     except:
-        from PySide.QtCore import Qt, QSize, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream
+        from PySide.QtCore import Qt, QSize, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime
         from PySide.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard
         from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
         from PySide.QtWebKit import QWebView, QWebPage, QWebHistory
@@ -60,7 +60,7 @@ def addHistoryItem(url, title=None):
     if settings.setting_to_bool("data/RememberHistory"):
         url = url.split("#")[0]
         if len(url) <= settings.setting_to_int("data/MaximumURLLength"):
-            data.history[url] = {"title": title}
+            data.history[url] = {"title": title, "last_visited" : QDateTime.currentDateTime().toMSecsSinceEpoch()}
 
 # Progress bar used for downloads.
 # This was ripped off of Ryouko.
@@ -208,7 +208,7 @@ class WebPage(QWebPage):
         self.mainFrame().javaScriptWindowObjectCleared.connect(self.tweakDOM)
 
         # Connect loadFinished to checkForNavigatorGeolocation and loadUserScripts.
-        self.loadFinished.connect(self.doGoogleHack)
+        self.loadFinished.connect(self.doRedirectHack)
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
         self.loadFinished.connect(self.loadUserScripts)
 
@@ -232,19 +232,29 @@ class WebPage(QWebPage):
             self.userScript = script
 
     # Performs a hack on Google pages to change their URLs.
-    def doGoogleHack(self):
-        if not "google" in self.mainFrame().url().toString():
-            return
+    def doRedirectHack(self):
         links = self.mainFrame().findAllElements("a")
         for link in links:
             try: href = link.attribute("href")
             except: pass
             else:
-                gurl = "/url?q="
-                if href.startswith(gurl):
-                    url = href.replace(gurl, "").split("&")[0]
-                    url = urllib.parse.unquote(url)
-                    link.setAttribute("href", url)
+                for gurl in ("/url?q=", "?redirect="):
+                    if href.startswith(gurl):
+                        url = href.replace(gurl, "").split("&")[0]
+                        url = urllib.parse.unquote(url)
+                        link.setAttribute("href", url)
+                    elif gurl in href:
+                        url = href.split(gurl)[-1]
+                        url = urllib.parse.unquote(url)
+                        link.setAttribute("href", url)
+                    elif "#post" in href:
+                        try: class_ = link.attribute("class")
+                        except: class_ = ""
+                        if not "postcounter" in class_:
+                            url = "-".join(href.split("-")[:-1])
+                            postnumber = href.split("#")[-1]
+                            url = url + "-" + postnumber + ".html"
+                            link.setAttribute("href", url)
 
     # Loads history.
     def loadHistory(self, history):

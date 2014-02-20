@@ -64,7 +64,7 @@ def loadData():
         if type(history) is list:
             new_history = {}
             for item in history:
-                new_history[item] = {"title": item}
+                new_history[item] = {"title": item, "last_visited": 0}
             history = new_history
 
     # Load cookies.
