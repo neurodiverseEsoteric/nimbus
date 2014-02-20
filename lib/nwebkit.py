@@ -26,6 +26,8 @@ import data
 import network
 import rss_parser
 import view_source_dialog
+if not sys.platform.startswith("linux"):
+    import webbrowser
 
 # Extremely specific imports from PyQt5/PySide.
 # We give PyQt5 priority because it supports Qt5.
@@ -603,6 +605,12 @@ class WebView(QWebView):
         if QCoreApplication.instance().keyboardModifiers() in (Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier) and len(data.clippings) > 0:
             menu = self.clippingsMenu
             menu.clear()
+            openInDefaultBrowserAction = QAction(tr("Open in Default Browser"), menu)
+            openInDefaultBrowserAction.triggered.connect(self.openInDefaultBrowser)
+            menu.addAction(openInDefaultBrowserAction)
+            if self._statusBarMessage == "":
+                openInDefaultBrowserAction.setEnabled(False)
+            menu.addSeparator()
             for clipping in data.clippings:
                 a = custom_widgets.LinkAction(data.clippings[clipping], clipping, menu)
                 a.triggered2.connect(QApplication.clipboard().setText)
@@ -885,8 +893,20 @@ class WebView(QWebView):
             ev.ignore()
             newWindow = self.createWindow(QWebPage.WebBrowserWindow)
             newWindow.load(QUrl(url))
+        elif self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ShiftModifier) and not ev.button() == Qt.RightButton)):
+            self.openInDefaultBrowser(self._statusBarMessage)
         else:
             return QWebView.mousePressEvent(self, ev)
+
+    def openInDefaultBrowser(self, url=None):
+        if type(url) is QUrl:
+            url = url.toString()
+        elif not url:
+            url = self._statusBarMessage
+        if sys.platform.startswith("linux"):
+            subprocess.Popen(["xdg-open", url])
+        else:
+            webbrowser.open(url)
 
     # Creates an error page.
     def errorPage(self, *args, **kwargs):
