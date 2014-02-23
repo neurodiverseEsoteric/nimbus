@@ -475,6 +475,17 @@ class MainWindow(QMainWindow):
         self.tabsToolBar.addAction(self.dateTime)
         self.tabsToolBar.widgetForAction(self.dateTime).setStyleSheet("QToolButton { font-family: monospace; border-radius: 3px; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }")
         self.dateTime.setVisible(False)
+        
+        # Add stuff for linux
+        self.connectionEditorButton = QAction(common.complete_icon("network-idle"), tr("Edit Connections..."), self)
+        self.connectionEditorButton.triggered.connect(lambda: os.system("nm-connection-editor &"))
+        self.tabsToolBar.addAction(self.connectionEditorButton)
+        self.connectionEditorButton.setVisible(False)
+
+        self.connectionEditorAction = QAction(common.complete_icon("network-idle"), tr("Edit Connections..."), self)
+        self.connectionEditorAction.setShortcut("Ctrl+Alt+N")
+        self.connectionEditorAction.triggered.connect(lambda: os.system("nm-connection-editor &"))
+        self.addAction(self.connectionEditorAction)
 
         # Add fullscreen button.
         self.toggleFullScreenButton = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
@@ -929,6 +940,8 @@ self.origY + ev.globalY() - self.mouseY)
     # Updates the time.
     def updateDateTime(self):
         self.dateTime.setText(QDateTime.currentDateTime().toString())
+        print(network.isConnectedToNetwork())
+        self.connectionEditorButton.setIcon(common.complete_icon("network-idle") if network.isConnectedToNetwork() else common.complete_icon("network-offline"))
 
     # Toggle all the navigation buttons.
     def toggleActions(self):
@@ -1215,6 +1228,7 @@ self.origY + ev.globalY() - self.mouseY)
             try: self.toggleFullScreenAction.setChecked(True)
             except: pass
             self.toggleFullScreenButton.setVisible(True)
+            self.connectionEditorButton.setVisible(True)
             self.dateTime.setVisible(True)
             self._wasMaximized = self.isMaximized()
             self.showFullScreen()
@@ -1224,6 +1238,7 @@ self.origY + ev.globalY() - self.mouseY)
             try: self.toggleFullScreenAction.setChecked(False)
             except: pass
             self.toggleFullScreenButton.setVisible(False)
+            self.connectionEditorButton.setVisible(False)
             self.dateTime.setVisible(False)
             if not self._wasMaximized:
                 self.showNormal()

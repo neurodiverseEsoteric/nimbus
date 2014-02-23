@@ -148,6 +148,7 @@ def isConnectedToNetwork():
     for iface in ifaces:
         if int(iface.flags() & QNetworkInterface.IsUp) != 0 and int(iface.flags() & QNetworkInterface.IsLoopBack) == 0:
             if len(iface.addressEntries()) > 0:
-                result = True
-                break
+                if iface.addressEntries()[0].ip().toIPv4Address() > 0:
+                    result = True
+                    break
     return result
