@@ -483,7 +483,7 @@ class MainWindow(QMainWindow):
         self.connectionEditorButton.setVisible(False)
 
         self.connectionEditorAction = QAction(common.complete_icon("network-idle"), tr("Edit Connections..."), self)
-        self.connectionEditorAction.setShortcut("Ctrl+Alt+N")
+        self.connectionEditorAction.setShortcut("Alt+N")
         self.connectionEditorAction.triggered.connect(lambda: os.system("nm-connection-editor &"))
         self.addAction(self.connectionEditorAction)
 
