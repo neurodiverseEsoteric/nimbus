@@ -13,20 +13,21 @@ import common
 import settings
 import os
 import json
+import custom_widgets
 from translate import tr
 try:
-    from PyQt5.QtCore import Qt, pyqtSignal
+    from PyQt5.QtCore import Qt, pyqtSignal, QSize
     from PyQt5.QtGui import QCursor
-    from PyQt5.QtWidgets import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QDesktopWidget
+    from PyQt5.QtWidgets import QMainWindow, QAction, QMessageBox, QToolBar, QLabel, QToolButton, QListWidget, QInputDialog, QDesktopWidget
     Signal = pyqtSignal
 except:
     try:
-        from PyQt4.QtCore import Qt, pyqtSignal
-        from PyQt4.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor, QDesktopWidget
+        from PyQt4.QtCore import Qt, pyqtSignal, QSize
+        from PyQt4.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLabel, QToolButton, QListWidget, QInputDialog, QCursor, QDesktopWidget
         Signal = pyqtSignal
     except:
-        from PySide.QtCore import Qt, Signal
-        from PySide.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLineEdit, QLabel, QPushButton, QListWidget, QInputDialog, QCursor, QDesktopWidget
+        from PySide.QtCore import Qt, Signal, QSize
+        from PySide.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLabel, QToolButton, QListWidget, QInputDialog, QCursor, QDesktopWidget
 
 def unicode(*args, **kwargs):
     return str(*args, **kwargs)
@@ -107,6 +108,7 @@ class SearchEditor(QMainWindow):
         self.addAction(closeWindowAction)
 
         self.entryBar = QToolBar(self)
+        self.entryBar.setIconSize(QSize(16, 16))
         self.entryBar.setStyleSheet(common.blank_toolbar)
         self.entryBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.entryBar.setMovable(False)
@@ -114,10 +116,12 @@ class SearchEditor(QMainWindow):
 
         eLabel = QLabel(" " + tr('New expression:'), self)
         self.entryBar.addWidget(eLabel)
-        self.expEntry = QLineEdit(self)
+        self.expEntry = custom_widgets.LineEdit(self)
         self.expEntry.returnPressed.connect(self.addSearch)
         self.entryBar.addWidget(self.expEntry)
-        self.addSearchButton = QPushButton(common.complete_icon("list-add"), "", self)
+        self.addSearchButton = QToolButton(self)
+        self.addSearchButton.setText(tr("Add"))
+        self.addSearchButton.setIcon(common.complete_icon("list-add"))
         self.addSearchButton.clicked.connect(self.addSearch)
         self.entryBar.addWidget(self.addSearchButton)
 
@@ -177,6 +181,7 @@ class SearchEditor(QMainWindow):
                 name = name[0]
                 keyword = QInputDialog.getText(self, tr('Query'), tr('Enter a keyword here:'))[0]
                 self.searchManager.add(name, self.expEntry.text(), keyword)
+                self.expEntry.clear()
             self.reload_()
         else:
             QMessageBox.warning(self, tr('Error'), tr('Search expression must contain a <b>%s</b> to indicate the search terms.'))
