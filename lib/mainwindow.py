@@ -623,7 +623,7 @@ class MainWindow(QMainWindow):
         self.addToolBar(Qt.BottomToolBarArea, self.findToolBar)
         self.findToolBar.hide()
 
-        self.findBar = QLineEdit(self.findToolBar)
+        self.findBar = custom_widgets.LineEdit(self.findToolBar)
         self.findBar.returnPressed.connect(self.findEither)
 
         hideFindToolBarAction = QAction(self)

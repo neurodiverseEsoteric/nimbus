@@ -10,28 +10,57 @@
 import os
 try: import settings
 except: pass
-from common import app_folder, blank_toolbar
+from common import app_folder, blank_toolbar, complete_icon
 from translate import tr
 
 try:
     from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
     Signal = pyqtSignal
-    from PyQt5.QtGui import QIcon
+    from PyQt5.QtGui import QIcon, QPixmap
     from PyQt5.QtWidgets import QMainWindow, QAction, QToolButton, QPushButton, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
-    from PyQt5.QtWebKitWidgets import QWebView
+    #from PyQt5.QtWebKitWidgets import QWebView
 except:
     try:
         from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
         Signal = pyqtSignal
-        from PyQt4.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
-        from PyQt4.QtWebKit import QWebView
+        from PyQt4.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
+        #from PyQt4.QtWebKit import QWebView
     except:
         from PySide.QtCore import Qt, Signal, QPoint, QUrl, QSize
-        from PySide.QtGui import QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
-        from PySide.QtWebKit import QWebView
+        from PySide.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
+#        from PySide.QtWebKit import QWebView
+
+# LineEdit
+class LineEdit(QLineEdit):
+    def __init__(self, *args, **kwargs):
+        super(LineEdit, self).__init__(*args, **kwargs)
+        self.clearButton = QToolButton(self)
+        icon = complete_icon("fileclose")
+        self.clearButton.setIcon(icon)
+        self.clearButton.setIconSize(icon.pixmap(QSize(16, 16)).size())
+        self.clearButton.setCursor(Qt.ArrowCursor)
+        self.clearButton.setStyleSheet("QToolButton { border: none; padding: 0px; }")
+        self.clearButton.hide()
+        self.clearButton.clicked.connect(self.clear)
+        self.textChanged.connect(self.updateCloseButton)
+        frameWidth = self.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
+        self.setStyleSheet("QLineEdit { padding-right: %spx; } " % (self.clearButton.sizeHint().width() + frameWidth + 1,))
+        msz = self.minimumSizeHint()
+        self.setMinimumSize(max(msz.width(), self.clearButton.sizeHint().height() + frameWidth * 2 + 2),
+                   max(msz.height(), self.clearButton.sizeHint().height() + frameWidth * 2 + 2));
+
+    def resizeEvent(self, *args, **kwargs):
+        super(LineEdit, self).resizeEvent(*args, **kwargs)
+        sz = self.clearButton.sizeHint()
+        frameWidth = self.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
+        self.clearButton.move(self.rect().right() - frameWidth - sz.width(),
+                      (self.rect().bottom() + 1 - sz.height())/2)
+
+    def updateCloseButton(self, text):
+        self.clearButton.setVisible(text != "")
 
 # About View
-class AboutView(QWebView):
+"""class AboutView(QWebView):
     def __init__(self, *args, sizeHint=None, **kwargs):
         super(AboutView, self).__init__(*args, **kwargs)
         self._sizeHint = sizeHint
@@ -41,7 +70,7 @@ class AboutView(QWebView):
         return super(AboutView, self).sizeHint()
     def load(self, url):
         if "file" in url.scheme():
-            super(AboutView, self).load(url)
+            super(AboutView, self).load(url)"""
 
 # Blank widget to take up space.
 class Expander(QLabel):
@@ -72,7 +101,7 @@ class LineEditRow(Row):
         super(LineEditRow, self).__init__(parent)
         self.label = QLabel(text, self)
         self.addWidget(self.label)
-        self.lineEdit = QLineEdit(self)
+        self.lineEdit = LineEdit(self)
         self.addWidget(self.lineEdit)
 
 # This is a row with a label and a QSpinBox.
@@ -124,6 +153,8 @@ class LocationBar(QComboBox):
         self.icon = QToolButton(self)
         if type(icon) is QIcon:
             self.icon.setIcon(icon)
+        lineEdit = LineEdit(self)
+        self.setLineEdit(lineEdit)
         self.icon.setFixedWidth(16)
         self.icon.setFixedHeight(16)
         self.icon.hide()
@@ -140,7 +171,7 @@ class LocationBar(QComboBox):
         QComboBox.paintEvent(self, ev)
         self.icon.render(self, QPoint(self.rect().left() + (self.height() + 1 - sz.width())/2, (self.height() + 1 - sz.height())/2))
         if self.s == False:
-            self.lineEdit().setStyleSheet("QLineEdit { background: transparent; padding-left: %spx; }" % str(sz.width() + (self.height() + 1 - sz.width())/2))
+            self.lineEdit().setStyleSheet(self.lineEdit().styleSheet().replace("{", "{ background: transparent; padding-left: %spx; ") % str(sz.width() + (self.height() + 1 - sz.width())/2))
             self.s = True
             self.redefPaintEvent()
 
