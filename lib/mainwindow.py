@@ -493,8 +493,12 @@ class MainWindow(QMainWindow):
         self.connectionEditAction.triggered.connect(lambda: os.system("nm-connection-editor &"))
         self.networkManagerMenu.addAction(self.connectionEditAction)
         
+        if sys.platform.startswith("win"):
+            self.connectAction.setEnabled(False)
+            self.connectionEditAction.setEnabled(False)
+        
         # Add stuff for linux
-        self.networkManagerAction = QAction(common.complete_icon("network-idle"), tr("Edit Connections..."), self)
+        self.networkManagerAction = QAction(common.complete_icon("network-idle"), tr("Network Management"), self)
         self.tabsToolBar.addAction(self.networkManagerAction)
         self.networkManagerButton = self.tabsToolBar.widgetForAction(self.networkManagerAction)
         self.networkManagerAction.setVisible(False)
