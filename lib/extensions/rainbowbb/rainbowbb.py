@@ -31,7 +31,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>"""
 
-import sys, getopt
+import os, sys, getopt
+
+app_dir = os.path.dirname(os.path.realpath(__file__))
+cycles_dir = os.path.join(app_dir, "cycles")
 
 cycles = {"pastel": ("FF7F7F", "FFBF7F", "FFFF7F", "BFFF7F", "7FFF7F", "7FFFBF", "7FFFFF", "7FBFFF", "7F7FFF", "BF7FFF", "FF7FFF", "FF7FBF"),
           "hard": ("FF0000", "FFFF00", "00FF00", "00FFFF", "0000FF", "FF00FF"),
@@ -45,6 +48,17 @@ cycles = {"pastel": ("FF7F7F", "FFBF7F", "FFFF7F", "BFFF7F", "7FFF7F", "7FFFBF",
           "magic": ("000080", "00ffff", "ff0000", "4b0082", "800080", "ee82ee", "dda0dd", "0000ff", "ffd700", "008000", "ff8c00", "00ff00"),
           "foxical": ("00BFBF", "00AFBF", "009FBF", "008FBF", "007FBF", "006FBF", "005FBF"),
           "azure": ("bfdfff", "a7d3ff", "8fc7ff", "77bbff", "5fafff", "47a3ff", "2f97ff", "178bff", "007fff")}
+
+if os.path.isdir(cycles_dir):
+    ecycles = os.listdir(cycles_dir)
+    for fname in ecycles:
+        pname = os.path.join(cycles_dir, fname)
+        try: f = open(pname)
+        except: continue
+        else:
+            cycles[fname] = tuple([line.replace("#", "").replace("\n", "") for line in f.readlines()])
+            if __name__ == "__main__":
+                print("Loaded external color cycle \"" + fname + "\"")
 
 def colorize(text, cycle="pastel", reverse=False, by_char=True, bounce=False):
     if type(text) is not str:
