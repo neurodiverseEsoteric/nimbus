@@ -26,37 +26,37 @@ import traceback
 # We give PyQt5 priority because it supports Qt5.
 try:
     from PyQt5.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
-                             QDateTime
-    from PyQt5.QtGui import QKeySequence, QIcon
+                             QDateTime, QPoint
+    from PyQt5.QtGui import QKeySequence, QIcon, QCursor
     from PyQt5.QtWidgets import QApplication, QDockWidget, QWidget, QHBoxLayout,\
                             QVBoxLayout,\
                             QMessageBox, QSizePolicy,\
                             QMenu, QAction, QMainWindow, QToolBar,\
                             QToolButton, QComboBox, QButtonGroup,\
-                            QLabel
+                            QLabel, QCalendarWidget
     from PyQt5.QtNetwork import QNetworkRequest
     from PyQt5.QtWebKitWidgets import QWebPage
 except:
     try:
         from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
-                                 QDateTime
+                                 QDateTime, QPoint
         from PyQt4.QtGui import QApplication, QDockWidget, QWidget, QHBoxLayout,\
                                 QVBoxLayout,\
                                 QKeySequence, QMessageBox, QSizePolicy, QIcon,\
                                 QMenu, QAction, QMainWindow, QToolBar,\
                                 QToolButton, QComboBox, QButtonGroup,\
-                                QLabel
+                                QLabel, QCalendarWidget, QCursor
         from PyQt4.QtNetwork import QNetworkRequest
         from PyQt4.QtWebKit import QWebPage
     except:
         from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
-                                  QDateTime
+                                  QDateTime, QPoint
         from PySide.QtGui import QApplication, QDockWidget, QWidget,\
                                  QVBoxLayout,\
                                  QHBoxLayout, QKeySequence, QMessageBox,\
                                  QSizePolicy, QIcon, QMenu, QAction,\
                                  QMainWindow, QToolBar, QToolButton, QComboBox,\
-                                 QButtonGroup, QLabel
+                                 QButtonGroup, QLabel, QCalendarWidget, QCursor
         from PySide.QtNetwork import QNetworkRequest
         from PySide.QtWebKit import QWebPage
 
@@ -470,10 +470,17 @@ class MainWindow(QMainWindow):
         # Add separator.
         #self.tabsToolBar.addSeparator()
 
+        try: common.calendar
+        except:
+            common.calendar = QCalendarWidget(None)
+            common.calendar.setWindowFlags(Qt.Popup)
+
         # Displays the date and time while in fullscreen mode.
         self.dateTime = QAction(self)
         self.tabsToolBar.addAction(self.dateTime)
-        self.tabsToolBar.widgetForAction(self.dateTime).setStyleSheet("QToolButton { font-family: monospace; border-radius: 3px; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }")
+        self.dateTimeButton = self.tabsToolBar.widgetForAction(self.dateTime)
+        self.dateTimeButton.setStyleSheet("QToolButton { font-family: monospace; border-radius: 3px; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }")
+        self.dateTimeButton.clicked.connect(self.showCalendar)
         self.dateTime.setVisible(False)
         
         # Add stuff for linux
@@ -663,6 +670,11 @@ class MainWindow(QMainWindow):
         tabNineAction.setShortcuts(["Ctrl+9", "Alt+9"])
         tabNineAction.triggered.connect(lambda: self.tabWidget().setCurrentIndex(self.tabWidget().count()-1))
         self.addAction(tabNineAction)
+
+    def showCalendar(self):
+        common.calendar.setVisible(not common.calendar.isVisible())
+        y = self.dateTimeButton.mapToGlobal(QPoint(0,0)).y() + self.dateTimeButton.height()
+        common.calendar.move(min(self.dateTimeButton.mapToGlobal(QPoint(0,0)).x(), common.desktop.width()-common.calendar.width()), self.dateTimeButton.mapToGlobal(QPoint(0,0)).y()-common.calendar.height() if y > common.desktop.height()-common.calendar.height() else y)
 
     def savePage(self):
         currentWidget = self.tabWidget().currentWidget()
@@ -940,7 +952,7 @@ self.origY + ev.globalY() - self.mouseY)
     # Updates the time.
     def updateDateTime(self):
         self.dateTime.setText(QDateTime.currentDateTime().toString())
-        print(network.isConnectedToNetwork())
+        #print(network.isConnectedToNetwork())
         self.connectionEditorButton.setIcon(common.complete_icon("network-idle") if network.isConnectedToNetwork() else common.complete_icon("network-offline"))
 
     # Toggle all the navigation buttons.

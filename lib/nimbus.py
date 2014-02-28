@@ -51,7 +51,7 @@ except:
 # We give PyQt5 priority because it supports Qt5.
 try:
     from PyQt5.QtCore import Qt, QCoreApplication, QUrl, QTimer
-    from PyQt5.QtWidgets import QApplication, QAction
+    from PyQt5.QtWidgets import QApplication, QAction, QDesktopWidget
     from PyQt5.QtWebKit import QWebSettings
     from PyQt5.QtWebKitWidgets import QWebPage
 
@@ -68,7 +68,7 @@ try:
 except:
     try:
         from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer
-        from PyQt4.QtGui import QApplication, QAction
+        from PyQt4.QtGui import QApplication, QAction, QDesktopWidget
         from PyQt4.QtWebKit import QWebPage, QWebSettings
 
         # Python DBus
@@ -83,7 +83,7 @@ except:
                 pass
     except:
         from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer
-        from PySide.QtGui import QApplication, QAction
+        from PySide.QtGui import QApplication, QAction, QDesktopWidget
         from PySide.QtWebKit import QWebPage, QWebSettings
 
 
@@ -274,6 +274,8 @@ def main():
     sessionSaver.timeout.connect(saveSession)
     sessionSaver.timeout.connect(data.saveData)
     sessionSaver.start(30000)
+
+    common.desktop = QDesktopWidget()
 
     lostTabsTimer = QTimer(timeout=recoverLostTabs, parent=QCoreApplication.instance())
     lostTabsTimer.start(500)
