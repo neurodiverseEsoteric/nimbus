@@ -10,7 +10,7 @@ except:
     mainWindow.rbbDock = QDockWidget(mainWindow)
     mainWindow.rbbDock.setWindowTitle(tr("RainbowBB"))
     mainWindow.rbbDock.setContextMenuPolicy(Qt.CustomContextMenu)
-    mainWindow.rbbDock.setFeatures(QDockWidget.NoDockWidgetFeatures)
+    mainWindow.rbbDock.setFeatures(QDockWidget.DockWidgetClosable)
     mainWindow.rbbEdit = MainWindow(browser.activeWindow().rbbDock)
     mainWindow.rbbDock.setWidget(browser.activeWindow().rbbEdit)
     mainWindow.addDockWidget(Qt.BottomDockWidgetArea, mainWindow.rbbDock)
