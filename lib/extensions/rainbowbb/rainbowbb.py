@@ -35,11 +35,11 @@ import sys, getopt
 
 cycles = {"pastel": ("FF7F7F", "FFBF7F", "FFFF7F", "BFFF7F", "7FFF7F", "7FFFBF", "7FFFFF", "7FBFFF", "7F7FFF", "BF7FFF", "FF7FFF", "FF7FBF"),
           "hard": ("FF0000", "FFFF00", "00FF00", "00FFFF", "0000FF", "FF00FF"),
-          "grayscale": ("000000", "3F3F3F", "7F7F7F", "BFBFBF", "7F7F7F", "3F3F3F"),
+          "grayscale": ("000000", "3F3F3F", "7F7F7F", "BFBFBF"),
           "fail": ("7F3F3F", "7F5F3F", "7F7F3F", "57FF3F", "37FF3F", "37FF5F", "37F7FF", "3F57FF", "3F37FF", "5F37FF", "7F37FF", "7F3F5F"),
           "desaturated": ("7F3F3F", "7F5F3F", "7F7F3F", "5F7F3F", "3F7F3F", "3F7F5F", "3F7F7F", "3F5F7F", "3F3F7F", "5F3F7F", "7F3F7F", "7F3F5F"),
-          "dawn": ("FFFFBF", "FFDFBF", "FFBFBF", "FFBFDF", "FFBFFF", "FFBFDF", "FFBFBF", "FFDFBF"),
-          "dawn2": ("FFFFBF", "FFEFBF", "FFDFBF", "FFCFBF", "FFBFBF", "FFBFCF", "FFBFDF", "FFBFEF", "FFBFFF", "FFBFEF", "FFBFDF", "FFBFCF", "FFBFBF", "FFCFBF", "FFDFBF"),
+          "dawn": ("FFFFBF", "FFDFBF", "FFBFBF", "FFBFDF", "FFBFFF"),
+          "dawn2": ("FFFFBF", "FFEFBF", "FFDFBF", "FFCFBF", "FFBFBF", "FFBFCF", "FFBFDF", "FFBFEF", "FFBFFF"),
           "terminal": ("000000", "003F00", "005F00", "007F00", "009F00", "00BF00", "00DF00", "00FF00"),
           "terminalred": ("000000", "3F0000", "5F0000", "7F0000", "9F0000", "BF0000", "DF0000", "FF0000")}
 
