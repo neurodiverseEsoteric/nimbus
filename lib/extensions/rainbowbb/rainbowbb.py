@@ -42,7 +42,9 @@ cycles = {"pastel": ("FF7F7F", "FFBF7F", "FFFF7F", "BFFF7F", "7FFF7F", "7FFFBF",
           "dawn2": ("FFFFBF", "FFEFBF", "FFDFBF", "FFCFBF", "FFBFBF", "FFBFCF", "FFBFDF", "FFBFEF", "FFBFFF"),
           "terminal": ("000000", "003F00", "005F00", "007F00", "009F00", "00BF00", "00DF00", "00FF00"),
           "terminalred": ("000000", "3F0000", "5F0000", "7F0000", "9F0000", "BF0000", "DF0000", "FF0000"),
-          "magic": ("000080", "00ffff", "ff0000", "4b0082", "800080", "ee82ee", "dda0dd", "0000ff", "ffd700", "008000", "ff8c00", "00ff00")}
+          "magic": ("000080", "00ffff", "ff0000", "4b0082", "800080", "ee82ee", "dda0dd", "0000ff", "ffd700", "008000", "ff8c00", "00ff00"),
+          "foxical": ("00BFBF", "00AFBF", "009FBF", "008FBF", "007FBF", "006FBF", "005FBF"),
+          "azure": ("dfffff", "c3efff", "a7dfff", "8bcfff", "6fbfff", "53afff", "379fff", "1b8fff", "007fff")}
 
 def colorize(text, cycle="pastel", reverse=False, by_char=True, bounce=False):
     if type(text) is not str:
