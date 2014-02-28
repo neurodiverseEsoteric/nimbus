@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
         self.toolBar = QToolBar(self)
         self.toolBar.setMovable(False)
         self.toolBar.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.addToolBar(Qt.BottomToolBarArea, self.toolBar)
+        self.addToolBar(self.toolBar)
 
         self.closeWindowAction = QAction(self)
         self.closeWindowAction.setShortcuts(["Ctrl+W", "Ctrl+Q"])
