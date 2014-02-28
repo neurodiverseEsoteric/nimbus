@@ -32,6 +32,20 @@ html_escape_table = {
 def html_escape(text):
     return "".join(html_escape_table.get(c,c) for c in text)
 
+def create_gradient(cycle):
+    try: rainbowbb.cycles[cycle]
+    except: return "transparent"
+    else:
+        picked_cycle = rainbowbb.cycles[cycle]
+        increment = round(1/len(picked_cycle), 1)
+        gradient = "qlineargradient(x1:0, y1:0, x2:0, y2:1"
+        counter = 0
+        for color in picked_cycle:
+            gradient += ", stop:%s #%s" % (counter, color)
+            counter += increment
+        gradient += ")"
+    return gradient
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__()
@@ -41,6 +55,7 @@ class MainWindow(QMainWindow):
 
     def initUI(self):
         self.toolBar = QToolBar(self)
+        self.toolBar.setStyleSheet("QToolBar { background: %s; border: 0; border-top: 1px palette(shadow); border-bottom: 1px palette(shadow); }" % (create_gradient("pastel"),))
         self.toolBar.setMovable(False)
         self.toolBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.addToolBar(self.toolBar)
