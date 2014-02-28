@@ -68,11 +68,6 @@ class MainWindow(QMainWindow):
         self.toolBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.addToolBar(self.toolBar)
 
-        self.closeWindowAction = QAction(self)
-        self.closeWindowAction.setShortcuts(["Ctrl+W", "Ctrl+Q"])
-        self.closeWindowAction.triggered.connect(self.close)
-        self.addAction(self.closeWindowAction)
-
         self.reverseBox = QCheckBox("&Reverse", self)
         self.reverseBox.clicked.connect(lambda: self.updateGradient())
         self.toolBar.addWidget(self.reverseBox)
