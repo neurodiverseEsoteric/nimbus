@@ -45,6 +45,8 @@ def create_gradient(cycle, reverse=False, bounce=False):
         for color in picked_cycle:
             gradient += ", stop:%s #%s" % (counter, color)
             counter += increment
+            if counter > 1:
+                counter = 1
         gradient += ")"
     return gradient
 
@@ -106,6 +108,7 @@ class MainWindow(QMainWindow):
         self.addDockWidget(Qt.LeftDockWidgetArea, self.inputDock)
 
         self.inputField = QTextEdit(self)
+        self.inputField.setAcceptRichText(False)
         self.inputDock.setWidget(self.inputField)
 
         self.outputField = QTextEdit(self)
