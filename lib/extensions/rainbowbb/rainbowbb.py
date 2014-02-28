@@ -49,16 +49,18 @@ cycles = {"pastel": ("FF7F7F", "FFBF7F", "FFFF7F", "BFFF7F", "7FFF7F", "7FFFBF",
           "foxical": ("00BFBF", "00AFBF", "009FBF", "008FBF", "007FBF", "006FBF", "005FBF"),
           "azure": ("bfdfff", "a7d3ff", "8fc7ff", "77bbff", "5fafff", "47a3ff", "2f97ff", "178bff", "007fff")}
 
-if os.path.isdir(cycles_dir):
-    ecycles = os.listdir(cycles_dir)
-    for fname in ecycles:
-        pname = os.path.join(cycles_dir, fname)
-        try: f = open(pname)
-        except: continue
-        else:
-            cycles[fname] = tuple([line.replace("#", "").replace("\n", "") for line in f.readlines()])
-            if __name__ == "__main__":
-                print("Loaded external color cycle \"" + fname + "\"")
+def load_cycles():
+    global cycles
+    if os.path.isdir(cycles_dir):
+        ecycles = os.listdir(cycles_dir)
+        for fname in ecycles:
+            pname = os.path.join(cycles_dir, fname)
+            try: f = open(pname)
+            except: continue
+            else:
+                cycles[fname] = tuple([line.replace("#", "").replace("\n", "") for line in f.readlines()])
+                if __name__ == "__main__":
+                    print("Loaded external color cycle \"" + fname + "\"")
 
 def colorize(text, cycle="pastel", reverse=False, by_char=True, bounce=False):
     if type(text) is not str:
@@ -123,5 +125,6 @@ def main(argv=[]):
         text = input("Enter some text here: ")
     print(size(colorize(text, cycle, reverse, by_char, bounce), fontsize))
 
+load_cycles()
 if __name__ == "__main__":
     main(sys.argv[1:])

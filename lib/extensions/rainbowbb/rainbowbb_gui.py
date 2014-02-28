@@ -86,16 +86,18 @@ class MainWindow(QMainWindow):
         self.toolBar.addWidget(self.sizeList)
         
         self.cycleList = QComboBox(self)
-        self.cycleList.addItem("pastel")
-        for cycle in sorted(list(rainbowbb.cycles.keys())):
-            if cycle != "pastel":
-                self.cycleList.addItem(cycle)
         self.toolBar.addWidget(self.cycleList)
         self.cycleList.currentIndexChanged.connect(self.updateGradient)
+        self.loadCycles()
         
         self.convertButton = QPushButton("&Convert", self)
         self.convertButton.clicked.connect(self.convert)
         self.toolBar.addWidget(self.convertButton)
+
+        self.reloadButton = QPushButton("Reload", self)
+        self.reloadButton.setShortcut("Alt+Shift+R")
+        self.reloadButton.clicked.connect(self.loadCycles)
+        self.toolBar.addWidget(self.reloadButton)
 
         self.inputDock = QDockWidget("Input", self)
         self.inputDock.setFeatures(QDockWidget.NoDockWidgetFeatures)
@@ -114,6 +116,14 @@ class MainWindow(QMainWindow):
         if not index:
             index = self.cycleList.currentIndex()
         self.toolBar.setStyleSheet(stylesheet % (create_gradient(self.cycleList.itemText(index), self.reverseBox.isChecked(), self.bounceBox.isChecked()),))
+
+    def loadCycles(self):
+        rainbowbb.load_cycles()
+        self.cycleList.clear()
+        self.cycleList.addItem("pastel")
+        for cycle in sorted(list(rainbowbb.cycles.keys())):
+            if cycle != "pastel":
+                self.cycleList.addItem(cycle)
 
     def show(self):
         self.setVisible(True)
