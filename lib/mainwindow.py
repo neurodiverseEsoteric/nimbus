@@ -483,16 +483,26 @@ class MainWindow(QMainWindow):
         self.dateTimeButton.clicked.connect(self.showCalendar)
         self.dateTime.setVisible(False)
         
+        self.networkManagerMenu = QMenu(self)
+        
+        self.connectAction = QAction(tr("Connect to Wi-Fi Network..."), self)
+        self.connectAction.triggered.connect(lambda: os.system("qdbus org.gnome.network_manager_applet /org/gnome/network_manager_applet ConnectToHiddenNetwork &"))
+        self.networkManagerMenu.addAction(self.connectAction)
+        
+        self.connectionEditAction = QAction(tr("Edit Connections..."), self)
+        self.connectionEditAction.triggered.connect(lambda: os.system("nm-connection-editor &"))
+        self.networkManagerMenu.addAction(self.connectionEditAction)
+        
         # Add stuff for linux
-        self.connectionEditorButton = QAction(common.complete_icon("network-idle"), tr("Edit Connections..."), self)
-        self.connectionEditorButton.triggered.connect(lambda: os.system("nm-connection-editor &"))
-        self.tabsToolBar.addAction(self.connectionEditorButton)
-        self.connectionEditorButton.setVisible(False)
-
-        self.connectionEditorAction = QAction(common.complete_icon("network-idle"), tr("Edit Connections..."), self)
-        self.connectionEditorAction.setShortcut("Alt+N")
-        self.connectionEditorAction.triggered.connect(lambda: os.system("nm-connection-editor &"))
-        self.addAction(self.connectionEditorAction)
+        self.networkManagerAction = QAction(common.complete_icon("network-idle"), tr("Edit Connections..."), self)
+        self.tabsToolBar.addAction(self.networkManagerAction)
+        self.networkManagerButton = self.tabsToolBar.widgetForAction(self.networkManagerAction)
+        self.networkManagerAction.setVisible(False)
+        self.addAction(self.networkManagerAction)
+        self.networkManagerAction.setShortcut("Alt+N")
+        self.networkManagerAction.triggered.connect(self.networkManagerButton.showMenu)
+        self.networkManagerAction.setMenu(self.networkManagerMenu)
+        self.networkManagerButton.setPopupMode(QToolButton.InstantPopup)
 
         # Add fullscreen button.
         self.toggleFullScreenButton = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
@@ -953,7 +963,7 @@ self.origY + ev.globalY() - self.mouseY)
     def updateDateTime(self):
         self.dateTime.setText(QDateTime.currentDateTime().toString())
         #print(network.isConnectedToNetwork())
-        self.connectionEditorButton.setIcon(common.complete_icon("network-idle") if network.isConnectedToNetwork() else common.complete_icon("network-offline"))
+        self.networkManagerAction.setIcon(common.complete_icon("network-idle") if network.isConnectedToNetwork() else common.complete_icon("network-offline"))
 
     # Toggle all the navigation buttons.
     def toggleActions(self):
@@ -1240,7 +1250,7 @@ self.origY + ev.globalY() - self.mouseY)
             try: self.toggleFullScreenAction.setChecked(True)
             except: pass
             self.toggleFullScreenButton.setVisible(True)
-            self.connectionEditorButton.setVisible(True)
+            self.networkManagerAction.setVisible(True)
             self.dateTime.setVisible(True)
             self._wasMaximized = self.isMaximized()
             self.showFullScreen()
@@ -1250,7 +1260,7 @@ self.origY + ev.globalY() - self.mouseY)
             try: self.toggleFullScreenAction.setChecked(False)
             except: pass
             self.toggleFullScreenButton.setVisible(False)
-            self.connectionEditorButton.setVisible(False)
+            self.networkManagerAction.setVisible(False)
             self.dateTime.setVisible(False)
             if not self._wasMaximized:
                 self.showNormal()
