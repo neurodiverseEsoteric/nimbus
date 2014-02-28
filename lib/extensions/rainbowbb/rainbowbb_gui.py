@@ -46,6 +46,8 @@ def create_gradient(cycle):
         gradient += ")"
     return gradient
 
+stylesheet = "QToolBar { background: %s; border: 0; border-top: 1px palette(shadow); border-bottom: 1px palette(shadow); }"
+
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__()
@@ -54,8 +56,10 @@ class MainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
+        self.setStyleSheet("QCheckBox { background: palette(window); border-radius: 4px; padding: 2px; margin-right: 2px; }")
+
         self.toolBar = QToolBar(self)
-        self.toolBar.setStyleSheet("QToolBar { background: %s; border: 0; border-top: 1px palette(shadow); border-bottom: 1px palette(shadow); }" % (create_gradient("pastel"),))
+        self.toolBar.setStyleSheet(stylesheet % (create_gradient("pastel"),))
         self.toolBar.setMovable(False)
         self.toolBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.addToolBar(self.toolBar)
@@ -86,6 +90,7 @@ class MainWindow(QMainWindow):
             if cycle != "pastel":
                 self.cycleList.addItem(cycle)
         self.toolBar.addWidget(self.cycleList)
+        self.cycleList.currentIndexChanged.connect(self.updateGradient)
         
         self.convertButton = QPushButton("&Convert", self)
         self.convertButton.clicked.connect(self.convert)
@@ -102,6 +107,9 @@ class MainWindow(QMainWindow):
         self.outputField = QTextEdit(self)
         self.outputField.setReadOnly(True)
         self.setCentralWidget(self.outputField)
+
+    def updateGradient(self, index=0):
+        self.toolBar.setStyleSheet(stylesheet % (create_gradient(self.cycleList.itemText(index)),))
 
     def show(self):
         self.setVisible(True)
