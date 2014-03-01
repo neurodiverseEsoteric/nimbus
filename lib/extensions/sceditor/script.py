@@ -10,5 +10,3 @@ if not self.parentWindow().hasSideBar(name):
     self.parentWindow().getSideBar(name)["radio"] = False
 else:
     self.parentWindow().toggleSideBar(name)
-if not name in sys.path:
-    sys.path.append(name)
