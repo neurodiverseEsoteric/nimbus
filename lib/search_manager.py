@@ -15,12 +15,12 @@ import os
 import json
 import custom_widgets
 from translate import tr
-try:
+if not common.pyqt4:
     from PyQt5.QtCore import Qt, pyqtSignal, QSize
     from PyQt5.QtGui import QCursor
     from PyQt5.QtWidgets import QMainWindow, QAction, QMessageBox, QToolBar, QLabel, QToolButton, QListWidget, QInputDialog, QDesktopWidget
     Signal = pyqtSignal
-except:
+else:
     try:
         from PyQt4.QtCore import Qt, pyqtSignal, QSize
         from PyQt4.QtGui import QMainWindow, QAction, QMessageBox, QToolBar, QLabel, QToolButton, QListWidget, QInputDialog, QCursor, QDesktopWidget

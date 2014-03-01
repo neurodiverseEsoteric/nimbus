@@ -25,7 +25,7 @@ import traceback
 
 # Extremely specific imports from PyQt5/PySide.
 # We give PyQt5 priority because it supports Qt5.
-try:
+if not common.pyqt4:
     from PyQt5.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
                              QDateTime, QPoint
     from PyQt5.QtGui import QKeySequence, QIcon, QCursor
@@ -37,7 +37,7 @@ try:
                             QLabel, QCalendarWidget
     from PyQt5.QtNetwork import QNetworkRequest
     from PyQt5.QtWebKitWidgets import QWebPage
-except:
+else:
     try:
         from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer, QSize,\
                                  QDateTime, QPoint

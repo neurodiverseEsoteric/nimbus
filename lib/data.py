@@ -8,13 +8,14 @@
 # Description: This module contains data related to browser history, cookies,
 #              etc.
 
+from common import pyqt4
 import network
 import json
-try:
+if not pyqt4:
     from PyQt5.QtCore import QCoreApplication, QByteArray, QUrl
     from PyQt5.QtNetwork import QNetworkCookie
     from qsettings import QSettings
-except:
+else:
     try:
         from PyQt4.QtCore import QCoreApplication, QByteArray, QUrl, QSettings
         from PyQt4.QtNetwork import QNetworkCookie

@@ -18,12 +18,12 @@ from translate import tr
 
 # Extremely specific imports from PyQt5/PySide.
 # We give PyQt5 priority because it supports Qt5.
-try:
+if not common.pyqt4:
     from PyQt5.QtCore import pyqtSignal, Qt, QTimer, QSize
     Signal = pyqtSignal
     from PyQt5.QtGui import QCursor
     from PyQt5.QtWidgets import QWidget, QApplication, QMenu, QAction, QSystemTrayIcon, QDesktopWidget, QMessageBox, QToolButton, QToolBar, QLabel
-except:
+else:
     try:
         from PyQt4.QtCore import pyqtSignal, Qt, QTimer, QSize
         Signal = pyqtSignal

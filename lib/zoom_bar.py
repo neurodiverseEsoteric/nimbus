@@ -11,11 +11,11 @@
 import common
 from translate import tr
 
-try:
+if not common.pyqt4:
     from PyQt5.QtCore import pyqtSignal, Qt
     Signal = pyqtSignal
     from PyQt5.QtWidgets import QAction, QDoubleSpinBox, QToolBar
-except:
+else:
     try:
         from PyQt4.QtCore import pyqtSignal, Qt
         Signal = pyqtSignal

@@ -19,11 +19,11 @@ import filtering
 import data
 import clear_history_dialog
 from translate import tr
-try:
+if not common.pyqt4:
     from PyQt5.QtCore import Qt, QUrl
     from PyQt5.QtGui import QKeySequence, QIcon
     from PyQt5.QtWidgets import QWidget, QLabel, QMainWindow, QCheckBox, QGroupBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget, QTextEdit
-except:
+else:
     try:
         from PyQt4.QtCore import Qt, QUrl
         from PyQt4.QtGui import QWidget, QKeySequence, QIcon, QLabel, QMainWindow, QCheckBox, QGroupBox, QTabWidget, QToolBar, QToolButton, QLineEdit, QVBoxLayout, QComboBox, QSizePolicy, QAction, QPushButton, QListWidget, QTextEdit

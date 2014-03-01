@@ -12,16 +12,17 @@
 
 import sys
 import os
+from common import pyqt4
 import subprocess
 import settings
 import filtering
 import settings
 from translate import tr
-try:
+if not pyqt4:
     from PyQt5.QtCore import QCoreApplication, QUrl, QTimer
     from PyQt5.QtWidgets import QInputDialog, QLineEdit
     from PyQt5.QtNetwork import QNetworkInterface, QNetworkCookieJar, QNetworkAccessManager, QNetworkDiskCache, QNetworkRequest, QNetworkReply
-except:
+else:
     try:
         from PyQt4.QtCore import QCoreApplication, QUrl, QTimer, SIGNAL
         from PyQt4.QtGui import QInputDialog, QLineEdit

@@ -16,10 +16,10 @@ import settings
 import network
 import data
 from translate import tr
-try:
+if not common.pyqt4:
     from PyQt5.QtCore import Qt
     from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QMainWindow, QAction, QToolBar, QComboBox, QPushButton
-except:
+else:
     try:
         from PyQt4.QtCore import Qt
         from PyQt4.QtGui import QWidget, QVBoxLayout, QLabel, QMainWindow, QAction, QToolBar, QComboBox, QPushButton

@@ -11,13 +11,14 @@
 
 from __future__ import print_function
 
+from common import pyqt4
 import os.path, sys
-try:
+if not pyqt4:
     from PyQt5.QtCore import pyqtSignal, QObject
     Signal = pyqtSignal
     from PyQt5.QtGui import QTextDocument
     from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QAction, QTextEdit, QFileDialog, QInputDialog, QLineEdit
-except:
+else:
     try:
         from PyQt4.QtCore import pyqtSignal, QObject
         Signal = pyqtSignal

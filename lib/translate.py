@@ -9,10 +9,11 @@
 #              internationalization.
 
 import os.path
-from common import app_folder, app_locale
+from common import app_folder, app_locale, pyqt4
 
-try: from PyQt5.QtCore import QCoreApplication, QLocale, QTranslator, QObject
-except:
+if not pyqt4:
+    from PyQt5.QtCore import QCoreApplication, QLocale, QTranslator, QObject
+else:
     try: from PyQt4.QtCore import QCoreApplication, QLocale, QTranslator, QObject
     except: from PySide.QtCore import QCoreApplication, QLocale, QTranslator, QObject
 

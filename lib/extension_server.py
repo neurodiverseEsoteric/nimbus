@@ -10,14 +10,15 @@
 #              without suffering from issues regarding origin policies.
 
 # Import whatever we need to run.
+from common import pyqt4
 import os
 from http.server import SimpleHTTPRequestHandler
 import http.server
-try: from PyQt5.QtCore import QThread
-except:
+if not pyqt4:
+    from PyQt5.QtCore import QThread
+else:
     try: from PyQt4.QtCore import QThread
     except: from PySide.QtCore import QThread
-import common
 from settings import extensions_folder
 
 class ExtensionServerThread(QThread):

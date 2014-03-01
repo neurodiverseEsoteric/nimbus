@@ -11,8 +11,9 @@ import os.path
 import abpy
 import common
 import settings
-try: from PyQt5.QtCore import QThread
-except:
+if not common.pyqt4:
+    from PyQt5.QtCore import QThread
+else:
     try: from PyQt4.QtCore import QThread
     except: from PySide.QtCore import QThread
 

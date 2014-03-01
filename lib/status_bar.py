@@ -7,12 +7,12 @@
 # License:     See LICENSE.md for more details.
 # Description: This is a browser status bar class.
 
-from common import blank_toolbar
+from common import blank_toolbar, pyqt4
 import custom_widgets
-try:
+if not pyqt4:
     from PyQt5.QtCore import Qt, QSize
     from PyQt5.QtWidgets import QToolBar, QStatusBar, QFrame, QMainWindow, QLineEdit, QProgressBar, QSizeGrip
-except:
+else:
     try:
         from PyQt4.QtCore import Qt, QSize
         from PyQt4.QtGui import QToolBar, QStatusBar, QFrame, QMainWindow, QLineEdit, QProgressBar, QSizeGrip

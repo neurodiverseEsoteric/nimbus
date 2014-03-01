@@ -8,13 +8,14 @@
 # Description: Contains a QObject providing geolocation capabilities, to be
 #              used by nwebkit.py.
 
+from common import pyqt4
 import urllib.request
 import time
 
-try:
+if not pyqt4:
     from PyQt5.QtCore import QObject, pyqtSlot
     Slot = pyqtSlot
-except:
+else:
     try:
         from PyQt4.QtCore import QObject, pyqtSlot
         Slot = pyqtSlot

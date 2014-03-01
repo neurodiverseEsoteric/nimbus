@@ -10,16 +10,16 @@
 import os
 try: import settings
 except: pass
-from common import app_folder, blank_toolbar, complete_icon
+from common import app_folder, blank_toolbar, complete_icon, pyqt4
 from translate import tr
 
-try:
+if not pyqt4:
     from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
     Signal = pyqtSignal
     from PyQt5.QtGui import QIcon, QPixmap
     from PyQt5.QtWidgets import QMainWindow, QAction, QToolButton, QPushButton, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
     #from PyQt5.QtWebKitWidgets import QWebView
-except:
+else:
     try:
         from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
         Signal = pyqtSignal
