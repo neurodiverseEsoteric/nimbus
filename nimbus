@@ -7,8 +7,9 @@
 # License:     See <http://unlicense.org/> for more details.
 # Description: This is the startup script for Nimbus.
 
+import sys
 try: from lib import *
 except: from nimbus import *
 
 if __name__ == "__main__":
-    nimbus.main()
+    nimbus.main(sys.argv)

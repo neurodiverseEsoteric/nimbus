@@ -10,6 +10,7 @@
 # Import everything we need.
 import os
 import json
+import getopt
 import copy
 import common
 import browser
@@ -59,18 +60,6 @@ except:
                                  QButtonGroup, QLabel, QCalendarWidget, QCursor
         from PySide.QtNetwork import QNetworkRequest
         from PySide.QtWebKit import QWebPage
-
-tabbar_stylesheet = \
-"""QTabBar { margin: 0; padding: 0; border-bottom: 0; }
-   QTabBar::tab { border: 1px solid palette(dark);
-                  border-%s: 0; margin: 0; padding: 4px;
-                  background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                              stop: 0 palette(window),
-                                              stop: 1 palette(dark)); }
-   QTabBar::tab:selected { background: qlineargradient(x1: 0, y1: 0,
-                                                       x2: 0, y2: 1,
-                                       stop: 0 palette(light),
-                                       stop: 1 palette(window)); }"""
 
 # Extension button class.
 class ExtensionButton(QToolButton):
@@ -133,23 +122,22 @@ class MainWindow(QMainWindow):
         # Sidebars are part of the (incomplete) extensions API.
         self.sideBars = {}
 
-
-        # Tabs toolbar.
-        self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
-                           contextMenuPolicy=Qt.CustomContextMenu,\
-                           parent=self,
-                           windowTitle=tr("Tabs"))
-        self.addToolBar(self.tabsToolBar)
-        self.addToolBarBreak(Qt.TopToolBarArea)
-
         # Main toolbar.
-        self.toolBar = QToolBar(movable=False,\
+        self.toolBar = custom_widgets.MenuToolBar(movable=False,\
                                 contextMenuPolicy=Qt.CustomContextMenu,\
                                 parent=self,
                                 windowTitle=tr("Navigation Toolbar"))
         self.addToolBar(self.toolBar)
         if self.appMode:
             self.toolBar.setVisible(False)
+        self.addToolBarBreak(Qt.TopToolBarArea)
+
+        # Tabs toolbar.
+        self.tabsToolBar = QToolBar(movable=False,\
+                           contextMenuPolicy=Qt.CustomContextMenu,\
+                           parent=self,
+                           windowTitle=tr("Tabs"))
+        self.addToolBar(self.tabsToolBar)
 
         # Tab widget for tabbed browsing.
         self.tabs = custom_widgets.TabWidget(self)
@@ -198,7 +186,8 @@ class MainWindow(QMainWindow):
         self.tabsToolBar.layout().setSpacing(0)
         self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
         self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
-        self.tabs.tabBar().setStyleSheet(tabbar_stylesheet % ("left" if self.layoutDirection() == Qt.LeftToRight else "right",))
+        #self.tabs.tabBar().setShape(self.tabs.tabBar().RoundedSouth)
+        #self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # New tab action.
         newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)

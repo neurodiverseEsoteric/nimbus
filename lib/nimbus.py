@@ -153,14 +153,22 @@ def recoverLostTabs():
             browser.activeWindow().addTab(webview)
 
 # Main function to load everything.
-def main():
+def main(argv):
     # Start DBus loop
     if has_dbus:
         mainloop = DBusQtMainLoop(set_as_default = True)
         dbus.set_default_main_loop(mainloop)
 
+    hasStyle = False
+    for arg in argv:
+        if arg.startswith("-style="):
+            hasStyle = True
+            break
+    if not hasStyle:
+        argv.append("-style=GTK")
+
     # Create app.
-    app = QApplication(sys.argv)
+    app = QApplication(argv)
     app.installTranslator(translate.translator)
 
     # We want Nimbus to stay open when the last window is closed,
@@ -179,9 +187,9 @@ def main():
     # will send all the requested URLs to the existing process and
     # exit.
     if dbus_present:
-        for arg in sys.argv[1:]:
+        for arg in argv[1:]:
             proxy.addTab(arg)
-        if len(sys.argv) < 2:
+        if len(argv) < 2:
             proxy.addWindow()
         return
 
@@ -280,18 +288,18 @@ def main():
     lostTabsTimer = QTimer(timeout=recoverLostTabs, parent=QCoreApplication.instance())
     lostTabsTimer.start(500)
 
-    if not "--daemon" in sys.argv and os.path.exists(settings.session_file):
+    if not "--daemon" in argv and os.path.exists(settings.session_file):
         loadSession()
-    if not "--daemon" in sys.argv and len(sys.argv[1:]) > 0:
+    if not "--daemon" in argv and len(argv[1:]) > 0:
         # Create instance of MainWindow.
         if len(browser.windows) > 0:
             win = browser.windows[-1]
         else:
-            win = MainWindow(appMode = ("--app" in sys.argv))
+            win = MainWindow(appMode = ("--app" in argv))
 
         # Open URLs from command line.
-        if len(sys.argv[1:]) > 0:
-            for arg in sys.argv[1:]:
+        if len(argv[1:]) > 0:
+            for arg in argv[1:]:
                 if "." in arg or ":" in arg:
                     win.addTab(url=arg)
 
@@ -306,4 +314,4 @@ def main():
 
 # Start program
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
