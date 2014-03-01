@@ -781,7 +781,7 @@ class MainWindow(QMainWindow):
              setFeatures(QDockWidget.NoDockWidgetFeatures)
         if not webView:
             self.sideBars[name]["sideBar"].\
-             webView = WebView(self.sideBars[name]["sideBar"], sizeHint=QSize(320, 320))
+             webView = WebView(self.sideBars[name]["sideBar"], sizeHint=QSize(320, 256))
             self.sideBars[name]["webView"] = self.sideBars[name]["sideBar"].webView
             self.sideBars[name]["sideBar"].\
              webView.page().setUserScript(script)
@@ -799,7 +799,7 @@ class MainWindow(QMainWindow):
         else:
             try: webView.disconnect()
             except: pass
-            webView._sizeHint = QSize(320, 320)
+            webView._sizeHint = QSize(320, 256)
             webView.setUserAgent(ua)
             self.sideBars[name]["sideBar"].webView = webView
             self.sideBars[name]["webView"] = self.sideBars[name]["sideBar"].webView

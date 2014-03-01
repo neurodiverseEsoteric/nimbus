@@ -12,7 +12,11 @@ except:
     mainWindow.rbbDock.setContextMenuPolicy(Qt.CustomContextMenu)
     mainWindow.rbbDock.setFeatures(QDockWidget.DockWidgetClosable)
     mainWindow.rbbEdit = MainWindow(browser.activeWindow().rbbDock)
+    def sizeHint(self=mainWindow.rbbEdit):
+        return QSize(320, 256)
+    mainWindow.rbbEdit.sizeHint = sizeHint
     mainWindow.rbbDock.setWidget(browser.activeWindow().rbbEdit)
     mainWindow.addDockWidget(Qt.BottomDockWidgetArea, mainWindow.rbbDock)
 else:
     browser.activeWindow().rbbDock.setVisible(not browser.activeWindow().rbbDock.isVisible())
+
