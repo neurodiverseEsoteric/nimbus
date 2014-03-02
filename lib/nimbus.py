@@ -159,13 +159,14 @@ def main(argv):
         mainloop = DBusQtMainLoop(set_as_default = True)
         dbus.set_default_main_loop(mainloop)
 
-    hasStyle = False
-    for arg in argv:
-        if arg.startswith("-style="):
-            hasStyle = True
-            break
-    if not hasStyle:
-        argv.append("-style=GTK")
+    if sys.platform.startswith("linux"):
+        hasStyle = False
+        for arg in argv:
+            if arg.startswith("-style="):
+                hasStyle = True
+                break
+        if not hasStyle:
+            argv.append("-style=GTK")
 
     # Create app.
     app = QApplication(argv)
