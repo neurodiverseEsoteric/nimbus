@@ -472,20 +472,6 @@ class MainWindow(QMainWindow):
         self.dateTimeButton.clicked.connect(self.showCalendar)
         self.dateTime.setVisible(False)
         
-        self.networkManagerMenu = QMenu(self)
-        
-        self.connectAction = QAction(tr("Connect to Wi-Fi Network..."), self)
-        self.connectAction.triggered.connect(lambda: os.system("qdbus org.gnome.network_manager_applet /org/gnome/network_manager_applet ConnectToHiddenNetwork &"))
-        self.networkManagerMenu.addAction(self.connectAction)
-        
-        self.connectionEditAction = QAction(tr("Edit Connections..."), self)
-        self.connectionEditAction.triggered.connect(lambda: os.system("nm-connection-editor &"))
-        self.networkManagerMenu.addAction(self.connectionEditAction)
-        
-        if sys.platform.startswith("win"):
-            self.connectAction.setEnabled(False)
-            self.connectionEditAction.setEnabled(False)
-        
         # Add stuff for linux
         self.networkManagerAction = QAction(common.complete_icon("network-idle"), tr("Network Management"), self)
         self.tabsToolBar.addAction(self.networkManagerAction)
@@ -493,9 +479,21 @@ class MainWindow(QMainWindow):
         self.networkManagerAction.setVisible(False)
         self.addAction(self.networkManagerAction)
         self.networkManagerAction.setShortcut("Alt+N")
-        self.networkManagerAction.triggered.connect(self.networkManagerButton.showMenu)
-        self.networkManagerAction.setMenu(self.networkManagerMenu)
-        self.networkManagerButton.setPopupMode(QToolButton.InstantPopup)
+        if sys.platform.startswith("linux"):
+            self.networkManagerMenu = QMenu(self)
+            self.connectAction = QAction(tr("Connect to Wi-Fi Network..."), self)
+            self.connectAction.triggered.connect(lambda: os.system("qdbus org.gnome.network_manager_applet /org/gnome/network_manager_applet ConnectToHiddenNetwork &"))
+            self.networkManagerMenu.addAction(self.connectAction)
+        
+            self.connectionEditAction = QAction(tr("Edit Connections..."), self)
+            self.connectionEditAction.triggered.connect(lambda: os.system("nm-connection-editor &"))
+            self.networkManagerMenu.addAction(self.connectionEditAction)
+        
+            self.networkManagerAction.triggered.connect(self.networkManagerButton.showMenu)
+            self.networkManagerAction.setMenu(self.networkManagerMenu)
+            self.networkManagerButton.setPopupMode(QToolButton.InstantPopup)
+        else:
+            self.networkManagerAction.triggered.connect(lambda: os.system("control ncpa.cpl"))
 
         # Add fullscreen button.
         self.toggleFullScreenButton = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
