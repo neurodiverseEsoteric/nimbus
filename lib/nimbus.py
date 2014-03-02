@@ -148,9 +148,15 @@ if has_dbus:
 
 
 def recoverLostTabs():
+    killemall = []
     for webview in common.webviews:
-        if webview.parent() == None:
-            browser.activeWindow().addTab(webview)
+        try:
+            if webview.parent() == None:
+                browser.activeWindow().addTab(webview)
+        except:
+            killemall.append(webview)
+    for webview in killemall:
+        common.webviews.remove(webview)
 
 # Main function to load everything.
 def main(argv):
