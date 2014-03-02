@@ -8,6 +8,7 @@
 # Description: Custom widgets used by Nimbus.
 
 import os
+import sys
 try: import settings
 except: pass
 from common import app_folder, blank_toolbar, complete_icon, pyqt4
@@ -31,33 +32,39 @@ else:
 #        from PySide.QtWebKit import QWebView
 
 # LineEdit
-class LineEdit(QLineEdit):
-    def __init__(self, *args, **kwargs):
-        super(LineEdit, self).__init__(*args, **kwargs)
-        self.clearButton = QToolButton(self)
-        icon = complete_icon("fileclose")
-        self.clearButton.setIcon(icon)
-        self.clearButton.setIconSize(icon.pixmap(QSize(16, 16)).size())
-        self.clearButton.setCursor(Qt.ArrowCursor)
-        self.clearButton.setStyleSheet("QToolButton { border: none; padding: 0px; }")
-        self.clearButton.hide()
-        self.clearButton.clicked.connect(self.clear)
-        self.textChanged.connect(self.updateCloseButton)
-        frameWidth = self.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
-        self.setStyleSheet("QLineEdit { padding-right: %spx; } " % (self.clearButton.sizeHint().width() + frameWidth + 1,))
-        msz = self.minimumSizeHint()
-        self.setMinimumSize(max(msz.width(), self.clearButton.sizeHint().height() + frameWidth * 2 + 2),
-                   max(msz.height(), self.clearButton.sizeHint().height() + frameWidth * 2 + 2));
+if sys.platform.startswith("linux"):
+    class LineEdit(QLineEdit):
+        def __init__(self, *args, **kwargs):
+            super(LineEdit, self).__init__(*args, **kwargs)
+            self.clearButton = QToolButton(self)
+            icon = complete_icon("fileclose")
+            self.clearButton.setIcon(icon)
+            self.clearButton.setIconSize(icon.pixmap(QSize(16, 16)).size())
+            self.clearButton.setCursor(Qt.ArrowCursor)
+            self.clearButton.setStyleSheet("QToolButton { border: none; padding: 0px; }")
+            self.clearButton.hide()
+            self.clearButton.clicked.connect(self.clear)
+            self.textChanged.connect(self.updateCloseButton)
+            frameWidth = self.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
+            self.setStyleSheet("QLineEdit { padding-right: %spx; }" % (self.clearButton.sizeHint().width() + frameWidth + 1,))
+            msz = self.minimumSizeHint()
+            self.setMinimumSize(max(msz.width(), self.clearButton.sizeHint().height() + frameWidth * 2 + 2),
+                       max(msz.height(), self.clearButton.sizeHint().height() + frameWidth * 2 + 2));
 
-    def resizeEvent(self, *args, **kwargs):
-        super(LineEdit, self).resizeEvent(*args, **kwargs)
-        sz = self.clearButton.sizeHint()
-        frameWidth = self.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
-        self.clearButton.move(self.rect().right() - frameWidth - sz.width(),
-                      (self.rect().bottom() + 1 - sz.height())/2)
+        def resizeEvent(self, *args, **kwargs):
+            super(LineEdit, self).resizeEvent(*args, **kwargs)
+            sz = self.clearButton.sizeHint()
+            frameWidth = self.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
+            self.clearButton.move(self.rect().right() - frameWidth - sz.width(),
+                          (self.rect().bottom() + 1 - sz.height())/2)
 
-    def updateCloseButton(self, text):
-        self.clearButton.setVisible(text != "")
+        def updateCloseButton(self, text):
+            self.clearButton.setVisible(text != "")
+else:
+    class LineEdit(QLineEdit):
+        def __init__(self, *args, **kwargs):
+            super(LineEdit, self).__init__(*args, **kwargs)
+            self.setStyleSheet("QLineEdit { }")
 
 # About View
 """class AboutView(QWebView):
