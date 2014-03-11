@@ -417,6 +417,14 @@ class MainWindow(QMainWindow):
         self.tabMenuToolBar.addAction(self.sideBarToTabAction)
         self.addAction(self.sideBarToTabAction)
 
+        e1 = custom_widgets.HorizontalExpander(self.tabMenuToolBar.toolBar())
+        self.tabMenuToolBar.addWidget(e1)
+
+        self.appName = QLabel(text="<b>%s</b>" % (common.app_name,), parent=self)
+        self.appName.setStyleSheet("QLabel { border-radius: 4px; margin: 2px; background: palette(highlight); color: palette(highlighted-text); }")
+
+        self.tabMenuToolBar.addWidget(self.appName)
+
         self.mainMenu.addSeparator()
 
         # Add print preview action.
@@ -478,7 +486,7 @@ class MainWindow(QMainWindow):
         self.dateTime = QAction(self)
         self.tabsToolBar.addAction(self.dateTime)
         self.dateTimeButton = self.tabsToolBar.widgetForAction(self.dateTime)
-        self.dateTimeButton.setStyleSheet("QToolButton { font-family: monospace; border-radius: 3px; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }")
+        self.dateTimeButton.setStyleSheet("QToolButton { font-family: monospace; border-radius: 4px; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }")
         self.dateTimeButton.clicked.connect(self.showCalendar)
         self.dateTime.setVisible(False)
         
@@ -1435,7 +1443,7 @@ self.origY + ev.globalY() - self.mouseY)
             longtitle = self.tabWidget().widget(index).windowTitle()
             self.tabWidget().setTabText(index, "\u26bf" if index < settings.setting_to_int("general/PinnedTabCount") else title)
             if index == self.tabWidget().currentIndex():
-                self.setWindowTitle(longtitle + " - " + tr("Nimbus"))
+                self.setWindowTitle(longtitle + " - " + common.app_name)
 
     # Update the icons on every single tab.
     def updateTabIcons(self):

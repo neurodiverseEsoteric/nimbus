@@ -176,6 +176,7 @@ def main(argv):
 
     # Create app.
     app = QApplication(argv)
+    app.setApplicationName(common.app_name + "/" + common.app_version)
     app.installTranslator(translate.translator)
 
     # We want Nimbus to stay open when the last window is closed,

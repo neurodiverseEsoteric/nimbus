@@ -80,7 +80,7 @@ class SystemTrayIcon(QSystemTrayIcon):
         super(SystemTrayIcon, self).__init__(common.app_icon, parent)
 
         # Set tooltip.
-        self.setToolTip(tr("Nimbus"))
+        self.setToolTip(common.app_name)
         
         self.widget = QWidget(None)
         self.widget.resize(0, 0)
@@ -142,13 +142,13 @@ class SystemTrayIcon(QSystemTrayIcon):
 
         if self.geometry().width() < 8:
             self.toolBar = BackgroundToolBar(None)
-            self.toolBar.setWindowTitle(tr("Nimbus"))
+            self.toolBar.setWindowTitle(common.app_name)
             #self.toolBar.setStyleSheet("QToolBar{background:palette(window);border:0;}")
             self.button = QToolButton(self.toolBar)
             self.button.setIcon(common.app_icon)
             self.button.clicked.connect(self.showMenu)
             self.toolBar.addWidget(self.button)
-            extender = QLabel(tr("Nimbus"), self.toolBar)
+            extender = QLabel(common.app_name, self.toolBar)
             self.toolBar.addWidget(extender)
             self.toolBar.hide()
             timer = QTimer(timeout=self.toggleButton, parent=self)
@@ -175,7 +175,7 @@ class SystemTrayIcon(QSystemTrayIcon):
             parent = self.widget
             self.widget.show()
         QMessageBox.about(parent, tr("About Nimbus"),\
-                          "<h3>" + tr("Nimbus") + " " +\
+                          "<h3>" + common.app_name + " " +\
                           common.app_version +\
                           "</h3>" +\
                           tr("A Qt-based web browser made in Python."))
