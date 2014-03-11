@@ -198,6 +198,7 @@ class MainWindow(QMainWindow):
         newIncognitoTabAction = QAction(common.complete_icon("face-devilish"), tr("New &Incognito Tab"), self)
         newIncognitoTabAction.setShortcut("Ctrl+Shift+I")
         newIncognitoTabAction.triggered.connect(lambda: self.addTab(incognito=True))
+        self.addAction(newIncognitoTabAction)
 
         # This is used so that the new tab button looks halfway decent,
         # and can actually be inserted into the corner of the tab widget.
@@ -388,6 +389,7 @@ class MainWindow(QMainWindow):
         newWindowAction = QAction(common.complete_icon("window-new"), tr("&New Window"), self)
         newWindowAction.setShortcut("Ctrl+N")
         newWindowAction.triggered.connect(self.addWindow)
+        self.addAction(newWindowAction)
 
         self.tabMenuToolBar = custom_widgets.ToolBarAction(self)
         mainMenu.addAction(self.tabMenuToolBar)
@@ -404,6 +406,7 @@ class MainWindow(QMainWindow):
         self.tabToSideBarAction.setShortcut("Ctrl+Shift+S")
         self.tabToSideBarAction.setIcon(common.complete_icon("format-indent-less"))
         self.tabMenuToolBar.addAction(self.tabToSideBarAction)
+        self.addAction(self.tabToSideBarAction)
 
         self.sideBarToTabAction = QAction(self, triggered=self.removeSideBar)
         self.sideBarToTabAction.triggered.connect(self.sideBarToTab)
@@ -411,6 +414,7 @@ class MainWindow(QMainWindow):
         self.sideBarToTabAction.setShortcut("Ctrl+Shift+D")
         self.sideBarToTabAction.setIcon(common.complete_icon("format-indent-more"))
         self.tabMenuToolBar.addAction(self.sideBarToTabAction)
+        self.addAction(self.sideBarToTabAction)
 
         mainMenu.addSeparator()
 
@@ -445,16 +449,19 @@ class MainWindow(QMainWindow):
         zoomOutAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() - 0.1))
         zoomOutAction.setShortcut("Ctrl+-")
         viewMenu.addAction(zoomOutAction)
+        self.addAction(zoomOutAction)
         
         zoomOriginalAction = QAction(common.complete_icon("zoom-original"), tr("Reset Zoom"), self)
         zoomOriginalAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(1.0))
         zoomOriginalAction.setShortcut("Ctrl+0")
         viewMenu.addAction(zoomOriginalAction)
+        self.addAction(zoomOriginalAction)
 
         zoomInAction = QAction(common.complete_icon("zoom-in"), tr("Zoom In"), self)
         zoomInAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() + 0.1))
         zoomInAction.setShortcuts(["Ctrl+=", "Ctrl++"])
         viewMenu.addAction(zoomInAction)
+        self.addAction(zoomInAction)
 
         viewMenu.addSeparator()
 
