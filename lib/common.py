@@ -17,9 +17,20 @@ import locale
 import base64
 pyqt4 = False
 if not "-4" in sys.argv and not "--pyqt4" in sys.argv and not "-pyqt4" in sys.argv:
-    from PyQt5.QtCore import qVersion, QLocale, QUrl
-    from PyQt5.QtGui import QIcon
-    from PyQt5.QtWebKit import qWebKitVersion
+    try:
+        from PyQt5.QtCore import qVersion, QLocale, QUrl
+        from PyQt5.QtGui import QIcon
+        from PyQt5.QtWebKit import qWebKitVersion
+    except:
+        try:
+            from PyQt4.QtCore import qVersion, QLocale, QUrl
+            from PyQt4.QtGui import QIcon
+            from PyQt4.QtWebKit import qWebKitVersion
+        except:
+            from PySide.QtCore import qVersion, QLocale, QUrl
+            from PySide.QtGui import QIcon
+            from PySide.QtWebKit import qWebKitVersion
+        pyqt4 = True
 else:
     try:
         from PyQt4.QtCore import qVersion, QLocale, QUrl
