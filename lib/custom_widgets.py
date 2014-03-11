@@ -18,17 +18,17 @@ if not pyqt4:
     from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
     Signal = pyqtSignal
     from PyQt5.QtGui import QIcon, QPixmap
-    from PyQt5.QtWidgets import QMainWindow, QAction, QToolButton, QPushButton, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction
+    from PyQt5.QtWidgets import QMainWindow, QAction, QToolButton, QPushButton, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction, QListWidget
     #from PyQt5.QtWebKitWidgets import QWebView
 else:
     try:
         from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
         Signal = pyqtSignal
-        from PyQt4.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction
+        from PyQt4.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction, QListWidget
         #from PyQt4.QtWebKit import QWebView
     except:
         from PySide.QtCore import Qt, Signal, QPoint, QUrl, QSize
-        from PySide.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction
+        from PySide.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction, QListWidget
 #        from PySide.QtWebKit import QWebView
 
 # LineEdit
@@ -82,17 +82,29 @@ else:
 class ToolBarAction(QWidgetAction):
     def __init__(self, *args, **kwargs):
         super(ToolBarAction, self).__init__(*args, **kwargs)
-        self.toolBar = QToolBar()
-        self.toolBar.setIconSize(QSize(16, 16))
-        self.setDefaultWidget(self.toolBar)
+        self._toolBar = QToolBar()
+        self._toolBar.setIconSize(QSize(16, 16))
+        self.setDefaultWidget(self._toolBar)
+    def toolBar(self):
+        return self._toolBar
     def addAction(self, *args, **kwargs):
-        self.toolBar.addAction(*args, **kwargs)
+        self._toolBar.addAction(*args, **kwargs)
     def widgetForAction(self, *args, **kwargs):
-        return self.toolBar.widgetForAction(*args, **kwargs)
+        return self._toolBar.widgetForAction(*args, **kwargs)
     def addWidget(self, *args, **kwargs):
-        self.toolBar.addWidget(*args, **kwargs)
+        self._toolBar.addWidget(*args, **kwargs)
     def addSeparator(self):
-        self.toolBar.addSeparator()
+        self._toolBar.addSeparator()
+
+# List widget as an action
+class ListWidgetAction(QWidgetAction):
+    def __init__(self, *args, **kwargs):
+        super(ListWidgetAction, self).__init__(*args, **kwargs)
+        self._listWidget = QListWidget()
+        self._listWidget.setAlternatingRowColors(True)
+        self.setDefaultWidget(self._listWidget)
+    def listWidget(self):
+        return self._listWidget
 
 # Blank widget to take up space.
 class Expander(QLabel):

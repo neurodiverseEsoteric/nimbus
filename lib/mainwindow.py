@@ -366,11 +366,12 @@ class MainWindow(QMainWindow):
         self.feedMenu.aboutToShow.connect(self.aboutToShowFeedMenu)
         self.feedMenuButton.setMenu(self.feedMenu)
 
-        self.searchEditButton = QAction(common.complete_icon("system-search"), tr("Manage Search Engines"), self)
-        self.searchEditButton.setShortcut("Ctrl+K")
-        self.searchEditButton.triggered.connect(common.searchEditor.show)
-        self.addAction(self.searchEditButton)
-        self.toolBar.addAction(self.searchEditButton)
+        self.searchEditAction = QAction(common.complete_icon("system-search"), tr("Manage Search Engines"), self)
+        self.searchEditAction.setShortcut("Ctrl+K")
+        self.addAction(self.searchEditAction)
+        self.toolBar.addAction(self.searchEditAction)
+        self.searchEditButton = self.toolBar.widgetForAction(self.searchEditAction)
+        self.searchEditAction.triggered.connect(self.showSearchEditor)
 
         # Ctrl+L/Alt+D focuses the location bar.
         locationAction = QAction(self)
@@ -684,6 +685,12 @@ class MainWindow(QMainWindow):
         tabNineAction.setShortcuts(["Ctrl+9", "Alt+9"])
         tabNineAction.triggered.connect(lambda: self.tabWidget().setCurrentIndex(self.tabWidget().count()-1))
         self.addAction(tabNineAction)
+
+    def showSearchEditor(self):
+        common.searchEditor.setVisible(not common.searchEditor.isVisible())
+        y = self.searchEditButton.mapToGlobal(QPoint(0,0)).y() + self.searchEditButton.height()
+        common.searchEditor.move(max(0, self.searchEditButton.mapToGlobal(QPoint(0,0)).x() - common.searchEditor.width() + self.searchEditButton.width()), self.searchEditButton.mapToGlobal(QPoint(0,0)).y()-common.searchEditor.height() if y > common.desktop.height()-common.searchEditor.height() else y)
+        common.searchEditor.expEntry.setFocus()
 
     def showCalendar(self):
         common.calendar.setVisible(not common.calendar.isVisible())
