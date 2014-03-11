@@ -383,7 +383,7 @@ class MainWindow(QMainWindow):
         self.extensionButtonGroup.setExclusive(True)
 
         # Main menu.
-        mainMenu = QMenu(self)
+        self.mainMenu = QMenu(self)
 
         # Add new window action.
         newWindowAction = QAction(common.complete_icon("window-new"), tr("&New Window"), self)
@@ -392,7 +392,7 @@ class MainWindow(QMainWindow):
         self.addAction(newWindowAction)
 
         self.tabMenuToolBar = custom_widgets.ToolBarAction(self)
-        mainMenu.addAction(self.tabMenuToolBar)
+        self.mainMenu.addAction(self.tabMenuToolBar)
 
         self.tabMenuToolBar.addAction(newTabAction)
         self.tabMenuToolBar.addAction(newIncognitoTabAction)
@@ -416,33 +416,33 @@ class MainWindow(QMainWindow):
         self.tabMenuToolBar.addAction(self.sideBarToTabAction)
         self.addAction(self.sideBarToTabAction)
 
-        mainMenu.addSeparator()
+        self.mainMenu.addSeparator()
 
         # Add print preview action.
         printPreviewAction = QAction(common.complete_icon("document-print-preview"), tr("Print Previe&w"), self)
         printPreviewAction.setShortcut("Ctrl+Shift+P")
         printPreviewAction.triggered.connect(self.printPreview)
-        mainMenu.addAction(printPreviewAction)
+        self.mainMenu.addAction(printPreviewAction)
 
         # Add print page action.
         printAction = QAction(common.complete_icon("document-print"), tr("&Print..."), self)
         printAction.setShortcut("Ctrl+P")
         printAction.triggered.connect(self.printPage)
-        mainMenu.addAction(printAction)
+        self.mainMenu.addAction(printAction)
 
         # Add separator.
-        mainMenu.addSeparator()
+        self.mainMenu.addSeparator()
 
         # Save page action.
         savePageAction = QAction(common.complete_icon("document-save-as"), tr("Save Page &As..."), self)
         savePageAction.setShortcut("Ctrl+S")
         savePageAction.triggered.connect(self.savePage)
-        mainMenu.addAction(savePageAction)
+        self.mainMenu.addAction(savePageAction)
 
-        mainMenu.addSeparator()
+        self.mainMenu.addSeparator()
 
         viewMenu = custom_widgets.ToolBarAction(self)
-        mainMenu.addAction(viewMenu)
+        self.mainMenu.addAction(viewMenu)
 
         # Zoom actions.
         zoomOutAction = QAction(common.complete_icon("zoom-out"), tr("Zoom Out"), self)
@@ -519,31 +519,31 @@ class MainWindow(QMainWindow):
         self.addAction(self.toggleFullScreenAction)
         viewMenu.addAction(self.toggleFullScreenAction)
 
-        mainMenu.addSeparator()
+        self.mainMenu.addSeparator()
 
         # Add find text action.
         findAction = QAction(common.complete_icon("edit-find"), tr("&Find..."), self)
         findAction.setShortcut("Ctrl+F")
         findAction.triggered.connect(self.find)
-        mainMenu.addAction(findAction)
+        self.mainMenu.addAction(findAction)
 
         # Add find next action.
         findNextAction = QAction(common.complete_icon("media-seek-forward"), tr("Find Ne&xt"), self)
         findNextAction.setShortcut("Ctrl+G")
         findNextAction.triggered.connect(self.findNext)
-        mainMenu.addAction(findNextAction)
+        self.mainMenu.addAction(findNextAction)
 
         # Add find previous action.
         findPreviousAction = QAction(common.complete_icon("media-seek-backward"), tr("Find Pre&vious"), self)
         findPreviousAction.setShortcut("Ctrl+Shift+G")
         findPreviousAction.triggered.connect(self.findPrevious)
-        mainMenu.addAction(findPreviousAction)
+        self.mainMenu.addAction(findPreviousAction)
 
-        mainMenu.addSeparator()
+        self.mainMenu.addSeparator()
 
         historyMenu = QMenu(tr("&History"), self)
         historyMenu.setIcon(common.complete_icon("office-calendar"))
-        mainMenu.addMenu(historyMenu)
+        self.mainMenu.addMenu(historyMenu)
 
         # Add reopen tab action.
         reopenTabAction = QAction(common.complete_icon("edit-undo"), tr("&Reopen Tab"), self)
@@ -571,50 +571,54 @@ class MainWindow(QMainWindow):
         viewSourceAction = QAction(tr("Page S&ource"), self)
         viewSourceAction.setShortcut("Ctrl+Alt+U")
         viewSourceAction.triggered.connect(lambda: self.tabWidget().currentWidget().viewSource())
-        mainMenu.addAction(viewSourceAction)
+        self.mainMenu.addAction(viewSourceAction)
 
         # Add settings dialog action.
         settingsAction = QAction(common.complete_icon("preferences-system"), tr("&Settings..."), self)
         settingsAction.setShortcut("Ctrl+,")
         settingsAction.triggered.connect(self.openSettings)
-        mainMenu.addAction(settingsAction)
+        self.mainMenu.addAction(settingsAction)
 
         clippingsAction = QAction(common.complete_icon("edit-paste"), tr("&Manage Clippings..."), self)
         clippingsAction.setShortcut("Ctrl+Shift+M")
         clippingsAction.triggered.connect(self.openClippings)
-        mainMenu.addAction(clippingsAction)
+        self.mainMenu.addAction(clippingsAction)
 
-        mainMenu.addSeparator()
+        self.mainMenu.addSeparator()
 
         # About Qt action.
         aboutQtAction = QAction(common.complete_icon("qt"), tr("About &Qt"), self)
         aboutQtAction.triggered.connect(QApplication.aboutQt)
-        mainMenu.addAction(aboutQtAction)
+        self.mainMenu.addAction(aboutQtAction)
 
         # About Nimbus action.
         aboutAction = QAction(common.complete_icon("help-about"), tr("A&bout Nimbus"), self)
         aboutAction.triggered.connect(common.trayIcon.about)
-        mainMenu.addAction(aboutAction)
+        self.mainMenu.addAction(aboutAction)
 
         # Licensing information.
         licenseAction = QAction(tr("Credits && &Licensing"), self)
         licenseAction.triggered.connect(common.licenseDialog.show)
-        mainMenu.addAction(licenseAction)
+        self.mainMenu.addAction(licenseAction)
 
-        mainMenu.addSeparator()
+        self.mainMenu.addSeparator()
 
         # Quit action.
         quitAction = QAction(common.complete_icon("application-exit"),\
                              tr("Quit"), self)
-        quitAction.setShortcut("Ctrl+Shift+Q")
+        quitAction.setShortcut("Ctrl+Shift+X")
         quitAction.triggered.connect(QCoreApplication.quit)
-        mainMenu.addAction(quitAction)
+        self.mainMenu.addAction(quitAction)
+
+        #self.menuWebView = WebViewAction(self, incognito=True)
+        #self.menuWebView.load(QUrl.fromUserInput("duckduckgo.com"))
+        #self.mainMenu.addAction(self.menuWebView)
 
         # Add main menu action/button.
         self.mainMenuAction =\
              QAction(tr("&Menu"), self)
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
-        self.mainMenuAction.setMenu(mainMenu)
+        self.mainMenuAction.setMenu(self.mainMenu)
         self.addAction(self.mainMenuAction)
         if self.appMode:
             self.tabsToolBar.addSeparator()

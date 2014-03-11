@@ -34,7 +34,7 @@ if not sys.platform.startswith("linux"):
 if not common.pyqt4:
     from PyQt5.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime
     from PyQt5.QtGui import QIcon, QImage, QClipboard
-    from PyQt5.QtWidgets import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QAction, QToolBar, QLineEdit, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget
+    from PyQt5.QtWidgets import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QAction, QToolBar, QLineEdit, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QWidgetAction
     from PyQt5.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
     from PyQt5.QtNetwork import QNetworkProxy, QNetworkRequest
     from PyQt5.QtWebKit import QWebHistory
@@ -44,14 +44,14 @@ if not common.pyqt4:
 else:
     try:
         from PyQt4.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime
-        from PyQt4.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard
+        from PyQt4.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard, QWidgetAction
         from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
         from PyQt4.QtWebKit import QWebView, QWebPage, QWebHistory
         Signal = pyqtSignal
         Slot = pyqtSlot
     except:
         from PySide.QtCore import Qt, QSize, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime
-        from PySide.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard
+        from PySide.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard, QWidgetAction
         from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
         from PySide.QtWebKit import QWebView, QWebPage, QWebHistory
 
@@ -1237,3 +1237,20 @@ class WebView(QWebView):
         printDialog.paintRequested.connect(lambda: self.print(printer))
         printDialog.exec_()
         printDialog.deleteLater()
+
+class WebViewAction(QWidgetAction):
+    def __init__(self, *args, incognito=False, **kwargs):
+        super(WebViewAction, self).__init__(*args, **kwargs)
+        self.webView = WebView(incognito=incognito, sizeHint=QSize(1, 320), minimumSizeHint=QSize(0,0))
+        self.webView.setUserAgent(common.mobileUserAgent)
+        self.setDefaultWidget(self.webView)
+    def load(self, *args, **kwargs):
+        self.webView.load(*args, **kwargs)
+    def back(self, *args, **kwargs):
+        self.webView.back(*args, **kwargs)
+    def forward(self, *args, **kwargs):
+        self.webView.forward(*args, **kwargs)
+    def reload(self, *args, **kwargs):
+        self.webView.reload(*args, **kwargs)
+    def stop(self, *args, **kwargs):
+        self.webView.stop(*args, **kwargs)
