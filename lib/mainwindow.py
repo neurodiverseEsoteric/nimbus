@@ -190,7 +190,7 @@ class MainWindow(QMainWindow):
         #self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # New tab action.
-        newTabAction = QAction(common.complete_icon("list-add"), tr("New &Tab"), self)
+        newTabAction = QAction(common.complete_icon("tab-new"), tr("New &Tab"), self)
         newTabAction.setShortcut("Ctrl+T")
         newTabAction.triggered.connect(lambda: self.addTab())
 
@@ -384,31 +384,33 @@ class MainWindow(QMainWindow):
         # Main menu.
         mainMenu = QMenu(self)
 
-        # Add new tab actions to menu.
-        mainMenu.addAction(newTabAction)
-        mainMenu.addAction(newIncognitoTabAction)
-
         # Add new window action.
         newWindowAction = QAction(common.complete_icon("window-new"), tr("&New Window"), self)
         newWindowAction.setShortcut("Ctrl+N")
         newWindowAction.triggered.connect(self.addWindow)
-        mainMenu.addAction(newWindowAction)
 
-        mainMenu.addSeparator()
+        self.tabMenuToolBar = custom_widgets.ToolBarAction(self)
+        mainMenu.addAction(self.tabMenuToolBar)
+
+        self.tabMenuToolBar.addAction(newTabAction)
+        self.tabMenuToolBar.addAction(newIncognitoTabAction)
+        self.tabMenuToolBar.addAction(newWindowAction)
+
+        self.tabMenuToolBar.addSeparator()
 
         self.tabToSideBarAction = QAction(self, triggered=self.removeSideBar)
         self.tabToSideBarAction.triggered.connect(self.tabToSideBar)
         self.tabToSideBarAction.setText(tr("Tab To Sidebar"))
         self.tabToSideBarAction.setShortcut("Ctrl+Shift+S")
         self.tabToSideBarAction.setIcon(common.complete_icon("format-indent-less"))
-        mainMenu.addAction(self.tabToSideBarAction)
+        self.tabMenuToolBar.addAction(self.tabToSideBarAction)
 
         self.sideBarToTabAction = QAction(self, triggered=self.removeSideBar)
         self.sideBarToTabAction.triggered.connect(self.sideBarToTab)
         self.sideBarToTabAction.setText(tr("Sidebar to Tab"))
         self.sideBarToTabAction.setShortcut("Ctrl+Shift+D")
         self.sideBarToTabAction.setIcon(common.complete_icon("format-indent-more"))
-        mainMenu.addAction(self.sideBarToTabAction)
+        self.tabMenuToolBar.addAction(self.sideBarToTabAction)
 
         mainMenu.addSeparator()
 
@@ -435,24 +437,24 @@ class MainWindow(QMainWindow):
 
         mainMenu.addSeparator()
 
-        viewMenu = QMenu(tr("Vi&ew"), self)
-        mainMenu.addMenu(viewMenu)
+        viewMenu = custom_widgets.ToolBarAction(self)
+        mainMenu.addAction(viewMenu)
 
         # Zoom actions.
-        zoomInAction = QAction(common.complete_icon("zoom-in"), tr("Zoom In"), self)
-        zoomInAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() + 0.1))
-        zoomInAction.setShortcuts(["Ctrl+=", "Ctrl++"])
-        viewMenu.addAction(zoomInAction)
-
         zoomOutAction = QAction(common.complete_icon("zoom-out"), tr("Zoom Out"), self)
         zoomOutAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() - 0.1))
         zoomOutAction.setShortcut("Ctrl+-")
         viewMenu.addAction(zoomOutAction)
-
+        
         zoomOriginalAction = QAction(common.complete_icon("zoom-original"), tr("Reset Zoom"), self)
         zoomOriginalAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(1.0))
         zoomOriginalAction.setShortcut("Ctrl+0")
         viewMenu.addAction(zoomOriginalAction)
+
+        zoomInAction = QAction(common.complete_icon("zoom-in"), tr("Zoom In"), self)
+        zoomInAction.triggered.connect(lambda: self.tabs.currentWidget().setZoomFactor(self.tabs.currentWidget().zoomFactor() + 0.1))
+        zoomInAction.setShortcuts(["Ctrl+=", "Ctrl++"])
+        viewMenu.addAction(zoomInAction)
 
         viewMenu.addSeparator()
 
@@ -822,7 +824,7 @@ class MainWindow(QMainWindow):
             self.sideBars[name]["sideBar"].toolBar.addAction(self.sideBars[name]["sideBar"].webView.page().action(QWebPage.Reload))
             sideBarToTabAction = QAction(self.sideBars[name]["sideBar"].toolBar)
             sideBarToTabAction.setText(tr("Open As Tab"))
-            sideBarToTabAction.setIcon(common.complete_icon("tab-new"))
+            sideBarToTabAction.setIcon(common.complete_icon("format-indent-more"))
             sideBarToTabAction.triggered.connect(self.sideBars[name]["sideBar"].webView.requestTab)
             self.sideBars[name]["sideBar"].toolBar.addAction(sideBarToTabAction)
             container.layout().addWidget(self.sideBars[name]["sideBar"].toolBar)

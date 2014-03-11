@@ -18,17 +18,17 @@ if not pyqt4:
     from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
     Signal = pyqtSignal
     from PyQt5.QtGui import QIcon, QPixmap
-    from PyQt5.QtWidgets import QMainWindow, QAction, QToolButton, QPushButton, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
+    from PyQt5.QtWidgets import QMainWindow, QAction, QToolButton, QPushButton, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction
     #from PyQt5.QtWebKitWidgets import QWebView
 else:
     try:
         from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
         Signal = pyqtSignal
-        from PyQt4.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
+        from PyQt4.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction
         #from PyQt4.QtWebKit import QWebView
     except:
         from PySide.QtCore import Qt, Signal, QPoint, QUrl, QSize
-        from PySide.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar
+        from PySide.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction
 #        from PySide.QtWebKit import QWebView
 
 # LineEdit
@@ -78,6 +78,21 @@ else:
     def load(self, url):
         if "file" in url.scheme():
             super(AboutView, self).load(url)"""
+
+class ToolBarAction(QWidgetAction):
+    def __init__(self, *args, **kwargs):
+        super(ToolBarAction, self).__init__(*args, **kwargs)
+        self.toolBar = QToolBar()
+        self.toolBar.setIconSize(QSize(16, 16))
+        self.setDefaultWidget(self.toolBar)
+    def addAction(self, *args, **kwargs):
+        self.toolBar.addAction(*args, **kwargs)
+    def widgetForAction(self, *args, **kwargs):
+        return self.toolBar.widgetForAction(*args, **kwargs)
+    def addWidget(self, *args, **kwargs):
+        self.toolBar.addWidget(*args, **kwargs)
+    def addSeparator(self):
+        self.toolBar.addSeparator()
 
 # Blank widget to take up space.
 class Expander(QLabel):
