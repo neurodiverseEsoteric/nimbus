@@ -160,8 +160,6 @@ class LocationBar(QComboBox):
         self.icon = QToolButton(self)
         if type(icon) is QIcon:
             self.icon.setIcon(icon)
-        lineEdit = LineEdit(self)
-        self.setLineEdit(lineEdit)
         self.icon.setFixedWidth(16)
         self.icon.setFixedHeight(16)
         self.icon.hide()
@@ -178,7 +176,7 @@ class LocationBar(QComboBox):
         QComboBox.paintEvent(self, ev)
         self.icon.render(self, QPoint(self.rect().left() + (self.height() + 1 - sz.width())/2, (self.height() + 1 - sz.height())/2))
         if self.s == False:
-            self.lineEdit().setStyleSheet(self.lineEdit().styleSheet().replace("{", "{ background: transparent; padding-left: %spx; ") % str(sz.width() + (self.height() + 1 - sz.width())/2))
+            self.lineEdit().setStyleSheet("QLineEdit { }".replace("{", "{ background: transparent; padding-left: %spx; ") % str(sz.width() + (self.height() + 1 - sz.width())/2))
             self.s = True
             self.redefPaintEvent()
 
