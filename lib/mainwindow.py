@@ -182,7 +182,6 @@ class MainWindow(QMainWindow):
         self.tabsWidget = QWidget(self)
         tabsLayout = QHBoxLayout(self.tabsWidget)
         self.tabsWidget.setLayout(tabsLayout)
-        self.tabsToolBar.addWidget(self.tabsWidget)
         self.tabsWidget.layout().setSpacing(0)
         self.tabsWidget.layout().setContentsMargins(0,0,0,0)
         self.tabsWidget.layout().addWidget(self.tabs.tabBar())
@@ -214,6 +213,7 @@ class MainWindow(QMainWindow):
 
         self.addAction(newTabAction)
         self.tabsToolBar.addAction(newTabAction)
+        self.tabsToolBar.addWidget(self.tabsWidget)
         self.newTabButton = self.tabsToolBar.widgetForAction(newTabAction)
         self.newTabButton.setIcon(common.complete_icon("list-add"))
 
@@ -225,6 +225,7 @@ class MainWindow(QMainWindow):
 
         tabsMenuAction = QAction(self)
         self.tabsToolBar.addAction(tabsMenuAction)
+        self.tabsToolBar.addSeparator()
         self.tabsToolBar.widgetForAction(tabsMenuAction).setPopupMode(QToolButton.InstantPopup)
         self.tabsToolBar.widgetForAction(tabsMenuAction).setStyleSheet("QToolButton { max-width: 1em; }")
         #self.tabsToolBar.widgetForAction(tabsMenuAction).setArrowType(Qt.DownArrow)
@@ -629,7 +630,6 @@ class MainWindow(QMainWindow):
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
         self.mainMenuAction.setMenu(self.mainMenu)
         self.addAction(self.mainMenuAction)
-        self.tabsToolBar.addSeparator()
         
         # This is horribly out of order.
         self.tabsToolBar.addAction(self.searchEditAction)
