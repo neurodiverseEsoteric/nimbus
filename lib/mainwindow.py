@@ -641,6 +641,7 @@ class MainWindow(QMainWindow):
         self.mainMenuButton = self.tabsToolBar.widgetForAction(self.mainMenuAction)
         self.mainMenuButton.setPopupMode(QToolButton.InstantPopup)
         self.mainMenuButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.mainMenuButton.setAutoRaise(False)
         self.mainMenuAction.triggered.\
              connect(lambda: self.mainMenuButton.showMenu())
 
