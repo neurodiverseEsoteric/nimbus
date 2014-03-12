@@ -691,7 +691,18 @@ class MainWindow(QMainWindow):
             self.locationBar.setFocus()
             self.locationBar.lineEdit().selectAll()
         else:
-            locationBar = QInputDialog.getText(self, tr("Open URL"), tr("Enter URL:"), QLineEdit.Normal, self.currentWidget().url().toString())
+            if type(data.history) is list:
+                items = [url for url in data.history if len(url) < 65]
+            else:
+                items = [data.shortUrl(url) for url in data.history.keys() if len(data.shortUrl(url)) < 65]
+            try: common.feeds
+            except: pass
+            else:
+                items = common.feeds + items
+            currentUrl = self.currentWidget().url().toString().split("://")[-1]
+            if len(currentUrl) < 65:
+                items = [currentUrl] + items
+            locationBar = QInputDialog.getItem(self, tr("Open URL"), tr("Enter URL:"), items, 0, True)
             if locationBar[1]:
                 self.load(locationBar[0])
 
