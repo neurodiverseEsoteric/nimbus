@@ -626,19 +626,14 @@ class MainWindow(QMainWindow):
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
         self.mainMenuAction.setMenu(self.mainMenu)
         self.addAction(self.mainMenuAction)
-        if self.appMode:
-            self.tabsToolBar.addSeparator()
-            self.tabsToolBar.addAction(self.mainMenuAction)
-            self.tabsToolBar.widgetForAction(self.mainMenuAction).\
-                setPopupMode(QToolButton.InstantPopup)
-        else:
-            self.mainMenuAction.setIcon(common.complete_icon("document-properties"))
-            self.toolBar.addAction(self.mainMenuAction)
-            self.toolBar.widgetForAction(self.mainMenuAction).\
-                setPopupMode(QToolButton.InstantPopup)
+        self.tabsToolBar.addSeparator()
+        self.mainMenuAction.setIcon(common.complete_icon("document-properties"))
+        self.tabsToolBar.addAction(self.mainMenuAction)
+        self.mainMenuButton = self.tabsToolBar.widgetForAction(self.mainMenuAction)
+        self.mainMenuButton.setPopupMode(QToolButton.InstantPopup)
+        self.mainMenuButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.mainMenuAction.triggered.\
-             connect(lambda: (self.tabsToolBar if self.appMode else self.toolBar).\
-             widgetForAction(self.mainMenuAction).showMenu())
+             connect(lambda: self.mainMenuButton.showMenu())
 
         self.addToolBarBreak(Qt.TopToolBarArea)
 
@@ -1309,24 +1304,6 @@ self.origY + ev.globalY() - self.mouseY)
             else:
                 self.showNormal()
                 self.showMaximized()
-
-    # Tab-related methods.
-    def toggleTabsOnTop(self):
-        if not settings.setting_to_bool("general/TabsOnTop"):
-            settings.settings.setValue("general/TabsOnTop", True)
-            for window in browser.windows:
-                window.addToolBarBreak()
-                window.addToolBar(window.toolBar)
-                self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
-        else:
-            settings.settings.setValue("general/TabsOnTop", False)
-            for window in browser.windows:
-                window.addToolBarBreak()
-                window.addToolBar(window.tabsToolBar)
-                self.tabs.tabBar().setStyleSheet("")
-        self.tabs.setStyleSheet("QTabWidget::pane { top: -%s; } " %\
-             (self.tabs.tabBar().height(),))
-        settings.settings.sync()
 
     def aboutToShowTabsMenu(self):
         self.tabsMenu.clear()
