@@ -217,6 +217,12 @@ def main(argv):
     app.setWindowIcon(common.app_icon)
 
     common.searchEditor = search_manager.SearchEditor()
+    common.downloadManager = QMainWindow(windowTitle=tr("Downloads"))
+    common.downloadManager.resize(QSize(480, 320))
+    closeWindowAction = QAction(common.downloadManager)
+    closeWindowAction.triggered.connect(common.downloadManager.hide)
+    closeWindowAction.setShortcuts(["Esc", "Ctrl+W", "Ctrl+J", "Ctrl+Shift+Y"])
+    common.downloadManager.addAction(closeWindowAction)
 
     # Build the browser's default user agent.
     # This should be improved as well.

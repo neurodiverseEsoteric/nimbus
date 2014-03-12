@@ -126,17 +126,16 @@ class MainWindow(QMainWindow):
         self.sideBars = {}
 
         # Main toolbar.
-        self.toolBar = custom_widgets.MenuToolBar(movable=False,\
+        self.toolBar = QToolBar(movable=False,\
                                 contextMenuPolicy=Qt.CustomContextMenu,\
                                 parent=self,
                                 windowTitle=tr("Navigation Toolbar"))
-        self.addToolBar(self.toolBar)
+        self.toolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-top: 1px solid palette(dark);}")
         if self.appMode:
             self.toolBar.setVisible(False)
-        self.addToolBarBreak(Qt.TopToolBarArea)
 
         # Tabs toolbar.
-        self.tabsToolBar = QToolBar(movable=False,\
+        self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
                            contextMenuPolicy=Qt.CustomContextMenu,\
                            parent=self,
                            windowTitle=tr("Tabs"))
@@ -168,6 +167,8 @@ class MainWindow(QMainWindow):
         self.statusBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.statusBar.setWindowTitle(tr("Status Bar"))
         self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
+        self.addToolBarBreak(Qt.BottomToolBarArea)
+        self.addToolBar(Qt.BottomToolBarArea, self.toolBar)
         if self.appMode:
             self.statusBar.setVisible(False)
         self.addToolBarBreak(Qt.BottomToolBarArea)
@@ -576,6 +577,11 @@ class MainWindow(QMainWindow):
         viewSourceAction.triggered.connect(lambda: self.tabWidget().currentWidget().viewSource())
         self.mainMenu.addAction(viewSourceAction)
 
+        downloadAction = QAction(common.complete_icon("go-down"), tr("&Downloads"), self)
+        downloadAction.setShortcuts(["Ctrl+J", "Ctrl+Shift+Y"])
+        downloadAction.triggered.connect(common.downloadManager.show)
+        self.mainMenu.addAction(downloadAction)
+
         # Add settings dialog action.
         settingsAction = QAction(common.complete_icon("preferences-system"), tr("&Settings..."), self)
         settingsAction.setShortcut("Ctrl+,")
@@ -641,11 +647,12 @@ class MainWindow(QMainWindow):
         self.addToolBarBreak(Qt.TopToolBarArea)
 
         self.findToolBar = QToolBar(self)
-        self.findToolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-top: 1px solid palette(dark);}")
+        self.findToolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-bottom: 1px solid palette(dark);}")
         self.findToolBar.setIconSize(QSize(16, 16))
         self.findToolBar.setMovable(False)
         self.findToolBar.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.addToolBar(Qt.BottomToolBarArea, self.findToolBar)
+        self.addToolBarBreak()
+        self.addToolBar(self.findToolBar)
         self.findToolBar.hide()
 
         self.findBar = custom_widgets.LineEdit(self.findToolBar)
@@ -1048,12 +1055,13 @@ self.origY + ev.globalY() - self.mouseY)
             self.feedMenuButton.setVisible(settings.\
                                            setting_to_bool\
                                            ("general/FeedButtonVisible"))
-            self.toolBar.setVisible(settings.\
-                                           setting_to_bool\
-                                           ("general/NavigationToolBarVisible"))
-            self.statusBar.setVisible(settings.\
-                                           setting_to_bool\
-                                           ("general/StatusBarVisible"))
+            if not self.appMode:
+                self.toolBar.setVisible(settings.\
+                                               setting_to_bool\
+                                               ("general/NavigationToolBarVisible"))
+                self.statusBar.setVisible(settings.\
+                                               setting_to_bool\
+                                               ("general/StatusBarVisible"))
         except:
             self.backAction.setEnabled(False)
             self.forwardAction.setEnabled(False)
@@ -1499,7 +1507,9 @@ self.origY + ev.globalY() - self.mouseY)
 
     # This method is used to add a DownloadBar to the window.
     def addDownloadToolBar(self, toolbar):
-        self.statusBar.addToolBar(toolbar)
+        common.downloadManager.addToolBar(toolbar)
+        common.downloadManager.addToolBarBreak()
+        common.downloadManager.show()
 
     # Method to update the location bar text.
     def updateLocationText(self, url=None):
