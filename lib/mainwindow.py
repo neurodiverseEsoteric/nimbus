@@ -375,9 +375,6 @@ class MainWindow(QMainWindow):
         self.searchEditAction = QAction(common.complete_icon("system-search"), tr("Manage Search Engines"), self)
         self.searchEditAction.setShortcut("Ctrl+K")
         self.addAction(self.searchEditAction)
-        self.toolBar.addAction(self.searchEditAction)
-        self.searchEditButton = self.toolBar.widgetForAction(self.searchEditAction)
-        self.searchEditAction.triggered.connect(self.showSearchEditor)
 
         # Ctrl+L/Alt+D focuses the location bar.
         locationAction = QAction(self)
@@ -627,6 +624,12 @@ class MainWindow(QMainWindow):
         self.mainMenuAction.setMenu(self.mainMenu)
         self.addAction(self.mainMenuAction)
         self.tabsToolBar.addSeparator()
+        
+        # This is horribly out of order.
+        self.tabsToolBar.addAction(self.searchEditAction)
+        self.searchEditButton = self.tabsToolBar.widgetForAction(self.searchEditAction)
+        self.searchEditAction.triggered.connect(self.showSearchEditor)
+        
         self.mainMenuAction.setIcon(common.complete_icon("document-properties"))
         self.tabsToolBar.addAction(self.mainMenuAction)
         self.mainMenuButton = self.tabsToolBar.widgetForAction(self.mainMenuAction)
