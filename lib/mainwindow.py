@@ -419,14 +419,6 @@ class MainWindow(QMainWindow):
         self.tabMenuToolBar.addAction(self.sideBarToTabAction)
         self.addAction(self.sideBarToTabAction)
 
-        e1 = custom_widgets.HorizontalExpander(self.tabMenuToolBar.toolBar())
-        self.tabMenuToolBar.addWidget(e1)
-
-        self.appName = QLabel(text="<b>%s</b>" % (common.app_name,), parent=self)
-        self.appName.setStyleSheet("QLabel { border-radius: 4px; margin: 2px; background: palette(highlight); color: palette(highlighted-text); }")
-
-        self.tabMenuToolBar.addWidget(self.appName)
-
         self.mainMenu.addSeparator()
 
         # Add print preview action.
