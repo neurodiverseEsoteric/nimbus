@@ -1198,7 +1198,7 @@ class WebView(QWebView):
         if type(self._findText) is not str:
             self._findText = ""
         find = QInputDialog.getText(self, tr("Find"), tr("Search for:"), QLineEdit.Normal, self._findText)
-        if find:
+        if find[1]:
             self._findText = find[0]
         else:
             self._findText = ""

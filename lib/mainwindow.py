@@ -34,7 +34,8 @@ if not common.pyqt4:
                             QMessageBox, QSizePolicy,\
                             QMenu, QAction, QMainWindow, QToolBar,\
                             QToolButton, QComboBox, QButtonGroup,\
-                            QLabel, QCalendarWidget
+                            QLabel, QCalendarWidget, QInputDialog,\
+                            QLineEdit
     from PyQt5.QtNetwork import QNetworkRequest
     from PyQt5.QtWebKitWidgets import QWebPage
 else:
@@ -46,7 +47,8 @@ else:
                                 QKeySequence, QMessageBox, QSizePolicy, QIcon,\
                                 QMenu, QAction, QMainWindow, QToolBar,\
                                 QToolButton, QComboBox, QButtonGroup,\
-                                QLabel, QCalendarWidget, QCursor
+                                QLabel, QCalendarWidget, QCursor, QInputDialog,\
+                                QLineEdit
         from PyQt4.QtNetwork import QNetworkRequest
         from PyQt4.QtWebKit import QWebPage
     except:
@@ -57,7 +59,8 @@ else:
                                  QHBoxLayout, QKeySequence, QMessageBox,\
                                  QSizePolicy, QIcon, QMenu, QAction,\
                                  QMainWindow, QToolBar, QToolButton, QComboBox,\
-                                 QButtonGroup, QLabel, QCalendarWidget, QCursor
+                                 QButtonGroup, QLabel, QCalendarWidget, QCursor,\
+                                 QInputDialog, QLineEdit
         from PySide.QtNetwork import QNetworkRequest
         from PySide.QtWebKit import QWebPage
 
@@ -208,6 +211,7 @@ class MainWindow(QMainWindow):
         # We don't want this widget to have any decorations.
         #newTabToolBar.setStyleSheet(common.blank_toolbar)
 
+        self.addAction(newTabAction)
         self.tabsToolBar.addAction(newTabAction)
         self.newTabButton = self.tabsToolBar.widgetForAction(newTabAction)
         self.newTabButton.setIcon(common.complete_icon("list-add"))
@@ -378,8 +382,7 @@ class MainWindow(QMainWindow):
         # Ctrl+L/Alt+D focuses the location bar.
         locationAction = QAction(self)
         locationAction.setShortcuts(["Ctrl+L", "Alt+D"])
-        locationAction.triggered.connect(self.locationBar.setFocus)
-        locationAction.triggered.connect(self.locationBar.lineEdit().selectAll)
+        locationAction.triggered.connect(self.focusLocationBar)
         self.addAction(locationAction)
 
         self.extensionButtonGroup = QButtonGroup(self)
@@ -687,6 +690,15 @@ class MainWindow(QMainWindow):
         tabNineAction.setShortcuts(["Ctrl+9", "Alt+9"])
         tabNineAction.triggered.connect(lambda: self.tabWidget().setCurrentIndex(self.tabWidget().count()-1))
         self.addAction(tabNineAction)
+
+    def focusLocationBar(self):
+        if self.locationBar.isVisible():
+            self.locationBar.setFocus()
+            self.locationBar.lineEdit().selectAll()
+        else:
+            locationBar = QInputDialog.getText(self, tr("Open URL"), tr("Enter URL:"), QLineEdit.Normal, self.currentWidget().url().toString())
+            if locationBar[1]:
+                self.load(locationBar[0])
 
     def showSearchEditor(self):
         common.searchEditor.setVisible(not common.searchEditor.isVisible())
@@ -1027,6 +1039,12 @@ self.origY + ev.globalY() - self.mouseY)
             self.feedMenuButton.setVisible(settings.\
                                            setting_to_bool\
                                            ("general/FeedButtonVisible"))
+            self.toolBar.setVisible(settings.\
+                                           setting_to_bool\
+                                           ("general/NavigationToolBarVisible"))
+            self.statusBar.setVisible(settings.\
+                                           setting_to_bool\
+                                           ("general/StatusBarVisible"))
         except:
             self.backAction.setEnabled(False)
             self.forwardAction.setEnabled(False)
@@ -1197,7 +1215,7 @@ self.origY + ev.globalY() - self.mouseY)
     def load(self, url=False):
         if not url:
             url = self.locationBar.currentText()
-        for keyword in common.search_engines.values()   :
+        for keyword in common.search_engines.values():
             if type(url) is str:
                 url3 = url
             else:

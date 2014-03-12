@@ -54,11 +54,6 @@ class GeneralSettingsPanel(SettingsPanel):
         self.homepageEntry = homepageRow.lineEdit
         self.layout().addWidget(homepageRow)
 
-        # Default search.
-        #searchRow = custom_widgets.LineEditRow(tr("Search expression:"), self)
-        #self.searchEntry = searchRow.lineEdit
-        #self.layout().addWidget(searchRow)
-
         # Checkbox to toggle closing of window with last tab.
         self.closeWindowToggle = QCheckBox(tr("Close &window with last tab"), self)
         self.layout().addWidget(self.closeWindowToggle)
@@ -81,6 +76,12 @@ class GeneralSettingsPanel(SettingsPanel):
         self.tabHotkeysToggle = QCheckBox(tr("E&nable tab hotkeys"), self)
         self.layout().addWidget(self.tabHotkeysToggle)
 
+        self.navBarVisibleToggle = QCheckBox(tr("Show na&vigation toolbar"), self)
+        self.layout().addWidget(self.navBarVisibleToggle)
+        
+        self.statusBarVisibleToggle = QCheckBox(tr("Show &status bar"), self)
+        self.layout().addWidget(self.statusBarVisibleToggle)
+
         self.homeButtonVisibleToggle = QCheckBox(tr("Show &home button"), self)
         self.layout().addWidget(self.homeButtonVisibleToggle)
 
@@ -94,24 +95,26 @@ class GeneralSettingsPanel(SettingsPanel):
 
     def loadSettings(self):
         self.homepageEntry.setText(str(settings.settings.value("general/Homepage")))
-        #self.searchEntry.setText(str(settings.settings.value("general/Search")))
         self.closeWindowToggle.setChecked(settings.setting_to_bool("general/CloseWindowWithLastTab"))
         self.reopenableTabCount.setValue(settings.setting_to_int("general/ReopenableTabCount"))
         self.reopenableWindowCount.setValue(settings.setting_to_int("general/ReopenableWindowCount"))
         self.pinnedTabCount.setValue(settings.setting_to_int("general/PinnedTabCount"))
         self.tabHotkeysToggle.setChecked(settings.setting_to_bool("general/TabHotkeysVisible"))
+        self.navBarVisibleToggle.setChecked(settings.setting_to_bool("general/NavigationToolBarVisible"))
+        self.statusBarVisibleToggle.setChecked(settings.setting_to_bool("general/StatusBarVisible"))
         self.homeButtonVisibleToggle.setChecked(settings.setting_to_bool("general/HomeButtonVisible"))
         self.upButtonVisibleToggle.setChecked(settings.setting_to_bool("general/UpButtonVisible"))
         self.feedButtonVisibleToggle.setChecked(settings.setting_to_bool("general/FeedButtonVisible"))
 
     def saveSettings(self):
         settings.settings.setValue("general/Homepage", self.homepageEntry.text())
-        #settings.settings.setValue("general/Search", self.searchEntry.text())
         settings.settings.setValue("general/CloseWindowWithLastTab", self.closeWindowToggle.isChecked())
         settings.settings.setValue("general/ReopenableWindowCount", self.reopenableWindowCount.text())
         settings.settings.setValue("general/ReopenableTabCount", self.reopenableTabCount.text())
         settings.settings.setValue("general/PinnedTabCount", self.pinnedTabCount.text())
         settings.settings.setValue("general/TabHotkeysVisible", self.tabHotkeysToggle.isChecked())
+        settings.settings.setValue("general/NavigationToolBarVisible", self.navBarVisibleToggle.isChecked())
+        settings.settings.setValue("general/StatusBarVisible", self.statusBarVisibleToggle.isChecked())
         settings.settings.setValue("general/HomeButtonVisible", self.homeButtonVisibleToggle.isChecked())
         settings.settings.setValue("general/UpButtonVisible", self.upButtonVisibleToggle.isChecked())
         settings.settings.setValue("general/FeedButtonVisible", self.feedButtonVisibleToggle.isChecked())
