@@ -209,6 +209,8 @@ class MainWindow(QMainWindow):
         #newTabToolBar.setStyleSheet(common.blank_toolbar)
 
         self.tabsToolBar.addAction(newTabAction)
+        self.newTabButton = self.tabsToolBar.widgetForAction(newTabAction)
+        self.newTabButton.setIcon(common.complete_icon("list-add"))
 
         self.tabsToolBar.addWidget(custom_widgets.HorizontalExpander(self.tabsToolBar))
 
