@@ -653,6 +653,10 @@ class MainWindow(QMainWindow):
         self.mainMenuAction.setIcon(common.complete_icon("document-properties"))
         self.tabsToolBar.addAction(self.mainMenuAction)
         self.mainMenuButton = self.tabsToolBar.widgetForAction(self.mainMenuAction)
+        self.mainMenuButton.setPopupMode(QToolButton.InstantPopup)
+        if self.appMode:
+            self.mainMenuButton.setStyleSheet("QToolButton { border-radius: 4px; border-top-%(o)s-radius: 0; border-bottom-%(o)s-radius: 0; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }" % {"o": "right" if self.layoutDirection() == Qt.LeftToRight else "left"})
+            self.mainMenuButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         #self.mainMenuButton.setAutoRaise(False)
         self.mainMenuAction.triggered.\
              connect(lambda: self.mainMenuButton.showMenu())
