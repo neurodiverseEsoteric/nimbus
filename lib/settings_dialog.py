@@ -703,7 +703,10 @@ class SettingsDialog(QWidget):
         settings.reset_extensions()
         settings.reload_userscripts()
         for window in browser.windows:
-            window.reloadExtensions()
+            try: window.reloadExtensions()
+            except: pass
+            try: window.applySettings()
+            except: pass
         for webview in common.webviews:
             webview.updateProxy()
             webview.updateNetworkSettings()

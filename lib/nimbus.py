@@ -203,16 +203,6 @@ def main(argv):
 
     # Hack together the browser's icon. This needs to be improved.
     common.app_icon = common.complete_icon("nimbus")
-    common.app_icon.addFile(common.icon("nimbus-16.png"))
-    common.app_icon.addFile(common.icon("nimbus-22.png"))
-    common.app_icon.addFile(common.icon("nimbus-24.png"))
-    common.app_icon.addFile(common.icon("nimbus-32.png"))
-    common.app_icon.addFile(common.icon("nimbus-48.png"))
-    common.app_icon.addFile(common.icon("nimbus-64.png"))
-    common.app_icon.addFile(common.icon("nimbus-72.png"))
-    common.app_icon.addFile(common.icon("nimbus-80.png"))
-    common.app_icon.addFile(common.icon("nimbus-128.png"))
-    common.app_icon.addFile(common.icon("nimbus-256.png"))
 
     app.setWindowIcon(common.app_icon)
 

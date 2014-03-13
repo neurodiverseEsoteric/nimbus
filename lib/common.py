@@ -141,8 +141,8 @@ content_viewers = (("http://view.samurajdata.se/ps.php?url=%s", (".pdf", ".ps.gz
                    ("http://vuzit.com/view?url=", (".bmp", ".ppm", ".xpm")))
 
 # Get an application icon.
-def icon(name):
-    return os.path.join(app_icons_folder, name)
+def icon(name, size=22):
+    return os.path.join(app_icons_folder, str(size), name)
 
 complete_icons = {}
 
@@ -151,11 +151,13 @@ def complete_icon(name):
     global complete_icons
     try: return complete_icons[name]
     except:
-        ic = icon(name + ".png")
-        if not os.path.isfile(ic):
-            ic = icon(name + ".gif")
-        try: nic = QIcon().fromTheme(name, QIcon(ic))
-        except: nic = QIcon()
+        nnic = QIcon()
+        for size in (12, 16, 22, 24, 32, 48, 64, 72, 80, 128, 256):
+            ic = icon(name + ".png", size)
+            try: nnic.addFile(ic)
+            except: pass
+        try: nic = QIcon().fromTheme(name, nnic)
+        except: nic = nnic
         complete_icons[name] = nic
         return complete_icons[name]
 

@@ -129,7 +129,7 @@ class MainWindow(QMainWindow):
         self.toolBar = custom_widgets.MenuToolBar(movable=False,\
                                 contextMenuPolicy=Qt.CustomContextMenu,\
                                 parent=self,
-                                #iconSize=QSize(16,16),
+                                iconSize=QSize(22,22),
                                 windowTitle=tr("Navigation Toolbar"))
         self.extensionBar = QToolBar(movable=False,\
                                 contextMenuPolicy=Qt.CustomContextMenu,\
@@ -239,7 +239,7 @@ class MainWindow(QMainWindow):
 
         tabsMenuAction = QAction(self)
         self.tabsToolBar.addAction(tabsMenuAction)
-        self.tabsToolBar.addSeparator()
+        #self.tabsToolBar.addSeparator()
         self.tabsToolBar.widgetForAction(tabsMenuAction).setPopupMode(QToolButton.InstantPopup)
         self.tabsToolBar.widgetForAction(tabsMenuAction).setStyleSheet("QToolButton { max-width: 1em; }")
         #self.tabsToolBar.widgetForAction(tabsMenuAction).setArrowType(Qt.DownArrow)
@@ -653,9 +653,6 @@ class MainWindow(QMainWindow):
         self.mainMenuAction.setIcon(common.complete_icon("document-properties"))
         self.tabsToolBar.addAction(self.mainMenuAction)
         self.mainMenuButton = self.tabsToolBar.widgetForAction(self.mainMenuAction)
-        self.mainMenuButton.setStyleSheet("QToolButton { border-radius: 4px; border-top-%(o)s-radius: 0; border-bottom-%(o)s-radius: 0; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }" % {"o": "right" if self.layoutDirection() == Qt.LeftToRight else "left"})
-        self.mainMenuButton.setPopupMode(QToolButton.InstantPopup)
-        self.mainMenuButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         #self.mainMenuButton.setAutoRaise(False)
         self.mainMenuAction.triggered.\
              connect(lambda: self.mainMenuButton.showMenu())
@@ -711,6 +708,7 @@ class MainWindow(QMainWindow):
         tabNineAction.setShortcuts(["Ctrl+9", "Alt+9"])
         tabNineAction.triggered.connect(lambda: self.tabWidget().setCurrentIndex(self.tabWidget().count()-1))
         self.addAction(tabNineAction)
+        self.applySettings()
 
     def focusLocationBar(self):
         if self.locationBar.isVisible():
@@ -1062,22 +1060,6 @@ self.origY + ev.globalY() - self.mouseY)
                                          isEnabled())
             self.reloadAction.setEnabled(True)
 
-            self.homeAction.setVisible(settings.\
-                                       setting_to_bool\
-                                       ("general/HomeButtonVisible"))
-            self.upAction.setVisible(settings.\
-                                     setting_to_bool\
-                                     ("general/UpButtonVisible"))
-            self.feedMenuButton.setVisible(settings.\
-                                           setting_to_bool\
-                                           ("general/FeedButtonVisible"))
-            if not self.appMode:
-                self.toolBar.setVisible(settings.\
-                                               setting_to_bool\
-                                               ("general/NavigationToolBarVisible"))
-                self.statusBar.setVisible(settings.\
-                                               setting_to_bool\
-                                               ("general/StatusBarVisible"))
         except:
             self.backAction.setEnabled(False)
             self.forwardAction.setEnabled(False)
@@ -1085,6 +1067,45 @@ self.origY + ev.globalY() - self.mouseY)
             self.reloadAction.setEnabled(False)
         self.toggleActions2()
         self.updateTabTitles()
+
+    def applySettings(self):
+        self.homeAction.setVisible(settings.\
+                                   setting_to_bool\
+                                   ("general/HomeButtonVisible"))
+        self.upAction.setVisible(settings.\
+                                 setting_to_bool\
+                                 ("general/UpButtonVisible"))
+        self.feedMenuButton.setVisible(settings.\
+                                       setting_to_bool\
+                                       ("general/FeedButtonVisible"))
+        if not self.appMode:
+            self.toolBar.setVisible(settings.\
+                                    setting_to_bool\
+                                    ("general/NavigationToolBarVisible"))
+            self.statusBar.setVisible(settings.\
+                                      setting_to_bool\
+                                      ("general/StatusBarVisible"))
+            if settings.setting_to_bool("general/NavigationToolBarVisible"):
+                try:
+                    self.tabsToolBar.removeAction(self.searchEditAction)
+                    self.tabsToolBar.removeAction(self.mainMenuAction)
+                except: pass
+                self.toolBar.addAction(self.searchEditAction)
+                self.toolBar.addAction(self.mainMenuAction)
+                self.mainMenuButton = self.toolBar.widgetForAction(self.mainMenuAction)
+                self.searchEditButton = self.toolBar.widgetForAction(self.searchEditAction)
+            else:
+                try:
+                    self.toolBar.removeAction(self.searchEditAction)
+                    self.toolBar.removeAction(self.mainMenuAction)
+                except: pass
+                self.tabsToolBar.addAction(self.searchEditAction)
+                self.tabsToolBar.addAction(self.mainMenuAction)
+                self.mainMenuButton = self.tabsToolBar.widgetForAction(self.mainMenuAction)
+                self.mainMenuButton.setStyleSheet("QToolButton { border-radius: 4px; border-top-%(o)s-radius: 0; border-bottom-%(o)s-radius: 0; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }" % {"o": "right" if self.layoutDirection() == Qt.LeftToRight else "left"})
+                self.mainMenuButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+                self.searchEditButton = self.tabsToolBar.widgetForAction(self.searchEditAction)
+            self.mainMenuButton.setPopupMode(QToolButton.InstantPopup)
 
     def toggleActions2(self):
         try: self.nextAction.setEnabled(bool(self.tabWidget().\
