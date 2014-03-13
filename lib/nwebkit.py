@@ -313,7 +313,7 @@ delete __NimbusAdRemoverQueries;""" % (settings.adremover_filters,))
     # Returns user agent string.
     def userAgentForUrl(self, url):
         override = data.userAgentForUrl(url.authority())
-        if override:
+        if override and not "android" in self._userAgent.lower():
             return override
         elif ("app.box" in url.authority() or "ppirc" in url.authority() or "google" in url.authority() or "blackboard" in url.authority()) and not "android" in self._userAgent.lower():
             return QWebPage.userAgentForUrl(self, url) + " Chrome/22." + common.qt_version + " Nimbus/" + common.app_version
