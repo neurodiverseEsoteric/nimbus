@@ -152,8 +152,8 @@ def complete_icon(name):
     try: return complete_icons[name]
     except:
         nnic = QIcon()
-        for size in (12, 16, 22, 24, 32, 48, 64, 72, 80, 128, 256):
-            ic = icon(name + ".png", size)
+        for size in (12, 16, 22, 24, 32, 48, 64, 72, 80, 128, 256, "scalable"):
+            ic = icon(name + (".png" if size != "scalable" else ".svg"), size)
             try: nnic.addFile(ic)
             except: pass
         try: nic = QIcon().fromTheme(name, nnic)
