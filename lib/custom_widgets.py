@@ -168,10 +168,14 @@ class InvisibleMenu(QMenu):
 class MenuToolBar(QToolBar):
     def __init__(self, *args, **kwargs):
         super(MenuToolBar, self).__init__(*args, **kwargs)
+        self._isMenuBar = True
+    def isMenuBar(self):
+        return self._isMenuBar
+    def setIsMenuBar(self, isMenuBar):
+        self._isMenuBar = bool(isMenuBar)
+        self.repaint()
     def paintEvent(self, event):
-        try: tabsontop = settings.setting_to_bool("general/TabsOnTop")
-        except: tabsontop = True
-        if tabsontop:
+        if self.isMenuBar():
             painter = QStylePainter(self)
             option = QStyleOptionToolBar()
             self.initStyleOption(option)

@@ -144,7 +144,7 @@ class MainWindow(QMainWindow):
             self.toolBar.setVisible(False)
 
         # Tabs toolbar.
-        self.tabsToolBar = QToolBar(movable=False,\
+        self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
                            contextMenuPolicy=Qt.CustomContextMenu,\
                            parent=self,
                            windowTitle=tr("Tabs"))
@@ -1092,6 +1092,7 @@ self.origY + ev.globalY() - self.mouseY)
                 except: pass
                 self.toolBar.addAction(self.searchEditAction)
                 self.toolBar.addAction(self.mainMenuAction)
+                self.tabsToolBar.setIsMenuBar(False)
                 self.mainMenuButton = self.toolBar.widgetForAction(self.mainMenuAction)
                 self.searchEditButton = self.toolBar.widgetForAction(self.searchEditAction)
             else:
@@ -1101,6 +1102,7 @@ self.origY + ev.globalY() - self.mouseY)
                 except: pass
                 self.tabsToolBar.addAction(self.searchEditAction)
                 self.tabsToolBar.addAction(self.mainMenuAction)
+                self.tabsToolBar.setIsMenuBar(True)
                 self.mainMenuButton = self.tabsToolBar.widgetForAction(self.mainMenuAction)
                 self.mainMenuButton.setStyleSheet("QToolButton { border-radius: 4px; border-top-%(o)s-radius: 0; border-bottom-%(o)s-radius: 0; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }" % {"o": "right" if self.layoutDirection() == Qt.LeftToRight else "left"})
                 self.mainMenuButton.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
