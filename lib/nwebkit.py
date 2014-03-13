@@ -554,6 +554,10 @@ class WebView(QWebView):
         if os.path.exists(settings.new_tab_page) and not forceBlankPage:
             self.load(QUrl("about:blank"))
 
+    def wheelEvent(self, *args, **kwargs):
+        super(WebView, self).wheelEvent(*args, **kwargs)
+        self.statusMessageDisplay.hide()
+
     def disconnect(self, *args, **kwargs):
         super(WebView, self).disconnect(*args, **kwargs)
         self.init()
