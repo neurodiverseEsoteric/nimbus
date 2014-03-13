@@ -249,6 +249,14 @@ class IndexAction(QAction):
         self.setData(index)
         self.triggered.connect(lambda: self.triggered2.emit(self.data()))
 
+# Action that emits a number.
+class StringAction(QAction):
+    triggered2 = Signal(str)
+    def __init__(self, data, *args, **kwargs):
+        super(StringAction, self).__init__(*args, **kwargs)
+        self.setData(data)
+        self.triggered.connect(lambda: self.triggered2.emit(self.data()))
+
 # Web history action for dropdown menus.
 class WebHistoryAction(IndexAction):
     pass

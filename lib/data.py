@@ -8,10 +8,11 @@
 # Description: This module contains data related to browser history, cookies,
 #              etc.
 
-from common import pyqt4
+import common
 import network
+import traceback
 import json
-if not pyqt4:
+if not common.pyqt4:
     from PyQt5.QtCore import QCoreApplication, QByteArray, QUrl
     from PyQt5.QtNetwork import QNetworkCookie
     from qsettings import QSettings
@@ -52,6 +53,20 @@ def shortUrl(url):
     i = url.partition("://")[-1] if "://" in url else url
     i = i.replace(("www." if i.startswith("www.") else ""), "")
     return i
+
+def setUserAgentForUrl(user_agent, url):
+    global history
+    if type(url) is QUrl:
+        url = url.authority()
+    try: history[url]
+    except: history[url] = {}
+    history[url]["user_agent"] = str(user_agent)
+
+def userAgentForUrl(url):
+    if type(url) is QUrl:
+        url = url.authority()
+    try: return history[url]["user_agent"]
+    except: return None
 
 # This function loads the browser's settings.
 def loadData():

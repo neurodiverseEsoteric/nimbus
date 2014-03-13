@@ -112,6 +112,11 @@ qt_version = qVersion()
 
 defaultUserAgent = "%(app_name)s/%(app_version)s (%(system)s) AppleWebKit/%(webkit_version)s (KHTML, like Gecko) Chrome/22.%(qt_version)s" % {"app_name": app_name, "app_version": app_version, "system": platform.system(), "qt_version": qt_version, "webkit_version": qWebKitVersion()}
 mobileUserAgent = "Mozilla/5.0 (Linux; U; Android 2.3.5; en-us) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
+firefoxUserAgent = "Mozilla/5.0 (%s; rv:24.0) Gecko/20100101 Firefox/24.0" % (platform.system(),)
+safariUserAgent = "Mozilla/5.0 (%(system)s) AppleWebKit/%(webkit_version)s (KHTML, like Gecko) Version/4.0 Safari/%(webkit_version)s" % {"system": platform.system(), "webkit_version": qWebKitVersion()}
+chromeUserAgent = "Mozilla/5.0 (%(system)s) AppleWebKit/%(webkit_version)s (KHTML, like Gecko) Chrome/22.%(qt_version)s Safari/%(webkit_version)s" % {"system": platform.system(), "webkit_version": qWebKitVersion(), "qt_version": qt_version}
+
+user_agents = {"Internet Explorer": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko", "Firefox": firefoxUserAgent, "Safari": safariUserAgent, "Chrome": chromeUserAgent, "Nimbus": defaultUserAgent, "Android": mobileUserAgent}
 
 # Default user agent.
 def createUserAgent():

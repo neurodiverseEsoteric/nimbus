@@ -645,6 +645,21 @@ class MainWindow(QMainWindow):
         self.mainMenuAction.setMenu(self.mainMenu)
         self.addAction(self.mainMenuAction)
         
+        # Add user agent picker.
+        self.userAgentMenu = QMenu(self)
+        self.userAgentMenuAction = QAction(tr("Set User Agent For Site"), self)
+        self.userAgentMenuAction.setIcon(common.complete_icon("applications-internet"))
+        for browser_ in sorted(tuple(common.user_agents.keys())):
+            ua = common.user_agents[browser_]
+            action = custom_widgets.StringAction(ua, browser_, self.userAgentMenu)
+            action.triggered2.connect(lambda x: data.setUserAgentForUrl(x, self.currentWidget().url()))
+            action.triggered2.connect(self.reload)
+            self.userAgentMenu.addAction(action)
+        self.userAgentMenuAction.setMenu(self.userAgentMenu)
+        self.tabsToolBar.addAction(self.userAgentMenuAction)
+        self.userAgentMenuButton = self.tabsToolBar.widgetForAction(self.userAgentMenuAction)
+        self.userAgentMenuButton.setPopupMode(QToolButton.InstantPopup)
+        
         # This is horribly out of order.
         self.tabsToolBar.addAction(self.searchEditAction)
         self.searchEditButton = self.tabsToolBar.widgetForAction(self.searchEditAction)
