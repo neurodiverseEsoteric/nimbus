@@ -1006,6 +1006,7 @@ class WebView(QWebView):
             self.statusMessageDisplay.move(QPoint(0, self.height()-self.statusMessageDisplay.height()))
             opposite = QCursor.pos().x() in tuple(range(self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).x(), self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).x() + self.statusMessageDisplay.width())) and QCursor.pos().y() in tuple(range(self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).y(), self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).y() + self.statusMessageDisplay.height()))
             self.statusMessageDisplay.move(QPoint(0 if not opposite else self.width()-self.statusMessageDisplay.width(), self.height()-self.statusMessageDisplay.height()))
+            self.repaint()
         elif len(self._statusBarMessage) == 0:
             self.statusMessageDisplay.hide()
 

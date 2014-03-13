@@ -663,7 +663,7 @@ class MainWindow(QMainWindow):
         self.addToolBarBreak(Qt.TopToolBarArea)
 
         self.findToolBar = QToolBar(self)
-        self.findToolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-top: 1px solid palette(dark);}")
+        #self.findToolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-top: 1px solid palette(dark);}")
         self.findToolBar.setIconSize(QSize(16, 16))
         self.findToolBar.setMovable(False)
         self.findToolBar.setContextMenuPolicy(Qt.CustomContextMenu)
