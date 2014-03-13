@@ -35,7 +35,7 @@ if not common.pyqt4:
                             QMenu, QAction, QMainWindow, QToolBar,\
                             QToolButton, QComboBox, QButtonGroup,\
                             QLabel, QCalendarWidget, QInputDialog,\
-                            QLineEdit
+                            QLineEdit, QStatusBar, QProgressBar
     from PyQt5.QtNetwork import QNetworkRequest
     from PyQt5.QtWebKitWidgets import QWebPage
 else:
@@ -48,7 +48,7 @@ else:
                                 QMenu, QAction, QMainWindow, QToolBar,\
                                 QToolButton, QComboBox, QButtonGroup,\
                                 QLabel, QCalendarWidget, QCursor, QInputDialog,\
-                                QLineEdit
+                                QLineEdit, QStatusBar, QProgressBar
         from PyQt4.QtNetwork import QNetworkRequest
         from PyQt4.QtWebKit import QWebPage
     except:
@@ -60,7 +60,7 @@ else:
                                  QSizePolicy, QIcon, QMenu, QAction,\
                                  QMainWindow, QToolBar, QToolButton, QComboBox,\
                                  QButtonGroup, QLabel, QCalendarWidget, QCursor,\
-                                 QInputDialog, QLineEdit
+                                 QInputDialog, QLineEdit, QStatusBar, QProgressBar
         from PySide.QtNetwork import QNetworkRequest
         from PySide.QtWebKit import QWebPage
 
@@ -126,16 +126,25 @@ class MainWindow(QMainWindow):
         self.sideBars = {}
 
         # Main toolbar.
-        self.toolBar = QToolBar(movable=False,\
+        self.toolBar = custom_widgets.MenuToolBar(movable=False,\
                                 contextMenuPolicy=Qt.CustomContextMenu,\
                                 parent=self,
+                                #iconSize=QSize(16,16),
                                 windowTitle=tr("Navigation Toolbar"))
-        self.toolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-top: 1px solid palette(dark);}")
+        self.extensionBar = QToolBar(movable=False,\
+                                contextMenuPolicy=Qt.CustomContextMenu,\
+                                parent=self,
+                                styleSheet="QToolButton { padding: 0; }",
+                                windowTitle=tr("Extension Toolbar"))
+        self.addToolBar(self.toolBar)
+        self.addToolBarBreak()
+        self.addToolBar(Qt.BottomToolBarArea, self.extensionBar)
+        #self.toolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-top: 1px solid palette(dark);}")
         if self.appMode:
             self.toolBar.setVisible(False)
 
         # Tabs toolbar.
-        self.tabsToolBar = custom_widgets.MenuToolBar(movable=False,\
+        self.tabsToolBar = QToolBar(movable=False,\
                            contextMenuPolicy=Qt.CustomContextMenu,\
                            parent=self,
                            windowTitle=tr("Tabs"))
@@ -163,18 +172,23 @@ class MainWindow(QMainWindow):
         self.tabs.setTabsClosable(True)
         self.tabs.tabCloseRequested.connect(self.removeTab)
 
-        self.statusBar = status_bar.StatusBar(self)
-        self.statusBar.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.statusBar.setWindowTitle(tr("Status Bar"))
-        self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
-        self.addToolBarBreak(Qt.BottomToolBarArea)
-        self.addToolBar(Qt.BottomToolBarArea, self.toolBar)
+        self.statusBar = QStatusBar(self)
+        self.setStatusBar(self.statusBar)
+        self.progressBar = QProgressBar(self)
+        self.progressBar.setStyleSheet("min-height: 1em; max-height: 1em; min-width: 200px; max-width: 200px;")
+        self.statusBar.addPermanentWidget(self.progressBar)
+        #self.statusBar = status_bar.StatusBar(self)
+        #self.statusBar.setContextMenuPolicy(Qt.CustomContextMenu)
+        #self.statusBar.setWindowTitle(tr("Status Bar"))
+        #self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
+        #self.addToolBarBreak(Qt.BottomToolBarArea)
+        #self.addToolBar(Qt.BottomToolBarArea, self.toolBar)
         if self.appMode:
             self.statusBar.setVisible(False)
-        self.addToolBarBreak(Qt.BottomToolBarArea)
+        #self.addToolBarBreak(Qt.BottomToolBarArea)
 
         # Extensions toolbar.
-        self.extensionBar = self.statusBar.widgetToolBar
+        #self.extensionBar = self.statusBar.widgetToolBar
 
         # Set tabs as central widget.
         self.setCentralWidget(self.tabs)
@@ -212,8 +226,8 @@ class MainWindow(QMainWindow):
         #newTabToolBar.setStyleSheet(common.blank_toolbar)
 
         self.addAction(newTabAction)
-        self.tabsToolBar.addAction(newTabAction)
         self.tabsToolBar.addWidget(self.tabsWidget)
+        self.tabsToolBar.addAction(newTabAction)
         self.newTabButton = self.tabsToolBar.widgetForAction(newTabAction)
         self.newTabButton.setIcon(common.complete_icon("list-add"))
 
@@ -649,12 +663,12 @@ class MainWindow(QMainWindow):
         self.addToolBarBreak(Qt.TopToolBarArea)
 
         self.findToolBar = QToolBar(self)
-        self.findToolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-bottom: 1px solid palette(dark);}")
+        self.findToolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-top: 1px solid palette(dark);}")
         self.findToolBar.setIconSize(QSize(16, 16))
         self.findToolBar.setMovable(False)
         self.findToolBar.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.addToolBarBreak()
-        self.addToolBar(self.findToolBar)
+        self.addToolBarBreak(Qt.BottomToolBarArea)
+        self.addToolBar(Qt.BottomToolBarArea, self.findToolBar)
         self.findToolBar.hide()
 
         self.findBar = custom_widgets.LineEdit(self.findToolBar)
@@ -1291,17 +1305,15 @@ self.origY + ev.globalY() - self.mouseY)
 
     # Status bar related methods.
     def setStatusBarMessage(self, message):
-        try: self.statusBar.setStatusBarMessage(self.tabWidget().\
-                                                currentWidget().\
-                                                _statusBarMessage)
-        except: self.statusBar.setStatusBarMessage("")
+        try: self.statusBar.showMessage(message)
+        except: self.updateLocationText()
 
     def setProgress(self, progress=None):
-        try: self.statusBar.setValue(self.tabWidget().\
-                                     currentWidget()._loadProgress)
-        except:
-            try: self.statusBar.setValue(progress)
-            except: self.statusBar.setValue(0)
+        if progress in (0, 100):
+            self.progressBar.hide()
+        else:
+            self.progressBar.show()
+        self.progressBar.setValue(progress)
 
     # Fullscreen mode.
     def setFullScreen(self, fullscreen=False):

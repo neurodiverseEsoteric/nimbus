@@ -185,6 +185,7 @@ class LocationBar(QComboBox):
     def __init__(self, *args, icon=None, **kwargs):
         super(LocationBar, self).__init__(*args, **kwargs)
         self.icon = QToolButton(self)
+        self._savedText = ""
         if type(icon) is QIcon:
             self.icon.setIcon(icon)
         self.icon.setFixedWidth(16)
@@ -196,6 +197,12 @@ class LocationBar(QComboBox):
         self.s = False
         msz = self.minimumSizeHint()
         self.setMinimumSize(max(msz.width(), self.icon.sizeHint().height() + fw * 2 + 2), max(msz.height(), self.icon.sizeHint().height() + fw * 2 + 2))
+
+    def savedText(self):
+        return self._savedText
+
+    def setSavedText(self, text):
+        self._savedText = str(text)
 
     def paintEvent(self, ev):
         sz = self.icon

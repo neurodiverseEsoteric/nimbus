@@ -89,7 +89,7 @@ default_settings = {"proxy/Type": "None",
                     "general/ReopenableTabCount": 10,
                     "general/ReopenableWindowCount": 10,
                     "general/NavigationToolBarVisible": True,
-                    "general/StatusBarVisible": True}
+                    "general/StatusBarVisible": False}
 default_port = default_settings["proxy/Port"]
 
 # New tab page.

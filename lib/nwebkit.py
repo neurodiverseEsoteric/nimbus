@@ -32,9 +32,9 @@ if not sys.platform.startswith("linux"):
 # Extremely specific imports from PyQt5/PySide.
 # We give PyQt5 priority because it supports Qt5.
 if not common.pyqt4:
-    from PyQt5.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime
-    from PyQt5.QtGui import QIcon, QImage, QClipboard
-    from PyQt5.QtWidgets import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QAction, QToolBar, QLineEdit, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QWidgetAction
+    from PyQt5.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime, QPoint
+    from PyQt5.QtGui import QIcon, QImage, QClipboard, QCursor
+    from PyQt5.QtWidgets import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QAction, QToolBar, QLineEdit, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QWidgetAction, QToolTip
     from PyQt5.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
     from PyQt5.QtNetwork import QNetworkProxy, QNetworkRequest
     from PyQt5.QtWebKit import QWebHistory
@@ -43,15 +43,15 @@ if not common.pyqt4:
     Slot = pyqtSlot
 else:
     try:
-        from PyQt4.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime
-        from PyQt4.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard, QWidgetAction
+        from PyQt4.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime, QPoint
+        from PyQt4.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard, QWidgetAction, QToolTip, QCursor
         from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
         from PyQt4.QtWebKit import QWebView, QWebPage, QWebHistory
         Signal = pyqtSignal
         Slot = pyqtSlot
     except:
-        from PySide.QtCore import Qt, QSize, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime
-        from PySide.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard, QWidgetAction
+        from PySide.QtCore import Qt, QSize, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime, QPoint
+        from PySide.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard, QWidgetAction, QToolTip, QCursor
         from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
         from PySide.QtWebKit import QWebView, QWebPage, QWebHistory
 
@@ -474,6 +474,9 @@ class WebView(QWebView):
 
         # This is used to store the current status message.
         self._statusBarMessage = ""
+        self.statusMessageDisplay = QLabel(self)
+        self.statusMessageDisplay.setStyleSheet("QLabel { border-radius: 4px; padding: 2px; background: palette(highlight); color: palette(highlighted-text); }")
+        self.statusMessageDisplay.hide()
 
         # This is used to store the current page loading progress.
         self._loadProgress = 0
@@ -996,6 +999,15 @@ class WebView(QWebView):
     # Set status bar message.
     def setStatusBarMessage(self, link="", title="", content=""):
         self._statusBarMessage = link
+        if not settings.setting_to_bool("general/StatusBarVisible") and len(self._statusBarMessage) > 0:
+            self.statusMessageDisplay.hide()
+            self.statusMessageDisplay.setText(self._statusBarMessage)
+            self.statusMessageDisplay.show()
+            self.statusMessageDisplay.move(QPoint(0, self.height()-self.statusMessageDisplay.height()))
+            opposite = QCursor.pos().x() in tuple(range(self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).x(), self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).x() + self.statusMessageDisplay.width())) and QCursor.pos().y() in tuple(range(self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).y(), self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).y() + self.statusMessageDisplay.height()))
+            self.statusMessageDisplay.move(QPoint(0 if not opposite else self.width()-self.statusMessageDisplay.width(), self.height()-self.statusMessageDisplay.height()))
+        elif len(self._statusBarMessage) == 0:
+            self.statusMessageDisplay.hide()
 
     # Set load progress.
     def setLoadProgress(self, progress):
