@@ -1013,6 +1013,7 @@ class WebView(QWebView):
             self.repaint()
         elif len(self._statusBarMessage) == 0:
             self.statusMessageDisplay.hide()
+            self.repaint()
 
     # Set load progress.
     def setLoadProgress(self, progress):
