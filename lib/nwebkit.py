@@ -313,26 +313,20 @@ delete __NimbusAdRemoverQueries;""" % (settings.adremover_filters,))
     # Returns user agent string.
     def userAgentForUrl(self, url):
         override = data.userAgentForUrl(url.authority())
-        if override and not "android" in self._userAgent.lower():
+        if override and not self._userAgent:
             return override
-        elif ("app.box" in url.authority() or "ppirc" in url.authority() or "google" in url.authority() or "blackboard" in url.authority()) and not "android" in self._userAgent.lower():
+        elif ("app.box" in url.authority() or "ppirc" in url.authority() or "google" in url.authority() or "blackboard" in url.authority()) and not "android" in str(self._userAgent).lower():
             return QWebPage.userAgentForUrl(self, url) + " Chrome/22." + common.qt_version + " Nimbus/" + common.app_version
-        elif not "github" in url.authority():
+        elif not "github" in url.authority() and self._userAgent:
             return self._userAgent
         # This is a workaround for GitHub not loading properly
         # with the default Nimbus user agent.
         else:
-            return QWebPage.userAgentForUrl(self, url)
+            return common.defaultUserAgent
 
     # Convenience function.
     def setUserAgent(self, ua=None):
-        try:
-            if type(ua) is str:
-                self._userAgent = ua
-            else:
-                self._userAgent = common.defaultUserAgent
-        except:
-            pass
+        self._userAgent = ua
 
     # This is a hacky way of checking whether a website wants to use
     # geolocation. It checks the page source for navigator.geolocation,
