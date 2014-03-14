@@ -18,7 +18,6 @@ import translate
 from translate import tr
 import custom_widgets
 import settings
-import status_bar
 import data
 from nwebkit import *
 import traceback
@@ -139,7 +138,6 @@ class MainWindow(QMainWindow):
         self.addToolBar(self.toolBar)
         self.addToolBarBreak()
         self.addToolBar(Qt.BottomToolBarArea, self.extensionBar)
-        #self.toolBar.setStyleSheet("QToolBar{background: palette(window); border: 0; border-top: 1px solid palette(dark);}")
         if self.appMode:
             self.toolBar.setVisible(False)
 
@@ -160,7 +158,6 @@ class MainWindow(QMainWindow):
         self.tabs.setMovable(True)
 
         # Update tab titles and icons when the current tab is changed.
-        #self.tabs.currentChanged.connect(self.updateTabTitles)
         self.tabs.currentChanged.connect(self.updateTabIcons)
         self.tabs.currentChanged.connect(self.setProgress)
 
@@ -177,18 +174,8 @@ class MainWindow(QMainWindow):
         self.progressBar = QProgressBar(self)
         self.progressBar.setStyleSheet("min-height: 1em; max-height: 1em; min-width: 200px; max-width: 200px;")
         self.statusBar.addPermanentWidget(self.progressBar)
-        #self.statusBar = status_bar.StatusBar(self)
-        #self.statusBar.setContextMenuPolicy(Qt.CustomContextMenu)
-        #self.statusBar.setWindowTitle(tr("Status Bar"))
-        #self.addToolBar(Qt.BottomToolBarArea, self.statusBar)
-        #self.addToolBarBreak(Qt.BottomToolBarArea)
-        #self.addToolBar(Qt.BottomToolBarArea, self.toolBar)
         if self.appMode:
             self.statusBar.setVisible(False)
-        #self.addToolBarBreak(Qt.BottomToolBarArea)
-
-        # Extensions toolbar.
-        #self.extensionBar = self.statusBar.widgetToolBar
 
         # Set tabs as central widget.
         self.setCentralWidget(self.tabs)
@@ -203,8 +190,6 @@ class MainWindow(QMainWindow):
         self.tabsToolBar.layout().setSpacing(0)
         self.tabsToolBar.layout().setContentsMargins(0,0,0,0)
         self.tabsToolBar.setStyleSheet("QToolBar { padding: 0; margin: 0; }")
-        #self.tabs.tabBar().setShape(self.tabs.tabBar().RoundedSouth)
-        #self.tabs.tabBar().setStyleSheet(tabbar_stylesheet)
 
         # New tab action.
         newTabAction = QAction(common.complete_icon("tab-new"), tr("New &Tab"), self)
@@ -222,9 +207,6 @@ class MainWindow(QMainWindow):
         #newTabToolBar = QToolBar(movable=False, contextMenuPolicy=Qt.CustomContextMenu, parent=self)
         self.tabsToolBar.setIconSize(QSize(16, 16))
 
-        # We don't want this widget to have any decorations.
-        #newTabToolBar.setStyleSheet(common.blank_toolbar)
-
         self.addAction(newTabAction)
         self.tabsToolBar.addWidget(self.tabsWidget)
         self.tabsToolBar.addAction(newTabAction)
@@ -233,16 +215,10 @@ class MainWindow(QMainWindow):
 
         self.tabsToolBar.addWidget(custom_widgets.HorizontalExpander(self.tabsToolBar))
 
-        #self.tabsToolBar.addAction(newIncognitoTabAction)
-        #self.tabsToolBar.addWidget(newTabToolBar)
-        #self.tabs.setCornerWidget(newTabToolBar, Qt.TopRightCorner)
-
         tabsMenuAction = QAction(self)
         self.tabsToolBar.addAction(tabsMenuAction)
-        #self.tabsToolBar.addSeparator()
         self.tabsToolBar.widgetForAction(tabsMenuAction).setPopupMode(QToolButton.InstantPopup)
         self.tabsToolBar.widgetForAction(tabsMenuAction).setStyleSheet("QToolButton { max-width: 1em; }")
-        #self.tabsToolBar.widgetForAction(tabsMenuAction).setArrowType(Qt.DownArrow)
 
         self.tabsMenu = QMenu(self)
         self.tabsMenu.aboutToShow.connect(self.aboutToShowTabsMenu)
@@ -345,7 +321,6 @@ class MainWindow(QMainWindow):
         self.toggleActionsTimer.start(256)
         self.dateTimeTimer.start(500)
         self.reconnectWebViewsTimer.start(5000)
-        #self.lostTabsTimer.start(5000)
 
         # Location bar. Note that this is a combo box.
         # At some point, I should make a custom location bar
