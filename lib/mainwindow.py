@@ -625,9 +625,9 @@ class MainWindow(QMainWindow):
         self.userAgentMenuAction = QAction(tr("Set User Agent For Site"), self)
         self.userAgentMenuAction.setShortcut("Alt+U")
         self.userAgentMenuAction.setIcon(common.complete_icon("applications-internet"))
-        for browser_ in sorted(tuple(common.user_agents.keys())):
+        for browser_ in sorted(tuple(common.user_agents.keys()), key=lambda x: x.replace("&", "")):
             ua = common.user_agents[browser_]
-            icon = common.complete_icon(browser_.lower().replace(" ", "-"))
+            icon = common.complete_icon(browser_.lower().replace(" ", "-").replace("&", ""))
             action = custom_widgets.StringAction(ua, icon, browser_, self.userAgentMenu)
             action.triggered2.connect(lambda x: data.setUserAgentForUrl(x, self.currentWidget().url()))
             action.triggered2.connect(self.reload)
