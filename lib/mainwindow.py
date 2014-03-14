@@ -525,7 +525,7 @@ class MainWindow(QMainWindow):
 
         # Add fullscreen button.
         self.toggleFullScreenButton = QAction(common.complete_icon("view-fullscreen"), tr("Toggle Fullscreen"), self)
-        self.toggleFullScreenButton.setCheckable(True)
+        #self.toggleFullScreenButton.setCheckable(True)
         self.toggleFullScreenButton.triggered.connect(lambda: self.setFullScreen(not self.isFullScreen()))
         self.tabsToolBar.addAction(self.toggleFullScreenButton)
         self.toggleFullScreenButton.setVisible(False)
@@ -1362,20 +1362,12 @@ self.origY + ev.globalY() - self.mouseY)
     # Fullscreen mode.
     def setFullScreen(self, fullscreen=False):
         if fullscreen:
-            try: self.toggleFullScreenButton.setChecked(True)
-            except: pass
-            try: self.toggleFullScreenAction.setChecked(True)
-            except: pass
             self.toggleFullScreenButton.setVisible(True)
             self.networkManagerAction.setVisible(True)
             self.dateTime.setVisible(True)
             self._wasMaximized = self.isMaximized()
             self.showFullScreen()
         else:
-            try: self.toggleFullScreenButton.setChecked(False)
-            except: pass
-            try: self.toggleFullScreenAction.setChecked(False)
-            except: pass
             self.toggleFullScreenButton.setVisible(False)
             self.networkManagerAction.setVisible(False)
             self.dateTime.setVisible(False)

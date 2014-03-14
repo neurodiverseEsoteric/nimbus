@@ -221,7 +221,6 @@ class WebPage(QWebPage):
 
         # This stores the user agent.
         self._userAgent = ""
-        self._fullScreen = False
 
         # Start self.isOnlineTimer.
         if not isOnlineTimer.isActive():
@@ -272,13 +271,8 @@ class WebPage(QWebPage):
         return byteArray
 
     # Sends a request to become fullscreen.
-    def toggleFullScreen(self):
-        if self._fullScreen:
-            self.fullScreenRequested.emit(False)
-            self._fullScreen = False
-        else:
-            self.fullScreenRequested.emit(True)
-            self._fullScreen = True
+    def toggleFullScreen(self, value):
+        self.fullScreenRequested.emit(value)
 
     def setUserScriptsLoaded(self, loaded=False):
         self._userScriptsLoaded = loaded
