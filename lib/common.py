@@ -116,7 +116,7 @@ firefoxUserAgent = "Mozilla/5.0 (%s %s; rv:24.0) Gecko/20100101 Firefox/24.0" % 
 safariUserAgent = "Mozilla/5.0 (%(system)s %(machine)s) AppleWebKit/%(webkit_version)s (KHTML, like Gecko) Version/4.0 Safari/%(webkit_version)s" % {"system": platform.system(), "webkit_version": qWebKitVersion(), "machine": platform.machine()}
 chromeUserAgent = "Mozilla/5.0 (%(system)s %(machine)s) AppleWebKit/%(webkit_version)s (KHTML, like Gecko) Chrome/22.%(qt_version)s Safari/%(webkit_version)s" % {"system": platform.system(), "webkit_version": qWebKitVersion(), "qt_version": qt_version, "machine": platform.machine()}
 
-user_agents = {"Internet Explorer": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko", "Firefox": firefoxUserAgent, "Safari": safariUserAgent, "Chrome": chromeUserAgent, "Nimbus": defaultUserAgent, "Android": mobileUserAgent}
+user_agents = {"Internet Explorer": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko", "Firefox": firefoxUserAgent, "Safari": safariUserAgent, "Chromium": chromeUserAgent, "Nimbus": defaultUserAgent, "Android": mobileUserAgent}
 
 # Default user agent.
 def createUserAgent():

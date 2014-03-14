@@ -627,7 +627,8 @@ class MainWindow(QMainWindow):
         self.userAgentMenuAction.setIcon(common.complete_icon("applications-internet"))
         for browser_ in sorted(tuple(common.user_agents.keys())):
             ua = common.user_agents[browser_]
-            action = custom_widgets.StringAction(ua, browser_, self.userAgentMenu)
+            icon = common.complete_icon(browser_.lower().replace(" ", "-"))
+            action = custom_widgets.StringAction(ua, icon, browser_, self.userAgentMenu)
             action.triggered2.connect(lambda x: data.setUserAgentForUrl(x, self.currentWidget().url()))
             action.triggered2.connect(self.reload)
             self.userAgentMenu.addAction(action)
