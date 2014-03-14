@@ -2,13 +2,9 @@ nimbus
 ======
 
 Nimbus is a somewhat hacky Web browser coded in Python 3, using either Qt 5 via
-PyQt5, or Qt 4 via either PyQt4 or PySide. It was originally supposed to
-cater to whatever few users my old browser Ryouko had, and was meant to employ
-a "batteries included" approach similar to that of Python. Ultimately,
-however, it simply ended up being made for my own selfish purposes, and is
-tailored primarily for my own browsing habits. Nonetheless, I have open-sourced
-it, since I have nothing to hide. Hopefully, someone else may find it useful
-for something.
+PyQt5, or Qt 4 via either PyQt4 or PySide. It is tailored specifically for my
+use case, but I have open-sourced it due to 1) personal ideology, and
+2) personal convenience. Maybe someone will find it useful for something.
 
 Features include:
 * Tabbed browsing
