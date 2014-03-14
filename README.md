@@ -30,7 +30,6 @@ Features include:
   Windows, where QtWebKit doesn't support audio and video tags)
 * Options to toggle features such as JavaScript, Netscape plugins, DNS
   prefetching, and XSS auditing, among others
-* A graphing calculator, though its accuracy cannot be assured
 * A tank you can enable and use to "wreck up" sites you don't like (no,
   seriously. It's in the Settings dialog, under the Extensions tab)
 
@@ -48,15 +47,14 @@ PyQt5 from http://www.riverbankcomputing.com/software/pyqt/download.
 You can install all of Nimbus's dependencies on Ubuntu using the following
 command:
 
-    sudo apt-get install python3 python3-pyqt5 python3-dbus python3-dbus.mainloop.qt python3-feedparser
+    sudo apt-get install python3 python3-pyqt5 python3-pyqt5.qtwebkit python3-dbus python3-dbus.mainloop.pyqt5 python3-feedparser
 
 Installing/compiling Nimbus on Windows
 ======
 
-There is no installer for Windows, but you can (or should be able to) compile
-Nimbus on Windows. In addition to its normal dependencies, you will need
-cx_Freeze. You can download it from http://cx-freeze.sourceforge.net/. Once
-that's done, run compile_windows.py in Python 3.
+Nimbus is not reliably supported on Windows anymore. There is no installer,
+and the compilation script has been broken for a long time. However, you are
+certainly welcome to try it. Let me know if it works; I'd appreciate it.
 
 Installing Nimbus on Linux
 ======
