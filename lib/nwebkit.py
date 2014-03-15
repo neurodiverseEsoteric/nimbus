@@ -272,7 +272,9 @@ class WebPage(QWebPage):
 
     # Sends a request to become fullscreen.
     def toggleFullScreen(self, value):
-        self.fullScreenRequested.emit(value)
+        if (value == True and settings.setting_to_bool("content/JavascriptCanEnterFullscreenMode")) or\
+           (value == False and settings.setting_to_bool("content/JavascriptCanExitFullscreenMode")):
+            self.fullScreenRequested.emit(value)
 
     def setUserScriptsLoaded(self, loaded=False):
         self._userScriptsLoaded = loaded

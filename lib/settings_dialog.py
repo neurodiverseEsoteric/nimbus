@@ -145,6 +145,8 @@ class ContentSettingsPanel(SettingsPanel):
         self.javascriptGroupBox.layout().addWidget(javaScriptRow1)
         javaScriptRow2 = custom_widgets.Row(self.javascriptGroupBox)
         self.javascriptGroupBox.layout().addWidget(javaScriptRow2)
+        javaScriptRow3 = custom_widgets.Row(self.javascriptGroupBox)
+        self.javascriptGroupBox.layout().addWidget(javaScriptRow3)
 
         # Checkbox to toggle JavaScript.
         self.javascriptToggle = QCheckBox(tr("Enable Java&Script"), self)
@@ -161,6 +163,13 @@ class ContentSettingsPanel(SettingsPanel):
         # Checkbox to allow JavaScript to access clipboard.
         self.javascriptCanAccessClipboardToggle = QCheckBox(tr("Allow JavaScript to access clipboard"), self)
         javaScriptRow2.addWidget(self.javascriptCanAccessClipboardToggle)
+
+        # Fullscreen mode
+        self.javascriptCanEnterFullscreenToggle = QCheckBox(tr("Allow JavaScript to enter fullscreen mode"), self)
+        javaScriptRow3.addWidget(self.javascriptCanEnterFullscreenToggle)
+
+        self.javascriptCanExitFullscreenToggle = QCheckBox(tr("Allow JavaScript to exit fullscreen mode"), self)
+        javaScriptRow3.addWidget(self.javascriptCanExitFullscreenToggle)
 
         self.pluginsGroupBox = QGroupBox(tr("Plugin Options"), self)
         self.layout().addWidget(self.pluginsGroupBox)
@@ -226,6 +235,8 @@ class ContentSettingsPanel(SettingsPanel):
         self.javascriptCanOpenWindowsToggle.setChecked(settings.setting_to_bool("content/JavascriptCanOpenWindows"))
         self.javascriptCanCloseWindowsToggle.setChecked(settings.setting_to_bool("content/JavascriptCanCloseWindows"))
         self.javascriptCanAccessClipboardToggle.setChecked(settings.setting_to_bool("content/JavascriptCanAccessClipboard"))
+        self.javascriptCanEnterFullscreenToggle.setChecked(settings.setting_to_bool("content/JavascriptCanEnterFullscreenMode"))
+        self.javascriptCanExitFullscreenToggle.setChecked(settings.setting_to_bool("content/JavascriptCanExitFullscreenMode"))
         self.javaToggle.setChecked(settings.setting_to_bool("content/JavaEnabled"))
         self.flashToggle.setChecked(settings.setting_to_bool("content/FlashEnabled"))
         self.elementBackgroundsToggle.setChecked(settings.setting_to_bool("content/PrintElementBackgrounds"))
@@ -245,6 +256,8 @@ class ContentSettingsPanel(SettingsPanel):
         settings.settings.setValue("content/JavascriptCanOpenWindows", self.javascriptCanOpenWindowsToggle.isChecked())
         settings.settings.setValue("content/JavascriptCanCloseWindows", self.javascriptCanCloseWindowsToggle.isChecked())
         settings.settings.setValue("content/JavascriptCanAccessClipboard", self.javascriptCanAccessClipboardToggle.isChecked())
+        settings.settings.setValue("content/JavascriptCanEnterFullscreenMode", self.javascriptCanEnterFullscreenToggle.isChecked())
+        settings.settings.setValue("content/JavascriptCanExitFullscreenMode", self.javascriptCanExitFullscreenToggle.isChecked())
         settings.settings.setValue("content/JavaEnabled", self.javaToggle.isChecked())
         settings.settings.setValue("content/FlashEnabled", self.flashToggle.isChecked())
         settings.settings.setValue("content/PrintElementBackgrounds", self.elementBackgroundsToggle.isChecked())
