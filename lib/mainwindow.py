@@ -479,7 +479,8 @@ class MainWindow(QMainWindow):
         self.networkManagerAction = QAction(common.complete_icon("network-idle"), tr("Network Management"), self)
         self.tabsToolBar.addAction(self.networkManagerAction)
         self.networkManagerButton = self.tabsToolBar.widgetForAction(self.networkManagerAction)
-        self.networkManagerAction.setVisible(False)
+        if self.statusBar.isVisible():
+            self.networkManagerAction.setVisible(False)
         self.addAction(self.networkManagerAction)
         self.networkManagerAction.setShortcut("Alt+N")
         if sys.platform.startswith("linux"):
@@ -1331,8 +1332,10 @@ self.origY + ev.globalY() - self.mouseY)
     def setProgress(self, progress=None):
         if progress in (0, 100):
             self.progressBar.hide()
+            self.networkManagerAction.setIcon(common.complete_icon("network-idle"))
         else:
             self.progressBar.show()
+            self.networkManagerAction.setIcon(common.complete_icon("network-transmit-receive"))
         self.progressBar.setValue(progress)
 
     # Fullscreen mode.
@@ -1349,7 +1352,10 @@ self.origY + ev.globalY() - self.mouseY)
             self.toggleFullScreenButton.setChecked(False)
             self.toggleFullScreenAction.setChecked(False)
             self.toggleFullScreenButton.setVisible(False)
-            self.networkManagerAction.setVisible(False)
+            if self.statusBar.isVisible():
+                self.networkManagerAction.setVisible(False)
+            else:
+                self.networkManagerAction.setVisible(True)
             self.dateTime.setVisible(False)
             if not self._wasMaximized:
                 self.showNormal()

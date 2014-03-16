@@ -119,7 +119,7 @@ netSurfUserAgent = "NetSurf/%(qt_version)s (%(system)s; %(machine)s)" % {"system
 elinksUserAgent = "ELinks/%(qt_version)s (textmode; %(system)s %(release)s %(machine)s; 80x24)" % {"system": platform.system(), "qt_version": qt_version, "machine": platform.machine(), "release": platform.release()}
 dilloUserAgent = "Dillo/%s" % (qt_version,)
 
-user_agents = {"&Internet Explorer": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko", "&Firefox": firefoxUserAgent, "&Safari": safariUserAgent, "&Chromium": chromeUserAgent, "&Nimbus": defaultUserAgent, "&Android": mobileUserAgent, "NetSu&rf": netSurfUserAgent, "&ELinks": elinksUserAgent, "&Dillo": dilloUserAgent}
+user_agents = {"&Internet Explorer": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko", "&Firefox": firefoxUserAgent, "&Safari": safariUserAgent, "&Chromium": chromeUserAgent, "&Nimbus": defaultUserAgent, "&Android": mobileUserAgent, "NetSu&rf": netSurfUserAgent, "&ELinks": elinksUserAgent, "&Dillo": dilloUserAgent, "&Qt": "nimbus_generic"}
 
 # Default user agent.
 def createUserAgent():

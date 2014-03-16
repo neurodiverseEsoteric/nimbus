@@ -167,7 +167,6 @@ isOnlineTimer = QTimer()
 def setNavigatorOnline():
     online = bool(network.isConnectedToNetwork())
     script = "window.navigator.onLine = " + str(online).lower() + ";"
-    print(script)
     if online:
         for window in browser.windows:
             for tab in range(window.tabWidget().count()):
@@ -316,7 +315,9 @@ delete __NimbusAdRemoverQueries;""" % (settings.adremover_filters,))
     # Returns user agent string.
     def userAgentForUrl(self, url):
         override = data.userAgentForUrl(url.authority())
-        if override and not self._userAgent:
+        if override == "nimbus_generic" and not self._userAgent:
+            return QWebPage.userAgentForUrl(self, url)
+        elif override and not self._userAgent:
             return override
         elif ("app.box" in url.authority() or "ppirc" in url.authority() or "google" in url.authority() or "blackboard" in url.authority()) and not "android" in str(self._userAgent).lower():
             return QWebPage.userAgentForUrl(self, url) + " Chrome/22." + common.qt_version + " Nimbus/" + common.app_version
