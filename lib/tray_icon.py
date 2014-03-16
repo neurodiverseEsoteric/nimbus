@@ -155,10 +155,11 @@ class SystemTrayIcon(QSystemTrayIcon):
             timer.start(500)
 
     def toggleButton(self):
-        if len(browser.windows) == 0:
-            self.toolBar.show()
-        else:
-            self.toolBar.hide()
+        if self.geometry().width() < 8:
+            if len(browser.windows) == 0:
+                self.toolBar.show()
+            else:
+                self.toolBar.hide()
 
     # Show menu.
     def showMenu(self, reason=None):
