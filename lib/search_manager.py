@@ -65,6 +65,7 @@ class SearchManager(object):
             common.search_engines['Openclipart'] = ["oca", "http://openclipart.org/search/?query=%s"]
             common.search_engines['Safebooru'] = ["sb", "http://safebooru.org/index.php?page=post&s=list&tags=%s"]
             common.search_engines['Gigablast'] = ["gb", "https://www.gigablast.com/search?q=%s"]
+            common.search_engines["Startpage"] = ["s", "https://startpage.com/do/search?q=%s"]
             settings.settings.setValue("SearchEngines", json.dumps(common.search_engines))
             settings.settings.sync()
         else:
