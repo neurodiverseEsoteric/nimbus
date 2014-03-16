@@ -172,7 +172,7 @@ def main(argv):
                 hasStyle = True
                 break
         if not hasStyle:
-            argv.append("-style=GTK")
+            argv.append("-style=Fusion")
 
     # Create app.
     app = QApplication(argv)
