@@ -16,6 +16,7 @@ import browser
 import urllib.parse
 import hashlib
 import common
+import traceback
 import geolocation
 import custom_widgets
 import filtering
@@ -164,19 +165,25 @@ class FullScreenRequester(QObject):
 isOnlineTimer = QTimer()
 
 def setNavigatorOnline():
-    script = "window.navigator.onLine = " + str(network.isConnectedToNetwork()).lower() + ";"
-    for window in browser.windows:
-        for tab in range(window.tabWidget().count()):
-            try:
-                window.tabWidget().widget(tab).page().mainFrame().evaluateJavaScript(script)
-                window.tabWidget().widget(tab).page().mainFrame().evaluateJavaScript("if (window.onLine) {\n" + \
-                                            "   document.dispatchEvent(window.nimbus.onLineEvent);\n" + \
-                                            "}")
-                window.tabWidget().widget(tab).page().mainFrame().evaluateJavaScript("if (!window.onLine) {\n" + \
-                                            "   document.dispatchEvent(window.nimbus.offLineEvent);\n" + \
-                                            "}")
-            except:
-                pass
+    online = bool(network.isConnectedToNetwork())
+    script = "window.navigator.onLine = " + str(online).lower() + ";"
+    print(script)
+    if online:
+        for window in browser.windows:
+            for tab in range(window.tabWidget().count()):
+                try:
+                    window.tabWidget().widget(tab).page().mainFrame().evaluateJavaScript(script)
+                    window.tabWidget().widget(tab).page().mainFrame().evaluateJavaScript("document.dispatchEvent(window.nimbus.onLineEvent);")
+                except:
+                    traceback.print_exc()
+    else:
+        for window in browser.windows:
+            for tab in range(window.tabWidget().count()):
+                try:
+                    window.tabWidget().widget(tab).page().mainFrame().evaluateJavaScript(script)
+                    window.tabWidget().widget(tab).page().mainFrame().evaluateJavaScript("document.dispatchEvent(window.nimbus.offLineEvent);")
+                except:
+                    traceback.print_exc()
 
 # Custom WebPage class with support for filesystem.
 class WebPage(QWebPage):
