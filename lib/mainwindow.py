@@ -639,6 +639,14 @@ class MainWindow(QMainWindow):
         self.userAgentMenuButton.setPopupMode(QToolButton.InstantPopup)
         self.userAgentMenuAction.triggered.connect(self.userAgentMenuButton.showMenu)
         
+        self.sessionMenuAction = QAction(tr("Session"), self)
+        self.sessionMenuAction.setShortcut("Alt+S")
+        self.sessionMenuAction.setIcon(common.complete_icon("nimbus"))
+        self.tabsToolBar.addAction(self.sessionMenuAction)
+        self.sessionMenuButton = self.tabsToolBar.widgetForAction(self.sessionMenuAction)
+        self.sessionMenuButton.setPopupMode(QToolButton.InstantPopup)
+        self.sessionMenuAction.triggered.connect(self.showSessionMenu)
+        
         # This is horribly out of order.
         self.tabsToolBar.addAction(self.searchEditAction)
         self.searchEditButton = self.tabsToolBar.widgetForAction(self.searchEditAction)
@@ -727,6 +735,12 @@ class MainWindow(QMainWindow):
             locationBar = QInputDialog.getItem(self, tr("Open URL"), tr("Enter URL:"), items, 0, True)
             if locationBar[1]:
                 self.load(locationBar[0])
+
+    def showSessionMenu(self):
+        menu = common.trayIcon.menu
+        menu.setVisible(not menu.isVisible())
+        y = self.sessionMenuButton.mapToGlobal(QPoint(0,0)).y() + self.sessionMenuButton.height()
+        menu.move(max(0, self.sessionMenuButton.mapToGlobal(QPoint(0,0)).x() - menu.width() + self.sessionMenuButton.width()), self.sessionMenuButton.mapToGlobal(QPoint(0,0)).y()-menu.height() if y > common.desktop.height()-menu.height() else y)
 
     def showSearchEditor(self):
         common.searchEditor.setVisible(not common.searchEditor.isVisible())
