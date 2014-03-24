@@ -95,6 +95,8 @@ directoryView = """<!DOCTYPE html>
 </html>
 """
 
+replacement_table = {"http://personalitycafe.com/images/styles/PersonalityCafe/misc/Other.gif": "http://personalitycafe.com/images/styles/PersonalityCafe/misc/Neutral.gif"}
+
 # Custom NetworkAccessManager class with support for ad-blocking.
 class NetworkAccessManager(QNetworkAccessManager):
     diskCache = diskCache
@@ -120,6 +122,8 @@ class NetworkAccessManager(QNetworkAccessManager):
         y = url.authority() in filtering.host_rules if settings.setting_to_bool("content/HostFilterEnabled") and url.authority() != "" else False
         z = (lurlString.endswith(".swf") or "flash" in ctype) and not settings.setting_to_bool("content/FlashEnabled")
         aa = (lurlString.endswith(".gif") or "image/gif" in ctype) and not settings.setting_to_bool("content/GIFsEnabled")
+        if urlString in tuple(replacement_table.keys()):
+            return QNetworkAccessManager.createRequest(self, op, QNetworkRequest(QUrl(replacement_table[urlString])), device)
         if url.scheme() == "file" and os.path.isdir(os.path.abspath(url.path())):
             html = directoryView % {"title": urlString, "heading": url.path(), "links": "".join(["<a href=\"%s\">%s</a><br/>" % (QUrl.fromUserInput(os.path.join(urlString, path)).toString(), path,) for path in [".."] + sorted(os.listdir(os.path.abspath(url.path())))])}
             return NetworkReply(self, url, self.GetOperation, html)
