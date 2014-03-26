@@ -932,7 +932,7 @@ class WebView(QWebView):
 
     # Creates an error page.
     def errorPage(self, *args, **kwargs):
-        self.setHtml(network.errorPage(*args, **kwargs))
+        self.setHtml(network.errorPage(*args, **kwargs), QUrl("nimbus://error"))
 
     # This loads a page from the cache if certain network errors occur.
     # If that can't be done either, it produces an error page.
