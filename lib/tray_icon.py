@@ -39,12 +39,14 @@ class BackgroundToolBar(QToolBar):
         self.shownOnce = False
         self.desktopWidget = QDesktopWidget()
         self.setWindowFlags(Qt.FramelessWindowHint|Qt.WindowStaysOnTopHint)
-    def halfScreen(self):
+    def halfScreenHeight(self):
         return int((self.desktopWidget.height()-self.height())/2)
+    def halfScreenWidth(self):
+        return int((self.desktopWidget.width()-self.width())/2)
     def show(self):
         super(BackgroundToolBar, self).show()
         if not self.shownOnce:
-            self.move(self.desktopWidget.width()-self.width(), self.halfScreen())
+            self.move(self.desktopWidget.width()-self.width(), self.halfScreenHeight())
             self.shownOnce = True
     def mousePressEvent(self, ev):
         if ev.button() != Qt.LeftButton:
@@ -62,14 +64,24 @@ class BackgroundToolBar(QToolBar):
 self.origY + ev.globalY() - self.mouseY)
     def mouseReleaseEvent(self, ev):
         QApplication.restoreOverrideCursor()
+        x = False
+        y = False
         if self.x() + self.width() > self.desktopWidget.width():
             self.move(self.desktopWidget.width()-self.width(), self.y())
-            if self.halfScreen() - 64 <= self.y() <= self.halfScreen() + 64:
-                self.move(self.x(), self.halfScreen())
+            x = True
         elif self.x() < 0:
             self.move(0, self.y())
-            if self.halfScreen() - 64 <= self.y() <= self.halfScreen() + 64:
-                self.move(self.x(), self.halfScreen())
+            x = True
+        if x and self.halfScreenHeight() - 64 <= self.y() <= self.halfScreenHeight() + 64:
+                self.move(self.x(), self.halfScreenHeight())
+        if self.y() < 0:
+            self.move(self.x(), 0)
+            y = True
+        elif self.y() + self.height() > self.desktopWidget.height():
+            self.move(self.x(), self.desktopWidget.height()-self.height())
+            y = True
+        if y and self.halfScreenWidth() - 64 <= self.x() <= self.halfScreenWidth() + 64:
+            self.move(self.halfScreenWidth(), self.y())
         return QToolBar.mouseReleaseEvent(self, ev)
 
 # System tray icon.
