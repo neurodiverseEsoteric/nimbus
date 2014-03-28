@@ -479,8 +479,7 @@ class MainWindow(QMainWindow):
         self.networkManagerAction = QAction(common.complete_icon("network-idle"), tr("Network Management"), self)
         self.tabsToolBar.addAction(self.networkManagerAction)
         self.networkManagerButton = self.tabsToolBar.widgetForAction(self.networkManagerAction)
-        if self.statusBar.isVisible():
-            self.networkManagerAction.setVisible(False)
+        self.networkManagerAction.setVisible(False)
         self.addAction(self.networkManagerAction)
         self.networkManagerAction.setShortcut("Alt+N")
         if sys.platform.startswith("linux"):
@@ -573,6 +572,18 @@ class MainWindow(QMainWindow):
         downloadAction.triggered.connect(common.downloadManager.show)
         self.mainMenu.addAction(downloadAction)
 
+        # Add user agent picker.
+        self.userAgentMenu = QMenu(tr("Set &User Agent For Site"), self)
+        self.userAgentMenu.setIcon(common.complete_icon("applications-internet"))
+        for browser_ in sorted(tuple(common.user_agents.keys()), key=lambda x: x.replace("&", "")):
+            ua = common.user_agents[browser_]
+            icon = common.complete_icon(browser_.lower().replace(" ", "-").replace("&", ""))
+            action = custom_widgets.StringAction(ua, icon, browser_, self.userAgentMenu)
+            action.triggered2.connect(lambda x: data.setUserAgentForUrl(x, self.currentWidget().url()))
+            action.triggered2.connect(self.reload)
+            self.userAgentMenu.addAction(action)
+        self.mainMenu.addMenu(self.userAgentMenu)
+
         # Add settings dialog action.
         settingsAction = QAction(common.complete_icon("preferences-system"), tr("&Settings..."), self)
         settingsAction.setShortcut("Ctrl+,")
@@ -620,24 +631,6 @@ class MainWindow(QMainWindow):
         self.mainMenuAction.setShortcuts(["Alt+M", "Alt+F"])
         self.mainMenuAction.setMenu(self.mainMenu)
         self.addAction(self.mainMenuAction)
-        
-        # Add user agent picker.
-        self.userAgentMenu = QMenu(self)
-        self.userAgentMenuAction = QAction(tr("Set User Agent For Site"), self)
-        self.userAgentMenuAction.setShortcut("Alt+U")
-        self.userAgentMenuAction.setIcon(common.complete_icon("applications-internet"))
-        for browser_ in sorted(tuple(common.user_agents.keys()), key=lambda x: x.replace("&", "")):
-            ua = common.user_agents[browser_]
-            icon = common.complete_icon(browser_.lower().replace(" ", "-").replace("&", ""))
-            action = custom_widgets.StringAction(ua, icon, browser_, self.userAgentMenu)
-            action.triggered2.connect(lambda x: data.setUserAgentForUrl(x, self.currentWidget().url()))
-            action.triggered2.connect(self.reload)
-            self.userAgentMenu.addAction(action)
-        self.userAgentMenuAction.setMenu(self.userAgentMenu)
-        self.tabsToolBar.addAction(self.userAgentMenuAction)
-        self.userAgentMenuButton = self.tabsToolBar.widgetForAction(self.userAgentMenuAction)
-        self.userAgentMenuButton.setPopupMode(QToolButton.InstantPopup)
-        self.userAgentMenuAction.triggered.connect(self.userAgentMenuButton.showMenu)
         
         self.sessionMenuAction = QAction(tr("Session"), self)
         self.sessionMenuAction.setShortcut("Alt+S")
@@ -1366,10 +1359,7 @@ self.origY + ev.globalY() - self.mouseY)
             self.toggleFullScreenButton.setChecked(False)
             self.toggleFullScreenAction.setChecked(False)
             self.toggleFullScreenButton.setVisible(False)
-            if self.statusBar.isVisible():
-                self.networkManagerAction.setVisible(False)
-            else:
-                self.networkManagerAction.setVisible(True)
+            self.networkManagerAction.setVisible(False)
             self.dateTime.setVisible(False)
             if not self._wasMaximized:
                 self.showNormal()
