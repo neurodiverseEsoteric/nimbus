@@ -238,16 +238,17 @@ class MainWindow(QMainWindow):
 
         # Dummy webpage used to provide navigation actions that conform to
         # the system's icon theme.
-        self.actionsPage = QWebPage(self)
 
         # Regularly and forcibly enable and disable navigation actions
         # every few milliseconds.
         self.toggleActionsTimer = QTimer(timeout=self.toggleActions, parent=self)
         self.dateTimeTimer = QTimer(timeout=self.updateDateTime, parent=self)
         self.reconnectWebViewsTimer = QTimer(timeout=self.reconnectWebViews, parent=self)
+        
+        style = QApplication.style()
 
         # Set up navigation actions.
-        self.backAction = self.actionsPage.action(QWebPage.Back)
+        self.backAction = QAction(self, icon=style.standardIcon(style.SP_ArrowBack), text=tr("Go Back"))
         self.backAction.setShortcut("Alt+Left")
         self.backAction.triggered.connect(self.back)
         self.addAction(self.backAction)
@@ -259,7 +260,7 @@ class MainWindow(QMainWindow):
         self.backHistoryMenu = QMenu(aboutToShow=self.aboutToShowBackHistoryMenu, parent=self)
         self.backAction.setMenu(self.backHistoryMenu)
 
-        self.forwardAction = self.actionsPage.action(QWebPage.Forward)
+        self.forwardAction = QAction(self, icon=style.standardIcon(style.SP_ArrowForward), text=tr("Go Forward"))
         self.forwardAction.setShortcut("Alt+Right")
         self.forwardAction.triggered.connect(self.forward)
         self.addAction(self.forwardAction)
@@ -271,7 +272,7 @@ class MainWindow(QMainWindow):
         self.forwardHistoryMenu = QMenu(aboutToShow=self.aboutToShowForwardHistoryMenu, parent=self)
         self.forwardAction.setMenu(self.forwardHistoryMenu)
 
-        self.upAction = QAction(self, triggered=self.up, icon=common.complete_icon("go-up"), text=tr("Go Up"))
+        self.upAction = QAction(self, triggered=self.up, icon=style.standardIcon(style.SP_ArrowUp), text=tr("Go Up"))
         self.addAction(self.upAction)
         self.toolBar.addAction(self.upAction)
         self.toolBar.widgetForAction(self.upAction).setPopupMode(QToolButton.MenuButtonPopup)
@@ -283,11 +284,11 @@ class MainWindow(QMainWindow):
         self.upMenu = QMenu(aboutToShow=self.aboutToShowUpMenu, parent=self)
         self.upAction.setMenu(self.upMenu)
 
-        self.nextAction = QAction(self, triggered=self.next, icon=common.complete_icon("media-skip-forward"), text=tr("Go Next"))
+        self.nextAction = QAction(self, triggered=self.next, icon=style.standardIcon(style.SP_MediaSkipForward), text=tr("Go Next"))
         self.addAction(self.nextAction)
         self.toolBar.addAction(self.nextAction)
 
-        self.stopAction = self.actionsPage.action(QWebPage.Stop)
+        self.stopAction = QAction(self, icon=style.standardIcon(style.SP_BrowserStop), text=tr("Stop"))
         self.stopAction.triggered.connect(self.stop)
         self.stopAction.triggered.connect(lambda: self.stopAction.setEnabled(True))
         self.stopAction.triggered.connect(lambda: self.reloadAction.setEnabled(True))
@@ -297,7 +298,7 @@ class MainWindow(QMainWindow):
         self.stopAction2 = QAction(self, triggered=self.toggleFindToolBar, shortcut="Esc")
         self.addAction(self.stopAction2)
 
-        self.reloadAction = self.actionsPage.action(QWebPage.Reload)
+        self.reloadAction = QAction(self, icon=style.standardIcon(style.SP_BrowserReload), text=tr("Reload"))
         self.reloadAction.triggered.connect(self.reload)
         self.reloadAction.triggered.connect(lambda: self.stopAction.setEnabled(True))
         self.reloadAction.triggered.connect(lambda: self.reloadAction.setEnabled(True))
@@ -522,13 +523,13 @@ class MainWindow(QMainWindow):
         self.mainMenu.addAction(findAction)
 
         # Add find next action.
-        findNextAction = QAction(common.complete_icon("media-seek-forward"), tr("Find Ne&xt"), self)
+        findNextAction = QAction(style.standardIcon(style.SP_MediaSkipForward), tr("Find Ne&xt"), self)
         findNextAction.setShortcut("Ctrl+G")
         findNextAction.triggered.connect(self.findNext)
         self.mainMenu.addAction(findNextAction)
 
         # Add find previous action.
-        findPreviousAction = QAction(common.complete_icon("media-seek-backward"), tr("Find Pre&vious"), self)
+        findPreviousAction = QAction(style.standardIcon(style.SP_MediaSkipBackward), tr("Find Pre&vious"), self)
         findPreviousAction.setShortcut("Ctrl+Shift+G")
         findPreviousAction.triggered.connect(self.findPrevious)
         self.mainMenu.addAction(findPreviousAction)
