@@ -310,7 +310,7 @@ class MainWindow(QMainWindow):
         self.addAction(self.reloadAction2)
 
         # Go home button.
-        self.homeAction = QAction(self, triggered=self.goHome, icon=common.complete_icon("go-home"), text=tr("Go Home"))
+        self.homeAction = QAction(self, triggered=self.goHome, icon=style.standardIcon(style.SP_DirHomeIcon), text=tr("Go Home"))
         self.addAction(self.homeAction)
         self.toolBar.addAction(self.homeAction)
         self.homeAction.setVisible(False)
@@ -568,7 +568,7 @@ class MainWindow(QMainWindow):
         viewSourceAction.triggered.connect(lambda: self.tabWidget().currentWidget().viewSource())
         self.mainMenu.addAction(viewSourceAction)
 
-        downloadAction = QAction(common.complete_icon("go-down"), tr("&Downloads"), self)
+        downloadAction = QAction(style.standardIcon(style.SP_ArrowDown), tr("&Downloads"), self)
         downloadAction.setShortcuts(["Ctrl+J", "Ctrl+Shift+Y"])
         downloadAction.triggered.connect(common.downloadManager.show)
         self.mainMenu.addAction(downloadAction)
@@ -673,7 +673,7 @@ class MainWindow(QMainWindow):
 
         hideFindToolBarAction = QAction(self)
         hideFindToolBarAction.triggered.connect(self.findToolBar.hide)
-        hideFindToolBarAction.setIcon(common.complete_icon("window-close"))
+        hideFindToolBarAction.setIcon(style.standardIcon(style.SP_DialogCloseButton))
 
         self.findToolBar.addWidget(self.findBar)
         self.findToolBar.addAction(findPreviousAction)
