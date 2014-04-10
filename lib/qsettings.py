@@ -4,6 +4,7 @@
 
 import os
 import json
+import common
 
 class QSettings(object):
     IniFormat = None
@@ -11,7 +12,7 @@ class QSettings(object):
     def __init__(self, *args, portable=False, **kwargs):
         self.portable = os.path.expanduser("~")
         if portable:
-            self.portable = os.path.join("")
+            self.portable = os.path.dirname(os.path.dirname(common.app_folder))
         self.dirname = "." + args[2]
         self.fulldirname = os.path.join(self.portable, self.dirname)
         if not os.path.isdir(self.fulldirname):
