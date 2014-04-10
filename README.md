@@ -29,7 +29,7 @@ Features include:
 * A tank you can enable and use to "wreck up" sites you don't like (no,
   seriously. It's in the Settings dialog, under the Extensions tab)
 
-Dependencies
+Running 
 ======
 
 Nimbus depends on Python >=3.2 and either PyQt5, PyQt4, or PySide, with
@@ -37,20 +37,26 @@ python3-dbus and feedparser as optional dependencies. It does not work in
 Python 2.x. It is possible that it will work in versions of Python 3 below
 3.2 as well, but this has not been tested before.
 
-On Windows, you can download Python 3 from http://www.python.org/getit/ and
-PyQt5 from http://www.riverbankcomputing.com/software/pyqt/download.
-
-You can install all of Nimbus's dependencies on Ubuntu using the following
-command:
+You can install all of Nimbus's dependencies on Debian-based platforms
+using the following command:
 
     sudo apt-get install python3 python3-pyqt5 python3-pyqt5.qtwebkit python3-dbus python3-dbus.mainloop.pyqt5 python3-feedparser
 
-Installing/compiling Nimbus on Windows
+Running Nimbus on Windows
 ======
 
-Nimbus is not reliably supported on Windows anymore. There is no installer,
-and the compilation script has been broken for a long time. However, you are
-certainly welcome to try it. Let me know if it works; I'd appreciate it.
+Nimbus also works using [Portable Python](http://portablepython.com/). This is
+currently the recommended way of running it on Windows. To start Nimbus, open
+the /lib folder and run nimbus.py.
+
+Enabling portable mode
+======
+
+Portable Python makes it possible to run Nimbus off a flash drive. For true
+portability, Nimbus also supports a portable mode in which settings are saved
+to whatever folder Nimbus itself is contained in, as opposed to the user's
+home folder on the local hard drive. To enable this mode, simply create a file
+named portable.conf and insert it into the /lib folder.
 
 Installing Nimbus on Linux
 ======
@@ -67,7 +73,7 @@ Once that's done, run the following:
 Translations
 ======
 
-Nimbus now supports translations by way of QTranslator. To write a new
+Nimbus supports translations by way of QTranslator. To write a new
 translation for Nimbus, make a copy of translations/en_US.ts, rename it to the
 ISO code for the desired locale, and edit away. Once you're done, run
 compile_translations.py on Linux/OS X/Unix, or lrelease on Windows. You will
