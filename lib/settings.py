@@ -13,19 +13,19 @@ import sys
 import os
 import json
 import common
+from qsettings import QSettings
 if not common.pyqt4:
     from PyQt5.QtCore import QCoreApplication, QUrl
     from PyQt5.QtNetwork import QNetworkCookie
-    from qsettings import QSettings
 else:
     try:
-        from PyQt4.QtCore import QCoreApplication, QUrl, QSettings
+        from PyQt4.QtCore import QCoreApplication, QUrl
         from PyQt4.QtNetwork import QNetworkCookie
     except:
-        from PySide.QtCore import QCoreApplication, QUrl, QSettings
+        from PySide.QtCore import QCoreApplication, QUrl
         from PySide.QtNetwork import QNetworkCookie
 
-settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance())
+settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance(), portable=common.portable)
 
 # This is a global variable that gets the settings folder on any platform.
 settings_folder = os.path.dirname(settings.fileName())

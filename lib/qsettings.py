@@ -8,9 +8,12 @@ import json
 class QSettings(object):
     IniFormat = None
     UserScope = None
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, portable=False, **kwargs):
+        self.portable = os.path.expanduser("~")
+        if portable:
+            self.portable = os.path.join("")
         self.dirname = "." + args[2]
-        self.fulldirname = os.path.join(os.path.expanduser("~"), self.dirname)
+        self.fulldirname = os.path.join(self.portable, self.dirname)
         if not os.path.isdir(self.fulldirname):
             os.makedirs(self.fulldirname)
         self.fname = args[3] + ".json"

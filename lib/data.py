@@ -12,22 +12,22 @@ import common
 import network
 import traceback
 import json
+from qsettings import QSettings
 if not common.pyqt4:
     from PyQt5.QtCore import QCoreApplication, QByteArray, QUrl
     from PyQt5.QtNetwork import QNetworkCookie
-    from qsettings import QSettings
 else:
     try:
-        from PyQt4.QtCore import QCoreApplication, QByteArray, QUrl, QSettings
+        from PyQt4.QtCore import QCoreApplication, QByteArray, QUrl
         from PyQt4.QtNetwork import QNetworkCookie
     except:
-        from PySide.QtCore import QCoreApplication, QByteArray, QUrl, QSettings
+        from PySide.QtCore import QCoreApplication, QByteArray, QUrl
         from PySide.QtNetwork import QNetworkCookie
 
 # Global list to store history.
 history = {}
 
-data = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "data", QCoreApplication.instance())
+data = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "data", QCoreApplication.instance(), portable=common.portable)
 
 # These store the geolocation whitelist and blacklist.
 geolocation_whitelist = []
