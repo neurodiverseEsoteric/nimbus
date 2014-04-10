@@ -49,6 +49,9 @@ Nimbus also works using [Portable Python](http://portablepython.com/); this is
 currently the recommended way of running it on Windows. To start Nimbus, open
 the /lib folder and run nimbus.py.
 
+The compile_windows.py script is deprecated and has been broken for quite some
+time now. It will likely be removed in the near future.
+
 Enabling portable mode
 ======
 
@@ -77,7 +80,8 @@ Nimbus supports translations by way of QTranslator. To write a new
 translation for Nimbus, make a copy of translations/en_US.ts, rename it to the
 ISO code for the desired locale, and edit away. Once you're done, run
 compile_translations.py on Linux/OS X/Unix, or lrelease on Windows. You will
-need lrelease to be installed.
+need lrelease to be installed. Do note that the translation files are badly
+out of date.
 
 Licensing information
 ======
