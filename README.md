@@ -45,7 +45,7 @@ using the following command:
 Running Nimbus on Windows
 ======
 
-Nimbus also works using [Portable Python](http://portablepython.com/). This is
+Nimbus also works using [Portable Python](http://portablepython.com/); this is
 currently the recommended way of running it on Windows. To start Nimbus, open
 the /lib folder and run nimbus.py.
 
