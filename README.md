@@ -62,7 +62,7 @@ Installing Nimbus on Linux
 ======
 
 If you want to install Nimbus system-wide, you will need setuptools. On
-Ubuntu, you can install it with the following command:
+Debian-based platforms, you can install it with the following command:
 
     sudo apt-get install python3-setuptools
 
