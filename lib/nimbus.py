@@ -298,7 +298,7 @@ def main(argv):
     common.desktop = QDesktopWidget()
 
     lostTabsTimer = QTimer(timeout=recoverLostTabs, parent=QCoreApplication.instance())
-    if common,portable:
+    if common.portable:
         lostTabsTimer.start(1000)
     else:
         lostTabsTimer.start(500)
