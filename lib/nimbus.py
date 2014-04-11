@@ -106,7 +106,9 @@ def addWindow(url=None):
 # Preparations to quit.
 def prepareQuit():
     saveSession()
+    settings.settings.hardSync()
     data.saveData()
+    data.data.hardSync()
     filtering.adblock_filter_loader.quit()
     filtering.adblock_filter_loader.wait()
     server_thread.httpd.shutdown()
@@ -288,12 +290,18 @@ def main(argv):
     sessionSaver = QTimer(QCoreApplication.instance())
     sessionSaver.timeout.connect(saveSession)
     sessionSaver.timeout.connect(data.saveData)
-    sessionSaver.start(30000)
+    if common.portable:
+        sessionSaver.start(50000)
+    else:
+        sessionSaver.start(30000)
 
     common.desktop = QDesktopWidget()
 
     lostTabsTimer = QTimer(timeout=recoverLostTabs, parent=QCoreApplication.instance())
-    lostTabsTimer.start(500)
+    if common,portable:
+        lostTabsTimer.start(1000)
+    else:
+        lostTabsTimer.start(500)
 
     if not "--daemon" in argv and os.path.exists(settings.session_file):
         loadSession()

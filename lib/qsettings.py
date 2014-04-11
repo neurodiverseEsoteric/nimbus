@@ -10,11 +10,13 @@ class QSettings(object):
     IniFormat = None
     UserScope = None
     def __init__(self, *args, portable=False, **kwargs):
-        self.portable = os.path.expanduser("~")
+        self.root_folder = os.path.expanduser("~")
+        self.portable = False
         if portable:
-            self.portable = os.path.dirname(os.path.dirname(common.app_folder))
+            self.root_folder = os.path.dirname(os.path.dirname(common.app_folder))
+            self.portable = True
         self.dirname = "." + args[2]
-        self.fulldirname = os.path.join(self.portable, self.dirname)
+        self.fulldirname = os.path.join(self.root_folder, self.dirname)
         if not os.path.isdir(self.fulldirname):
             os.makedirs(self.fulldirname)
         self.fname = args[3] + ".json"
@@ -36,6 +38,11 @@ class QSettings(object):
     def allKeys(self):
         return sorted([key for key in self.tables.keys()])
     def sync(self):
+        if self.portable:
+            pass
+        else:
+            self.hardSync()
+    def hardSync(self):
         try: f = open(self.fileName(), "w")
         except: pass
         else:

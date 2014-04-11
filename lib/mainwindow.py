@@ -241,9 +241,9 @@ class MainWindow(QMainWindow):
 
         # Regularly and forcibly enable and disable navigation actions
         # every few milliseconds.
-        self.toggleActionsTimer = QTimer(timeout=self.toggleActions, parent=self)
-        self.dateTimeTimer = QTimer(timeout=self.updateDateTime, parent=self)
-        self.reconnectWebViewsTimer = QTimer(timeout=self.reconnectWebViews, parent=self)
+        self.timer = QTimer(timeout=self.toggleActions, parent=self)
+        self.timer.timeout.connect(self.updateDateTime)
+        self.timer.timeout.connect(self.reconnectWebViews)
         
         style = QApplication.style()
 
@@ -319,9 +319,10 @@ class MainWindow(QMainWindow):
         self.addAction(self.homeAction2)
 
         # Start timer to forcibly enable and disable navigation actions.
-        self.toggleActionsTimer.start(256)
-        self.dateTimeTimer.start(500)
-        self.reconnectWebViewsTimer.start(5000)
+        if common.portable:
+            self.timer.start(1000)
+        else:
+            self.timer.start(500)
 
         # Location bar. Note that this is a combo box.
         # At some point, I should make a custom location bar

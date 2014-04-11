@@ -102,7 +102,7 @@ for setting, value in default_settings.items():
     if settings.value(setting) == None:
         settings.setValue(setting, value)
 
-settings.sync()
+settings.hardSync()
 
 def setting_to_bool(value=""):
     try: return bool(eval(str(settings.value(value)).title()))
