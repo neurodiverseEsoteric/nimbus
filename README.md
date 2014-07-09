@@ -47,7 +47,9 @@ Running Nimbus on Windows
 
 Nimbus also works using [Portable Python](http://portablepython.com/); this is
 currently the recommended way of running it on Windows. To start Nimbus, open
-the /lib folder and run nimbus.py.
+the /lib folder and run nimbus.py. Unfortunately, this is not a long-term 
+solution unless Portable Python starts bundling PyQt5; see **The future of
+Nimbus** for more details.
 
 The compile_windows.py script is deprecated and has been broken for quite some
 time now. It will likely be removed in the near future.
@@ -82,6 +84,15 @@ ISO code for the desired locale, and edit away. Once you're done, run
 compile_translations.py on Linux/OS X/Unix, or lrelease on Windows. You will
 need lrelease to be installed. Do note that the translation files are badly
 out of date.
+
+The future of Nimbus
+======
+
+In the long run, PyQt5 will drop support for QtWebKit in favor of QtWebEngine.
+Supporting both of them at once will be infeasible, meaning that Nimbus will
+only support QtWebEngine in the future. This also means dropping support for
+both PyQt4 and PySide, unless PySide actually picks up the slack and starts
+supporting Qt 5.
 
 Licensing information
 ======
