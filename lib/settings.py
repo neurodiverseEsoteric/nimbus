@@ -91,7 +91,9 @@ default_settings = {"proxy/Type": "None",
                     "general/ReopenableTabCount": 10,
                     "general/ReopenableWindowCount": 10,
                     "general/NavigationToolBarVisible": True,
-                    "general/StatusBarVisible": False}
+                    "general/StatusBarVisible": False,
+                    "content/JavaScriptExceptions": []}
+
 default_port = default_settings["proxy/Port"]
 
 # New tab page.
@@ -111,6 +113,15 @@ def setting_to_bool(value=""):
 def setting_to_int(value=""):
     try: return int(settings.value(value))
     except: return 0
+
+def setting_to_list(value=""):
+    if type(settings.value(value)) is list:
+        return settings.value(value)
+    else:
+        try: return json.loads(settings.value(value))
+        except: return []
+
+js_exceptions = setting_to_list("content/JavaScriptExceptions")
 
 # List of extensions.
 extensions_folder = os.path.join(settings_folder, "Extensions")

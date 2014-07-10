@@ -179,7 +179,7 @@ class ContentSettingsPanel(SettingsPanel):
         self.pluginsGroupBox.layout().addWidget(pluginsRow)
 
         # Checkbox to toggle Java.
-        self.javaToggle = QCheckBox(tr("Enable &Java"), self)
+        self.javaToggle = QCheckBox(tr("Enable Java"), self)
         pluginsRow.addWidget(self.javaToggle)
 
         # Checkbox to toggle Flash.
@@ -271,6 +271,51 @@ class ContentSettingsPanel(SettingsPanel):
         settings.settings.setValue("content/TiledBackingStoreEnabled", self.tiledBackingStoreToggle.isChecked())
         settings.settings.setValue("content/FrameFlatteningEnabled", self.frameFlattenToggle.isChecked())
         settings.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())
+        settings.settings.sync()
+
+# Ad Remover settings panel
+class JavaScriptExceptionsPanel(SettingsPanel):
+    def __init__(self, parent=None):
+        super(JavaScriptExceptionsPanel, self).__init__(parent)
+
+        domainEntryRow = custom_widgets.LineEditRow(tr("Add domain:"), self)
+        self.domainEntry = domainEntryRow.lineEdit
+        self.domainEntry.returnPressed.connect(self.addDomain)
+        self.layout().addWidget(domainEntryRow)
+
+        self.addDomainButton = QPushButton(tr("Add"))
+        self.addDomainButton.clicked.connect(self.addDomain)
+        domainEntryRow.layout().addWidget(self.addDomainButton)
+
+        self.domainList = QListWidget(self)
+        self.layout().addWidget(self.domainList)
+
+        self.removeDomainButton = QPushButton(tr("Remove"))
+        self.removeDomainButton.clicked.connect(lambda: self.removeDomain(True))
+        self.layout().addWidget(self.removeDomainButton)
+
+        self.removeAction = QAction(self)
+        self.removeAction.setShortcut("Del")
+        self.removeAction.triggered.connect(self.removeDomain)
+        self.addAction(self.removeAction)
+
+    def removeDomain(self, forceFocus=False):
+        if self.domainList.hasFocus() or forceFocus:
+            self.domainList.takeItem(self.domainList.row(self.domainList.currentItem()))
+
+    def addDomain(self):
+        self.domainList.addItem(self.domainEntry.text())
+        self.domainEntry.clear()
+
+    def loadSettings(self):
+        settings.js_exceptions = settings.setting_to_list("content/JavaScriptExceptions")
+        self.domainList.clear()
+        for f in settings.js_exceptions:
+            self.domainList.addItem(f)
+
+    def saveSettings(self):
+        settings.js_exceptions = [self.domainList.item(f).text() for f in range(0, self.domainList.count())]
+        settings.settings.setValue("content/JavaScriptExceptions", settings.js_exceptions)
         settings.settings.sync()
 
 # Ad Remover settings panel
@@ -669,6 +714,7 @@ class SettingsDialog(QWidget):
 
         self.tabs.addTab(GeneralSettingsPanel(self), tr("&General"))
         self.tabs.addTab(ContentSettingsPanel(self), tr("Con&tent"))
+        self.tabs.addTab(JavaScriptExceptionsPanel(self), tr("&JavaScript"))
         self.tabs.addTab(AdremoverSettingsPanel(self), tr("Ad &Remover"))
         self.tabs.addTab(DataSettingsPanel(self), tr("&Data && Privacy"))
         self.tabs.addTab(NetworkSettingsPanel(self), tr("N&etwork"))

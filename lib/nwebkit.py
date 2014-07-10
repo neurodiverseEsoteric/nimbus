@@ -566,6 +566,7 @@ class WebView(QWebView):
 
     def init(self):
         self.urlChanged.connect(self.setUrlText)
+        self.urlChanged.connect(self.setJavaScriptEnabled)
         if not self.incognito:
             self.urlChanged.connect(self.addHistoryItem)
             self.urlChanged.connect(lambda: self.setChangeCanGoNext(True))
@@ -583,6 +584,12 @@ class WebView(QWebView):
         self.loadFinished.connect(self.savePageToCache)
         self.loadStarted.connect(self.checkIfUsingContentViewer)
         self.loadFinished.connect(self.finishLoad)
+
+    def setJavaScriptEnabled(self):
+        if not self.url().authority() and not self.url().authority().replace("www.", "") in settings.js_exceptions:
+            self.settings().setAttribute(self.settings().JavascriptEnabled, settings.setting_to_bool("content/JavascriptEnabled"))
+        else:
+            self.settings().setAttribute(self.settings().JavascriptEnabled, not settings.setting_to_bool("content/JavascriptEnabled"))
 
     def requestTab(self):
         self.tabRequested.emit(self)
@@ -1058,7 +1065,6 @@ class WebView(QWebView):
     # Updates content settings based on settings.settings.
     def updateContentSettings(self):
         self.settings().setAttribute(self.settings().AutoLoadImages, settings.setting_to_bool("content/AutoLoadImages"))
-        self.settings().setAttribute(self.settings().JavascriptEnabled, settings.setting_to_bool("content/JavascriptEnabled"))
         self.settings().setAttribute(self.settings().JavascriptCanOpenWindows, settings.setting_to_bool("content/JavascriptCanOpenWindows"))
         self.settings().setAttribute(self.settings().JavascriptCanCloseWindows, settings.setting_to_bool("content/JavascriptCanCloseWindows"))
         self.settings().setAttribute(self.settings().JavascriptCanAccessClipboard, settings.setting_to_bool("content/JavascriptCanAccessClipboard"))
