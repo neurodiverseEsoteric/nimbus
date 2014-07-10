@@ -120,6 +120,51 @@ class GeneralSettingsPanel(SettingsPanel):
         settings.settings.setValue("general/FeedButtonVisible", self.feedButtonVisibleToggle.isChecked())
         settings.settings.sync()
 
+# Ad Remover settings panel
+class JavaScriptExceptionsPanel(SettingsPanel):
+    def __init__(self, parent=None):
+        super(JavaScriptExceptionsPanel, self).__init__(parent)
+
+        domainEntryRow = custom_widgets.LineEditRow(tr("Add domain:"), self)
+        self.domainEntry = domainEntryRow.lineEdit
+        self.domainEntry.returnPressed.connect(self.addDomain)
+        self.layout().addWidget(domainEntryRow)
+
+        self.addDomainButton = QPushButton(tr("Add"))
+        self.addDomainButton.clicked.connect(self.addDomain)
+        domainEntryRow.layout().addWidget(self.addDomainButton)
+
+        self.domainList = QListWidget(self)
+        self.layout().addWidget(self.domainList)
+
+        self.removeDomainButton = QPushButton(tr("Remove"))
+        self.removeDomainButton.clicked.connect(lambda: self.removeDomain(True))
+        self.layout().addWidget(self.removeDomainButton)
+
+        self.removeAction = QAction(self)
+        self.removeAction.setShortcut("Del")
+        self.removeAction.triggered.connect(self.removeDomain)
+        self.addAction(self.removeAction)
+
+    def removeDomain(self, forceFocus=False):
+        if self.domainList.hasFocus() or forceFocus:
+            self.domainList.takeItem(self.domainList.row(self.domainList.currentItem()))
+
+    def addDomain(self):
+        self.domainList.addItem(self.domainEntry.text())
+        self.domainEntry.clear()
+
+    def loadSettings(self):
+        settings.js_exceptions = settings.setting_to_list("content/JavaScriptExceptions")
+        self.domainList.clear()
+        for f in settings.js_exceptions:
+            self.domainList.addItem(f)
+
+    def saveSettings(self):
+        settings.js_exceptions = [self.domainList.item(f).text() for f in range(0, self.domainList.count())]
+        settings.settings.setValue("content/JavaScriptExceptions", settings.js_exceptions)
+        settings.settings.sync()
+
 # Content settings panel
 class ContentSettingsPanel(SettingsPanel):
     def __init__(self, parent=None):
@@ -131,6 +176,15 @@ class ContentSettingsPanel(SettingsPanel):
         # Checkbox to toggle auto loading of images.
         self.imagesToggle = QCheckBox(tr("Automatically load &images"), self)
         backgroundsRow.addWidget(self.imagesToggle)
+
+        self.jsExceptionsPanel = JavaScriptExceptionsPanel()
+        self.jsExceptionsPanel.setWindowTitle(tr("JavaScript Exceptions"))
+        self.jsExceptionsPanel.setWindowFlags(Qt.Dialog)
+        closeJSDialogAction = QAction(self.jsExceptionsPanel)
+        closeJSDialogAction.setShortcuts(["Esc", "Ctrl+W"])
+        closeJSDialogAction.triggered.connect(self.jsExceptionsPanel.hide)
+        self.jsExceptionsPanel.addAction(closeJSDialogAction)
+        self.jsExceptionsPanel.hide()
 
         # Checkbox to toggle element backgrounds.
         self.elementBackgroundsToggle = QCheckBox(tr("Print e&lement backgrounds"), self)
@@ -171,6 +225,10 @@ class ContentSettingsPanel(SettingsPanel):
         self.javascriptCanExitFullscreenToggle = QCheckBox(tr("Allow JavaScript to exit fullscreen mode"), self)
         javaScriptRow3.addWidget(self.javascriptCanExitFullscreenToggle)
 
+        self.exceptionsButton = QPushButton(tr("Excep&tions..."))
+        self.javascriptGroupBox.layout().addWidget(self.exceptionsButton)
+        self.exceptionsButton.clicked.connect(self.jsExceptionsPanel.show)
+
         self.pluginsGroupBox = QGroupBox(tr("Plugin Options"), self)
         self.layout().addWidget(self.pluginsGroupBox)
         self.pluginsGroupBox.setLayout(QVBoxLayout(self.pluginsGroupBox))
@@ -179,7 +237,7 @@ class ContentSettingsPanel(SettingsPanel):
         self.pluginsGroupBox.layout().addWidget(pluginsRow)
 
         # Checkbox to toggle Java.
-        self.javaToggle = QCheckBox(tr("Enable Java"), self)
+        self.javaToggle = QCheckBox(tr("Enable &Java"), self)
         pluginsRow.addWidget(self.javaToggle)
 
         # Checkbox to toggle Flash.
@@ -230,6 +288,7 @@ class ContentSettingsPanel(SettingsPanel):
         self.layout().addWidget(custom_widgets.Expander(self))
 
     def loadSettings(self):
+        self.jsExceptionsPanel.loadSettings()
         self.imagesToggle.setChecked(settings.setting_to_bool("content/AutoLoadImages"))
         self.javascriptToggle.setChecked(settings.setting_to_bool("content/JavascriptEnabled"))
         self.javascriptCanOpenWindowsToggle.setChecked(settings.setting_to_bool("content/JavascriptCanOpenWindows"))
@@ -251,6 +310,7 @@ class ContentSettingsPanel(SettingsPanel):
         self.siteSpecificQuirksToggle.setChecked(settings.setting_to_bool("content/SiteSpecificQuirksEnabled"))
 
     def saveSettings(self):
+        self.jsExceptionsPanel.saveSettings()
         settings.settings.setValue("content/AutoLoadImages", self.imagesToggle.isChecked())
         settings.settings.setValue("content/JavascriptEnabled", self.javascriptToggle.isChecked())
         settings.settings.setValue("content/JavascriptCanOpenWindows", self.javascriptCanOpenWindowsToggle.isChecked())
@@ -271,51 +331,6 @@ class ContentSettingsPanel(SettingsPanel):
         settings.settings.setValue("content/TiledBackingStoreEnabled", self.tiledBackingStoreToggle.isChecked())
         settings.settings.setValue("content/FrameFlatteningEnabled", self.frameFlattenToggle.isChecked())
         settings.settings.setValue("content/SiteSpecificQuirksEnabled", self.siteSpecificQuirksToggle.isChecked())
-        settings.settings.sync()
-
-# Ad Remover settings panel
-class JavaScriptExceptionsPanel(SettingsPanel):
-    def __init__(self, parent=None):
-        super(JavaScriptExceptionsPanel, self).__init__(parent)
-
-        domainEntryRow = custom_widgets.LineEditRow(tr("Add domain:"), self)
-        self.domainEntry = domainEntryRow.lineEdit
-        self.domainEntry.returnPressed.connect(self.addDomain)
-        self.layout().addWidget(domainEntryRow)
-
-        self.addDomainButton = QPushButton(tr("Add"))
-        self.addDomainButton.clicked.connect(self.addDomain)
-        domainEntryRow.layout().addWidget(self.addDomainButton)
-
-        self.domainList = QListWidget(self)
-        self.layout().addWidget(self.domainList)
-
-        self.removeDomainButton = QPushButton(tr("Remove"))
-        self.removeDomainButton.clicked.connect(lambda: self.removeDomain(True))
-        self.layout().addWidget(self.removeDomainButton)
-
-        self.removeAction = QAction(self)
-        self.removeAction.setShortcut("Del")
-        self.removeAction.triggered.connect(self.removeDomain)
-        self.addAction(self.removeAction)
-
-    def removeDomain(self, forceFocus=False):
-        if self.domainList.hasFocus() or forceFocus:
-            self.domainList.takeItem(self.domainList.row(self.domainList.currentItem()))
-
-    def addDomain(self):
-        self.domainList.addItem(self.domainEntry.text())
-        self.domainEntry.clear()
-
-    def loadSettings(self):
-        settings.js_exceptions = settings.setting_to_list("content/JavaScriptExceptions")
-        self.domainList.clear()
-        for f in settings.js_exceptions:
-            self.domainList.addItem(f)
-
-    def saveSettings(self):
-        settings.js_exceptions = [self.domainList.item(f).text() for f in range(0, self.domainList.count())]
-        settings.settings.setValue("content/JavaScriptExceptions", settings.js_exceptions)
         settings.settings.sync()
 
 # Ad Remover settings panel
@@ -714,7 +729,6 @@ class SettingsDialog(QWidget):
 
         self.tabs.addTab(GeneralSettingsPanel(self), tr("&General"))
         self.tabs.addTab(ContentSettingsPanel(self), tr("Con&tent"))
-        self.tabs.addTab(JavaScriptExceptionsPanel(self), tr("&JavaScript Exceptions"))
         self.tabs.addTab(AdremoverSettingsPanel(self), tr("Ad &Remover"))
         self.tabs.addTab(DataSettingsPanel(self), tr("&Data && Privacy"))
         self.tabs.addTab(NetworkSettingsPanel(self), tr("N&etwork"))
