@@ -714,7 +714,7 @@ class SettingsDialog(QWidget):
 
         self.tabs.addTab(GeneralSettingsPanel(self), tr("&General"))
         self.tabs.addTab(ContentSettingsPanel(self), tr("Con&tent"))
-        self.tabs.addTab(JavaScriptExceptionsPanel(self), tr("&JavaScript"))
+        self.tabs.addTab(JavaScriptExceptionsPanel(self), tr("&JavaScript Exceptions"))
         self.tabs.addTab(AdremoverSettingsPanel(self), tr("Ad &Remover"))
         self.tabs.addTab(DataSettingsPanel(self), tr("&Data && Privacy"))
         self.tabs.addTab(NetworkSettingsPanel(self), tr("N&etwork"))
