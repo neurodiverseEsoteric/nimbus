@@ -42,6 +42,7 @@ class SearchManager(object):
         except: pass
         if not search_engines:
             common.search_engines = {}
+            common.search_engines['Disconnect Search'] = ["g", "https://search.disconnect.me/searchTerms/search?query=%s&ses=Google"]
             common.search_engines['DuckDuckGo'] = ["d", "https://duckduckgo.com/?q=%s"]
             common.search_engines['Wikipedia'] = ["w", "https://en.wikipedia.org/w/index.php?search=%s&title=Special:Search"]
             common.search_engines['Wiktionary'] = ["wk", "http://en.wiktionary.org/w/index.php?search=%s&title=Special:Search"]
