@@ -586,7 +586,7 @@ class WebView(QWebView):
         self.loadFinished.connect(self.finishLoad)
 
     def setJavaScriptEnabled(self):
-        if not self.url().authority() and not self.url().authority().replace("www.", "") in settings.js_exceptions:
+        if not self.url().authority() in settings.js_exceptions and not self.url().authority().replace("www.", "") in settings.js_exceptions:
             self.settings().setAttribute(self.settings().JavascriptEnabled, settings.setting_to_bool("content/JavascriptEnabled"))
         else:
             self.settings().setAttribute(self.settings().JavascriptEnabled, not settings.setting_to_bool("content/JavascriptEnabled"))
