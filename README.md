@@ -33,9 +33,11 @@ Dependencies
 ======
 
 Nimbus depends on Python >=3.2 and either PyQt5, PyQt4, or PySide, with
-python3-dbus and feedparser as optional dependencies. It does not work in
-Python 2.x. It is possible that it will work in versions of Python 3 below
-3.2 as well, but this has not been tested before.
+python3-dbus and feedparser as optional dependencies. It is possible that it
+will work in versions of Python 3 below 3.2 as well, but this has not been
+tested before.
+
+Nimbus does not work in Python 2.x and I have no plans to support it.
 
 You can install all of Nimbus's dependencies on Debian-based platforms
 using the following command:
