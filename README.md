@@ -103,9 +103,9 @@ Running Nimbus on OS X
 
 There is currently no procedure for installing Nimbus on OS X, since I don't
 own a Mac and have no way of testing it. However, if you can install Python
->=3.2 and PyQt5, you should (theoretically) be able to start it from the
-command line. If you own a Mac and can manage this, please let me know how it
-turns out; I'd be very curious.
+3.2+ and PyQt5, you should (theoretically) be able to start it from the
+command line. If you own a Mac and can manage this, please let me know how
+it turns out; I'd be very curious.
 
 Translations
 ======
