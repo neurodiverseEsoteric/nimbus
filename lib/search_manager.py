@@ -55,7 +55,7 @@ class SearchManager(object):
             common.search_engines['YouTube'] = ["yt", "http://www.youtube.com/results?search_query=%s"]
             common.search_engines["Stack Overflow"] = ["so", "http://stackoverflow.com/search?q=%s"]
             common.search_engines["Wolfram|Alpha"] = ["wa", "http://www.wolframalpha.com/input/?i=%s"]
-            common.search_engines["TV Tropes"] = ["tv", "http://tvtropes.org/pmwiki/search_result.php?cx=partner-pub-6610802604051523:amzitfn8e7v&cof=FORID:10&ie=ISO-8859-1&q=%s"]
+            common.search_engines["TV Tropes"] = ["tv", "https://search.disconnect.me/searchTerms/search?query=site:tvtropes.org+%s&ses=Google"]
             common.search_engines['A-Z Lyrics'] = ["azl", "http://search.azlyrics.com/search.php?q=%s"]
             common.search_engines['MetroLyrics'] = ["mtl", "http://www.metrolyrics.com/search?search=%s"]
             common.search_engines['Openclipart'] = ["oca", "http://openclipart.org/search/?query=%s"]
