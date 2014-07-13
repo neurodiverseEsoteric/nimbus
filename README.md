@@ -74,6 +74,13 @@ Debian-based platforms, you can install it with the following command:
 Once that's done, run the following:
 
     sudo python3 ./setup.py install
+    
+Uninstalling Nimbus on Linux
+======
+
+Simply run the following:
+
+    ./uninstall.sh
 
 Translations
 ======
