@@ -63,8 +63,22 @@ to whatever folder Nimbus itself is contained in, as opposed to the user's
 home folder on the local hard drive. To enable this mode, simply create a file
 named portable.conf and insert it into the /lib folder.
 
+Running Nimbus on Linux
+======
+
+Simply run the following:
+
+    ./nimbus
+
+Alternatively, you can try the following:
+
+    ./lib/nimbus.py
+
 Installing Nimbus on Linux
 ======
+
+**Note:** You don't have to install Nimbus in order to run it; see previous
+section.
 
 If you want to install Nimbus system-wide, you will need setuptools. On
 Debian-based platforms, you can install it with the following command:
