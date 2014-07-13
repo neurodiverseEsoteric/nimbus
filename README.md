@@ -29,7 +29,7 @@ Features include:
 * A tank you can enable and use to "wreck up" sites you don't like (no,
   seriously. It's in the Settings dialog, under the Extensions tab)
 
-Running 
+Dependencies
 ======
 
 Nimbus depends on Python >=3.2 and either PyQt5, PyQt4, or PySide, with
@@ -41,27 +41,6 @@ You can install all of Nimbus's dependencies on Debian-based platforms
 using the following command:
 
     sudo apt-get install python3 python3-pyqt5 python3-pyqt5.qtwebkit python3-dbus python3-dbus.mainloop.pyqt5 python3-feedparser
-
-Running Nimbus on Windows
-======
-
-Nimbus also works using [Portable Python](http://portablepython.com/); this is
-currently the recommended way of running it on Windows. To start Nimbus, open
-the /lib folder and run nimbus.py. Unfortunately, this is not a long-term 
-solution unless Portable Python starts bundling PyQt5; see **The future of
-Nimbus** for more details.
-
-The compile_windows.py script is deprecated and has been broken for quite some
-time now. It will likely be removed in the near future.
-
-Enabling portable mode
-======
-
-Portable Python makes it possible to run Nimbus off a flash drive. For true
-portability, Nimbus also supports a portable mode in which settings are saved
-to whatever folder Nimbus itself is contained in, as opposed to the user's
-home folder on the local hard drive. To enable this mode, simply create a file
-named portable.conf and insert it into the /lib folder.
 
 Running Nimbus on Linux
 ======
@@ -95,6 +74,36 @@ Uninstalling Nimbus on Linux
 Simply run the following:
 
     ./uninstall.sh
+
+Running Nimbus on Windows
+======
+
+Nimbus also works using [Portable Python](http://portablepython.com/); this is
+currently the recommended way of running it on Windows. To start Nimbus, open
+the /lib folder and run nimbus.py. Unfortunately, this is not a long-term 
+solution unless Portable Python starts bundling PyQt5; see **The future of
+Nimbus** for more details.
+
+The compile_windows.py script is deprecated and has been broken for quite some
+time now. It will likely be removed in the near future.
+
+Enabling portable mode
+======
+
+Portable Python makes it possible to run Nimbus off a flash drive. For true
+portability, Nimbus also supports a portable mode in which settings are saved
+to whatever folder Nimbus itself is contained in, as opposed to the user's
+home folder on the local hard drive. To enable this mode, simply create a file
+named portable.conf and insert it into the /lib folder.
+
+Running Nimbus on OS X
+======
+
+There is currently no procedure for installing Nimbus on OS X, since I don't
+own a Mac and have no way of testing it. However, if you can install Python
+>=3.2 and PyQt5, you should (theoretically) be able to start it from the
+command line. If you own a Mac and can manage this, please let me know how it
+turns out; I'd be very curious.
 
 Translations
 ======
