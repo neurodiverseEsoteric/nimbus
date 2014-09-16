@@ -642,7 +642,7 @@ class WebView(QWebView):
             menu.addSeparator()
             for clipping in data.clippings:
                 a = custom_widgets.LinkAction(data.clippings[clipping], clipping, menu)
-                a.triggered2.connect(QApplication.clipboard().setText)
+                a.triggered2.connect(common.copyToClipboard)
                 a.triggered2.connect(lambda: self.page().action(QWebPage.Paste).trigger())
                 menu.addAction(a)
             menu.show()

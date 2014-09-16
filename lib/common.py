@@ -20,27 +20,27 @@ import settings
 pyqt4 = settings.pyqt4
 if not settings.pyqt4:
     try:
-        from PyQt5.QtCore import qVersion, QLocale, QUrl
-        from PyQt5.QtGui import QIcon
+        from PyQt5.QtCore import qVersion, QLocale, QUrl, QEvent, QCoreApplication
+        from PyQt5.QtGui import QIcon, QApplication
         from PyQt5.QtWebKit import qWebKitVersion
     except:
         try:
-            from PyQt4.QtCore import qVersion, QLocale, QUrl
-            from PyQt4.QtGui import QIcon
+            from PyQt4.QtCore import qVersion, QLocale, QUrl, QEvent, QCoreApplication
+            from PyQt4.QtGui import QIcon, QApplication
             from PyQt4.QtWebKit import qWebKitVersion
         except:
-            from PySide.QtCore import qVersion, QLocale, QUrl
-            from PySide.QtGui import QIcon
+            from PySide.QtCore import qVersion, QLocale, QUrl, QEvent, QCoreApplication
+            from PySide.QtGui import QIcon, QApplication
             from PySide.QtWebKit import qWebKitVersion
         pyqt4 = True
 else:
     try:
-        from PyQt4.QtCore import qVersion, QLocale, QUrl
-        from PyQt4.QtGui import QIcon
+        from PyQt4.QtCore import qVersion, QLocale, QUrl, QEvent, QCoreApplication
+        from PyQt4.QtGui import QIcon, QApplication
         from PyQt4.QtWebKit import qWebKitVersion
     except:
-        from PySide.QtCore import qVersion, QLocale, QUrl
-        from PySide.QtGui import QIcon
+        from PySide.QtCore import qVersion, QLocale, QUrl, QEvent, QCoreApplication
+        from PySide.QtGui import QIcon, QApplication
         from PySide.QtWebKit import qWebKitVersion
     pyqt4 = True
 
@@ -68,6 +68,14 @@ def htmlToBase64(html):
 
 def cssToBase64(css):
     return "data:text/css;charset=utf-8;base64," + base64.b64encode((css.replace('\n', '')).encode('utf-8')).decode('utf-8')
+
+# Copy to clipboard.
+# http://stackoverflow.com/questions/1073550/pyqt-clipboard-doesnt-copy-to-system-clipboard
+def copyToClipboard(text):
+    clipboard = QApplication.clipboard()
+    clipboard.setText(text)
+    event = QEvent(QEvent.Clipboard)
+    QCoreApplication.instance().sendEvent(clipboard, event)
 
 # Folder that Nimbus is stored in.
 app_folder = paths.app_folder
