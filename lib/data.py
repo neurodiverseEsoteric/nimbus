@@ -27,7 +27,7 @@ else:
 # Global list to store history.
 history = {}
 
-data = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "data", QCoreApplication.instance(), portable=common.portable)
+data = QSettings("nimbus", "data", portable=common.portable)
 
 # These store the geolocation whitelist and blacklist.
 geolocation_whitelist = []

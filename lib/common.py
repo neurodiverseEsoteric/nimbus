@@ -15,8 +15,10 @@ import os
 import subprocess
 import locale
 import base64
-pyqt4 = False
-if not "-4" in sys.argv and not "--pyqt4" in sys.argv and not "-pyqt4" in sys.argv:
+import paths
+import settings
+pyqt4 = settings.pyqt4
+if not settings.pyqt4:
     try:
         from PyQt5.QtCore import qVersion, QLocale, QUrl
         from PyQt5.QtGui import QIcon
@@ -68,21 +70,21 @@ def cssToBase64(css):
     return "data:text/css;charset=utf-8;base64," + base64.b64encode((css.replace('\n', '')).encode('utf-8')).decode('utf-8')
 
 # Folder that Nimbus is stored in.
-app_folder = os.path.dirname(os.path.realpath(__file__)) if sys.executable != os.path.dirname(__file__) else os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+app_folder = paths.app_folder
 
-portable = os.path.exists(os.path.join(app_folder, "portable.conf"))
+portable = paths.portable
 
 # Start page
-startpage = os.path.join(app_folder, "start.html")
+startpage = paths.startpage
 
 # Extensions folder
-extensions_folder = os.path.join(app_folder, "extensions")
+extensions_folder = paths.extensions_folder
 
 # Icons folder
-app_icons_folder = os.path.join(app_folder, "icons")
+app_icons_folder = paths.app_icons_folder
 
 # Version info file
-app_version_file = os.path.join(app_folder, "version.txt")
+app_version_file = paths.app_version_file
 
 # Nimbus version
 app_name = "Nimbus"

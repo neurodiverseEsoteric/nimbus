@@ -12,23 +12,18 @@
 import sys
 import os
 import json
-import common
+import paths
 from qsettings import QSettings
-if not common.pyqt4:
-    from PyQt5.QtCore import QCoreApplication, QUrl
-    from PyQt5.QtNetwork import QNetworkCookie
-else:
-    try:
-        from PyQt4.QtCore import QCoreApplication, QUrl
-        from PyQt4.QtNetwork import QNetworkCookie
-    except:
-        from PySide.QtCore import QCoreApplication, QUrl
-        from PySide.QtNetwork import QNetworkCookie
 
-settings = QSettings(QSettings.IniFormat, QSettings.UserScope, "nimbus", "config", QCoreApplication.instance(), portable=common.portable)
+pyqt4 = False
+for arg in ("-4", "--pyqt4"):
+    if arg in sys.argv:
+        pyqt4 = True
+
+settings = QSettings("nimbus", "config", portable=paths.portable)
+settings_folder = os.path.dirname(settings.fileName())
 
 # This is a global variable that gets the settings folder on any platform.
-settings_folder = os.path.dirname(settings.fileName())
 
 # This stores the cache.
 network_cache_folder = os.path.join(settings_folder, "Cache")
@@ -74,12 +69,13 @@ default_settings = {"proxy/Type": "None",
                     "content/FlashEnabled": True,
                     "content/GIFsEnabled": True,
                     "content/SiteSpecificQuirksEnabled": True,
-                    "general/Homepage": QUrl.fromUserInput(startpage).toString(),
+                    "general/Homepage": startpage,
                     "general/Search": "https://startpage.com/do/search?q=%s",
                     "general/CloseWindowWithLastTab": True,
                     "general/TabsOnTop": True,
                     "data/RememberHistory": True,
                     "data/MaximumURLLength": 96,
+                    "general/ForcePyQt4": pyqt4,
                     "data/MaximumCacheSize": 50,
                     "general/OpenSettingsInTab": False,
                     "general/PinnedTabCount": 0,
@@ -120,6 +116,8 @@ def setting_to_list(value=""):
     else:
         try: return json.loads(settings.value(value))
         except: return []
+
+pyqt4 = setting_to_bool("general/ForcePyQt4")
 
 js_exceptions = setting_to_list("content/JavaScriptExceptions")
 

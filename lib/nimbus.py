@@ -15,13 +15,15 @@ import json
 import copy
 
 # This is a hack for installing Nimbus.
-try: import common
+try: import paths
 except:
-    try: import lib.common as common
+    try: import lib.paths as paths
     except:
-        import nimbus.common as common
-sys.path.append(common.app_folder)
+        import nimbus.paths as paths
+sys.path.append(paths.app_folder)
 
+import settings
+import common
 from session import *
 import settings_dialog
 import browser
@@ -30,7 +32,6 @@ import translate
 from translate import tr
 import custom_widgets
 import clear_history_dialog
-import settings
 if not os.path.isdir(settings.extensions_folder) or not os.path.isfile(settings.startpage):
     import shutil
 import extension_server

@@ -90,6 +90,9 @@ class GeneralSettingsPanel(SettingsPanel):
 
         self.feedButtonVisibleToggle = QCheckBox(tr("Show &feed button"), self)
         self.layout().addWidget(self.feedButtonVisibleToggle)
+        
+        self.forcePyQt4Toggle = QCheckBox(tr("Force PyQt4 mode"), self)
+        self.layout().addWidget(self.forcePyQt4Toggle)
 
         self.layout().addWidget(custom_widgets.Expander(self))
 
@@ -105,6 +108,7 @@ class GeneralSettingsPanel(SettingsPanel):
         self.homeButtonVisibleToggle.setChecked(settings.setting_to_bool("general/HomeButtonVisible"))
         self.upButtonVisibleToggle.setChecked(settings.setting_to_bool("general/UpButtonVisible"))
         self.feedButtonVisibleToggle.setChecked(settings.setting_to_bool("general/FeedButtonVisible"))
+        self.forcePyQt4Toggle.setChecked(settings.setting_to_bool("general/ForcePyQt4"))
 
     def saveSettings(self):
         settings.settings.setValue("general/Homepage", self.homepageEntry.text())
@@ -118,6 +122,7 @@ class GeneralSettingsPanel(SettingsPanel):
         settings.settings.setValue("general/HomeButtonVisible", self.homeButtonVisibleToggle.isChecked())
         settings.settings.setValue("general/UpButtonVisible", self.upButtonVisibleToggle.isChecked())
         settings.settings.setValue("general/FeedButtonVisible", self.feedButtonVisibleToggle.isChecked())
+        settings.settings.setValue("general/ForcePyQt4", self.forcePyQt4Toggle.isChecked())
         settings.settings.sync()
 
 # Ad Remover settings panel

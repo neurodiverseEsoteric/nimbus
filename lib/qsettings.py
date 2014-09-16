@@ -1,25 +1,26 @@
 #!/usr/bin/env python3
 
-# This is a dumb hacky stand-in for QSettings.
+# This was originally supposed to be a drop-in replacement for Qt's QSettings.
+# Not anymore, though. The name remains.
 
 import os
 import json
-import common
+import paths
 
 class QSettings(object):
     IniFormat = None
     UserScope = None
-    def __init__(self, *args, portable=False, **kwargs):
+    def __init__(self, dirname="nimbus", fname="config", portable=False, **kwargs):
         self.root_folder = os.path.expanduser("~")
         self.portable = False
         if portable:
-            self.root_folder = os.path.dirname(os.path.dirname(common.app_folder))
+            self.root_folder = os.path.dirname(os.path.dirname(paths.app_folder))
             self.portable = True
-        self.dirname = "." + args[2]
+        self.dirname = "." + dirname
         self.fulldirname = os.path.join(self.root_folder, self.dirname)
         if not os.path.isdir(self.fulldirname):
             os.makedirs(self.fulldirname)
-        self.fname = args[3] + ".json"
+        self.fname = fname + ".json"
         self.tables = {}
         if os.path.isfile(self.fileName()):
             try: f = open(self.fileName(), "r")
