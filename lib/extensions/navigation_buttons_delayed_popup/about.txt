@@ -1,0 +1,1 @@
+Back and forward dropdowns display after a long-click.
