@@ -65,9 +65,12 @@ else:
 
 # Extension button class.
 class ExtensionButton(QToolButton):
-    def __init__(self, name=None, script="", etype="python", shortcut=None, parent=None):
+    def __init__(self, name=None, script="", etype="python", shortcut=None, aboutText=None, parent=None):
         super(ExtensionButton, self).__init__(parent)
         self.name = "new-extension"
+        self.aboutText = "This is a Nimbus extension."
+        if aboutText:
+            self.aboutText = "This is a Nimbus extension."
         if name:
             self.name = name
         if shortcut:
@@ -76,6 +79,15 @@ class ExtensionButton(QToolButton):
         settings.extension_buttons.append(self)
         self._parent = parent
         self.script = script
+    def mousePressEvent(self, e):
+        if e.button() == Qt.RightButton:
+            self.about()
+        else:
+            return QToolButton.mousePressEvent(self, e)
+    def about(self):
+        QMessageBox.information(self.parent(), tr("About %s") % (self.name,),\
+                          "<h3>" + self.name + "</h3>" +\
+                          self.aboutText)
     def parentWindow(self):
         return self._parent
     def loadScript(self):
@@ -1008,6 +1020,7 @@ self.origY + ev.globalY() - self.mouseY)
                     etype = "js"
                 icon_path = os.path.join(extension_path, "icon.png")
                 shortcut_path = os.path.join(extension_path, "shortcut.txt")
+                about_path = os.path.join(extension_path, "about.txt")
                 if os.path.isfile(script_path):
                     f = open(script_path, "r")
                     script = copy.copy(f.read())
@@ -1017,7 +1030,12 @@ self.origY + ev.globalY() - self.mouseY)
                         f = open(shortcut_path, "r")
                         shortcut = copy.copy(f.read().replace("\n", ""))
                         f.close()
-                    newExtension = ExtensionButton(extension, script, etype, shortcut, self)
+                    aboutText = None
+                    if os.path.isfile(about_path):
+                        f = open(about_path, "r")
+                        aboutText = copy.copy(f.read().replace("\n", ""))
+                        f.close()
+                    newExtension = ExtensionButton(extension, script, etype, shortcut, aboutText, self)
                     self.extensionButtonGroup.addButton(newExtension)
                     newExtension.setToolTip(extension.replace("_", " ").\
                                             title() +\
