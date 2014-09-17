@@ -1,0 +1,1 @@
+Displays the current website's Webutations rating.

@@ -1,0 +1,1 @@
+Nimbus has faulty geolocation detection. This add-on is a workaround for that.

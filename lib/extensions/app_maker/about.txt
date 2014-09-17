@@ -1,0 +1,1 @@
+This creates a .desktop shortcut for launching the current URL in app mode.

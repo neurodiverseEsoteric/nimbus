@@ -1,0 +1,1 @@
+Allows custom CSS to be applied to websites. Similar (but inferior) to Firefox's Stylish add-on.

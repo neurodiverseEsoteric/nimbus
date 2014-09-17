@@ -1,0 +1,1 @@
+Loads an editor that converts text into a multitude of BBCode-formatted color cycles (or rainbows).

@@ -1,0 +1,1 @@
+Opens a simple text entry sidebar for taking notes. Saves automatically.

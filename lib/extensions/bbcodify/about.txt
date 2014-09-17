@@ -1,0 +1,1 @@
+This extension converts the location bar text into BBCode markup. Click to cycle between link, image, and linked image markup.

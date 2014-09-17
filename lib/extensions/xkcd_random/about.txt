@@ -1,0 +1,1 @@
+Loads a random xkcd comic.

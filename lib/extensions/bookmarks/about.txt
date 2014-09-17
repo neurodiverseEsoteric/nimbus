@@ -1,0 +1,1 @@
+Adds a bookmarks sidebar to Nimbus. Integrates with the location bar and the feed manager.

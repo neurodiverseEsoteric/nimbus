@@ -1,0 +1,1 @@
+Loads the current page's history on Wayback Machine. Useful for reference purposes.
