@@ -655,6 +655,7 @@ class ExtensionsSettingsPanel(SettingsPanel):
         listRow.addWidget(whitelistColumn)
         whitelistColumn.addWidget(QLabel(tr("Enabled extensions:"), self))
         self.whitelist = QListWidget(self)
+        self.whitelist.currentTextChanged.connect(self.changeAboutText)
         self.whitelist.itemActivated.connect(self.disableExtension)
         whitelistColumn.addWidget(self.whitelist)
 
@@ -663,12 +664,28 @@ class ExtensionsSettingsPanel(SettingsPanel):
         listRow.addWidget(blacklistColumn)
         blacklistColumn.addWidget(QLabel(tr("Disabled extensions:"), self))
         self.blacklist = QListWidget(self)
+        self.blacklist.currentTextChanged.connect(self.changeAboutText)
         self.blacklist.itemActivated.connect(self.enableExtension)
         blacklistColumn.addWidget(self.blacklist)
+
+        # About text
+        self.aboutText = custom_widgets.ReadOnlyTextEdit(self)
+        self.aboutText.setMaximumHeight(92)
+        self.layout().addWidget(self.aboutText)
 
         updateExtensionsButton = QPushButton(tr("&Update extensions"), self)
         updateExtensionsButton.clicked.connect(self.updateExtensions)
         self.layout().addWidget(updateExtensionsButton)
+
+    def changeAboutText(self, name):
+        aboutpath = os.path.join(settings.extensions_folder, name, "about.txt")
+        try: f = open(aboutpath, "r")
+        except:
+            self.aboutText.setText(tr("This extension has no description."))
+            return
+        aboutText = f.read().replace("\n", "")
+        f.close()
+        self.aboutText.setText(aboutText)
 
     def disableExtension(self, item):
         name = item.text()
