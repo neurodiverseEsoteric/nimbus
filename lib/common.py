@@ -21,7 +21,8 @@ pyqt4 = settings.pyqt4
 if not settings.pyqt4:
     try:
         from PyQt5.QtCore import qVersion, QLocale, QUrl, QEvent, QCoreApplication
-        from PyQt5.QtGui import QIcon, QApplication
+        from PyQt5.QtGui import QIcon
+        from PyQt5.QtWidgets import QApplication
         from PyQt5.QtWebKit import qWebKitVersion
     except:
         try:
