@@ -1,1 +1,1 @@
-Displays the current page in a more reader-friendly format.
+Displays the current page in a more reader-friendly format. Requires JavaScript.
