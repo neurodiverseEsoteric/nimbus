@@ -256,14 +256,15 @@ class WebPage(QWebPage):
                         url = href.split(gurl)[-1]
                         url = urllib.parse.unquote(url)
                         link.setAttribute("href", url)
-                    elif "#post" in href:
+                    # This is just awkward.
+                    """elif "#post" in href:
                         try: class_ = link.attribute("class")
                         except: class_ = ""
                         if not "postcounter" in class_:
                             url = "-".join(href.split("-")[:-1])
                             postnumber = href.split("#")[-1]
                             url = url + "-" + postnumber + ".html"
-                            link.setAttribute("href", url)
+                            link.setAttribute("href", url)"""
 
     # Loads history.
     def loadHistory(self, history):
