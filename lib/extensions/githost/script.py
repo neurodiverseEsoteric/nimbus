@@ -4,7 +4,7 @@ except:
     if not gitRepo:
         gitRepo = "None"
         QMessageBox.information(self, tr("Githost"), tr("Please select the directory of your Git repository."))
-        gitRepo = QFileDialog.getExistingDirectory(self, "Select directory", os.path.expanduser("~"))
+        gitRepo = QFileDialog.getExistingDirectory(self, "Select directory...", os.path.expanduser("~"))
         if not os.path.isdir(gitRepo):
             pass
         else:
@@ -15,7 +15,7 @@ except:
 try: common.git_repo
 except: pass
 else:
-    fnames = QFileDialog.getOpenFileNames(self, tr("Select files to upload"), os.path.expanduser("~"), tr("All files (*)"))
+    fnames = QFileDialog.getOpenFileNames(self, tr("Select files to upload..."), os.path.expanduser("~"), tr("All files (*)"))
     if len(fnames) > 0:
         for fname in fnames:
             os.system("cp %s %s" % (fname, common.git_repo))
