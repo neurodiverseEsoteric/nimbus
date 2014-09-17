@@ -576,7 +576,7 @@ class MainWindow(QMainWindow):
 
         # Add user agent picker.
         self.userAgentMenu = QMenu(tr("Set &User Agent For Site"), self)
-        self.userAgentMenu.setIcon(common.complete_icon("applications-internet"))
+        self.userAgentMenu.setIcon(common.complete_icon("user-agents"))
         for browser_ in sorted(tuple(common.user_agents.keys()), key=lambda x: x.replace("&", "")):
             ua = common.user_agents[browser_]
             icon = common.complete_icon(browser_.lower().replace(" ", "-").replace("&", ""))
