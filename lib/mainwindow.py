@@ -70,7 +70,7 @@ class ExtensionButton(QToolButton):
         self.name = "new-extension"
         self.aboutText = "This is a Nimbus extension."
         if aboutText:
-            self.aboutText = "This is a Nimbus extension."
+            self.aboutText = aboutText
         if name:
             self.name = name
         if shortcut:
