@@ -19,5 +19,5 @@ else:
     if len(fnames) > 0:
         for fname in fnames:
             os.system("cp %s %s" % (fname, common.git_repo))
-        os.system("cd %s && git add . && git commit -m \"Added new files (%s).\"" % (common.git_repo, ", ".join(fnames)))
+        os.system("cd %s && git add . && git commit -m \"Added %s new files.\"" % (common.git_repo, len(fnames)))
         os.system("cd %s && xterm -e \"git push --all\"" % (common.git_repo,))
