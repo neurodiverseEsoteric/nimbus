@@ -43,13 +43,16 @@ class SearchManager(object):
         if not search_engines:
             common.search_engines = {}
             common.search_engines['Disconnect Search'] = ["g", "https://search.disconnect.me/searchTerms/search?query=%s&ses=Google"]
+            common.search_engines['Disconnect Images'] = ["i", "https://search.disconnect.me/searchTerms/search?query=%s&option=Images&ses=Google"]
+            common.search_engines['Disconnect Videos'] = ["v", "https://search.disconnect.me/searchTerms/search?query=%s&option=Videos&ses=Google"]
+            common.search_engines['Disconnect News'] = ["n", "https://search.disconnect.me/searchTerms/search?query=%s&option=News&ses=Google"]
             common.search_engines['DuckDuckGo'] = ["d", "https://duckduckgo.com/?q=%s"]
             common.search_engines['Wikipedia'] = ["w", "https://en.wikipedia.org/w/index.php?search=%s&title=Special:Search"]
             common.search_engines['Wiktionary'] = ["wk", "http://en.wiktionary.org/w/index.php?search=%s&title=Special:Search"]
             common.search_engines['Wikimedia Commons'] = ["wc", "http://commons.wikimedia.org/w/index.php?search=%s&title=Special:Search"]
             common.search_engines["Startpage"] = ["s", "https://startpage.com/do/search?q=%s"]
-            common.search_engines['Startpage Picture Search'] = ["i", "https://startpage.com/do/search?cat=pics&q=%s"]
-            common.search_engines['Startpage Video Search'] = ["v", "https://startpage.com/do/search?cat=video&q=%s"]
+            common.search_engines['Startpage Picture Search'] = ["si", "https://startpage.com/do/search?cat=pics&q=%s"]
+            common.search_engines['Startpage Video Search'] = ["sv", "https://startpage.com/do/search?cat=video&q=%s"]
             common.search_engines['Google Translate'] = ["tr", "http://translate.google.com/#auto/en/%s"]
             common.search_engines['Thesaurus.com'] = ["t", "http://thesaurus.com/browse/%s"]
             common.search_engines['YouTube'] = ["yt", "http://www.youtube.com/results?search_query=%s"]
@@ -60,8 +63,8 @@ class SearchManager(object):
             common.search_engines['MetroLyrics'] = ["mtl", "http://www.metrolyrics.com/search?search=%s"]
             common.search_engines['Openclipart'] = ["oca", "http://openclipart.org/search/?query=%s"]
             common.search_engines['Safebooru'] = ["sb", "http://safebooru.org/index.php?page=post&s=list&tags=%s"]
-            common.search_engines['Gigablast'] = ["gb", "https://www.gigablast.com/search?q=%s"]
             common.search_engines["Urban Dictionary"] = ["u", "http://www.urbandictionary.com/define.php?term=%s"]
+            settings.settings.setValue("general/Search", common.search_engines['Disconnect Search'])
             settings.settings.setValue("SearchEngines", json.dumps(common.search_engines))
             settings.settings.sync()
         else:
