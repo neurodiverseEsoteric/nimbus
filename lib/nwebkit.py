@@ -26,7 +26,7 @@ import settings
 import data
 import network
 import rss_parser
-import view_source_dialog
+#import view_source_dialog
 if not sys.platform.startswith("linux"):
     import webbrowser
 
@@ -679,13 +679,28 @@ class WebView(QWebView):
         return title[:24] + '...' if len(title) > 24 else title
 
     def viewSource(self):
-        sourceDialog = view_source_dialog.ViewSourceDialog(None)
-        for sd in self.sourceDialogs:
-            try: sd.doNothing()
-            except: self.sourceDialogs.remove(sd)
-        self.sourceDialogs.append(sourceDialog)
-        sourceDialog.setPlainText(self.page().mainFrame().toHtml())
-        sourceDialog.show()
+        sview = self.createWindow(QWebPage.WebBrowserWindow)
+        sview.setHtml("""<!DOCTYPE html>
+<html>
+    <head>
+        <title>""" + (tr("Source of %s") % self.url().toString()) + """</title>
+        <!--<link rel="stylesheet" href="http://127.0.0.1:8133/highlight-style.css">
+        <script src="http://127.0.0.1:8133/highlight.pack.js"></script>-->
+    </head>
+    <body>
+        <!--<pre>-->
+            <code>""" + self.page().mainFrame().toHtml().replace("<", "&lt;").replace(">", "&gt;") + """</code>
+        <!--</pre>-->
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>""", QUrl("nimbus://view-source"))
+        #sourceDialog = view_source_dialog.ViewSourceDialog(None)
+        #for sd in self.sourceDialogs:
+            #try: sd.doNothing()
+            #except: self.sourceDialogs.remove(sd)
+        #self.sourceDialogs.append(sourceDialog)
+        #sourceDialog.setPlainText(self.page().mainFrame().toHtml())
+        #sourceDialog.show()
 
     # Enables fullscreen in web app mode.
     def enableWebAppMode(self):
