@@ -16,7 +16,13 @@ try: common.git_repo
 except: pass
 else:
     fnames = QFileDialog.getOpenFileNames(self, tr("Select files to upload..."), os.path.expanduser("~"), tr("All files (*)"))
-    if len(fnames) > 0:
+    if not settings.settings.value("settings/NoPromptForGitRepo"):
+        confirm = QMessageBox.question(self, tr("Confirm selection"), tr("Commit files to repository?"), QMessageBox.Yes | QMessageBox.YesToAll | QMessageBox.No)
+    else:
+        confirm = QMessageBox.Yes
+    if confirm == QMessageBox.YesToAll:
+        settings.settings.setValue("settings/NoPromptForGitRepo", True)
+    if len(fnames) > 0 and confirm in (QMessageBox.Yes, QMessageBox.YesToAll):
         for fname in fnames:
             os.system("cp %s %s" % (fname, common.git_repo))
         os.system("cd %s && git add . && git commit -m \"Added %s new file%s.\"" % (common.git_repo, len(fnames), ("s" if len(fnames) > 1 else "")))
