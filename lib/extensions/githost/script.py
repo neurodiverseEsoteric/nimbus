@@ -16,7 +16,7 @@ try: common.git_repo
 except: pass
 else:
     fnames = QFileDialog.getOpenFileNames(self, tr("Select files to upload..."), os.path.expanduser("~"), tr("All files (*)"))
-    if not settings.settings.value("settings/NoPromptForGitRepo"):
+    if not settings.settings.value("settings/NoPromptForGitRepo") and len(fnames) > 0:
         confirm = QMessageBox.question(self, tr("Confirm selection"), tr("Commit files to repository?"), QMessageBox.Yes | QMessageBox.YesToAll | QMessageBox.No)
     else:
         confirm = QMessageBox.Yes
