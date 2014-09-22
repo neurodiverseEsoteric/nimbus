@@ -162,7 +162,7 @@ def reload_userscripts():
             continue
         extension_path = os.path.join(extensions_folder, extension)
         if os.path.isfile(extension_path):
-            extension_data = {"match": [], "content": ""}
+            extension_data = {"match": [], "content": "", "start": False}
             try: f = open(extension_path, "r")
             except: pass
             else:
@@ -176,6 +176,8 @@ def reload_userscripts():
                         if r in line:
                             extension_data["match"].append(line.split(r)[-1].strip("\n\t ").replace("?", "\?").replace("#", "\#").replace("+", "\+").replace("|", "\|"))
                             break
+                    if "@run-at" in line:
+                        extension_data["start"] = True if "document-start" in line else False
                 userscripts.append(extension_data)
 
 reload_userscripts()

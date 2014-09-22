@@ -220,6 +220,7 @@ class WebPage(QWebPage):
         # Connect loadFinished to checkForNavigatorGeolocation and loadUserScripts.
         self.loadFinished.connect(self.doRedirectHack)
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
+        self.loadStarted.connect(self.loadUserScriptsStart)
         self.loadFinished.connect(self.loadUserScripts)
 
         # Custom userscript.
@@ -286,6 +287,24 @@ class WebPage(QWebPage):
     def setUserScriptsLoaded(self, loaded=False):
         self._userScriptsLoaded = loaded
 
+    # Load userscripts of document-start.
+    def loadUserScriptsStart(self):
+        if not self._userScriptsLoaded:
+            for userscript in settings.userscripts:
+                if userscript["start"] == False:
+                    continue
+                for match in userscript["match"]:
+                    try:
+                        if match == "*":
+                            r = True
+                        else:
+                            r = re.match(match, self.mainFrame().url().toString())
+                        if r:
+                            self.mainFrame().evaluateJavaScript(userscript["content"])
+                            break
+                    except:
+                        pass
+
     # Load userscripts.
     def loadUserScripts(self):
         if not self._userScriptsLoaded:
@@ -301,6 +320,8 @@ for (var i=0; i<__NimbusAdRemoverQueries.length; i++) {
 delete __NimbusAdRemoverQueries;""" % (settings.adremover_filters,))
             self.mainFrame().evaluateJavaScript(self.userScript)
             for userscript in settings.userscripts:
+                if userscript["start"] == True:
+                    continue
                 for match in userscript["match"]:
                     try:
                         if match == "*":
@@ -919,12 +940,12 @@ class WebView(QWebView):
     # new tabs.
     def mousePressEvent(self, ev):
         if self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ControlModifier) and not ev.button() == Qt.RightButton) or ev.button() == Qt.MidButton or ev.button() == Qt.MiddleButton):
-            url = self._statusBarMessage
+            url = urllib.parse.unquote(self._statusBarMessage)
             ev.ignore()
             newWindow = self.createWindow(QWebPage.WebBrowserWindow)
             newWindow.load(QUrl(url))
         elif self._statusBarMessage != "" and (((QCoreApplication.instance().keyboardModifiers() == Qt.ShiftModifier) and not ev.button() == Qt.RightButton)):
-            self.openInDefaultBrowser(self._statusBarMessage)
+            self.openInDefaultBrowser(urllib.parse.unquote(self._statusBarMessage))
         else:
             return QWebView.mousePressEvent(self, ev)
 
@@ -1013,7 +1034,7 @@ class WebView(QWebView):
         self._statusBarMessage = link
         if not settings.setting_to_bool("general/StatusBarVisible") and len(self._statusBarMessage) > 0:
             self.statusMessageDisplay.hide()
-            self.statusMessageDisplay.setText(self._statusBarMessage)
+            self.statusMessageDisplay.setText(urllib.parse.unquote(self._statusBarMessage))
             self.statusMessageDisplay.show()
             self.statusMessageDisplay.move(QPoint(0, self.height()-self.statusMessageDisplay.height()))
             opposite = QCursor.pos().x() in tuple(range(self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).x(), self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).x() + self.statusMessageDisplay.width())) and QCursor.pos().y() in tuple(range(self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).y(), self.statusMessageDisplay.mapToGlobal(QPoint(0,0)).y() + self.statusMessageDisplay.height()))
