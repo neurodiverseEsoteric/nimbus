@@ -489,6 +489,12 @@ class MainWindow(QMainWindow):
         self.dateTimeButton.clicked.connect(self.showCalendar)
         self.dateTime.setVisible(False)
         
+        self.batteryAction = custom_widgets.BatteryAction(self)
+        self.tabsToolBar.addAction(self.batteryAction)
+        self.batteryWidget = self.tabsToolBar.widgetForAction(self.batteryAction)
+        self.batteryWidget.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.batteryAction.setVisible(False)
+        
         # Add stuff for linux
         self.networkManagerAction = QAction(common.complete_icon("network-idle"), tr("Network Management"), self)
         self.tabsToolBar.addAction(self.networkManagerAction)
@@ -1373,6 +1379,7 @@ self.origY + ev.globalY() - self.mouseY)
             self.toggleFullScreenButton.setVisible(True)
             self.networkManagerAction.setVisible(True)
             self.dateTime.setVisible(True)
+            self.batteryAction.setVisible(True)
             self._wasMaximized = self.isMaximized()
             self.showFullScreen()
         else:
@@ -1381,6 +1388,7 @@ self.origY + ev.globalY() - self.mouseY)
             self.toggleFullScreenButton.setVisible(False)
             self.networkManagerAction.setVisible(False)
             self.dateTime.setVisible(False)
+            self.batteryAction.setVisible(False)
             if not self._wasMaximized:
                 self.showNormal()
             else:

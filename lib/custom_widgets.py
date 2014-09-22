@@ -15,19 +15,19 @@ from common import app_folder, blank_toolbar, complete_icon, pyqt4
 from translate import tr
 
 if not pyqt4:
-    from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
+    from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize, QTimer
     Signal = pyqtSignal
     from PyQt5.QtGui import QIcon, QPixmap
     from PyQt5.QtWidgets import QMainWindow, QAction, QToolButton, QPushButton, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction, QListWidget
     #from PyQt5.QtWebKitWidgets import QWebView
 else:
     try:
-        from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize
+        from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QUrl, QSize, QTimer
         Signal = pyqtSignal
         from PyQt4.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction, QListWidget
         #from PyQt4.QtWebKit import QWebView
     except:
-        from PySide.QtCore import Qt, Signal, QPoint, QUrl, QSize
+        from PySide.QtCore import Qt, Signal, QPoint, QUrl, QSize, QTimer
         from PySide.QtGui import QPixmap, QMainWindow, QAction, QToolButton, QPushButton, QIcon, QWidget, QComboBox, QHBoxLayout, QTabWidget, QTextEdit, QVBoxLayout, QLabel, QSizePolicy, QLineEdit, QSpinBox, QToolBar, QStyle, QStylePainter, QStyleOptionToolBar, QMenu, QTabBar, QWidgetAction, QListWidget
 #        from PySide.QtWebKit import QWebView
 
@@ -78,6 +78,55 @@ else:
     def load(self, url):
         if "file" in url.scheme():
             super(AboutView, self).load(url)"""
+
+class BatteryAction(QAction):
+    battery = None
+    energyFull = 0
+    energyNow = 0
+    hasBattery = True
+    def __init__(self, *args, **kwargs):
+        super(BatteryAction, self).__init__(*args, **kwargs)
+        self.setToolTip(tr("Power"))
+        if not self.battery and self.hasBattery:
+            power_supplies = "/sys/class/power_supply/"
+            try:
+                psups = os.listdir(power_supplies)
+            except:
+                pass
+            else:
+                for fname in psups:
+                    if fname.lower().startswith("bat"):
+                        self.battery = os.path.join(power_supplies, fname)
+                        try:
+                            f = open(os.path.join(self.battery, "energy_full"))
+                            self.energyFull = int(f.read())
+                            f.close()
+                        except:
+                            pass
+                        break
+                if not self.battery:
+                    self.hasBattery = False
+        if self.battery:
+            self.updateLife()
+            self.timer = QTimer(timeout=self.updateLife, parent=self)
+            self.timer.start(20000)
+    def updateLife(self):
+        if os.path.isdir(self.battery):
+            try:
+                f = open(os.path.join(self.battery, "energy_now"))
+                self.energyNow = int(f.read())
+                f.close()
+            except:
+                pass
+            else:
+                percentage = round(self.energyNow/self.energyFull*100, 1)
+                self.setText(str(percentage) + "%")
+                if percentage >= 40:
+                    self.setIcon(complete_icon("battery"))
+                elif percentage >= 10:
+                    self.setIcon(complete_icon("battery-caution"))
+                else:
+                    self.setIcon(complete_icon("dialog-warning"))
 
 class ToolBarAction(QWidgetAction):
     def __init__(self, *args, **kwargs):
