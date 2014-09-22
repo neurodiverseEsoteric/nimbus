@@ -108,8 +108,11 @@ class BatteryAction(QAction):
                     self.hasBattery = False
         if self.battery:
             self.updateLife()
-            self.timer = QTimer(timeout=self.updateLife, parent=self)
-            self.timer.start(20000)
+            try:
+                common.sessionSaver.timeout.connect(self.updateLife)
+            except:
+                self.timer = QTimer(timeout=self.updateLife, parent=self)
+                self.timer.start(20000)
     def updateLife(self):
         if os.path.isdir(self.battery):
             try:

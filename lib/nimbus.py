@@ -288,13 +288,14 @@ def main(argv):
     # Load settings.
     data.loadData()
 
-    sessionSaver = QTimer(QCoreApplication.instance())
-    sessionSaver.timeout.connect(saveSession)
-    sessionSaver.timeout.connect(data.saveData)
+    # This is a baaad name.
+    common.sessionSaver = QTimer(QCoreApplication.instance())
+    common.sessionSaver.timeout.connect(saveSession)
+    common.sessionSaver.timeout.connect(data.saveData)
     if common.portable:
-        sessionSaver.start(50000)
+        common.sessionSaver.start(50000)
     else:
-        sessionSaver.start(30000)
+        common.sessionSaver.start(30000)
 
     common.desktop = QDesktopWidget()
 
