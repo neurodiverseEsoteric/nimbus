@@ -92,7 +92,7 @@ class BatteryAction(QAction):
             try:
                 psups = os.listdir(power_supplies)
             except:
-                pass
+                self.hasBattery = False
             else:
                 for fname in psups:
                     if fname.lower().startswith("bat"):
