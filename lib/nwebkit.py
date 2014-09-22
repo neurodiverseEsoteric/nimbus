@@ -684,13 +684,13 @@ class WebView(QWebView):
 <html>
     <head>
         <title>""" + (tr("Source of %s") % self.url().toString()) + """</title>
-        <!--<link rel="stylesheet" href="http://127.0.0.1:8133/highlight-style.css">
-        <script src="http://127.0.0.1:8133/highlight.pack.js"></script>-->
+        <link rel="stylesheet" href="http://127.0.0.1:8133/highlight-style.css">
+        <script src="http://127.0.0.1:8133/highlight.pack.js"></script>
     </head>
     <body>
-        <!--<pre>-->
-            <code>""" + self.page().mainFrame().toHtml().replace("<", "&lt;").replace(">", "&gt;") + """</code>
-        <!--</pre>-->
+        <pre>
+            <code style="position: fixed; top: 0; left: 0; bottom: 0; right: 0; width: auto; height: auto; overflow-x: auto; overflow-y: auto;">""" + self.page().mainFrame().toHtml().replace("<", "&lt;").replace(">", "&gt;") + """</code>
+        </pre>
         <script>hljs.initHighlightingOnLoad();</script>
     </body>
 </html>""", QUrl("nimbus://view-source"))
