@@ -224,6 +224,10 @@ class MenuToolBar(QToolBar):
         self._isMenuBar = True
     def isMenuBar(self):
         return self._isMenuBar
+    def addAction(self, action):
+        super(MenuToolBar, self).addAction(action)
+        if action.shortcut().toString() > "":
+            action.setToolTip(action.text().replace("&", "") + "<br>" + action.shortcut().toString())
     def setIsMenuBar(self, isMenuBar):
         self._isMenuBar = bool(isMenuBar)
         self.repaint()

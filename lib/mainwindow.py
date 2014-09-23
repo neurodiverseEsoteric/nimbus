@@ -497,11 +497,11 @@ class MainWindow(QMainWindow):
         
         # Add stuff for linux
         self.networkManagerAction = QAction(common.complete_icon("network-idle"), tr("Network Management"), self)
+        self.networkManagerAction.setShortcut("Alt+N")
         self.tabsToolBar.addAction(self.networkManagerAction)
         self.networkManagerButton = self.tabsToolBar.widgetForAction(self.networkManagerAction)
         self.networkManagerAction.setVisible(False)
         self.addAction(self.networkManagerAction)
-        self.networkManagerAction.setShortcut("Alt+N")
         if sys.platform.startswith("linux"):
             self.networkManagerMenu = QMenu(self)
             self.connectAction = QAction(tr("Connect to Wi-Fi Network..."), self)
