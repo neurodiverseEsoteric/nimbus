@@ -389,6 +389,7 @@ class LicenseDialog(QMainWindow):
         self.toolBar.setContextMenuPolicy(Qt.CustomContextMenu)
         self.addToolBar(Qt.BottomToolBarArea, self.toolBar)
         self.toolBar.addWidget(HorizontalExpander(self))
-        self.closeButton = QPushButton(tr("Close"), self)
+        self.closeButton = QPushButton(tr("&OK"), self)
         self.closeButton.clicked.connect(self.close)
         self.toolBar.addWidget(self.closeButton)
+        self.closeButton.setFocus()
