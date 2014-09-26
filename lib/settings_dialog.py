@@ -400,7 +400,7 @@ class DataSettingsPanel(SettingsPanel):
         self.rememberHistoryToggle = QCheckBox(tr("Remember &history"), self)
         self.layout().addWidget(self.rememberHistoryToggle)
 
-        # Maximum cache size spinbox.
+        # Maximum URL length spinbox.
         self.maximumURLLengthRow = custom_widgets.SpinBoxRow(tr("Maximum URL length:"), self)
         self.maximumURLLengthRow.expander.setText(tr("characters"))
         self.maximumURLLength = self.maximumURLLengthRow.spinBox
@@ -408,11 +408,12 @@ class DataSettingsPanel(SettingsPanel):
         self.layout().addWidget(self.maximumURLLengthRow)
 
         # Maximum cache size spinbox.
-        self.maximumCacheSizeRow = custom_widgets.SpinBoxRow(tr("Maximum cache size:"), self)
-        self.maximumCacheSizeRow.expander.setText(tr("MB"))
-        self.maximumCacheSize = self.maximumCacheSizeRow.spinBox
-        self.maximumCacheSize.setMaximum(20000)
-        self.layout().addWidget(self.maximumCacheSizeRow)
+        # The cache is gone because it fucks Nimbus with a chainsaw.
+        #self.maximumCacheSizeRow = custom_widgets.SpinBoxRow(tr("Maximum cache size:"), self)
+        #self.maximumCacheSizeRow.expander.setText(tr("MB"))
+        #self.maximumCacheSize = self.maximumCacheSizeRow.spinBox
+        #self.maximumCacheSize.setMaximum(20000)
+        #self.layout().addWidget(self.maximumCacheSizeRow)
 
         # Checkbox to toggle geolocation.
         self.geolocationToggle = QCheckBox(tr("Enable geo&location"), self)
@@ -455,7 +456,7 @@ class DataSettingsPanel(SettingsPanel):
         self.layout().addWidget(custom_widgets.Expander(self))
     def loadSettings(self):
         self.maximumURLLength.setValue(settings.setting_to_int("data/MaximumURLLength"))
-        self.maximumCacheSize.setValue(settings.setting_to_int("data/MaximumCacheSize"))
+        #self.maximumCacheSize.setValue(settings.setting_to_int("data/MaximumCacheSize"))
         self.rememberHistoryToggle.setChecked(settings.setting_to_bool("data/RememberHistory"))
         self.geolocationToggle.setChecked(settings.setting_to_bool("network/GeolocationEnabled"))
         self.geolocationWhitelist.clear()
@@ -466,7 +467,7 @@ class DataSettingsPanel(SettingsPanel):
             self.geolocationBlacklist.addItem(url)
     def saveSettings(self):
         settings.settings.setValue("data/MaximumURLLength", self.maximumURLLength.value())
-        settings.settings.setValue("data/MaximumCacheSize", self.maximumCacheSize.value())
+        #settings.settings.setValue("data/MaximumCacheSize", self.maximumCacheSize.value())
         settings.settings.setValue("data/RememberHistory", self.rememberHistoryToggle.isChecked())
         settings.settings.setValue("network/GeolocationEnabled", self.geolocationToggle.isChecked())
         data.geolocation_whitelist = [self.geolocationWhitelist.item(authority).text() for authority in range(0, self.geolocationWhitelist.count())]
