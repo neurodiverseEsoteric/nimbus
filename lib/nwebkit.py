@@ -1081,33 +1081,6 @@ class WebView(QWebView):
             else:
                 self._cacheLoaded = True
 
-    # Hacky custom implementation of QWebView.load(),
-    # which can load a saved new tab page as well as
-    # the settings dialog.
-    def load(self, url):
-        if type(url) is QListWidgetItem:
-            url = QUrl.fromUserInput(url.text())
-        if sys.platform.startswith("win"):
-            components = []
-            print(url.toString().split("/"))
-            for component in url.toString().split("/"):
-                if len(component) == 2 and component.endswith(":"):
-                    pass
-                else:
-                    components.append(component)
-            print(components)
-            url = QUrl("/".join(components))
-        self._cacheLoaded = False
-        dirname = url.path()
-        self._url = url.toString()
-        if url.toString() == "about:blank":
-            if os.path.exists(settings.new_tab_page):
-                loadwin = QWebView.load(self, QUrl.fromUserInput(settings.new_tab_page))
-            else:
-                loadwin = QWebView.load(self, url)
-        else:
-            loadwin = QWebView.load(self, url)
-
     def load2(self, url):
         self.page().mainFrame().evaluateJavaScript("window.location.href = \"%s\"" % (url,))
 
