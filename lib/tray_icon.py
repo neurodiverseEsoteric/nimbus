@@ -152,7 +152,7 @@ class SystemTrayIcon(QSystemTrayIcon):
         quitAction.triggered.connect(QApplication.quit)
         self.menu.addAction(quitAction)
 
-        if self.geometry().width() < 8:
+        """if self.geometry().width() < 8:
             self.toolBar = BackgroundToolBar(None)
             self.toolBar.setWindowTitle(common.app_name)
             #self.toolBar.setStyleSheet("QToolBar{background:palette(window);border:0;}")
@@ -164,7 +164,7 @@ class SystemTrayIcon(QSystemTrayIcon):
             self.toolBar.addWidget(extender)
             self.toolBar.hide()
             timer = QTimer(timeout=self.toggleButton, parent=self)
-            timer.start(500)
+            timer.start(500)"""
 
     def toggleButton(self):
         if len(browser.windows) == 0:

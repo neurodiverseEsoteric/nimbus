@@ -182,18 +182,6 @@ def main(argv):
         mainloop = DBusQtMainLoop(set_as_default = True)
         dbus.set_default_main_loop(mainloop)
 
-    if sys.platform.startswith("linux"):
-        hasStyle = False
-        for arg in argv:
-            if arg.startswith("-style="):
-                hasStyle = True
-                break
-        if not hasStyle:
-            if not common.pyqt4:
-                argv.append("-style=Fusion")
-            else:
-                argv.append("-style=GTK")
-
     # Create app.
     app = QApplication(argv)
     app.setApplicationName(common.app_name + "/" + common.app_version)
@@ -321,9 +309,10 @@ def main(argv):
         lostTabsTimer.start(500)
 
     if os.path.isfile(settings.crash_file):
-        clearCache = QMessageBox.question(None, tr("Nimbus seems to have crashed..."), tr("Clearing the cache might fix this. Would you like to do that?"), QMessageBox.Yes | QMessageBox.No)
-        if clearCache == QMessageBox.Yes:
-            network.clear_cache()
+        clearCache = QMessageBox.question(None, tr("Ow."), tr("Nimbus seems to have crashed during your last session. Fortunately, your tabs were saved up to 30 seconds beforehand. Would you like to restore them?"), QMessageBox.Yes | QMessageBox.No)
+        if clearCache == QMessageBox.No:
+            try: os.remove(settings.session_file)
+            except: pass
     else:
         f = open(settings.crash_file, "w")
         f.write("")
@@ -348,6 +337,10 @@ def main(argv):
             win.addTab(url=settings.settings.value("general/Homepage"))
 
             # Show window.
+        win.show()
+    elif not "--daemon" in argv and len(argv[1:]) == 0 and len(browser.windows) == 0:
+        win = MainWindow(appMode = ("--app" in argv))
+        win.addTab(url=settings.settings.value("general/Homepage"))
         win.show()
 
     # Start app.
