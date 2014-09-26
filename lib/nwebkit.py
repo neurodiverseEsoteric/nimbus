@@ -11,7 +11,6 @@
 import sys
 import os
 import re
-import subprocess
 import browser
 import urllib.parse
 import hashlib
@@ -88,10 +87,7 @@ class DownloadProgressBar(QProgressBar):
             f.flush()
             f.close()
             self.progress = [0, 0]
-            if sys.platform.startswith("linux"):
-                subprocess.Popen(["notify-send", "--icon=emblem-downloads", tr("Download complete: %s") % (os.path.split(self.destination)[1],)])
-            else:
-                common.trayIcon.showMessage(tr("Download complete"), os.path.split(self.destination)[1])
+            common.trayIcon.showMessage(tr("Download complete"), os.path.split(self.destination)[1])
 
     # Updates the progress bar.
     def updateProgress(self, received, total):
@@ -1293,10 +1289,7 @@ class WebView(QWebView):
                 try: f.write(content)
                 except: pass
                 f.close()
-                if sys.platform.startswith("linux"):
-                    subprocess.Popen(["notify-send", "--icon=emblem-downloads", tr("Download complete: %s") % (os.path.split(fname)[1],)])
-                else:
-                    common.trayIcon.showMessage(tr("Download complete"), os.path.split(fname)[1])
+                common.trayIcon.showMessage(tr("Download complete"), os.path.split(fname)[1])
 
     # Adds a QUrl to the browser history.
     def addHistoryItem(self, url):

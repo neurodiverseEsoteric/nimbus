@@ -12,13 +12,12 @@
 
 import sys
 import os
-from common import pyqt4
-import subprocess
+import common
 import settings
 import filtering
 import settings
 from translate import tr
-if not pyqt4:
+if not common.pyqt4:
     from PyQt5.QtCore import QCoreApplication, QUrl, QTimer
     from PyQt5.QtWidgets import QInputDialog, QLineEdit
     from PyQt5.QtNetwork import QNetworkInterface, QNetworkCookieJar, QNetworkAccessManager, QNetworkDiskCache, QNetworkRequest, QNetworkReply
@@ -132,8 +131,7 @@ incognito_network_access_manager.setCookieJar(incognito_cookie_jar)
 
 # Clear cache.
 def clear_cache():
-    return
-    network_access_manager.cache().clear()
+    common.trayIcon.showMessage("What cache?", "Nimbus doesn't have a cache.")
 
 # This function checks whether the system is connected to a network interface.
 # It is used by Nimbus to determine whether the system is connected to the
