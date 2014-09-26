@@ -33,7 +33,7 @@ if not sys.platform.startswith("linux"):
 # Extremely specific imports from PyQt5/PySide.
 # We give PyQt5 priority because it supports Qt5.
 if not common.pyqt4:
-    from PyQt5.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime, QPoint
+    from PyQt5.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime, QPoint, QEventLoop
     from PyQt5.QtGui import QIcon, QImage, QClipboard, QCursor
     from PyQt5.QtWidgets import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QAction, QToolBar, QLineEdit, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QWidgetAction, QToolTip
     from PyQt5.QtPrintSupport import QPrinter, QPrintDialog, QPrintPreviewDialog
@@ -44,14 +44,14 @@ if not common.pyqt4:
     Slot = pyqtSlot
 else:
     try:
-        from PyQt4.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime, QPoint
+        from PyQt4.QtCore import Qt, QSize, QObject, QCoreApplication, pyqtSignal, pyqtSlot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime, QPoint, QEventLoop
         from PyQt4.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard, QWidgetAction, QToolTip, QCursor
         from PyQt4.QtNetwork import QNetworkProxy, QNetworkRequest
         from PyQt4.QtWebKit import QWebView, QWebPage, QWebHistory
         Signal = pyqtSignal
         Slot = pyqtSlot
     except:
-        from PySide.QtCore import Qt, QSize, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime, QPoint
+        from PySide.QtCore import Qt, QSize, QObject, QCoreApplication, Signal, Slot, QUrl, QFile, QIODevice, QTimer, QByteArray, QDataStream, QDateTime, QPoint, QEventLoop
         from PySide.QtGui import QApplication, QListWidget, QSpinBox, QListWidgetItem, QMessageBox, QIcon, QAction, QToolBar, QLineEdit, QPrinter, QPrintDialog, QPrintPreviewDialog, QInputDialog, QFileDialog, QProgressBar, QLabel, QCalendarWidget, QSlider, QFontComboBox, QLCDNumber, QImage, QDateTimeEdit, QDial, QSystemTrayIcon, QPushButton, QMenu, QDesktopWidget, QClipboard, QWidgetAction, QToolTip, QCursor
         from PySide.QtNetwork import QNetworkProxy, QNetworkRequest
         from PySide.QtWebKit import QWebView, QWebPage, QWebHistory
@@ -197,6 +197,7 @@ class WebPage(QWebPage):
                ("qspinbox", QSpinBox))
 
     fullScreenRequested = Signal(bool)
+    javaScriptBar = Signal(QToolBar)
     def __init__(self, *args, **kwargs):
         super(WebPage, self).__init__(*args, **kwargs)
 
@@ -222,6 +223,7 @@ class WebPage(QWebPage):
         self.loadFinished.connect(self.checkForNavigatorGeolocation)
         self.loadStarted.connect(self.loadUserScriptsStart)
         self.loadFinished.connect(self.loadUserScripts)
+        self.jsConfirm = False
 
         # Custom userscript.
         self.userScript = ""
@@ -236,6 +238,89 @@ class WebPage(QWebPage):
 
         # Set user agent to default value.
         self.setUserAgent()
+
+    def javaScriptAlert(self, frame, msg):
+        pause = QEventLoop()
+        toolBar = QToolBar(parent=self.parent())
+        w1 = custom_widgets.HorizontalExpander(parent=toolBar)
+        toolBar.addWidget(w1)
+        title = QLabel(parent=toolBar, text="<b>JavaScript Alert: </b>")
+        toolBar.addWidget(title)
+        toolBar.label = QLabel(parent=toolBar, text=msg)
+        toolBar.addWidget(toolBar.label)
+        button = QAction(tr("&OK"), toolBar)
+        button.triggered.connect(toolBar.deleteLater)
+        button.triggered.connect(pause.quit)
+        toolBar.addAction(button)
+        toolBar.widgetForAction(button).setFocusPolicy(Qt.StrongFocus)
+        w2 = custom_widgets.HorizontalExpander(parent=toolBar)
+        toolBar.addWidget(w2)
+        self.javaScriptBar.emit(toolBar)
+        pause.exec_()
+
+    def setJSConfirm(self, jsc):
+        self.jsConfirm = jsc
+
+    def javaScriptConfirm(self, frame, msg):
+        pause = QEventLoop()
+        toolBar = QToolBar(parent=self.parent())
+        w1 = custom_widgets.HorizontalExpander(parent=toolBar)
+        toolBar.addWidget(w1)
+        title = QLabel(parent=toolBar, text="<b>JavaScript Confirm: </b>")
+        toolBar.addWidget(title)
+        toolBar.label = QLabel(parent=toolBar, text=msg)
+        toolBar.addWidget(toolBar.label)
+        yes = QAction(tr("&Yes"), toolBar)
+        yes.triggered.connect(toolBar.deleteLater)
+        yes.triggered.connect(pause.quit)
+        yes.triggered.connect(lambda: self.setJSConfirm(True))
+        toolBar.addAction(yes)
+        toolBar.widgetForAction(yes).setFocusPolicy(Qt.StrongFocus)
+        no = QAction(tr("&No"), toolBar)
+        no.triggered.connect(toolBar.deleteLater)
+        no.triggered.connect(pause.quit)
+        no.triggered.connect(lambda: self.setJSConfirm(False))
+        toolBar.addAction(no)
+        toolBar.widgetForAction(no).setFocusPolicy(Qt.StrongFocus)
+        w2 = custom_widgets.HorizontalExpander(parent=toolBar)
+        toolBar.addWidget(w2)
+        self.javaScriptBar.emit(toolBar)
+        pause.exec_()
+        return self.jsConfirm
+
+    def javaScriptPrompt(self, frame, msg, defaultValue, result=None):
+        pause = QEventLoop()
+        toolBar = QToolBar(parent=self.parent())
+        w1 = custom_widgets.HorizontalExpander(parent=toolBar)
+        toolBar.addWidget(w1)
+        title = QLabel(parent=toolBar, text="<b>JavaScript Prompt: </b>")
+        toolBar.addWidget(title)
+        toolBar.label = QLabel(parent=toolBar, text=msg)
+        toolBar.addWidget(toolBar.label)
+        toolBar.lineEdit = QLineEdit(toolBar)
+        toolBar.lineEdit.setText(defaultValue)
+        toolBar.lineEdit.returnPressed.connect(toolBar.deleteLater)
+        toolBar.lineEdit.returnPressed.connect(pause.quit)
+        toolBar.lineEdit.returnPressed.connect(lambda: self.setJSConfirm(True))
+        toolBar.addWidget(toolBar.lineEdit)
+        yes = QAction(tr("&OK"), toolBar)
+        yes.triggered.connect(toolBar.deleteLater)
+        yes.triggered.connect(pause.quit)
+        yes.triggered.connect(lambda: self.setJSConfirm(True))
+        toolBar.addAction(yes)
+        toolBar.widgetForAction(yes).setFocusPolicy(Qt.StrongFocus)
+        no = QAction(tr("&Cancel"), toolBar)
+        no.triggered.connect(toolBar.deleteLater)
+        no.triggered.connect(pause.quit)
+        no.triggered.connect(lambda: self.setJSConfirm(False))
+        toolBar.addAction(no)
+        toolBar.widgetForAction(no).setFocusPolicy(Qt.StrongFocus)
+        w2 = custom_widgets.HorizontalExpander(parent=toolBar)
+        toolBar.addWidget(w2)
+        self.javaScriptBar.emit(toolBar)
+        pause.exec_()
+        result = toolBar.lineEdit.text()
+        return self.jsConfirm, result
 
     def setUserScript(self, script):
         if script:
@@ -457,6 +542,8 @@ class WebView(QWebView):
     urlChanged2 = Signal(QUrl)
 
     nextExpressions = ("start=", "offset=", "page=", "first=", "pn=", "=",)
+    
+    baseStyleSheet = "QToolBar { min-width: %spx; max-width: %spx; min-height: %spx; max-height: %spx; padding: 2px; background: palette(window); }"
 
     # Initialize class.
     def __init__(self, *args, incognito=False, sizeHint=None, minimumSizeHint=None, forceBlankPage=False, **kwargs):
@@ -467,6 +554,7 @@ class WebView(QWebView):
 
         # Add this webview to the list of webviews.
         common.webviews.append(self)
+        self.setStyleSheet(self.baseStyleSheet % (self.size().width(), self.size().width(), self.size().height(), self.size().height()))
 
         # These are used to store the current url.
         self._url = ""
@@ -517,8 +605,10 @@ class WebView(QWebView):
 
         # Temporary title.
         self._tempTitle = None
+        self.javaScriptBars = []
 
         self.setPage(WebPage(self))
+        self.page().javaScriptBar.connect(self.addJavaScriptBar)
 
         # Create a NetworkAccessmanager that supports ad-blocking and set it.
         if not self.incognito:
@@ -575,6 +665,19 @@ class WebView(QWebView):
 
         if os.path.exists(settings.new_tab_page) and not forceBlankPage:
             self.load(QUrl("about:blank"))
+
+    def addJavaScriptBar(self, toolBar):
+        self.javaScriptBars.append(toolBar)
+        toolBar.show()
+        try:
+            toolBar.lineEdit.setFocus()
+            toolBar.lineEdit.selectAll()
+        except:
+            pass
+
+    def resizeEvent(self, *args, **kwargs):
+        super(WebView, self).resizeEvent(*args, **kwargs)
+        self.setStyleSheet(self.baseStyleSheet % (self.size().width(), self.size().width(), self.size().height(), self.size().height()))
 
     def wheelEvent(self, *args, **kwargs):
         super(WebView, self).wheelEvent(*args, **kwargs)

@@ -164,6 +164,17 @@ def recoverLostTabs():
     for webview in killemall:
         common.webviews.remove(webview)
 
+def cleanJavaScriptBars():
+    killthem = []
+    for webview in common.webviews:
+        for bar in webview.javaScriptBars:
+            try:
+                bar.label
+            except:
+                killthem.append((webview, bar))
+    for bar in killthem:
+        bar[0].javaScriptBars.remove(bar)
+
 # Main function to load everything.
 def main(argv):
     # Start DBus loop
@@ -303,6 +314,7 @@ def main(argv):
     common.desktop = QDesktopWidget()
 
     lostTabsTimer = QTimer(timeout=recoverLostTabs, parent=QCoreApplication.instance())
+    lostTabsTimer.timeout.connect(cleanJavaScriptBars)
     if common.portable:
         lostTabsTimer.start(1000)
     else:
