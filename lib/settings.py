@@ -23,6 +23,8 @@ for arg in ("-4", "--pyqt4"):
 settings = QSettings("nimbus", "config", portable=paths.portable)
 settings_folder = os.path.dirname(settings.fileName())
 
+crash_file = os.path.join(settings_folder, ".browsercrash")
+
 # This is a global variable that gets the settings folder on any platform.
 
 # This stores the cache.

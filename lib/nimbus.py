@@ -27,6 +27,7 @@ import common
 from session import *
 import settings_dialog
 import browser
+import network
 import filtering
 import translate
 from translate import tr
@@ -52,7 +53,7 @@ except:
 # We give PyQt5 priority because it supports Qt5.
 try:
     from PyQt5.QtCore import Qt, QCoreApplication, QUrl, QTimer
-    from PyQt5.QtWidgets import QApplication, QAction, QDesktopWidget
+    from PyQt5.QtWidgets import QApplication, QAction, QDesktopWidget, QMessageBox
     from PyQt5.QtWebKit import QWebSettings
     from PyQt5.QtWebKitWidgets import QWebPage
 
@@ -69,7 +70,7 @@ try:
 except:
     try:
         from PyQt4.QtCore import Qt, QCoreApplication, QUrl, QTimer
-        from PyQt4.QtGui import QApplication, QAction, QDesktopWidget
+        from PyQt4.QtGui import QApplication, QAction, QDesktopWidget, QMessageBox
         from PyQt4.QtWebKit import QWebPage, QWebSettings
 
         # Python DBus
@@ -84,7 +85,7 @@ except:
                 pass
     except:
         from PySide.QtCore import Qt, QCoreApplication, QUrl, QTimer
-        from PySide.QtGui import QApplication, QAction, QDesktopWidget
+        from PySide.QtGui import QApplication, QAction, QDesktopWidget, QMessageBox
         from PySide.QtWebKit import QWebPage, QWebSettings
 
 
@@ -106,6 +107,8 @@ def addWindow(url=None):
 
 # Preparations to quit.
 def prepareQuit():
+    try: os.remove(settings.crash_file)
+    except: pass
     saveSession()
     settings.settings.hardSync()
     data.saveData()
@@ -304,6 +307,15 @@ def main(argv):
         lostTabsTimer.start(1000)
     else:
         lostTabsTimer.start(500)
+
+    if os.path.isfile(settings.crash_file):
+        clearCache = QMessageBox.question(None, tr("Nimbus crashed..."), tr("Would you like to try clearing the cache to fix this?"), QMessageBox.Yes | QMessageBox.No)
+        if clearCache == QMessageBox.Yes:
+            network.clear_cache()
+    else:
+        f = open(settings.crash_file, "w")
+        f.write("")
+        f.close()
 
     if not "--daemon" in argv and os.path.exists(settings.session_file):
         loadSession()
