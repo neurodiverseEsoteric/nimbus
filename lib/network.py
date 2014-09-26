@@ -39,11 +39,6 @@ cookie_jar = QNetworkCookieJar(QCoreApplication.instance())
 # All incognito nimbus.WebView instances use this one instead.
 incognito_cookie_jar = QNetworkCookieJar(QCoreApplication.instance())
 
-# Global disk cache.
-diskCache = QNetworkDiskCache(QCoreApplication.instance())
-diskCache.setCacheDirectory(settings.network_cache_folder)
-diskCache.setMaximumCacheSize(settings.setting_to_int("data/MaximumCacheSize"))
-
 # Subclass of QNetworkReply that loads a local folder.
 class NetworkReply(QNetworkReply):
     def __init__(self, parent, url, operation, content=""):
@@ -99,12 +94,9 @@ replacement_table = {"http://personalitycafe.com/images/styles/PersonalityCafe/m
 
 # Custom NetworkAccessManager class with support for ad-blocking.
 class NetworkAccessManager(QNetworkAccessManager):
-    diskCache = diskCache
+    #diskCache = diskCache
     def __init__(self, *args, nocache=False, **kwargs):
         super(NetworkAccessManager, self).__init__(*args, **kwargs)
-        if not nocache:
-            self.setCache(self.diskCache)
-            self.diskCache.setParent(QCoreApplication.instance())
         self.authenticationRequired.connect(self.provideAuthentication)
     def provideAuthentication(self, reply, auth):
         username = QInputDialog.getText(None, "Authentication", "Enter your username:", QLineEdit.Normal)
@@ -140,6 +132,7 @@ incognito_network_access_manager.setCookieJar(incognito_cookie_jar)
 
 # Clear cache.
 def clear_cache():
+    return
     network_access_manager.cache().clear()
 
 # This function checks whether the system is connected to a network interface.

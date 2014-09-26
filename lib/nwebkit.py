@@ -649,7 +649,7 @@ class WebView(QWebView):
         self.init()
 
         if os.path.exists(settings.new_tab_page) and not forceBlankPage:
-            self.load(QUrl("about:blank"))
+            self.load(QUrl.fromUserInput(settings.new_tab_page))
 
     def addJavaScriptBar(self, toolBar):
         self.javaScriptBars.append(toolBar)
