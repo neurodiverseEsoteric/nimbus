@@ -309,7 +309,7 @@ def main(argv):
         lostTabsTimer.start(500)
 
     if os.path.isfile(settings.crash_file):
-        clearCache = QMessageBox.question(None, tr("Nimbus crashed..."), tr("Would you like to try clearing the cache to fix this?"), QMessageBox.Yes | QMessageBox.No)
+        clearCache = QMessageBox.question(None, tr("Nimbus seems to have crashed..."), tr("Clearing the cache might fix this. Would you like to do that?"), QMessageBox.Yes | QMessageBox.No)
         if clearCache == QMessageBox.Yes:
             network.clear_cache()
     else:
