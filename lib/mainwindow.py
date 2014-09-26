@@ -1227,6 +1227,10 @@ self.origY + ev.globalY() - self.mouseY)
 
     def stop(self):
         self.tabWidget().currentWidget().stop()
+        try:
+            self.tabWidget().currentWidget().javaScriptBars[-1].no.click()
+        except:
+            pass
         self.locationBar.setEditText(self.tabWidget().\
                                      currentWidget().url().toString())
 
